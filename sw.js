@@ -1,6 +1,6 @@
 // Pages come fresh from the network when there is one, and from the saved copy when there isn't.
 // Everything else (map data, fonts, icons) is answered from the saved copy at once and refreshed behind the scenes.
-const C = "mapelago-0.8.1";
+const C = "mapelago-0.9.0";
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== C).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", (e) => {
