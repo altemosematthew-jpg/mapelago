@@ -1,0 +1,25 @@
+// Written by copy/apply.py from copy/copy.json. Edit copy.json, not this file.
+window.MXCOPY = {
+ "invite": {
+  "city": "Can you find it in fewer moves than me?",
+  "country": "How many clues will you need to pin it?",
+  "bigger": "Ten pairs, one minute. Can you beat my row?",
+  "bigcountry": "The last pairs are close. Think you can beat me?",
+  "voyage": "Did I drop anchor too soon? Try the ten islands.",
+  "fathoms": "How deep can you go? I skipped the obvious answers.",
+  "stamps": "Can you fill all six in fewer spins than me?"
+ },
+ "cards": {
+  "city": "Slide tiles to earn clues, then pin today's city on the map.",
+  "country": "The same tile-and-pin game, with a mystery country.",
+  "bigger": "Two cities, one tap: which has more people? Ten pairs.",
+  "bigcountry": "Which covers more land? Ten pairs, closer as you go.",
+  "voyage": "Ten islands of trivia. Keep your points or sail on.",
+  "fathoms": "Name a country that fits. Less obvious answers go deeper.",
+  "stamps": "Spin the wheel, answer the question, stamp all six."
+ },
+ "home": {
+  "headline": "A little geography, every day",
+  "line": "Seven free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for."
+ }
+};
