@@ -467,6 +467,9 @@ async function page(b, url, opts = {}) {
       const after = await read();
       check(after.open === before.open + 1, "missed pin opens the next clue", JSON.stringify([before, after]));
       check(after.label && after.label === after.slot, "next-clue label matches the highlighted slot after a missed pin", JSON.stringify(after));
+      const ladder = await p.evaluate(() => [...document.querySelectorAll("#track li")].map((l) => l.textContent));
+      const nums = ladder.filter((x) => /^\d+$/.test(x));
+      check(new Set(nums).size === nums.length && ladder.includes("\u{1F4CD}"), "the clue ladder never repeats a number; a pin marks the clue a miss opened", ladder.join(","));
       await ctx.close();
     }
 

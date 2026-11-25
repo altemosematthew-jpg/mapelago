@@ -135,8 +135,8 @@ country.html conflict whichever way you merge. What worked both times, with this
     python3 review/scoring-patch.py
     python3 review/country-quick-patch.py
     python3 review/review-fixes-patch.py
-    python3 review/teachers-menu-patch.py
     python3 copy/apply.py
+    python3 review/teachers-menu-patch.py
     git add index.html country.html
 
 The result differed from this branch only in the version strings, and the whole suite passed.
@@ -184,3 +184,11 @@ Made by `review/review-fixes-patch.py` (both pages; run after the other scripts)
 - `tests/run.js`: a block `// ---- mx-teachers ... ----` (8 checks: the page at 375 and 1440 px with no
   console errors or sideways scroll, its links and promises, the menu link on every page, the sitemap).
 - Not changed: sw.js (offline copies of the teachers page come from the normal page cache).
+
+## Merging 0.15.11 (copy.json and games/index.html conflicted too)
+
+With this branch checked out: `git checkout --theirs index.html country.html copy/copy.json games/index.html`,
+then the four page scripts, then `python3 review/country-copy-patch.py` and
+`python3 review/scoring-copy-patch.py` (each runs copy/apply.py), and `python3 review/teachers-menu-patch.py`
+last (taking your games/index.html drops its For teachers link). Your city copy changes were kept; only
+this branch's edits differ from your copy.json. Both suites passed.
