@@ -76,4 +76,4 @@ writing if an anchor is missing.
   list, the picture drawer taking a canvas, and `window.VXH` / `SX.wire()` hooks.
 - `<!-- vx-practice:start/end -->` markup: the "Play more" button under the result and the practice panel.
 - `/* vx-practice */` styles at the end of each page's `<style>`.
-- Both pages' `<script src="site.js?v=0.15.2">` anchors are used to place the block; a version bump does not affect it.
+- The generated block sits just before `<div id="toast">`, one line away from the `?v=` script lines, so a version bump merges cleanly.

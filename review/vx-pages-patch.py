@@ -26,9 +26,9 @@ def patch(path, edits):
 BLOCK = '<script>/* vx-pack:start */ /* vx-pack:end */</script>\n'
 
 voyage = [
-    # the generated pack + families + practice code, just before the game's own script
-    ('<script src="site.js?v=0.15.2"></script>\n<script>"use strict";',
-     '<script src="site.js?v=0.15.2"></script>\n' + BLOCK + '<script>"use strict";'),
+    # the generated pack + families + practice code, before the toast and the scripts (kept away from the ?v= lines)
+    ('</div>\n<div id="toast" role="status"></div>\n',
+     '</div>\n' + BLOCK + '<div id="toast" role="status"></div>\n'),
     # from No. 14 the day is dealt by the new mix
     ('rn=ut(xa,dt,_)', 'rn=window.VXV&&_>=VX.FROM?VXV.deal(xa,dt,_,yn):ut(xa,dt,_)'),
     # names for the new kinds (badges and island labels)
@@ -72,8 +72,8 @@ voyage = [
 ]
 
 stamps = [
-    ('<script src="site.js?v=0.15.2"></script>\n<script>"use strict";',
-     '<script src="site.js?v=0.15.2"></script>\n' + BLOCK + '<script>"use strict";'),
+    ('</div>\n<div id="toast" role="status"></div>\n',
+     '</div>\n' + BLOCK + '<div id="toast" role="status"></div>\n'),
     # from No. 14 the wheel's six categories and their questions come from the new mix
     ('A=pa(Ma,b)', 'A=(window.SX&&SX.init({T:Ma,yn:I,sa,Wa,Ya,D,va}),window.SX&&b>=SX.FROM?SX.deal(b,n=>{k=p.cats=n}):pa(Ma,b))'),
     ('na&&(window.__stamp=', 'window.SX&&SX.wire(),na&&(window.__stamp='),
