@@ -489,6 +489,11 @@ a.act{text-decoration:none}
 .mxpr-bars i{display:block;width:var(--w);min-width:4px;height:20px;border:1.5px solid var(--ink);border-radius:4px;background:var(--land);transform-origin:left;animation:bcgrowx .6s cubic-bezier(.2,.9,.3,1) both}
 .mxpr-bars .big i{background:var(--accent)}
 @keyframes bcgrowx{from{scale:0 1}}
+.mxpick{display:inline-block;padding:0 6px;border-radius:6px;background:var(--tint-2);color:var(--ink);font-size:12px;font-weight:800;vertical-align:1px;white-space:nowrap}
+.mxstats{margin:14px 0 0}
+.mxstats h2{margin:0 0 2px;font-size:20px}
+.mxstats .stats{margin-top:10px}
+.mxstats .hrow span:first-child{font-variant-numeric:tabular-nums}
 /* /bigcountry-practice */
 </style>
 </head>
@@ -579,7 +584,7 @@ a.act{text-decoration:none}
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   // How far apart the pair is, by how long the run is: wide to start, then closer, like the daily ten.
   var BANDS = [[8, Infinity], [4, 40], [3, 20], [2.5, 10], [2, 6], [1.8, 4], [1.6, 3], [1.45, 2.4], [1.3, 2], [1.2, 1.7]], LATE = [1.15, 1.45];
-  var CLOSE = 2, AUTO = 3000;
+  var CLOSE = 1.6;
   function band(n) { return BANDS[n] || LATE; }
   function sfx(name, arg) { try { if (window.MX && MX.play) MX.play(name, arg); } catch (e) {} }
   function buzz(p) { if (navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
@@ -634,7 +639,7 @@ a.act{text-decoration:none}
     function keep() { try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch (e) {} } // an array, so the site's save repair leaves it alone
     var cards = [$("#mxpr0"), $("#mxpr1")], panel = $("#mxprReveal"), wrap = $("#mxprCards"), say = $("#mxprSay");
     var run = 0, cur = null, recent = [], phase = "off", timer = 0, shownAt = 0, kb = false, settle = null, last = null;
-    function heat(p) { var r = Math.max(p[0].pop, p[1].pop) / Math.min(p[0].pop, p[1].pop); return r < 1.5 ? "Very close" : r < CLOSE ? "Close call" : ""; }
+    function heat(p) { var r = Math.max(p[0].pop, p[1].pop) / Math.min(p[0].pop, p[1].pop); return r < 1.2 ? "Very close" : r < CLOSE ? "Close call" : ""; }
     function bar(anim) {
       var el = $("#mxprRun");
       $("#mxprN").textContent = "Pair " + ((phase === "choose" || !last ? run : last.before) + 1) + " of this run";
@@ -700,20 +705,19 @@ a.act{text-decoration:none}
         : '<div class="mxpr-bars" aria-hidden="true">' + p.map(function (c) { return '<div' + (c === big ? ' class="big"' : "") + '><span>' + o.esc(c.name) + '</span><i style="--w:' + Math.max(1, Math.round(100 * c.pop / big.pop)) + '%"></i></div>'; }).join("") + "</div>";
       panel.innerHTML = '<p class="bcverdict' + (L.right ? " bc-ok" : " bc-no") + '">' + o.esc(verdict) + "</p>" + stage + '<div class="bclabs">' + labs + "</div>"
         + '<p class="bcratio">' + o.esc(big.name) + o.esc(w.pre) + '<b class="bcx">' + o.esc(w.n) + "</b>" + o.esc(w.mid) + o.esc(small.name) + "</p>"
-        + '<button class="act bcnext" id="mxprNext" type="button"><span>' + (L.right ? "Next pair" : "Start a new run") + "</span>" + (kb ? "" : '<i style="animation-duration:' + AUTO + 'ms"></i>') + "</button>";
+        + '<button class="act bcnext" id="mxprNext" type="button"><span>' + (L.right ? "Next pair" : "Start a new run") + "</span></button>";
       if (o.stage) o.stage(panel.querySelector(".bcs"), p, true);
       wrap.hidden = true; panel.hidden = false;
       say.textContent = (L.right ? "Right. " : "Not this time. ") + w.say + "." + (L.right ? "" : " Run over at " + L.before + ".") + " Best run " + mem[0] + ".";
       var nx = $("#mxprNext");
       nx.onclick = function (e) { e.stopPropagation(); advance(); };
-      if (kb) nx.focus({ preventScroll: true }); else timer = setTimeout(advance, AUTO);
+      if (kb) nx.focus({ preventScroll: true }); // and wait for the tap
       shownAt = Date.now();
     }
     function advance() {
       if (phase !== "reveal" || Date.now() - shownAt < 250) return;
-      var had = panel.contains(document.activeElement);
       next();
-      if (had) cards[0].focus({ preventScroll: true });
+      cards[0].focus({ preventScroll: true }); // the new pair
     }
     function open(viaKey) {
       done.hidden = true; box.hidden = false; run = 0; recent = [];
@@ -733,6 +737,34 @@ a.act{text-decoration:none}
     note();
   };
   window.MxPractice.deal = deal; window.MxPractice.band = band; // for the tests
+
+  // ---------- the end card for both games: your pick in the list, and your stats ----------
+  // o: pairs [[a, b] x10] of {name, country, pop}, picks [0|1 x10], ok(i), results (the daily save's), unit(n), esc, icon
+  window.MxBigEnd = function (o) {
+    var ol = $("#recap"); if (!ol) return;
+    ol.innerHTML = o.pairs.map(function (p, i) {
+      var mine = p[o.picks[i]], two = p.slice().sort(function (a, b) { return b.pop - a.pop; }), right = o.ok(i);
+      var line = function (c) { return "<b>" + o.esc(c.name) + "</b>, " + o.esc(c.country) + ": " + o.unit(c.pop) + (c === mine ? ' <span class="mxpick">' + "your pick" + "</span>" : ""); };
+      return "<li>" + o.icon(right ? "landed" : "far", 16) + '<span><span class="sr">Pair ' + (i + 1) + ", " + (right ? "right" : "wrong") + ". </span>" + line(two[0]) + "<br>" + line(two[1]) + "</span></li>";
+    }).join("");
+    var res = o.results || {}, days = Object.keys(res).filter(function (d) { return res[d] && typeof res[d].score === "number"; });
+    var scores = days.map(function (d) { return res[d].score; }), st = window.MXS ? MXS.streak(res, MXS.today()) : { cur: 0, best: 0 };
+    var avg = scores.length ? scores.reduce(function (a, b) { return a + b; }, 0) / scores.length : 0;
+    var spread = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0].map(function (n) { return [n, scores.filter(function (x) { return x === n; }).length]; });
+    var low = spread.filter(function (x) { return x[1]; }).map(function (x) { return x[0]; }), floor = low.length ? Math.min(5, Math.min.apply(null, low)) : 5;
+    spread = spread.filter(function (x) { return x[0] >= floor; });
+    var most = Math.max.apply(null, spread.map(function (x) { return x[1]; }).concat(1));
+    var box = $("#mxStats");
+    if (!box) { box = document.createElement("section"); box.id = "mxStats"; box.className = "panel mxstats"; box.setAttribute("aria-labelledby", "mxStatsH"); ol.parentNode.insertBefore(box, ol); }
+    box.innerHTML = '<h2 id="mxStatsH">Your stats</h2><div class="stats">'
+      + "<div><b>" + scores.length + "</b><span>Played</span></div>"
+      + "<div><b>" + (Math.round(avg * 10) / 10) + "</b><span>Average</span></div>"
+      + "<div><b>" + st.cur + "</b><span>Streak</span></div>"
+      + "<div><b>" + st.best + "</b><span>Best streak</span></div></div>"
+      + '<div class="hist" role="list" aria-label="How often you scored each number out of 10">' + spread.map(function (x) {
+        return '<div class="hrow" role="listitem"><span>' + x[0] + "/10</span>" + '<div class="hbar" style="width:' + Math.max(8, x[1] / most * 100) + '%"><span class="sr">' + x[1] + (x[1] === 1 ? " day" : " days") + " with " + x[0] + ": </span>" + x[1] + "</div></div>";
+      }).join("") + "</div>";
+  };
 })();
 </script>
 <script>
@@ -743,7 +775,7 @@ a.act{text-decoration:none}
   "use strict";
   var $ = function (s) { return document.querySelector(s); };
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var EARTH = 6371.0088, RAD = Math.PI / 180, CLOSE = 2, VERY = 1.5, AUTO = 3400;
+  var EARTH = 6371.0088, RAD = Math.PI / 180, CLOSE = 1.6, VERY = 1.2;
 
   // ---------- outlines: each country in a Lambert azimuthal equal-area projection centred on itself ----------
   // Equal-area means a square centimetre on screen is the same number of square kilometres everywhere,
@@ -897,8 +929,54 @@ a.act{text-decoration:none}
     document.head.appendChild(e);
   }
 
+  // ---------- official areas and the deal, from No. 14 ----------
+  // Every area is the total area (land and water) in the CIA World Factbook, "Area: total", read from the
+  // factbook.json mirror on 25 Nov 2026. Keyed by the map's country number. Morocco is left out: its
+  // Factbook figure includes Western Sahara, a size that depends on what is counted.
+  var FROM = 14, AREAS = {4:652230,8:28748,12:2381740,24:1246700,31:86600,32:2780400,36:7741220,40:83871,44:13880,50:148460,51:29743,56:30528,64:38394,68:1098581,70:51197,72:581730,76:8515770,84:22966,90:28896,96:5765,100:110879,104:676578,108:27830,112:207600,116:181035,120:475440,124:9984670,132:4033,140:622984,144:65610,148:1284000,152:756102,156:9596960,170:1138910,178:342000,180:2344858,188:51100,191:56594,192:110860,196:9251,203:78867,204:112622,214:48670,218:283561,222:21041,226:28051,231:1104300,232:117600,233:45228,242:18274,246:338145,262:23200,266:267667,268:69700,270:11300,276:357022,288:238533,300:131957,320:108889,324:245857,328:214969,332:27750,340:112090,348:93028,352:103000,356:3287263,360:1904569,364:1648195,368:438317,372:70273,376:21937,380:301340,384:322463,388:10991,392:377915,398:2724900,400:89342,404:580367,408:120538,410:99720,414:17818,417:199951,418:236800,422:10400,426:30355,428:64589,430:111369,434:1759540,440:65300,442:2586,450:587041,454:118484,458:329847,466:1240192,478:1030700,480:2040,484:1964375,496:1564116,498:33851,499:13812,508:799380,512:309500,516:824292,524:147181,528:41543,548:12189,554:268838,558:130370,562:1267000,566:923768,591:75420,598:462840,600:406752,604:1285216,608:300000,616:312685,620:92090,624:36125,626:14874,634:11586,642:238391,643:17098242,646:26338,682:2149690,686:196722,694:71740,703:49035,704:331210,705:20273,706:637657,710:1219090,716:390757,724:505370,728:644329,729:1861484,740:163820,748:17364,752:450295,756:41277,760:187437,762:144100,764:513120,768:56785,780:5128,784:83600,788:163610,792:783562,795:488100,800:241038,804:603550,807:25713,818:1001450,826:243610,834:947300,854:274200,858:176215,860:447400,862:912050,882:2831,894:752618};
+  function official(M) {
+    return M.filter(function (c) { return AREAS[c.cid]; }).map(function (c) { return { name: c.name, country: c.country, pop: AREAS[c.cid], cid: c.cid }; });
+  }
+  // How far apart each of the ten pairs is: wide to start, the last two within about 20%.
+  var DAILY = [[8, 1e9], [4, 40], [3, 20], [2.5, 10], [2, 6], [1.6, 3], [1.4, 2.2], [1.25, 1.6], [1.1, 1.2], [1.05, 1.15]];
+  function rng(seed) { return function () { seed |= 0; seed = seed + 0x6d2b79f5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function shuffle(a, rnd) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  // Ten anchors a day come from a shuffled deck, so every country takes its turn; each anchor's partner is
+  // the country in the pair's band. The tightest pairs are found first, while most countries are free.
+  function deal(pool, n) {
+    var per = 10, cycle = Math.floor(pool.length / per), c = Math.floor((n - FROM) / cycle), d = (n - FROM) % cycle;
+    var deck = shuffle(pool.map(function (_, i) { return i; }), rng(7919 * (c + 1)));
+    var rnd = rng(104729 * n + 17), mine = deck.slice(d * per, d * per + per), others = shuffle(deck.slice(0, d * per).concat(deck.slice(d * per + per)), rnd);
+    var used = {}, out = [];
+    var ratio = function (a, b) { return Math.max(pool[a].pop, pool[b].pop) / Math.min(pool[a].pop, pool[b].pop); };
+    for (var r = per - 1; r >= 0; r--) {
+      var got = null;
+      for (var widen = 0; widen < 4 && !got; widen++) {
+        var lo = DAILY[r][0] - (DAILY[r][0] - 1.05) * widen / 3, hi = DAILY[r][1] * (1 + widen);
+        var anchors = mine.concat(others);
+        for (var t = 0; t < anchors.length && !got; t++) {
+          var a = anchors[t]; if (used[a]) continue;
+          var c2 = [];
+          for (var b = 0; b < pool.length; b++) if (b !== a && !used[b]) { var q = ratio(a, b); if (q >= lo && q <= hi) c2.push(b); }
+          if (c2.length) got = [a, c2[Math.floor(rnd() * c2.length)]];
+        }
+      }
+      if (!got) { var free = deck.filter(function (i) { return !used[i]; }); got = [free[0], free[1]]; } // never needed with today's pool
+      used[got[0]] = used[got[1]] = 1;
+      out[r] = rnd() < 0.5 ? got : [got[1], got[0]];
+    }
+    return out;
+  }
+
   window.MxBC = function (G) {
     extras();
+    // From No. 14 the day plays with the official areas and the new deal. Earlier numbers keep exactly the
+    // countries, figures and pairs they were played with. Practice always uses the official areas.
+    var clean = official(G.M);
+    if (G.k >= FROM) {
+      G.M.length = 0; Array.prototype.push.apply(G.M, clean);
+      G.R.length = 0; Array.prototype.push.apply(G.R, deal(G.M, G.k));
+    }
     var M = G.M, R = G.R, k = G.k, h = G.h, A = G.A, N = G.rounds;
     var pair = function (i) { return R[i].map(function (j) { return M[j]; }); };
     var rat = R.map(function (_, i) { var p = pair(i); return ratio(p[0], p[1]); });
@@ -1012,7 +1090,7 @@ a.act{text-decoration:none}
         + '<div class="bcstage"><span class="bcsame" aria-hidden="true">Same scale</span><svg class="bcs" viewBox="0 0 340 176" role="img" aria-label="' + G.esc(p[0].name + " and " + p[1].name + ", drawn at the same scale") + '" data-i="' + i + '"></svg></div>'
         + '<div class="bclabs">' + labs + "</div>"
         + '<p class="bcratio">' + G.esc(r.big.name) + ' is <b class="bcx">' + G.esc(r.n) + "</b>" + r.mid + G.esc(r.small.name) + "</p>"
-        + (withNext ? '<button class="act bcnext" id="bcNext" type="button"><span>' + (i === N - 1 ? "See your score" : "Next pair") + "</span>" + (kb ? "" : '<i style="animation-duration:' + AUTO + 'ms"></i>') + "</button>" : "");
+        + (withNext ? '<button class="act bcnext" id="bcNext" type="button"><span>' + (i === N - 1 ? "See your score" : "Next pair") + "</span></button>" : "");
     }
     function draw(svg, anim) {
       var i = Number(svg.getAttribute("data-i")), d = pairSVG(pair(i), 340, 176, { bar: true, pad: 12 });
@@ -1043,14 +1121,13 @@ a.act{text-decoration:none}
       var nx = $("#bcNext");
       nx.onclick = function (e) { e.stopPropagation(); next(); };
       if (kb) nx.focus({ preventScroll: true });
-      else timer = setTimeout(next, AUTO);
-      shownAt = Date.now();
+      shownAt = Date.now(); // and wait for the tap the button asks for
+
     }
     function next() {
       if (phase !== "reveal" || Date.now() - shownAt < 250) return;
-      var had = panel.contains(document.activeElement);
       round(true);
-      if (had && !done()) cards[0].focus({ preventScroll: true });
+      if (!done()) cards[0].focus({ preventScroll: true }); // the new pair, for keyboard and screen reader players
     }
     panel.addEventListener("click", function () { next(); });
     cards.forEach(function (c, j) { c.onclick = function (e) { pick(j, e.detail === 0); }; });
@@ -1063,7 +1140,9 @@ a.act{text-decoration:none}
     function shareText() {
       var sc = G.score(), st = runAt(N), close = R.map(function (_, i) { return i; }).filter(function (i) { return heat(i); });
       var got = close.filter(function (i) { return G.ok(i); }).length;
-      var invite = (window.MXCOPY && MXCOPY.invite && MXCOPY.invite.bigcountry) || "Can you beat " + sc + "?";
+      // "The last pairs are close" only when they were: both last pairs within 25%
+      var tight = rat[N - 1].r <= 1.25 && rat[N - 2].r <= 1.25;
+      var invite = (tight && window.MXCOPY && MXCOPY.invite && MXCOPY.invite.bigcountry) || "Can you beat " + sc + "?";
       return G.brand + " " + G.title + " No. " + k + " \u{1F422} " + sc + "/" + N + "\n"
         + h.map(function (_, i) { return G.ok(i) ? "✅" : "❌"; }).join("") + "\n"
         + "Best run: " + st.best + (close.length ? " \u00b7 Close calls: " + got + " of " + close.length : "") + "\n"
@@ -1102,10 +1181,7 @@ a.act{text-decoration:none}
       $("#bcClose").textContent = close.length ? close.filter(function (i) { return G.ok(i); }).length + "/" + close.length : "–";
       $("#shareText").textContent = shareText();
       strip();
-      $("#recap").innerHTML = R.map(function (_, i) {
-        var two = pair(i).slice().sort(function (a, b) { return b.pop - a.pop; });
-        return "<li>" + G.icon(G.ok(i) ? "landed" : "far", 16) + "<span><b>" + G.esc(two[0].name) + "</b>, " + G.esc(two[0].country) + ": " + G.unit(two[0].pop) + "<br>" + G.esc(two[1].name) + ", " + G.esc(two[1].country) + ": " + G.unit(two[1].pop) + "</span></li>";
-      }).join("");
+      if (window.MxBigEnd) MxBigEnd({ pairs: R.map(function (_, i) { return pair(i); }), picks: h, ok: G.ok, results: A.results, unit: G.unit, esc: G.esc, icon: G.icon });
       var days = G.days();
       $("#streakNote").hidden = days < 2; $("#streakNote").textContent = "You've played " + days + " days in a row.";
       G.tick();
@@ -1120,7 +1196,7 @@ a.act{text-decoration:none}
       try { await navigator.clipboard.writeText(t); G.toast("Copied. Paste it in your group chat."); } catch (e) { G.toast("Select the text above to copy it."); }
     };
     // "Play more": endless practice pairs from the whole pool, with this same true-scale reveal
-    if (window.MxPractice) MxPractice({ id: "bigcountry", pool: M, unit: km2, esc: G.esc, icon: G.icon,
+    if (window.MxPractice) MxPractice({ id: "bigcountry", pool: clean, unit: km2, esc: G.esc, icon: G.icon,
       words: function (big, small) { var r = ratio(big, small); return { pre: " is ", n: r.n, mid: r.mid, say: r.say }; },
       stage: function (svg, two, anim) {
         var paint = function () { var d = pairSVG(two, 340, 176, { bar: true, pad: 12 }); svg.innerHTML = d.svg; svg.classList.toggle("anim", !!anim); return d.real; };
@@ -1131,6 +1207,7 @@ a.act{text-decoration:none}
   };
   // for the tests: the projected outline of a country and the words for a pair
   window.MxBC.outline = outline; window.MxBC.ratio = ratio; window.MxBC.km2 = km2;
+  window.MxBC.areas = AREAS; window.MxBC.deal = deal;
 })();
 </script>
   <noscript><p class="note">This game needs JavaScript to run. Turn it on in your browser settings, then reload this page.</p></noscript>
