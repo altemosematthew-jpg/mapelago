@@ -2,12 +2,12 @@
 
 Dead Reckoning is a new daily game: five places a day, tapped on a blank world map, scored by great-circle
 distance. It becomes the tenth game once Logbook (0.15.8, `history.html`) is out, the ninth before that.
-Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at 0.15.7 is already merged into it,
-with the patch re-applied on top, so merging the branch into 0.15.7 brings no conflicts.
+Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at **0.15.8** (`a87cb35`, Logbook) is already
+merged into it, with the patch re-applied on top, so merging the branch into 0.15.8 brings no conflicts.
 
 ## How to merge
 
-1. Merge the branch. If main has moved on (0.15.8 and Logbook), the shared files may conflict: take **main's**
+1. Merge the branch. If main has moved on past 0.15.8, the shared files may conflict: take **main's**
    version of every shared file listed below (`git checkout --theirs` / `--ours` as appropriate, i.e. the side
    that is main), then run step 2, which puts Dead Reckoning back in.
 2. Run the patch for the shared files from anywhere:
@@ -17,16 +17,17 @@ with the patch re-applied on top, so merging the branch into 0.15.7 brings no co
    It is idempotent: each edit is checked first and skipped when already in place, so running it twice, or after a
    merge that kept some of the edits, is safe. Nothing in it assumes which game came last: links and entries go
    after the last game already listed (Logbook if `history.html` is in the menu, otherwise Crossings), and the
-   "nine / ten games" wording is worked out from the number of entries in `site.js`'s `GAMES` after the edit.
+   "ten games" wording is worked out from the number of games in `site.js` after the edit (the `GAMES` array plus
+   every `GAMES.push`).
    It prints `added`, `already there` or `NOT FOUND` for each edit and exits 1 if anything was not found.
-3. Run the tests: `cd tests && npm test`. Dead Reckoning's checks run just before the end of `run.js`.
+3. Run the tests: `cd tests && npm test` (`run.js`, then Logbook's `history.js`). Dead Reckoning's checks run just
+   before the end of `run.js`. On this branch: `run.js` 443 passed, `history.js` 66 passed.
 4. At release, bump the version as usual. The patch already set `dead-reckoning.html`'s `?v=` to the `sw.js`
    version at the time it ran, and `tests/run.js` section 1b now checks that page too. A global replace of the old
    `?v=` value covers it, along with `dead-reckoning.js?v=` in the `sw.js` PRE list.
 
-Checked: on a clean 0.15.7, and on a 0.15.7 with Logbook added by hand the way 0.15.8 will add it (menu link after
-Crossings, a `GAMES` entry, "Nine games…", tests naming Logbook): every edit applies once and a second run adds
-nothing. With Logbook present, Dead Reckoning goes after Logbook everywhere and every count reads "ten".
+Checked on clean copies of 0.15.5, 0.15.7 and 0.15.8: every edit applies once and a second run adds nothing. On
+0.15.8, Dead Reckoning goes after Logbook everywhere (menus, cards, streaks sheet, lists) and every count reads "ten".
 
 ## New files (no conflicts possible)
 
@@ -48,9 +49,8 @@ in `site.js` once Dead Reckoning is added (ten with Logbook).
 
 | File | Change |
 |---|---|
-| `site.js` | `GAMES`: new last entry `{ id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: 📍 }`. This puts it in the front page's "Today's games" cards, every game page's cards, the "Your streaks" sheet, the streak-at-risk note and the save code. |
-| `site.js` | `BEAT`: `reckoning: { code: "dr", max: 1000, modes: 1 }`, the new beat-my-score game code (`#b-dr-<No.>-0-<score>`). |
-| `site.js` | `UNIT`: `reckoning` reads "828 of 1,000" in a friend's challenge note. |
+| `site.js` | A `// ---------- Dead Reckoning: start/end ----------` block right after Logbook's block, laid out like it: `GAMES.push({ id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: 📍 })` and `UNIT.reckoning` ("828 of 1,000" in a friend's challenge note). This puts it after Logbook in the front page's "Today's games" cards, every game page's cards, the "Your streaks" sheet, the streak-at-risk note and the save code. |
+| `site.js` | `BEAT` (after `history`): `reckoning: { code: "dr", max: 1000, modes: 1 }`, the new beat-my-score game code (`#b-dr-<No.>-0-<score>`). |
 | `site.js` | `todayText`: Dead Reckoning's total in "Copy today's results". |
 | `site.js` | `perfect`: confetti on 1,000 of 1,000. |
 | `site.js` | `addImageButton`: not added for Dead Reckoning (its share line doesn't use the 🐢 layout the generic image expects). |
@@ -65,8 +65,8 @@ in `site.js` once Dead Reckoning is added (ten with Logbook).
 | `sitemap.xml` | `https://mapelago.com/dead-reckoning.html`. |
 | `tests/run.js` | `dead-reckoning.html` added after the last game in every page list that names the games (clean load, the cache-version check 1b, the landmarks check 21); a call to `tests/dead-reckoning.test.js` before the end; the About-page check and the home search-data check (22) also name Dead Reckoning; their counts and test names say N. |
 
-Not changed: `copy.js` / `copy/copy.json` (the card text falls back to `GAMES.about`; add a `cards.reckoning`
-line there if you want house copy), the manifest's shortcuts, `hints.html`, `privacy/`. No other game's script or
+Not changed: `copy/copy.json` and `copy.js` (generated from it by `copy/apply.py`): the card text falls back to
+`GAMES.about`; add `reckoning` lines there if you want house copy, the manifest's shortcuts, `hints.html`, `privacy/`. No other game's script or
 data was touched, so no other game's puzzles change (the golden check in `tests/run.js` confirms it).
 
 ## The game, for review

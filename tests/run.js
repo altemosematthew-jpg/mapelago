@@ -41,7 +41,7 @@ async function page(b, url, opts = {}) {
   const b = await chromium.launch();
   try {
     // 1. every page loads cleanly at phone and desktop size
-    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
+    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
       for (const desktop of [false, true]) {
         const { ctx, p } = await page(b, U + f, { desktop, wait: 800 });
         check(!p.errs.length, `loads cleanly: /${f} ${desktop ? "desktop" : "phone"}`, p.errs.join("; "));
@@ -51,7 +51,7 @@ async function page(b, url, opts = {}) {
     // 1b. a release bumps the cache and every script address together, so returning players get it on their next visit
     {
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8"), v = /const C = "mapelago-([^"]+)"/.exec(sw)[1];
-      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "privacy/index.html", "shapes.js", "sw.js"]) {
+      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "privacy/index.html", "shapes.js", "sw.js"]) {
         const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
         const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/)?(?:site|extras|shapes|world|copy|analytics|history|history-data)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
         check(tags.length > 0 && tags.every((t) => t === "?v=" + v), `script addresses carry the cache version ${v}: ${f}`, tags.join(" "));
@@ -220,7 +220,7 @@ async function page(b, url, opts = {}) {
       check(/Each move costs 6 points/.test(t) && !/costs 8 points/.test(t), "hints page: city moves cost 6");
       await ctx.close();
       const ab = fs.readFileSync(path.join(__dirname, "../about/index.html"), "utf8");
-      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings", "Logbook"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Nine games a day/.test(ab), "about page: names all nine daily games");
+      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings", "Logbook", "Dead Reckoning"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Ten games a day/.test(ab), "about page: names all ten daily games");
     }
     // ---- end mx-country-rules ----
 
@@ -439,7 +439,7 @@ async function page(b, url, opts = {}) {
     // 21. landmarks for screen readers: exactly one main region on every page (checked with axe-core: no landmark issues left)
     {
       const ctx = await b.newContext(PHONE), p = await ctx.newPage(), bad = [];
-      for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "games/", "privacy/", "about/", "how-to-play/"]) {
+      for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "dead-reckoning.html", "games/", "privacy/", "about/", "how-to-play/"]) {
         await p.goto(U + f, { waitUntil: "load" }); await p.waitForTimeout(250);
         const r = await p.evaluate(() => [document.querySelectorAll("main,[role=main]").length, document.querySelectorAll("main header,[role=main] > header:not([role=none])").length]);
         if (r[0] !== 1 || r[1]) bad.push(f + " " + JSON.stringify(r));
@@ -448,13 +448,13 @@ async function page(b, url, opts = {}) {
       await ctx.close();
     }
 
-    // 22. the app manifest and the home page's search data know all eight games
+    // 22. the app manifest and the home page's search data know all ten games
     {
       const m = JSON.parse(fs.readFileSync(path.join(__dirname, "../manifest.webmanifest"), "utf8"));
       const ok = (m.shortcuts || []).every((x) => fs.existsSync(path.join(__dirname, "..", x.url === "./" ? "index.html" : x.url.endsWith("/") ? x.url + "index.html" : x.url)));
       check(ok && m.shortcuts.length >= 3, "manifest: shortcuts point at real pages");
       const home = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
-      check(/Nine free daily geography games[^"]*Logbook/.test(home), "home page search data lists all nine games");
+      check(/Ten free daily geography games[^"]*Dead Reckoning/.test(home), "home page search data lists all ten games");
     }
 
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
@@ -482,6 +482,8 @@ async function page(b, url, opts = {}) {
       check(/on a shortest route/i.test(await k.p.textContent("#say")) && !k.p.errs.length, "crossings: keyboard guess", await k.p.textContent("#say"));
       await k.ctx.close();
     }
+    // Dead Reckoning (tests/dead-reckoning.test.js)
+    await require("./dead-reckoning.test.js")({ b, U, page, check });
   } finally { await b.close(); srv.close(); }
   console.log(`\n${passed} passed, ${failed.length} failed`);
   failed.forEach((f) => console.log("  FAIL " + f));

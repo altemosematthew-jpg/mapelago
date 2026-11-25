@@ -340,7 +340,7 @@
   }
   function addImageButton() {
     var me = here(), btn = document.getElementById("shareBtn");
-    if (!me || !btn || document.getElementById("imgBtn") || me.id === "city" || me.id === "country") return;
+    if (!me || !btn || document.getElementById("imgBtn") || me.id === "city" || me.id === "country" || (me.id === "reckoning")) return;
     var b = document.createElement("button");
     b.className = btn.className + " mx-img"; b.type = "button"; b.textContent = "Share image";
     b.onclick = function () { shareImageClick(me); };
@@ -358,7 +358,7 @@
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
         id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
         id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") :
-        id === "crossings" ? (r.score != null ? r.score : "✓") : "✓";
+        id === "crossings" ? (r.score != null ? r.score : "✓") : id === "reckoning" ? (r.total != null ? r.total : "✓") : "✓";
       parts.push(s.game.icon + " " + v);
     });
     return { n: parts.length, text: "Mapelago today, No. " + t + " \u{1F422}\n" + parts.join(" · ") + "\nmapelago.com/games/" };
@@ -375,6 +375,7 @@
     if (me.id === "stamps") return /\b6 of 6\b/.test(line);
     if (me.id === "fathoms") return /7,000 of 7,000/.test(line);
     if (me.id === "crossings") return /\u{1F422} 1000 points/u.test(line);
+    if (me.id === "reckoning") return /1,000 of 1,000/.test(line);
     return false;
   }
   function confetti(box) {
@@ -483,6 +484,12 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", logbookLink); else logbookLink();
   // ---------- Logbook: end ----------
+  // ---------- Dead Reckoning: start ----------
+  // Dead Reckoning joins streaks, "Today's games", today's combined message and challenge links. Its page is
+  // dead-reckoning.html; its own code is dead-reckoning.js. Merge notes: review/dead-reckoning-merge-notes.md
+  GAMES.push({ id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: "\u{1F4CD}", about: "Tap five places on a blank map. Closer scores more." });
+  UNIT.reckoning = function (n) { return Number(n).toLocaleString("en-US") + " of 1,000"; };
+  // ---------- Dead Reckoning: end ----------
 
   // Beat my score. A shared result carries #b-<game>-<puzzle>-<mode>-<score>: a two-letter game code and
   // whole numbers only, nothing about the person and never the answer. Everything read from the address is
@@ -492,7 +499,8 @@
     bigger: { code: "bc", max: 10, modes: 1 }, bigcountry: { code: "bn", max: 10, modes: 1 },
     voyage: { code: "vy", max: 1000, modes: 1 }, fathoms: { code: "fa", max: 7000, modes: 1 },
     stamps: { code: "st", max: 6, modes: 1 }, crossings: { code: "cr", max: 1000, modes: 1 },
-    history: { code: "lb", max: 800, modes: 1 }
+    history: { code: "lb", max: 800, modes: 1 },
+    reckoning: { code: "dr", max: 1000, modes: 1 }
   };
   function gameByCode(c) { var id = Object.keys(BEAT).filter(function (k) { return BEAT[k].code === c; })[0]; return id ? GAMES.filter(function (g) { return g.id === id; })[0] : null; }
   function gameByPage(page) { return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(page); })[0]; }
