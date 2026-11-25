@@ -354,7 +354,9 @@ a.act{text-decoration:none}
 @media (min-width:700px){.app{padding-top:24px}}
 /* v0.12 ---------------------------------------------------------------- */
 /* 1.1 On short screens the board shrinks a little so the clues are not hidden under the pin button. */
-.board{width:min(100%,max(250px,calc(100vh - 372px)));width:min(100%,max(250px,calc(100svh - 372px)));margin-left:auto;margin-right:auto}
+.board{width:min(100%,max(220px,calc(100vh - 372px - var(--x1,0px) - var(--x2,0px) - var(--x3,0px))));width:min(100%,max(220px,calc(100svh - 372px - var(--x1,0px) - var(--x2,0px) - var(--x3,0px))));margin-left:auto;margin-right:auto}
+/* ...and a little more while the coach line, the friend banner or the pin list is showing */
+.app:has(#tip:not([hidden])){--x1:84px}.app:has(#challenge:not([hidden])){--x2:66px}.app:has(#guesses li){--x3:28px}.app:has(#guesses li+li){--x3:56px}
 /* 1.1 Newest clue first, right under the clue track, where it can't fall behind the button. */
 #clues{display:flex;flex-direction:column-reverse}
 /* 1.2 Messages appear just above the pin button instead of over the header. */
@@ -373,6 +375,7 @@ a.act{text-decoration:none}
 .tipm{flex:none;width:34px;height:34px;background:var(--mascot-url) center/contain no-repeat}
 .tip p{margin:0;flex:1;font-size:15px;font-weight:600;line-height:1.35}
 .tipx{flex:none;width:44px;height:44px;border:0;background:none;color:var(--ink);font-size:24px;line-height:1}
+@media (max-height:700px){.tip{padding:3px 2px 3px 8px;gap:6px}.tip p{font-size:13.5px;line-height:1.3}.tipm{width:24px;height:24px}}
 /* 1.2 with a sheet open, messages go back to the top so they don't cover the result */
 .modal:not([hidden])~#toast{top:calc(10px + env(safe-area-inset-top));bottom:auto}
 /* 3.1 the tile that earns a clue rings, and a copy flies to the clue track */
