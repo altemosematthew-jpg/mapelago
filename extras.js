@@ -281,6 +281,7 @@
   function addPastButton() {
     var nav = document.querySelector('nav[aria-label="Daily games"]');
     if (!nav || document.getElementById("pastCities")) return;
+    if (!document.getElementById("board")) return; // bigcountry: other games load this file for its sound; past cities belong to the city game
     var b = document.createElement("button");
     b.className = "mx-link"; b.type = "button"; b.id = "pastCities"; b.textContent = "Past cities"; b.style.marginLeft = "16px";
     b.onclick = pastList;
@@ -319,7 +320,8 @@
 
   window.MX = {
     ev: function (name, data) { var h = handlers[name]; return h ? h(data || {}) : undefined; },
-    streak: streak // exposed for tests
+    streak: streak, // exposed for tests
+    play: play // bigcountry: other games play the same sounds, and stay silent when muted
   };
 
   function ready() { addMuteButton(); setTimeout(addPastButton, 0); }
