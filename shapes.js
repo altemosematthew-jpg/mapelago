@@ -31,7 +31,8 @@
   // Outer rings of a country, in kilometres around its own middle (so Russia and Fiji don't split at 180 degrees).
   function rings(cid) {
     var W = window.__WORLD, g = null;
-    W.objects.countries.geometries.forEach(function (x) { if (Number(x.id) === cid) g = x; });
+    // the first match: a few ids are shared with small territories (036 is Australia, then Ashmore and Cartier)
+    W.objects.countries.geometries.forEach(function (x) { if (Number(x.id) === cid && !g) g = x; });
     if (!g) return null;
     var polys = g.type === "Polygon" ? [g.arcs] : g.type === "MultiPolygon" ? g.arcs : [];
     var rs = polys.map(function (p) { return ring(p[0]); });
