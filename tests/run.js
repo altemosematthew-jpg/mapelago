@@ -71,11 +71,14 @@ async function page(b, url, opts = {}) {
       }
     }
     await ctx.close();
+    // golden.json holds a fingerprint of each day's puzzle, not the puzzle, so the published file gives no answers away
+    const fp = (v) => require("crypto").createHash("sha256").update(JSON.stringify(v)).digest("hex").slice(0, 16);
+    for (const g of Object.keys(now)) for (const d of Object.keys(now[g])) now[g][d] = fp(now[g][d]);
     if (UPDATE || !fs.existsSync(GOLDEN)) { fs.writeFileSync(GOLDEN, JSON.stringify(now, null, 1)); console.log("golden.json written"); }
     else {
       const gold = JSON.parse(fs.readFileSync(GOLDEN, "utf8"));
       for (const g of Object.keys(GAMES)) for (const d of DAYS)
-        check(JSON.stringify(gold[g] && gold[g][d]) === JSON.stringify(now[g][d]), `schedule unchanged: ${g} No. ${d}`);
+        check(gold[g] && gold[g][d] === now[g][d], `schedule unchanged: ${g} No. ${d}`);
     }
 
     // 3. a save made by the live version (0.11) replays exactly
@@ -250,6 +253,35 @@ async function page(b, url, opts = {}) {
       await p.waitForTimeout(300);
       const n = await p.evaluate(() => { const r = [...document.querySelectorAll("#map text")].map((t) => t.getBoundingClientRect()); let k = 0; for (let i = 0; i < r.length; i++) for (let j = i + 1; j < r.length; j++) { const a = r[i], c = r[j]; if (a.left < c.right && a.right > c.left && a.top < c.bottom && a.bottom > c.top) k++; } return [r.length, k]; });
       check(n[0] >= 2 && n[1] === 0, "crossings: no two map labels overlap", JSON.stringify(n));
+      await ctx.close();
+    }
+
+    // 17. game pages work at addresses without ".html" (mapelago.com/bigger, the previews' /bigger)
+    {
+      const { ctx, p } = await page(b, U + "bigger?q=1", { wait: 300 });
+      const T = await p.evaluate(() => MXS.today());
+      await p.goto(U + "bigger?q=2#b-bc-" + T + "-0-7"); await p.waitForTimeout(700);
+      check(/A friend scored 7 of 10 on today's Bigger city\?/.test((await p.textContent(".mx-beat").catch(() => "")) || ""), "extensionless address: the beat-my-score banner shows on /bigger");
+      await p.goto(U + "fathoms?q=3#c-" + T + "-4000"); await p.waitForTimeout(700);
+      check(/A friend scored 4,000 fathoms/.test(await p.evaluate(() => [...document.querySelectorAll(".mx-risk")].map((e) => e.textContent).join(" "))), "extensionless address: the old challenge banner shows on /fathoms");
+      await p.goto(U + "index?q=4#b-mc-" + T + "-0-850"); await p.waitForTimeout(900);
+      check(/A friend scored 850 points on today's Mystery city/.test((await p.textContent(".mx-beat").catch(() => "")) || ""), "extensionless address: /index counts as the mystery city");
+      await p.goto(U + "games/"); await p.waitForTimeout(500);
+      check(!(await p.evaluate(() => !!document.querySelector(".mx-card.here"))), "a folder page such as /games/ is not mistaken for a game");
+      await ctx.close();
+    }
+
+    // 18. a save from release 0.15.0 (recorded on that version): quick-mode result, crossings in progress, remembered mode
+    {
+      const v15 = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/save-from-v0.15.json"), "utf8"));
+      const { ctx, p } = await page(b, U + "#day-12", { storage: v15, clock: new Date("2026-11-25T12:00:00"), wait: 1500 });
+      const r = await p.evaluate(() => ({ res: JSON.parse(localStorage.getItem("dailycity:v2")).results[12], city: MXS.info().find((s) => s.game.id === "city"), quick: document.documentElement.classList.contains("mx-quick") }));
+      check(r.res.q === 1 && r.res.score === 800 && r.city.cur === 3 && r.quick, "0.15.0 save: the quick-mode day and the 3-day streak are kept", JSON.stringify([r.res, r.city.cur, r.quick]));
+      await p.goto(U + "?n=13#day-13"); await p.waitForTimeout(1200);
+      check(await p.evaluate(() => document.documentElement.classList.contains("mx-quick")), "0.15.0 save: the remembered quick mode applies to the next day");
+      await p.goto(U + "crossings.html#day-12"); await p.waitForTimeout(800);
+      check((await p.evaluate(() => __cross.G().steps.map((s) => __cross.name(s.i)).join(","))) === "North Korea", "0.15.0 save: a crossing in progress keeps its guesses");
+      check(!p.errs.length, "0.15.0 save: no errors", p.errs.join("; "));
       await ctx.close();
     }
 
