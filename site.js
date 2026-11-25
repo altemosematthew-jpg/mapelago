@@ -578,6 +578,12 @@
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
+    // screen readers can jump straight to the game: the page's main region (pages that have a <main> keep it)
+    if (app && !document.querySelector("main,[role=main]")) {
+      app.setAttribute("role", "main");
+      // a header or footer inside the main region isn't a page-level banner or footer
+      Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
+    }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
     watchEnd(); upgradeShown();
     addImageButton();
