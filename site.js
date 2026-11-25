@@ -300,7 +300,7 @@
       x.lineWidth = 5; x.strokeStyle = "#000"; x.setLineDash([]);
       var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8" }[m];
       if (m === "❌") { x.setLineDash([12, 8]); x.strokeRect(px, py, size, size); x.setLineDash([]); x.beginPath(); x.moveTo(px + size * .28, py + size * .28); x.lineTo(px + size * .72, py + size * .72); x.moveTo(px + size * .72, py + size * .28); x.lineTo(px + size * .28, py + size * .72); x.stroke(); return; }
-      x.fillStyle = fill || "#ffffff"; x.fillRect(px, py, size, size); x.strokeRect(px, py, size, size);
+      x.fillStyle = fill || MXFILL[m] || "#ffffff"; x.fillRect(px, py, size, size); x.strokeRect(px, py, size, size); // MXFILL: Logbook's heat marks
       if (m === "✅") { x.strokeStyle = "#fff"; x.lineWidth = 8; x.beginPath(); x.moveTo(px + size * .25, py + size * .52); x.lineTo(px + size * .43, py + size * .7); x.lineTo(px + size * .76, py + size * .3); x.stroke(); }
       if (m === "⚓") { x.fillStyle = "#000"; x.font = "800 " + Math.round(size * .6) + "px " + font; x.fillText("⚓", px + size * .2, py + size * .72); }
     });
@@ -347,6 +347,7 @@
     var t = today(), parts = [];
     info().forEach(function (s) {
       var r = s.res[t]; if (!r) return;
+      if (s.game.id === "history") { parts.push(s.game.icon + " " + (r.score != null ? r.score : "✓")); return; } // Logbook
       var id = s.game.id, v =
         id === "city" || id === "country" ? (r.score != null ? r.score : "✓") :
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
@@ -362,6 +363,7 @@
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   function perfect(me, text) {
     var line = (text.split("\n")[0] || "") + " " + (text.split("\n")[1] || "");
+    if (me.id === "history") return /\b800 points\b/.test(line); // Logbook
     if (me.id === "voyage") return /✅{10}/.test(text.replace(/\s/g, ""));
     if (me.id === "bigger" || me.id === "bigcountry") return /\b10\/10\b/.test(line);
     if (me.id === "stamps") return /\b6 of 6\b/.test(line);
@@ -426,7 +428,7 @@
       var g = s.game, isMe = me && g.id === me.id;
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
       return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
-    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">All seven done today. See you tomorrow.</p>');
+    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">Every game done today. See you tomorrow.</p>');
     var tt = todayText();
     if (tt.n >= 2) {
       var share = document.createElement("p"); share.className = "mx-next";
@@ -458,6 +460,22 @@
     var head = app.querySelector("header");
     if (head && head.parentNode === app) app.insertBefore(el, head.nextSibling); else app.insertBefore(el, app.firstChild);
   }
+  // ---------- Logbook (history game): start ----------
+  // Logbook joins streaks, "Today's games", today's combined message, challenge links and the share image.
+  // Its page is history.html; its own code is history.js. Merge notes: review/history-merge-notes.md
+  GAMES.push({ id: "history", name: "Logbook", key: "dailycity:history:v1", url: "history.html", icon: "\u{1F4DC}", about: "Eight questions on how the world map has changed since 1800." });
+  UNIT.history = function (n) { return n + " points"; };
+  var MXFILL = { "\u{1F3AF}": "#7a0177", "\u{1F525}": "#e06a00", "\u{1F321}": "#f3d98a", "\u2744": "#a9d3e8", "\u{1F9CA}": "#dcedf5" };
+  // Until every page's footer lists Logbook, add it to the "Daily games" links on pages that don't.
+  function logbookLink() {
+    Array.prototype.forEach.call(document.querySelectorAll('nav[aria-label="Daily games"]'), function (nav) {
+      if (nav.querySelector('a[href$="history.html"]')) return;
+      var a = document.createElement("a"); a.href = "history.html"; a.textContent = "Logbook";
+      nav.appendChild(document.createTextNode(" ")); nav.appendChild(a);
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", logbookLink); else logbookLink();
+  // ---------- Logbook: end ----------
 
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
