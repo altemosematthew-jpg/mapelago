@@ -17,8 +17,11 @@
       try { save = JSON.parse(raw); } catch (e) { continue; }
       if (!save || typeof save !== "object") continue;
       var fixed = false;
+      // The city and country games need both lists; the other games need "results".
+      var need = /^dailycity:(v2|country:v1)$/.test(key) ? ["results", "games"] : ["results"];
       ["results", "games"].forEach(function (f) {
-        if (f in save && (save[f] === null || typeof save[f] !== "object" || Array.isArray(save[f]))) {
+        var bad = f in save ? save[f] === null || typeof save[f] !== "object" || Array.isArray(save[f]) : need.indexOf(f) >= 0;
+        if (bad) {
           save[f] = {};
           fixed = true;
         }
