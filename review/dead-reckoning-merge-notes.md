@@ -2,13 +2,13 @@
 
 Dead Reckoning is a new daily game: five places a day, tapped on a blank world map, scored by great-circle
 distance. It becomes the tenth game once Logbook (0.15.8, `history.html`) is out, the ninth before that.
-Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at **0.15.10** (`9ac9cda`) is already merged
-into it, with the patch re-applied on top, so merging the branch into 0.15.10 brings no conflicts. The version
-is not bumped here; `dead-reckoning.html`'s `?v=` follows `sw.js` (0.15.10).
+Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at **0.15.11** (`5e27d0b`) is already merged
+into it, with the patch re-applied on top, so merging the branch into 0.15.11 brings no conflicts. The version
+is not bumped here; `dead-reckoning.html`'s `?v=` follows `sw.js` (0.15.11).
 
 ## How to merge
 
-1. Merge the branch. If main has moved on past 0.15.10, the shared files may conflict: take **main's**
+1. Merge the branch. If main has moved on past 0.15.11, the shared files may conflict: take **main's**
    version of every shared file listed below (`git checkout --theirs` / `--ours` as appropriate, i.e. the side
    that is main), then run step 2, which puts Dead Reckoning back in.
 2. Run the patch for the shared files from anywhere:
@@ -27,7 +27,7 @@ is not bumped here; `dead-reckoning.html`'s `?v=` follows `sw.js` (0.15.10).
    version at the time it ran, and `tests/run.js` section 1b now checks that page too. A global replace of the old
    `?v=` value covers it, along with `dead-reckoning.js?v=` in the `sw.js` PRE list.
 
-Checked on clean copies of 0.15.5, 0.15.7, 0.15.8 and 0.15.10: every edit applies once and a second run adds nothing. On
+Checked on clean copies of 0.15.5, 0.15.7, 0.15.8, 0.15.10 and 0.15.11: every edit applies once and a second run adds nothing. On
 0.15.8, Dead Reckoning goes after Logbook everywhere (menus, cards, streaks sheet, lists) and every count reads "ten".
 
 ## New files (no conflicts possible)
