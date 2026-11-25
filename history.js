@@ -53,7 +53,8 @@
     return { k: "m", q: item[1], opts: item[2], ans: item[3] };
   }
   var QS = ITEMS.map(make);
-  var MC_KIND = { name: "What was it called?", nameof: "What was it called?", from: "Independent from whom?", capto: "Capital on the move", capfrom: "Capital on the move", capwho: "Capital on the move" };
+  var MC_KIND = { name: "What was it called?", nameof: "What was it called?", from: "Independent from whom?", capto: "Capital on the move", capfrom: "Capital on the move", capwho: "Capital on the move", city: "What was this city called?", cityof: "What was this city called?" };
+  function changed(mq) { return (mq[0] === "city" || mq[0] === "cityof") && mq[5] ? mq[5].charAt(0).toUpperCase() + mq[5].slice(1) + "." : ""; }   // Block C's "what changed", as written
   function kindName(q) {
     return q.k === "w" ? (q.later ? "Which came later?" : "Which came first?") : q.k === "o" ? "Put in order" : q.k === "t" ? "When was it?" : q.k === "g" ? "How many years apart?" : MC_KIND[Q[q.q][0]];
   }
@@ -281,7 +282,7 @@
       });
       var mq = Q[q.q], ans = T[mq[2]];
       s.className = "qsay " + (j.right ? "ok" : "no");
-      s.textContent = (j.right ? "Right: " : "It was ") + ans + "." + (mq[0] === "from" && mq[5] && mq[5] !== ans ? " (" + mq[5] + ")" : "") + factLine(mq[3]);
+      s.textContent = (j.right ? "Right: " : "It was ") + ans + "." + (mq[0] === "from" && mq[5] && mq[5] !== ans ? " (" + mq[5] + ")" : "") + factLine(mq[3]) + (changed(mq) ? " " + changed(mq) : "");
     }
     var nx = $("#qnext"), last = i === QS.length - 1;
     nx.hidden = false; nx.textContent = last ? "See today's log" : "Next question";
@@ -316,6 +317,7 @@
       head = esc(mq[1]);
       lines = ["<b>" + esc(T[mq[2]]) + "</b>" + (mq[0] === "from" && mq[5] && mq[5] !== T[mq[2]] ? " (" + esc(mq[5]) + ")" : "")];
       mq[3].filter(function (x) { return F[x][0]; }).slice(0, 1).forEach(function (f) { lines.push(y(f)); });
+      if (changed(mq)) lines.push('<span class="src">' + esc(changed(mq)) + "</span>");
     }
     return '<li><span class="mk" aria-hidden="true">' + j.mark + '</span><span><span class="q">' + (q.k === "m" ? head : esc(head)) + '<span class="sr"> (' + (j.right ? "right" : "not right") + ", " + j.pts + " points)</span></span>"
       + lines.map(function (l) { return '<span class="f">' + l + "</span>"; }).join("") + "</span></li>";

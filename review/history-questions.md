@@ -1,26 +1,25 @@
 # Logbook: every question the game can ask
 
-Written by `review/history/build.py` from `review/history/block-a.txt` and `block-b.txt` (the source-checked blocks, unchanged). Each entry quotes the Block line it came from. Regenerate this file by running the script; don't edit it by hand.
+Written by `review/history/build.py` from `review/history/block-a.txt`, `block-b.txt` and `block-c.txt` (the source-checked blocks, unchanged). Each entry quotes the Block line it came from. Regenerate this file by running the script; don't edit it by hand.
 
 ## The numbers
 
 | | |
 |---|---|
-| Dated facts (Block B events plus Block A years) | 467 |
-| ...usable in "Which came first?" and "Put in order" | 461 |
-| ...usable in "When was it?" (the timeline slider) | 435 |
+| Dated facts (Block B events, Block A years, Block C city renames) | 644 |
+| ...usable in "Which came first?" and "Put in order" | 638 |
+| ...usable in "When was it?" (the timeline slider) | 611 |
 | "What was it called?" questions | 144 |
 | "Independent from whom?" questions | 146 |
 | "Capital on the move" questions | 177 |
+| "What was this city called?" questions | 350 |
 | Days before any question repeats | 371 (the slider, name, from-whom and capital questions each run through their whole bank once in 371 days; a pair or order of events is never repeated in the 742-day schedule) |
 | Shipped schedule | No. 1 to No. 742, then it starts again from No. 1 |
-| Shortest gap before the same fact appears again, in a different question | 17 days |
-| Average gap before a fact appears again | 31 days |
-| Facts used at least once | 467 of 467 |
+| Shortest gap before the same fact appears again, in a different question | 21 days |
+| Average gap before a fact appears again | 47 days |
+| Facts used at least once | 644 of 644 |
 
-Kinds per day on average over a cycle: how many years apart 0.60, multiple choice 1.26, put in order 1.74, when was it 1.17, which came first or later 3.23.
-
-The pair finder had to widen its year window 21 times (of 4132 pairs and orders).
+Kinds per day on average over a cycle: how many years apart 0.60, multiple choice 2.20, put in order 1.57, when was it 1.65, which came first or later 1.98.
 
 ## Rules applied
 
@@ -174,6 +173,10 @@ These Block A years were joined to the Block B event with the same year, so the 
 - Sri Lanka, name end 1972: "Ceylon becomes a republic renamed Sri Lanka"
 - Sudan, name start 1899: "Anglo-Egyptian condominium over Sudan established"
 - Thailand, name end 1939: "Siam officially renamed Thailand"
+- Astana, city name 2022: "Kazakhstan's capital Nur-Sultan renamed back to Astana"
+- Harare, city name 1982: "Salisbury, capital of Zimbabwe, renamed Harare"
+- Oslo, city name 1925: "Norway's capital Kristiania renamed Oslo"
+- Tokyo, city name 1868: "Edo renamed Tokyo"
 
 ## Questions left out for want of fair wrong answers
 
@@ -404,6 +407,7 @@ These Block A years were joined to the Block B event with the same year, so the 
    - Block B line 68: 1867 | Dual monarchy of Austria-Hungary established | Austria, Hungary
 69. **1868** Edo renamed Tokyo  [first, slider]
    - Block B line 69: 1868 | Edo renamed Tokyo | Japan
+   - Block C line 21: Tokyo | Japan | Edo | 1868 | renamed Eastern Capital under Emperor Meiji
 70. **1869** Suez Canal opens  [first, slider]
    - Block B line 70: 1869 | Suez Canal opens | Egypt
 71. **1870** Rupert's Land transferred to Canada  [first, slider]
@@ -608,6 +612,7 @@ These Block A years were joined to the Block B event with the same year, so the 
    - Block B line 158: 1925 | Svalbard Treaty takes effect under Norwegian sovereignty | Norway
 159. **1925** Norway's capital Kristiania renamed Oslo  [first, slider]
    - Block B line 159: 1925 | Norway's capital Kristiania renamed Oslo | Norway
+   - Block C line 15: Oslo | Norway | Kristiania | 1925 | original name Oslo restored
 160. **1927** Australian Parliament moves from Melbourne to Canberra  [first, slider]
    - Block B line 160: 1927 | Australian Parliament moves from Melbourne to Canberra | Australia
    - Block A: Australia | 1901 | United Kingdom (federation of colonies) | none | Melbourne to Canberra (1927)
@@ -840,6 +845,7 @@ These Block A years were joined to the Block B event with the same year, so the 
    - Block A: Belize | 1981 | United Kingdom | British Honduras (to 1973) | Belize City to Belmopan (1970)
 249. **1982** Salisbury, capital of Zimbabwe, renamed Harare  [first, slider]
    - Block B line 249: 1982 | Salisbury, capital of Zimbabwe, renamed Harare | Zimbabwe
+   - Block C line 10: Harare | Zimbabwe | Salisbury | 1982 | capital renamed two years after independence
 250. **1982** Itaipu Dam reservoir forms, drowning the Guaira Falls  [first, slider]
    - Block B line 250: 1982 | Itaipu Dam reservoir forms, drowning the Guaira Falls | Brazil, Paraguay
 251. **1983** Yamoussoukro made capital of Cote d'Ivoire instead of Abidjan  [first, slider]
@@ -979,6 +985,7 @@ These Block A years were joined to the Block B event with the same year, so the 
    - Block B line 301: 2022 | Peljesac Bridge opens, linking Dubrovnik area to rest of Croatia | Croatia
 302. **2022** Kazakhstan's capital Nur-Sultan renamed back to Astana  [first, slider]
    - Block B line 302: 2022 | Kazakhstan's capital Nur-Sultan renamed back to Astana | Kazakhstan
+   - Block C line 1: Astana | Kazakhstan | Nur-Sultan | 2022 | capital's name changed back to Astana
 303. **2026** Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo  [first, slider]
    - Block B line 303: 2026 | Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo | Equatorial Guinea
    - Block A: Equatorial Guinea | 1968 | Spain | Spanish Guinea (to 1968) | Malabo to Ciudad de la Paz (2026)
@@ -1310,6 +1317,1081 @@ These Block A years were joined to the Block B event with the same year, so the 
    - Block A: Ukraine | 1991 | Soviet Union (dissolution) | Ukrainian SSR (1919-1991) | Kharkiv to Kyiv (1934)
 467. **1911** The name Northern Rhodesia comes into use for today's Zambia  [first, slider]
    - Block A: Zambia | 1964 | United Kingdom | Northern Rhodesia (1911-1964) | Livingstone to Lusaka (1935)
+468. **1970** Brunei Town, Brunei, is renamed Bandar Seri Begawan  [first, slider]
+   - Block C line 2: Bandar Seri Begawan | Brunei | Brunei Town | 1970 | renamed to honour Sultan Omar Ali Saifuddien III
+469. **1973** Bathurst, Gambia, is renamed Banjul  [first, slider]
+   - Block C line 3: Banjul | Gambia | Bathurst | 1973 | capital renamed after independence
+470. **1991** Frunze, Kyrgyzstan, is renamed Bishkek  [first, slider]
+   - Block C line 4: Bishkek | Kyrgyzstan | Frunze | 1991 | Soviet-era name dropped
+471. **2000** Santa Fe de Bogota, Colombia, is renamed Bogota  [first, slider]
+   - Block C line 5: Bogota | Colombia | Santa Fe de Bogota | 2000 | constitutional reform made the name just Bogota
+472. **1919** Pressburg, Slovakia, is renamed Bratislava  [first, slider]
+   - Block C line 6: Bratislava | Slovakia | Pressburg | 1919 | name Bratislava officially adopted
+473. **1961** Stalinabad, Tajikistan, is renamed Dushanbe  [first, slider]
+   - Block C line 7: Dushanbe | Tajikistan | Stalinabad | 1961 | renamed in de-Stalinization
+474. **1969** Gaberones, Botswana, is renamed Gaborone  [first, slider]
+   - Block C line 8: Gaborone | Botswana | Gaberones | 1969 | capital's name officially changed
+475. **1812** Stabroek, Guyana, is renamed Georgetown  [first, slider]
+   - Block C line 9: Georgetown | Guyana | Stabroek | 1812 | British renamed it for King George III
+476. **1966** Leopoldville, Democratic Republic of the Congo, is renamed Kinshasa  [first, slider]
+   - Block C line 11: Kinshasa | Democratic Republic of the Congo | Leopoldville | 1966 | capital renamed under Mobutu's Africanization drive
+477. **1973** Santa Isabel, Equatorial Guinea, is renamed Malabo  [first, slider]
+   - Block C line 12: Malabo | Equatorial Guinea | Santa Isabel | 1973 | European name replaced under Macias Nguema
+478. **1976** Lourenco Marques, Mozambique, is renamed Maputo  [first, slider]
+   - Block C line 13: Maputo | Mozambique | Lourenco Marques | 1976 | capital renamed after independence
+479. **1973** Fort-Lamy, Chad, is renamed N'Djamena  [first, slider]
+   - Block C line 14: N'Djamena | Chad | Fort-Lamy | 1973 | capital renamed by President Tombalbaye
+480. **1855** Bytown, Canada, is renamed Ottawa  [first, slider]
+   - Block C line 16: Ottawa | Canada | Bytown | 1855 | renamed Ottawa on gaining city status
+481. **1992** Titograd, Montenegro, is renamed Podgorica  [first, slider]
+   - Block C line 17: Podgorica | Montenegro | Titograd | 1992 | original name restored
+482. **1961** Ciudad Trujillo, Dominican Republic, is renamed Santo Domingo  [first, slider]
+   - Block C line 18: Santo Domingo | Dominican Republic | Ciudad Trujillo | 1961 | old name restored after the dictator's death
+483. **1946** Gyeongseong, South Korea, is renamed Seoul  [first, slider]
+   - Block C line 19: Seoul | South Korea | Gyeongseong | 1946 | US military government named it Seoul
+484. **1936** Tiflis, Georgia, is renamed Tbilisi  [first, slider]
+   - Block C line 20: Tbilisi | Georgia | Tiflis | 1936 | official Russian name changed to Tbilisi
+485. **1924** Niislel Khuree, Mongolia, is renamed Ulaanbaatar  [first, slider]
+   - Block C line 22: Ulaanbaatar | Mongolia | Niislel Khuree | 1924 | renamed at founding of People's Republic
+486. **1990** Qyteti Stalin, Albania, is renamed Kucove  [first, slider]
+   - Block C line 23: Kucove | Albania | Qyteti Stalin | 1990 | Stalin name dropped, old name back
+487. **1962** Philippeville, Algeria, is renamed Skikda  [first, slider]
+   - Block C line 24: Skikda | Algeria | Philippeville | 1962 | French name dropped at independence
+488. **1975** Nova Lisboa, Angola, is renamed Huambo  [first, slider]
+   - Block C line 25: Huambo | Angola | Nova Lisboa | 1975 | original name restored after independence
+489. **1976** Salazar, Angola, is renamed N'dalatando  [first, slider]
+   - Block C line 26: N'dalatando | Angola | Salazar | 1976 | original name restored after independence
+490. **1955** Ciudad Eva Peron, Argentina, is renamed La Plata  [first, slider]
+   - Block C line 27: La Plata | Argentina | Ciudad Eva Peron | 1955 | original name restored after Peron fell
+491. **1933** Stuart, Australia, is renamed Alice Springs  [first, slider]
+   - Block C line 28: Alice Springs | Australia | Stuart | 1933 | town gazetted under its waterhole name
+492. **1891** Sandhurst, Australia, is renamed Bendigo  [first, slider]
+   - Block C line 29: Bendigo | Australia | Sandhurst | 1891 | official name changed back to Bendigo
+493. **1911** Palmerston, Australia, is renamed Darwin  [first, slider]
+   - Block C line 30: Darwin | Australia | Palmerston | 1911 | town renamed after Charles Darwin
+494. **1958** South Coast, Australia, is renamed Gold Coast  [first, slider]
+   - Block C line 31: Gold Coast | Australia | South Coast | 1958 | Town of South Coast renamed Town of Gold Coast
+495. **1935** Ambleside, Australia, is renamed Hahndorf  [first, slider]
+   - Block C line 32: Hahndorf | Australia | Ambleside | 1935 | German name restored after WWI-era change
+496. **1915** Germanton, Australia, is renamed Holbrook  [first, slider]
+   - Block C line 33: Holbrook | Australia | Germanton | 1915 | German name dropped in WWI
+497. **1989** Kirovabad, Azerbaijan, is renamed Ganja  [first, slider]
+   - Block C line 34: Ganja | Azerbaijan | Kirovabad | 1989 | original name restored during perestroika
+498. **2008** Ali Bayramli, Azerbaijan, is renamed Shirvan  [first, slider]
+   - Block C line 35: Shirvan | Azerbaijan | Ali Bayramli | 2008 | Azerbaijan parliament renamed the city
+499. **1930** Parahyba do Norte, Brazil, is renamed Joao Pessoa  [first, slider]
+   - Block C line 36: Joao Pessoa | Brazil | Parahyba do Norte | 1930 | state capital renamed for a murdered governor
+500. **1835** Vila Real da Praia Grande, Brazil, is renamed Nictheroy (now spelled Niteroi)  [first, slider]
+   - Block C line 37: Niteroi | Brazil | Vila Real da Praia Grande | 1835 | renamed Nictheroy (now spelled Niteroi)
+501. **1990** Tolbukhin, Bulgaria, is renamed Dobrich  [first, slider]
+   - Block C line 38: Dobrich | Bulgaria | Tolbukhin | 1990 | old name restored by decree
+502. **1956** Stalin, Bulgaria, is renamed Varna  [first, slider]
+   - Block C line 39: Varna | Bulgaria | Stalin | 1956 | Stalin name dropped, old name back
+503. **1962** Usumbura, Burundi, is renamed Bujumbura  [first, slider]
+   - Block C line 40: Bujumbura | Burundi | Usumbura | 1962 | capital renamed at independence
+504. **1982** Victoria, Cameroon, is renamed Limbe  [first, slider]
+   - Block C line 41: Limbe | Cameroon | Victoria | 1982 | renamed by presidential decree
+505. **1989** Eskimo Point, Canada, is renamed Arviat  [first, slider]
+   - Block C line 42: Arviat | Canada | Eskimo Point | 1989 | English name replaced by Inuktitut name
+506. **1987** Frobisher Bay, Canada, is renamed Iqaluit  [first, slider]
+   - Block C line 43: Iqaluit | Canada | Frobisher Bay | 1987 | English name replaced by Inuktitut name
+507. **1905** Rat Portage, Canada, is renamed Kenora  [first, slider]
+   - Block C line 44: Kenora | Canada | Rat Portage | 1905 | new name built from Keewatin, Norman, Rat Portage
+508. **1916** Berlin, Canada, is renamed Kitchener  [first, slider]
+   - Block C line 45: Kitchener | Canada | Berlin | 1916 | German name dropped by referendum in WWI
+509. **1996** Coppermine, Canada, is renamed Kugluktuk  [first, slider]
+   - Block C line 46: Kugluktuk | Canada | Coppermine | 1996 | English name replaced by Inuinnaqtun name
+510. **1980** Fort Chimo, Canada, is renamed Kuujjuaq  [first, slider]
+   - Block C line 47: Kuujjuaq | Canada | Fort Chimo | 1980 | took the Inuit name of the Koksoak River
+511. **1998** Broughton Island, Canada, is renamed Qikiqtarjuaq  [first, slider]
+   - Block C line 48: Qikiqtarjuaq | Canada | Broughton Island | 1998 | English name replaced by Inuktitut name
+512. **1882** Pile o' Bones, Canada, is renamed Regina  [first, slider]
+   - Block C line 49: Regina | Canada | Pile o' Bones | 1882 | renamed Regina in honour of Queen Victoria
+513. **1970** Fort William and Port Arthur, Canada, merge as Thunder Bay  [first, slider]
+   - Block C line 50: Thunder Bay | Canada | Fort William and Port Arthur | 1970 | two cities merged into Thunder Bay
+514. **1834** York, Canada, is renamed Toronto  [first, slider]
+   - Block C line 51: Toronto | Canada | York | 1834 | incorporated as a city under the name Toronto
+515. **1886** Granville, Canada, is renamed Vancouver  [first, slider]
+   - Block C line 52: Vancouver | Canada | Granville | 1886 | renamed Vancouver on incorporation as a city
+516. **1974** Crampel, Central African Republic, is renamed Kaga-Bandoro  [first, slider]
+   - Block C line 53: Kaga-Bandoro | Central African Republic | Crampel | 1974 | colonial name (Fort-Crampel) replaced
+517. **1972** Fort-Archambault, Chad, is renamed Sarh  [first, slider]
+   - Block C line 54: Sarh | Chad | Fort-Archambault | 1972 | renamed in Tombalbaye's authenticite campaign
+518. **2001** Zhongdian, China, is renamed Shangri-La  [first, slider]
+   - Block C line 55: Shangri-La | China | Zhongdian | 2001 | county renamed after the novel's paradise
+519. **1954** Dihua, China, is renamed Urumqi  [first, slider]
+   - Block C line 56: Urumqi | China | Dihua | 1954 | name Urumqi restored by the government
+520. **1994** Dayong, China, is renamed Zhangjiajie  [first, slider]
+   - Block C line 57: Zhangjiajie | China | Dayong | 1994 | city renamed after its famous scenic area
+521. **1990** Gottwaldov, Czechia, is renamed Zlin  [first, slider]
+   - Block C line 58: Zlin | Czechia | Gottwaldov | 1990 | Gottwald name dropped, old name back
+522. **1966** Banningville, Democratic Republic of the Congo, is renamed Bandundu  [first, slider]
+   - Block C line 59: Bandundu | Democratic Republic of the Congo | Banningville | 1966 | Belgian colonial name dropped
+523. **1966** Luluabourg, Democratic Republic of the Congo, is renamed Kananga  [first, slider]
+   - Block C line 60: Kananga | Democratic Republic of the Congo | Luluabourg | 1966 | colonial name replaced under Mobutu
+524. **1966** Stanleyville, Democratic Republic of the Congo, is renamed Kisangani  [first, slider]
+   - Block C line 61: Kisangani | Democratic Republic of the Congo | Stanleyville | 1966 | colonial name replaced under authenticite policy
+525. **1966** Jadotville, Democratic Republic of the Congo, is renamed Likasi  [first, slider]
+   - Block C line 62: Likasi | Democratic Republic of the Congo | Jadotville | 1966 | Belgian colonial name dropped
+526. **1966** Elisabethville, Democratic Republic of the Congo, is renamed Lubumbashi  [first, slider]
+   - Block C line 63: Lubumbashi | Democratic Republic of the Congo | Elisabethville | 1966 | Belgian colonial name replaced under Mobutu
+527. **1966** Coquilhatville, Democratic Republic of the Congo, is renamed Mbandaka  [first, slider]
+   - Block C line 64: Mbandaka | Democratic Republic of the Congo | Coquilhatville | 1966 | renamed to honour a local leader
+528. **1960** Bremersdorp, Eswatini, is renamed Manzini  [first, slider]
+   - Block C line 65: Manzini | Eswatini | Bremersdorp | 1960 | original Swazi name restored
+529. **2000** Nazret, Ethiopia, is renamed Adama  [first, slider]
+   - Block C line 66: Adama | Ethiopia | Nazret | 2000 | Oromo name officially restored
+530. **1866** Port-de-France, France, is renamed Noumea  [first, slider]
+   - Block C line 67: Noumea | France | Port-de-France | 1866 | New Caledonia capital renamed Noumea
+531. **1990** Karl-Marx-Stadt, Germany, is renamed Chemnitz  [first, slider]
+   - Block C line 68: Chemnitz | Germany | Karl-Marx-Stadt | 1990 | historical name restored
+532. **1961** Stalinstadt, Germany, is renamed Eisenhuttenstadt  [first, slider]
+   - Block C line 69: Eisenhuttenstadt | Germany | Stalinstadt | 1961 | renamed during de-Stalinization
+533. **1961** Sztalinvaros, Hungary, is renamed Dunaujvaros  [first, slider]
+   - Block C line 70: Dunaujvaros | Hungary | Sztalinvaros | 1961 | Stalin name dropped, new name given
+534. **2014** Bangalore, India, is renamed Bengaluru  [first, slider]
+   - Block C line 71: Bengaluru | India | Bangalore | 2014 | officially renamed with 12 other Karnataka cities
+535. **1996** Madras, India, is renamed Chennai  [first, slider]
+   - Block C line 72: Chennai | India | Madras | 1996 | official name changed to the Tamil name
+536. **2016** Gurgaon, India, is renamed Gurugram  [first, slider]
+   - Block C line 73: Gurugram | India | Gurgaon | 2016 | Haryana renamed it with central approval
+537. **1996** Cochin, India, is renamed Kochi  [first, slider]
+   - Block C line 74: Kochi | India | Cochin | 1996 | reverted to its original Malayalam name
+538. **2001** Calcutta, India, is renamed Kolkata  [first, slider]
+   - Block C line 75: Kolkata | India | Calcutta | 2001 | official name changed to the Bengali form
+539. **1995** Bombay, India, is renamed Mumbai  [first, slider]
+   - Block C line 76: Mumbai | India | Bombay | 1995 | state government adopted the Marathi name
+540. **2014** Mysore, India, is renamed Mysuru  [first, slider]
+   - Block C line 77: Mysuru | India | Mysore | 2014 | officially renamed with other Karnataka cities
+541. **2006** Pondicherry, India, is renamed Puducherry  [first, slider]
+   - Block C line 78: Puducherry | India | Pondicherry | 2006 | territory and city renamed by Act of Parliament
+542. **1991** Trivandrum, India, is renamed Thiruvananthapuram  [first, slider]
+   - Block C line 79: Thiruvananthapuram | India | Trivandrum | 1991 | official name restored to the Malayalam name
+543. **1974** Baroda, India, is renamed Vadodara  [first, slider]
+   - Block C line 80: Vadodara | India | Baroda | 1974 | official name changed to the local name
+544. **1963** Kutaraja, Indonesia, is renamed Banda Aceh  [first, slider]
+   - Block C line 81: Banda Aceh | Indonesia | Kutaraja | 1963 | Indonesian ministry restored the name Banda Aceh
+545. **1999** Ujung Pandang, Indonesia, is renamed Makassar  [first, slider]
+   - Block C line 82: Makassar | Indonesia | Ujung Pandang | 1999 | name reverted to Makassar
+546. **1979** Bandar Pahlavi, Iran, is renamed Bandar Anzali  [first, slider]
+   - Block C line 83: Bandar Anzali | Iran | Bandar Pahlavi | 1979 | Pahlavi-era name dropped after the revolution
+547. **1920** Queenstown, Ireland, is renamed Cobh  [first, slider]
+   - Block C line 84: Cobh | Ireland | Queenstown | 1920 | Irish name adopted
+548. **1920** Kingstown, Ireland, is renamed Dun Laoghaire  [first, slider]
+   - Block C line 85: Dun Laoghaire | Ireland | Kingstown | 1920 | Irish name adopted
+549. **1927** Girgenti, Italy, is renamed Agrigento  [first, slider]
+   - Block C line 86: Agrigento | Italy | Girgenti | 1927 | Latin-based name adopted by decree
+550. **1946** Littoria, Italy, is renamed Latina  [first, slider]
+   - Block C line 87: Latina | Italy | Littoria | 1946 | Fascist-era name dropped
+551. **1991** Shevchenko, Kazakhstan, is renamed Aktau  [first, slider]
+   - Block C line 88: Aktau | Kazakhstan | Shevchenko | 1991 | original name restored at independence
+552. **2022** Kapchagay, Kazakhstan, is renamed Konaev  [first, slider]
+   - Block C line 89: Konaev | Kazakhstan | Kapchagay | 2022 | renamed after Soviet-era leader Dinmukhamed Kunaev
+553. **2002** Leninogorsk, Kazakhstan, is renamed Ridder  [first, slider]
+   - Block C line 90: Ridder | Kazakhstan | Leninogorsk | 2002 | original name restored
+554. **2007** Semipalatinsk, Kazakhstan, is renamed Semey  [first, slider]
+   - Block C line 91: Semey | Kazakhstan | Semipalatinsk | 2007 | city council voted for the Kazakh name
+555. **1997** Zhambyl, Kazakhstan, is renamed Taraz  [first, slider]
+   - Block C line 92: Taraz | Kazakhstan | Zhambyl | 1997 | ancient name Taraz restored
+556. **1991** Przhevalsk, Kyrgyzstan, is renamed Karakol  [first, slider]
+   - Block C line 93: Karakol | Kyrgyzstan | Przhevalsk | 1991 | original name restored at independence
+557. **1967** Jesselton, Malaysia, is renamed Kota Kinabalu  [first, slider]
+   - Block C line 94: Kota Kinabalu | Malaysia | Jesselton | 1967 | Sabah assembly renamed the capital
+558. **1972** Port Swettenham, Malaysia, is renamed Port Klang  [first, slider]
+   - Block C line 95: Port Klang | Malaysia | Port Swettenham | 1972 | colonial name replaced
+559. **1960** Port-Etienne, Mauritania, is renamed Nouadhibou  [first, slider]
+   - Block C line 96: Nouadhibou | Mauritania | Port-Etienne | 1960 | French name dropped after independence
+560. **1888** Paso del Norte, Mexico, is renamed Ciudad Juarez  [first, slider]
+   - Block C line 97: Ciudad Juarez | Mexico | Paso del Norte | 1888 | renamed in honour of Benito Juarez
+561. **1928** Cajeme, Mexico, is renamed Ciudad Obregon  [first, slider]
+   - Block C line 98: Ciudad Obregon | Mexico | Cajeme | 1928 | renamed after Alvaro Obregon's murder
+562. **1825** Santa Maria de Aguayo, Mexico, is renamed Ciudad Victoria  [first, slider]
+   - Block C line 99: Ciudad Victoria | Mexico | Santa Maria de Aguayo | 1825 | made a city and named for Guadalupe Victoria
+563. **1936** Puerto Mexico, Mexico, is renamed Coatzacoalcos  [first, slider]
+   - Block C line 100: Coatzacoalcos | Mexico | Puerto Mexico | 1936 | old name restored to the port city
+564. **1828** Valladolid, Mexico, is renamed Morelia  [first, slider]
+   - Block C line 101: Morelia | Mexico | Valladolid | 1828 | renamed for independence hero Morelos
+565. **1911** Ciudad Porfirio Diaz, Mexico, is renamed Piedras Negras  [first, slider]
+   - Block C line 102: Piedras Negras | Mexico | Ciudad Porfirio Diaz | 1911 | old name restored after Diaz fell
+566. **1956** Port-Lyautey, Morocco, is renamed Kenitra  [first, slider]
+   - Block C line 103: Kenitra | Morocco | Port-Lyautey | 1956 | French name dropped at independence
+567. **1975** Vila Pery, Mozambique, is renamed Chimoio  [first, slider]
+   - Block C line 104: Chimoio | Mozambique | Vila Pery | 1975 | renamed at a rally by Samora Machel
+568. **1975** Porto Amelia, Mozambique, is renamed Pemba  [first, slider]
+   - Block C line 105: Pemba | Mozambique | Porto Amelia | 1975 | Portuguese name dropped at end of colonial rule
+569. **1975** Joao Belo, Mozambique, is renamed Xai-Xai  [first, slider]
+   - Block C line 106: Xai-Xai | Mozambique | Joao Belo | 1975 | Portuguese name dropped at independence
+570. **1996** Titov Veles, North Macedonia, is renamed Veles  [first, slider]
+   - Block C line 107: Veles | North Macedonia | Titov Veles | 1996 | Tito name dropped
+571. **1931** Nidaros, Norway, is renamed Trondheim  [first, slider]
+   - Block C line 108: Trondheim | Norway | Nidaros | 1931 | Nidaros dropped after protests
+572. **1978** Campbellpur, Pakistan, is renamed Attock  [first, slider]
+   - Block C line 109: Attock | Pakistan | Campbellpur | 1978 | Government of Pakistan restored the old name
+573. **1979** Lyallpur, Pakistan, is renamed Faisalabad  [first, slider]
+   - Block C line 110: Faisalabad | Pakistan | Lyallpur | 1979 | renamed in honour of King Faisal of Saudi Arabia
+574. **1989** Puerto Presidente Stroessner, Paraguay, is renamed Ciudad del Este  [first, slider]
+   - Block C line 111: Ciudad del Este | Paraguay | Puerto Presidente Stroessner | 1989 | renamed after the dictator was overthrown
+575. **1945** Danzig, Poland, is renamed Gdansk  [first, slider]
+   - Block C line 112: Gdansk | Poland | Danzig | 1945 | German city became Polish Gdansk
+576. **1956** Stalinogrod, Poland, is renamed Katowice  [first, slider]
+   - Block C line 113: Katowice | Poland | Stalinogrod | 1956 | Stalin name dropped, old name back
+577. **1945** Stettin, Poland, is renamed Szczecin  [first, slider]
+   - Block C line 114: Szczecin | Poland | Stettin | 1945 | German city became Polish Szczecin
+578. **1945** Breslau, Poland, is renamed Wroclaw  [first, slider]
+   - Block C line 115: Wroclaw | Poland | Breslau | 1945 | German city became Polish Wroclaw
+579. **1991** Loubomo, Republic of the Congo, is renamed Dolisie  [first, slider]
+   - Block C line 116: Dolisie | Republic of the Congo | Loubomo | 1991 | earlier name Dolisie restored
+580. **1960** Orasul Stalin, Romania, is renamed Brasov  [first, slider]
+   - Block C line 117: Brasov | Romania | Orasul Stalin | 1960 | Stalin name dropped, old name back
+581. **1946** Pillau, Russia, is renamed Baltiysk  [first, slider]
+   - Block C line 118: Baltiysk | Russia | Pillau | 1946 | German name replaced under Soviet rule
+582. **1931** Pokrovsk, Russia, is renamed Engels  [first, slider]
+   - Block C line 121: Engels | Russia | Pokrovsk | 1931 | renamed after Friedrich Engels
+583. **1987** Ustinov, Russia, is renamed Izhevsk  [first, slider]
+   - Block C line 123: Izhevsk | Russia | Ustinov | 1987 | historical name regained after protests
+584. **1946** Konigsberg, Russia, is renamed Kaliningrad  [first, slider]
+   - Block C line 124: Kaliningrad | Russia | Konigsberg | 1946 | renamed after Mikhail Kalinin under Soviet rule
+585. **1934** Vyatka, Russia, is renamed Kirov  [first, slider]
+   - Block C line 125: Kirov | Russia | Vyatka | 1934 | renamed after Bolshevik Sergei Kirov
+586. **1920** Yekaterinodar, Russia, is renamed Krasnodar  [first, slider]
+   - Block C line 127: Krasnodar | Russia | Yekaterinodar | 1920 | renamed after the revolution
+587. **1921** Petrovsk-Port, Russia, is renamed Makhachkala  [first, slider]
+   - Block C line 128: Makhachkala | Russia | Petrovsk-Port | 1921 | renamed under Soviet rule
+588. **1988** Brezhnev, Russia, is renamed Naberezhnye Chelny  [first, slider]
+   - Block C line 129: Naberezhnye Chelny | Russia | Brezhnev | 1988 | Brezhnev name dropped, old name back
+589. **1990** Gorky, Russia, is renamed Nizhny Novgorod  [first, slider]
+   - Block C line 130: Nizhny Novgorod | Russia | Gorky | 1990 | original name reinstated
+590. **1926** Novonikolayevsk, Russia, is renamed Novosibirsk  [first, slider]
+   - Block C line 131: Novosibirsk | Russia | Novonikolayevsk | 1926 | given its present name
+591. **1957** Chkalov, Russia, is renamed Orenburg  [first, slider]
+   - Block C line 132: Orenburg | Russia | Chkalov | 1957 | original name regained
+592. **1957** Molotov, Russia, is renamed Perm  [first, slider]
+   - Block C line 133: Perm | Russia | Molotov | 1957 | historical name restored
+593. **1937** Detskoye Selo, Russia, is renamed Pushkin  [first, slider]
+   - Block C line 134: Pushkin | Russia | Detskoye Selo | 1937 | renamed after the poet Pushkin
+594. **1989** Andropov, Russia, is renamed Rybinsk  [first, slider]
+   - Block C line 135: Rybinsk | Russia | Andropov | 1989 | Andropov name dropped, old name back
+595. **1991** Leningrad, Russia, is renamed Saint Petersburg  [first, slider]
+   - Block C line 136: Saint Petersburg | Russia | Leningrad | 1991 | old name restored after a city referendum
+596. **1991** Kuybyshev, Russia, is renamed Samara  [first, slider]
+   - Block C line 137: Samara | Russia | Kuybyshev | 1991 | historical name restored
+597. **1991** Zagorsk, Russia, is renamed Sergiyev Posad  [first, slider]
+   - Block C line 139: Sergiyev Posad | Russia | Zagorsk | 1991 | original name restored
+598. **1946** Tilsit, Russia, is renamed Sovetsk  [first, slider]
+   - Block C line 141: Sovetsk | Russia | Tilsit | 1946 | German name replaced under Soviet rule
+599. **1964** Stavropol, Russia, is renamed Tolyatti  [first, slider]
+   - Block C line 142: Tolyatti | Russia | Stavropol | 1964 | renamed after Italian communist Togliatti
+600. **1990** Kalinin, Russia, is renamed Tver  [first, slider]
+   - Block C line 143: Tver | Russia | Kalinin | 1990 | historical name restored
+601. **1924** Simbirsk, Russia, is renamed Ulyanovsk  [first, slider]
+   - Block C line 144: Ulyanovsk | Russia | Simbirsk | 1924 | renamed after Lenin (Vladimir Ulyanov)
+602. **1957** Voroshilov, Russia, is renamed Ussuriysk  [first, slider]
+   - Block C line 145: Ussuriysk | Russia | Voroshilov | 1957 | Voroshilov name dropped
+603. **1990** Ordzhonikidze, Russia, is renamed Vladikavkaz  [first, slider]
+   - Block C line 146: Vladikavkaz | Russia | Ordzhonikidze | 1990 | old Russian name Vladikavkaz returned
+604. **1961** Stalingrad, Russia, is renamed Volgograd  [first, slider]
+   - Block C line 147: Volgograd | Russia | Stalingrad | 1961 | renamed during de-Stalinization
+605. **1991** Sverdlovsk, Russia, is renamed Yekaterinburg  [first, slider]
+   - Block C line 148: Yekaterinburg | Russia | Sverdlovsk | 1991 | historical name restored
+606. **1950** Caribrod, Serbia, is renamed Dimitrovgrad  [first, slider]
+   - Block C line 149: Dimitrovgrad | Serbia | Caribrod | 1950 | renamed after Georgi Dimitrov
+607. **1946** Petrovgrad, Serbia, is renamed Zrenjanin  [first, slider]
+   - Block C line 150: Zrenjanin | Serbia | Petrovgrad | 1946 | renamed after partisan Zarko Zrenjanin
+608. **2002** Warmbaths, South Africa, is renamed Bela-Bela  [first, slider]
+   - Block C line 151: Bela-Bela | South Africa | Warmbaths | 2002 | officially renamed by government
+609. **2021** Port Elizabeth, South Africa, is renamed Gqeberha  [first, slider]
+   - Block C line 152: Gqeberha | South Africa | Port Elizabeth | 2021 | name change officially gazetted
+610. **2021** Uitenhage, South Africa, is renamed Kariega  [first, slider]
+   - Block C line 153: Kariega | South Africa | Uitenhage | 2021 | name change officially gazetted
+611. **2002** Ellisras, South Africa, is renamed Lephalale  [first, slider]
+   - Block C line 154: Lephalale | South Africa | Ellisras | 2002 | renamed by Limpopo provincial government
+612. **2018** Grahamstown, South Africa, is renamed Makhanda  [first, slider]
+   - Block C line 155: Makhanda | South Africa | Grahamstown | 2018 | officially renamed after colonial-era name
+613. **2009** Nelspruit, South Africa, is renamed Mbombela  [first (20-year gap)]
+   - Block C line 156: Mbombela | South Africa | Nelspruit | 2009 | renamed by government, upheld in court 2014
+614. **2003** Potgietersrus, South Africa, is renamed Mokopane  [first, slider]
+   - Block C line 158: Mokopane | South Africa | Potgietersrus | 2003 | name officially changed by government
+615. **2005** Pietersburg, South Africa, is renamed Polokwane  [first, slider]
+   - Block C line 159: Polokwane | South Africa | Pietersburg | 2005 | government declared Polokwane official name
+616. **2021** King William's Town, South Africa, is renamed Qonce  [first, slider]
+   - Block C line 160: Qonce | South Africa | King William's Town | 2021 | officially renamed
+617. **2006** Witbank, South Africa, is renamed eMalahleni  [first, slider]
+   - Block C line 161: eMalahleni | South Africa | Witbank | 2006 | officially renamed
+618. **2018** Qurghonteppa, Tajikistan, is renamed Bokhtar  [first, slider]
+   - Block C line 162: Bokhtar | Tajikistan | Qurghonteppa | 2018 | city officially renamed Bokhtar
+619. **2000** Ura-Tyube, Tajikistan, is renamed Istaravshan  [first, slider]
+   - Block C line 163: Istaravshan | Tajikistan | Ura-Tyube | 2000 | Tajik government restored the historic name
+620. **1930** Constantinople, Turkiye, is renamed Istanbul  [first, slider]
+   - Block C line 164: Istanbul | Turkiye | Constantinople | 1930 | Istanbul made the official name
+621. **1973** Maras, Turkiye, is given the title kahraman (heroic): Kahramanmaras  [first, slider]
+   - Block C line 165: Kahramanmaras | Turkiye | Maras | 1973 | parliament added the title kahraman (heroic)
+622. **1984** Urfa, Turkiye, is given the title sanli (glorious): Sanliurfa  [first, slider]
+   - Block C line 166: Sanliurfa | Turkiye | Urfa | 1984 | parliament added the title sanli (glorious)
+623. **1993** Krasnovodsk, Turkmenistan, is renamed Turkmenbashi  [first, slider]
+   - Block C line 167: Turkmenbashi | Turkmenistan | Krasnovodsk | 1993 | renamed after President Niyazov's title
+624. **2016** Dnipropetrovsk, Ukraine, is renamed Dnipro  [first, slider]
+   - Block C line 168: Dnipro | Ukraine | Dnipropetrovsk | 2016 | renamed under decommunization law
+625. **1962** Stanislav, Ukraine, is renamed Ivano-Frankivsk  [first, slider]
+   - Block C line 169: Ivano-Frankivsk | Ukraine | Stanislav | 1962 | renamed after writer Ivan Franko
+626. **1954** Proskuriv, Ukraine, is renamed Khmelnytskyi  [first, slider]
+   - Block C line 170: Khmelnytskyi | Ukraine | Proskuriv | 1954 | renamed after Bohdan Khmelnytsky
+627. **2016** Kirovohrad, Ukraine, is renamed Kropyvnytskyi  [first, slider]
+   - Block C line 171: Kropyvnytskyi | Ukraine | Kirovohrad | 2016 | renamed under decommunization law
+628. **2019** Pereiaslav-Khmelnytskyi, Ukraine, is renamed Pereiaslav  [first, slider]
+   - Block C line 172: Pereiaslav | Ukraine | Pereiaslav-Khmelnytskyi | 2019 | historic name reinstated by parliament
+629. **1839** Waterloo, United States, is renamed Austin  [first, slider]
+   - Block C line 173: Austin | United States | Waterloo | 1839 | renamed Austin when chosen as Texas capital
+630. **1873** Edwinton, United States, is renamed Bismarck  [first, slider]
+   - Block C line 174: Bismarck | United States | Edwinton | 1873 | railway renamed it for Otto von Bismarck
+631. **1998** Agana, United States, is renamed Hagatna  [first, slider]
+   - Block C line 175: Hagatna | United States | Agana | 1998 | Guam capital took its Chamorro name
+632. **1954** Mauch Chunk, United States, is renamed Jim Thorpe  [first, slider]
+   - Block C line 176: Jim Thorpe | United States | Mauch Chunk | 1954 | merged boroughs renamed for athlete Jim Thorpe
+633. **1996** North Tarrytown, United States, is renamed Sleepy Hollow  [first, slider]
+   - Block C line 177: Sleepy Hollow | United States | North Tarrytown | 1996 | village took the area's historical name
+634. **1950** Hot Springs, United States, is renamed Truth or Consequences  [first, slider]
+   - Block C line 178: Truth or Consequences | United States | Hot Springs | 1950 | renamed after a radio quiz show
+635. **2016** Barrow, United States, is renamed Utqiagvik  [first, slider]
+   - Block C line 179: Utqiagvik | United States | Barrow | 2016 | English name replaced by Inupiaq name
+636. **1846** Angostura, Venezuela, is renamed Ciudad Bolivar  [first, slider]
+   - Block C line 180: Ciudad Bolivar | Venezuela | Angostura | 1846 | renamed in honour of Simon Bolivar
+637. **1976** Saigon, Viet Nam, is renamed Ho Chi Minh City  [first, slider]
+   - Block C line 181: Ho Chi Minh City | Viet Nam | Saigon | 1976 | renamed at Vietnam's reunification
+638. **1966** Broken Hill, Zambia, is renamed Kabwe  [first, slider]
+   - Block C line 182: Kabwe | Zambia | Broken Hill | 1966 | colonial name dropped after independence
+639. **1982** Hartley, Zimbabwe, is renamed Chegutu  [first, slider]
+   - Block C line 183: Chegutu | Zimbabwe | Hartley | 1982 | colonial name officially replaced
+640. **1982** Wankie, Zimbabwe, is renamed Hwange  [first, slider]
+   - Block C line 184: Hwange | Zimbabwe | Wankie | 1982 | colonial name replaced
+641. **1982** Gatooma, Zimbabwe, is renamed Kadoma  [first, slider]
+   - Block C line 185: Kadoma | Zimbabwe | Gatooma | 1982 | renamed in 1982 gazette of new names
+642. **1982** Fort Victoria, Zimbabwe, is renamed Masvingo  [first, slider]
+   - Block C line 186: Masvingo | Zimbabwe | Fort Victoria | 1982 | colonial name replaced (briefly Nyanda)
+643. **1982** Umtali, Zimbabwe, is renamed Mutare  [first, slider]
+   - Block C line 187: Mutare | Zimbabwe | Umtali | 1982 | colonial name officially replaced
+644. **1982** Shabani, Zimbabwe, is renamed Zvishavane  [first, slider]
+   - Block C line 188: Zvishavane | Zimbabwe | Shabani | 1982 | colonial name replaced with indigenous one
+
+## Block C lines not asked as "What was this city called?"
+
+- Chernyakhovsk (Russia), Insterburg 1946: one source only, not asked at all
+- Dimitrovgrad (Russia), Melekess 1972: one source only, not asked at all
+- Gatchina (Russia), Krasnogvardeysk 1944: one source only, not asked at all
+- Korolyov (Russia), Kaliningrad 1996: one source only, not asked at all
+- Sarov (Russia), Kremlyov 1995: one source only, not asked at all
+- Sochi (Russia), Dakhovsky Posad 1896: one source only, not asked at all
+- Modimolle (South Africa), Nylstroom 2002: one source only, not asked at all
+- Bogota (Colombia), Santa Fe de Bogota 2000: the present name contains the old one, so it is only a dated fact
+- Veles (North Macedonia), Titov Veles 1996: the present name contains the old one, so it is only a dated fact
+- Kahramanmaras (Turkiye), Maras 1973: the present name contains the old one, so it is only a dated fact
+- Sanliurfa (Turkiye), Urfa 1984: the present name contains the old one, so it is only a dated fact
+- Dnipro (Ukraine), Dnipropetrovsk 2016: the present name contains the old one, so it is only a dated fact
+- Pereiaslav (Ukraine), Pereiaslav-Khmelnytskyi 2019: the present name contains the old one, so it is only a dated fact
+
+## What was this city called?
+
+Wrong answers are drawn from the other questions' right answers of the same kind (all from Block A), never from the excluded pairs above.
+
+- What was Astana (Kazakhstan) called before 2022? **Nur-Sultan**
+  - Block C line 1: Astana | Kazakhstan | Nur-Sultan | 2022 | capital's name changed back to Astana
+- Nur-Sultan is a former name of which city? **Astana (Kazakhstan)**
+  - Block C line 1: Astana | Kazakhstan | Nur-Sultan | 2022 | capital's name changed back to Astana
+- What was Bandar Seri Begawan (Brunei) called before 1970? **Brunei Town**
+  - Block C line 2: Bandar Seri Begawan | Brunei | Brunei Town | 1970 | renamed to honour Sultan Omar Ali Saifuddien III
+- Brunei Town is a former name of which city? **Bandar Seri Begawan (Brunei)**
+  - Block C line 2: Bandar Seri Begawan | Brunei | Brunei Town | 1970 | renamed to honour Sultan Omar Ali Saifuddien III
+- What was Banjul (Gambia) called before 1973? **Bathurst**
+  - Block C line 3: Banjul | Gambia | Bathurst | 1973 | capital renamed after independence
+- Bathurst is a former name of which city? **Banjul (Gambia)**
+  - Block C line 3: Banjul | Gambia | Bathurst | 1973 | capital renamed after independence
+- What was Bishkek (Kyrgyzstan) called before 1991? **Frunze**
+  - Block C line 4: Bishkek | Kyrgyzstan | Frunze | 1991 | Soviet-era name dropped
+- Frunze is a former name of which city? **Bishkek (Kyrgyzstan)**
+  - Block C line 4: Bishkek | Kyrgyzstan | Frunze | 1991 | Soviet-era name dropped
+- What was Bratislava (Slovakia) called before 1919? **Pressburg**
+  - Block C line 6: Bratislava | Slovakia | Pressburg | 1919 | name Bratislava officially adopted
+- Pressburg is a former name of which city? **Bratislava (Slovakia)**
+  - Block C line 6: Bratislava | Slovakia | Pressburg | 1919 | name Bratislava officially adopted
+- What was Dushanbe (Tajikistan) called before 1961? **Stalinabad**
+  - Block C line 7: Dushanbe | Tajikistan | Stalinabad | 1961 | renamed in de-Stalinization
+- Stalinabad is a former name of which city? **Dushanbe (Tajikistan)**
+  - Block C line 7: Dushanbe | Tajikistan | Stalinabad | 1961 | renamed in de-Stalinization
+- What was Gaborone (Botswana) called before 1969? **Gaberones**
+  - Block C line 8: Gaborone | Botswana | Gaberones | 1969 | capital's name officially changed
+- Gaberones is a former name of which city? **Gaborone (Botswana)**
+  - Block C line 8: Gaborone | Botswana | Gaberones | 1969 | capital's name officially changed
+- What was Georgetown (Guyana) called before 1812? **Stabroek**
+  - Block C line 9: Georgetown | Guyana | Stabroek | 1812 | British renamed it for King George III
+- Stabroek is a former name of which city? **Georgetown (Guyana)**
+  - Block C line 9: Georgetown | Guyana | Stabroek | 1812 | British renamed it for King George III
+- What was Harare (Zimbabwe) called before 1982? **Salisbury**
+  - Block C line 10: Harare | Zimbabwe | Salisbury | 1982 | capital renamed two years after independence
+- Salisbury is a former name of which city? **Harare (Zimbabwe)**
+  - Block C line 10: Harare | Zimbabwe | Salisbury | 1982 | capital renamed two years after independence
+- What was Kinshasa (Democratic Republic of the Congo) called before 1966? **Leopoldville**
+  - Block C line 11: Kinshasa | Democratic Republic of the Congo | Leopoldville | 1966 | capital renamed under Mobutu's Africanization drive
+- Leopoldville is a former name of which city? **Kinshasa (Democratic Republic of the Congo)**
+  - Block C line 11: Kinshasa | Democratic Republic of the Congo | Leopoldville | 1966 | capital renamed under Mobutu's Africanization drive
+- What was Malabo (Equatorial Guinea) called before 1973? **Santa Isabel**
+  - Block C line 12: Malabo | Equatorial Guinea | Santa Isabel | 1973 | European name replaced under Macias Nguema
+- Santa Isabel is a former name of which city? **Malabo (Equatorial Guinea)**
+  - Block C line 12: Malabo | Equatorial Guinea | Santa Isabel | 1973 | European name replaced under Macias Nguema
+- What was Maputo (Mozambique) called before 1976? **Lourenco Marques**
+  - Block C line 13: Maputo | Mozambique | Lourenco Marques | 1976 | capital renamed after independence
+- Lourenco Marques is a former name of which city? **Maputo (Mozambique)**
+  - Block C line 13: Maputo | Mozambique | Lourenco Marques | 1976 | capital renamed after independence
+- What was N'Djamena (Chad) called before 1973? **Fort-Lamy**
+  - Block C line 14: N'Djamena | Chad | Fort-Lamy | 1973 | capital renamed by President Tombalbaye
+- Fort-Lamy is a former name of which city? **N'Djamena (Chad)**
+  - Block C line 14: N'Djamena | Chad | Fort-Lamy | 1973 | capital renamed by President Tombalbaye
+- What was Oslo (Norway) called before 1925? **Kristiania**
+  - Block C line 15: Oslo | Norway | Kristiania | 1925 | original name Oslo restored
+- Kristiania is a former name of which city? **Oslo (Norway)**
+  - Block C line 15: Oslo | Norway | Kristiania | 1925 | original name Oslo restored
+- What was Ottawa (Canada) called before 1855? **Bytown**
+  - Block C line 16: Ottawa | Canada | Bytown | 1855 | renamed Ottawa on gaining city status
+- Bytown is a former name of which city? **Ottawa (Canada)**
+  - Block C line 16: Ottawa | Canada | Bytown | 1855 | renamed Ottawa on gaining city status
+- What was Podgorica (Montenegro) called before 1992? **Titograd**
+  - Block C line 17: Podgorica | Montenegro | Titograd | 1992 | original name restored
+- Titograd is a former name of which city? **Podgorica (Montenegro)**
+  - Block C line 17: Podgorica | Montenegro | Titograd | 1992 | original name restored
+- What was Santo Domingo (Dominican Republic) called before 1961? **Ciudad Trujillo**
+  - Block C line 18: Santo Domingo | Dominican Republic | Ciudad Trujillo | 1961 | old name restored after the dictator's death
+- Ciudad Trujillo is a former name of which city? **Santo Domingo (Dominican Republic)**
+  - Block C line 18: Santo Domingo | Dominican Republic | Ciudad Trujillo | 1961 | old name restored after the dictator's death
+- What was Seoul (South Korea) called before 1946? **Gyeongseong**
+  - Block C line 19: Seoul | South Korea | Gyeongseong | 1946 | US military government named it Seoul
+- Gyeongseong is a former name of which city? **Seoul (South Korea)**
+  - Block C line 19: Seoul | South Korea | Gyeongseong | 1946 | US military government named it Seoul
+- What was Tbilisi (Georgia) called before 1936? **Tiflis**
+  - Block C line 20: Tbilisi | Georgia | Tiflis | 1936 | official Russian name changed to Tbilisi
+- Tiflis is a former name of which city? **Tbilisi (Georgia)**
+  - Block C line 20: Tbilisi | Georgia | Tiflis | 1936 | official Russian name changed to Tbilisi
+- What was Tokyo (Japan) called before 1868? **Edo**
+  - Block C line 21: Tokyo | Japan | Edo | 1868 | renamed Eastern Capital under Emperor Meiji
+- Edo is a former name of which city? **Tokyo (Japan)**
+  - Block C line 21: Tokyo | Japan | Edo | 1868 | renamed Eastern Capital under Emperor Meiji
+- What was Ulaanbaatar (Mongolia) called before 1924? **Niislel Khuree**
+  - Block C line 22: Ulaanbaatar | Mongolia | Niislel Khuree | 1924 | renamed at founding of People's Republic
+- Niislel Khuree is a former name of which city? **Ulaanbaatar (Mongolia)**
+  - Block C line 22: Ulaanbaatar | Mongolia | Niislel Khuree | 1924 | renamed at founding of People's Republic
+- What was Kucove (Albania) called before 1990? **Qyteti Stalin**
+  - Block C line 23: Kucove | Albania | Qyteti Stalin | 1990 | Stalin name dropped, old name back
+- Qyteti Stalin is a former name of which city? **Kucove (Albania)**
+  - Block C line 23: Kucove | Albania | Qyteti Stalin | 1990 | Stalin name dropped, old name back
+- What was Skikda (Algeria) called before 1962? **Philippeville**
+  - Block C line 24: Skikda | Algeria | Philippeville | 1962 | French name dropped at independence
+- Philippeville is a former name of which city? **Skikda (Algeria)**
+  - Block C line 24: Skikda | Algeria | Philippeville | 1962 | French name dropped at independence
+- What was Huambo (Angola) called before 1975? **Nova Lisboa**
+  - Block C line 25: Huambo | Angola | Nova Lisboa | 1975 | original name restored after independence
+- Nova Lisboa is a former name of which city? **Huambo (Angola)**
+  - Block C line 25: Huambo | Angola | Nova Lisboa | 1975 | original name restored after independence
+- What was N'dalatando (Angola) called before 1976? **Salazar**
+  - Block C line 26: N'dalatando | Angola | Salazar | 1976 | original name restored after independence
+- Salazar is a former name of which city? **N'dalatando (Angola)**
+  - Block C line 26: N'dalatando | Angola | Salazar | 1976 | original name restored after independence
+- What was La Plata (Argentina) called before 1955? **Ciudad Eva Peron**
+  - Block C line 27: La Plata | Argentina | Ciudad Eva Peron | 1955 | original name restored after Peron fell
+- Ciudad Eva Peron is a former name of which city? **La Plata (Argentina)**
+  - Block C line 27: La Plata | Argentina | Ciudad Eva Peron | 1955 | original name restored after Peron fell
+- What was Alice Springs (Australia) called before 1933? **Stuart**
+  - Block C line 28: Alice Springs | Australia | Stuart | 1933 | town gazetted under its waterhole name
+- Stuart is a former name of which city? **Alice Springs (Australia)**
+  - Block C line 28: Alice Springs | Australia | Stuart | 1933 | town gazetted under its waterhole name
+- What was Bendigo (Australia) called before 1891? **Sandhurst**
+  - Block C line 29: Bendigo | Australia | Sandhurst | 1891 | official name changed back to Bendigo
+- Sandhurst is a former name of which city? **Bendigo (Australia)**
+  - Block C line 29: Bendigo | Australia | Sandhurst | 1891 | official name changed back to Bendigo
+- What was Darwin (Australia) called before 1911? **Palmerston**
+  - Block C line 30: Darwin | Australia | Palmerston | 1911 | town renamed after Charles Darwin
+- Palmerston is a former name of which city? **Darwin (Australia)**
+  - Block C line 30: Darwin | Australia | Palmerston | 1911 | town renamed after Charles Darwin
+- What was Gold Coast (Australia) called before 1958? **South Coast**
+  - Block C line 31: Gold Coast | Australia | South Coast | 1958 | Town of South Coast renamed Town of Gold Coast
+- South Coast is a former name of which city? **Gold Coast (Australia)**
+  - Block C line 31: Gold Coast | Australia | South Coast | 1958 | Town of South Coast renamed Town of Gold Coast
+- What was Hahndorf (Australia) called before 1935? **Ambleside**
+  - Block C line 32: Hahndorf | Australia | Ambleside | 1935 | German name restored after WWI-era change
+- Ambleside is a former name of which city? **Hahndorf (Australia)**
+  - Block C line 32: Hahndorf | Australia | Ambleside | 1935 | German name restored after WWI-era change
+- What was Holbrook (Australia) called before 1915? **Germanton**
+  - Block C line 33: Holbrook | Australia | Germanton | 1915 | German name dropped in WWI
+- Germanton is a former name of which city? **Holbrook (Australia)**
+  - Block C line 33: Holbrook | Australia | Germanton | 1915 | German name dropped in WWI
+- What was Ganja (Azerbaijan) called before 1989? **Kirovabad**
+  - Block C line 34: Ganja | Azerbaijan | Kirovabad | 1989 | original name restored during perestroika
+- Kirovabad is a former name of which city? **Ganja (Azerbaijan)**
+  - Block C line 34: Ganja | Azerbaijan | Kirovabad | 1989 | original name restored during perestroika
+- What was Shirvan (Azerbaijan) called before 2008? **Ali Bayramli**
+  - Block C line 35: Shirvan | Azerbaijan | Ali Bayramli | 2008 | Azerbaijan parliament renamed the city
+- Ali Bayramli is a former name of which city? **Shirvan (Azerbaijan)**
+  - Block C line 35: Shirvan | Azerbaijan | Ali Bayramli | 2008 | Azerbaijan parliament renamed the city
+- What was Joao Pessoa (Brazil) called before 1930? **Parahyba do Norte**
+  - Block C line 36: Joao Pessoa | Brazil | Parahyba do Norte | 1930 | state capital renamed for a murdered governor
+- Parahyba do Norte is a former name of which city? **Joao Pessoa (Brazil)**
+  - Block C line 36: Joao Pessoa | Brazil | Parahyba do Norte | 1930 | state capital renamed for a murdered governor
+- What was Niteroi (Brazil) called before 1835? **Vila Real da Praia Grande**
+  - Block C line 37: Niteroi | Brazil | Vila Real da Praia Grande | 1835 | renamed Nictheroy (now spelled Niteroi)
+- Vila Real da Praia Grande is a former name of which city? **Niteroi (Brazil)**
+  - Block C line 37: Niteroi | Brazil | Vila Real da Praia Grande | 1835 | renamed Nictheroy (now spelled Niteroi)
+- What was Dobrich (Bulgaria) called before 1990? **Tolbukhin**
+  - Block C line 38: Dobrich | Bulgaria | Tolbukhin | 1990 | old name restored by decree
+- Tolbukhin is a former name of which city? **Dobrich (Bulgaria)**
+  - Block C line 38: Dobrich | Bulgaria | Tolbukhin | 1990 | old name restored by decree
+- What was Varna (Bulgaria) called before 1956? **Stalin**
+  - Block C line 39: Varna | Bulgaria | Stalin | 1956 | Stalin name dropped, old name back
+- Stalin is a former name of which city? **Varna (Bulgaria)**
+  - Block C line 39: Varna | Bulgaria | Stalin | 1956 | Stalin name dropped, old name back
+- What was Bujumbura (Burundi) called before 1962? **Usumbura**
+  - Block C line 40: Bujumbura | Burundi | Usumbura | 1962 | capital renamed at independence
+- Usumbura is a former name of which city? **Bujumbura (Burundi)**
+  - Block C line 40: Bujumbura | Burundi | Usumbura | 1962 | capital renamed at independence
+- What was Limbe (Cameroon) called before 1982? **Victoria**
+  - Block C line 41: Limbe | Cameroon | Victoria | 1982 | renamed by presidential decree
+- Victoria is a former name of which city? **Limbe (Cameroon)**
+  - Block C line 41: Limbe | Cameroon | Victoria | 1982 | renamed by presidential decree
+- What was Arviat (Canada) called before 1989? **Eskimo Point**
+  - Block C line 42: Arviat | Canada | Eskimo Point | 1989 | English name replaced by Inuktitut name
+- Eskimo Point is a former name of which city? **Arviat (Canada)**
+  - Block C line 42: Arviat | Canada | Eskimo Point | 1989 | English name replaced by Inuktitut name
+- What was Iqaluit (Canada) called before 1987? **Frobisher Bay**
+  - Block C line 43: Iqaluit | Canada | Frobisher Bay | 1987 | English name replaced by Inuktitut name
+- Frobisher Bay is a former name of which city? **Iqaluit (Canada)**
+  - Block C line 43: Iqaluit | Canada | Frobisher Bay | 1987 | English name replaced by Inuktitut name
+- What was Kenora (Canada) called before 1905? **Rat Portage**
+  - Block C line 44: Kenora | Canada | Rat Portage | 1905 | new name built from Keewatin, Norman, Rat Portage
+- Rat Portage is a former name of which city? **Kenora (Canada)**
+  - Block C line 44: Kenora | Canada | Rat Portage | 1905 | new name built from Keewatin, Norman, Rat Portage
+- What was Kitchener (Canada) called before 1916? **Berlin**
+  - Block C line 45: Kitchener | Canada | Berlin | 1916 | German name dropped by referendum in WWI
+- Berlin is a former name of which city? **Kitchener (Canada)**
+  - Block C line 45: Kitchener | Canada | Berlin | 1916 | German name dropped by referendum in WWI
+- What was Kugluktuk (Canada) called before 1996? **Coppermine**
+  - Block C line 46: Kugluktuk | Canada | Coppermine | 1996 | English name replaced by Inuinnaqtun name
+- Coppermine is a former name of which city? **Kugluktuk (Canada)**
+  - Block C line 46: Kugluktuk | Canada | Coppermine | 1996 | English name replaced by Inuinnaqtun name
+- What was Kuujjuaq (Canada) called before 1980? **Fort Chimo**
+  - Block C line 47: Kuujjuaq | Canada | Fort Chimo | 1980 | took the Inuit name of the Koksoak River
+- Fort Chimo is a former name of which city? **Kuujjuaq (Canada)**
+  - Block C line 47: Kuujjuaq | Canada | Fort Chimo | 1980 | took the Inuit name of the Koksoak River
+- What was Qikiqtarjuaq (Canada) called before 1998? **Broughton Island**
+  - Block C line 48: Qikiqtarjuaq | Canada | Broughton Island | 1998 | English name replaced by Inuktitut name
+- Broughton Island is a former name of which city? **Qikiqtarjuaq (Canada)**
+  - Block C line 48: Qikiqtarjuaq | Canada | Broughton Island | 1998 | English name replaced by Inuktitut name
+- What was Regina (Canada) called before 1882? **Pile o' Bones**
+  - Block C line 49: Regina | Canada | Pile o' Bones | 1882 | renamed Regina in honour of Queen Victoria
+- Pile o' Bones is a former name of which city? **Regina (Canada)**
+  - Block C line 49: Regina | Canada | Pile o' Bones | 1882 | renamed Regina in honour of Queen Victoria
+- What was Thunder Bay (Canada) called before 1970? **Fort William and Port Arthur**
+  - Block C line 50: Thunder Bay | Canada | Fort William and Port Arthur | 1970 | two cities merged into Thunder Bay
+- Fort William and Port Arthur is a former name of which city? **Thunder Bay (Canada)**
+  - Block C line 50: Thunder Bay | Canada | Fort William and Port Arthur | 1970 | two cities merged into Thunder Bay
+- What was Toronto (Canada) called before 1834? **York**
+  - Block C line 51: Toronto | Canada | York | 1834 | incorporated as a city under the name Toronto
+- York is a former name of which city? **Toronto (Canada)**
+  - Block C line 51: Toronto | Canada | York | 1834 | incorporated as a city under the name Toronto
+- What was Vancouver (Canada) called before 1886? **Granville**
+  - Block C line 52: Vancouver | Canada | Granville | 1886 | renamed Vancouver on incorporation as a city
+- Granville is a former name of which city? **Vancouver (Canada)**
+  - Block C line 52: Vancouver | Canada | Granville | 1886 | renamed Vancouver on incorporation as a city
+- What was Kaga-Bandoro (Central African Republic) called before 1974? **Crampel**
+  - Block C line 53: Kaga-Bandoro | Central African Republic | Crampel | 1974 | colonial name (Fort-Crampel) replaced
+- Crampel is a former name of which city? **Kaga-Bandoro (Central African Republic)**
+  - Block C line 53: Kaga-Bandoro | Central African Republic | Crampel | 1974 | colonial name (Fort-Crampel) replaced
+- What was Sarh (Chad) called before 1972? **Fort-Archambault**
+  - Block C line 54: Sarh | Chad | Fort-Archambault | 1972 | renamed in Tombalbaye's authenticite campaign
+- Fort-Archambault is a former name of which city? **Sarh (Chad)**
+  - Block C line 54: Sarh | Chad | Fort-Archambault | 1972 | renamed in Tombalbaye's authenticite campaign
+- What was Shangri-La (China) called before 2001? **Zhongdian**
+  - Block C line 55: Shangri-La | China | Zhongdian | 2001 | county renamed after the novel's paradise
+- Zhongdian is a former name of which city? **Shangri-La (China)**
+  - Block C line 55: Shangri-La | China | Zhongdian | 2001 | county renamed after the novel's paradise
+- What was Urumqi (China) called before 1954? **Dihua**
+  - Block C line 56: Urumqi | China | Dihua | 1954 | name Urumqi restored by the government
+- Dihua is a former name of which city? **Urumqi (China)**
+  - Block C line 56: Urumqi | China | Dihua | 1954 | name Urumqi restored by the government
+- What was Zhangjiajie (China) called before 1994? **Dayong**
+  - Block C line 57: Zhangjiajie | China | Dayong | 1994 | city renamed after its famous scenic area
+- Dayong is a former name of which city? **Zhangjiajie (China)**
+  - Block C line 57: Zhangjiajie | China | Dayong | 1994 | city renamed after its famous scenic area
+- What was Zlin (Czechia) called before 1990? **Gottwaldov**
+  - Block C line 58: Zlin | Czechia | Gottwaldov | 1990 | Gottwald name dropped, old name back
+- Gottwaldov is a former name of which city? **Zlin (Czechia)**
+  - Block C line 58: Zlin | Czechia | Gottwaldov | 1990 | Gottwald name dropped, old name back
+- What was Bandundu (Democratic Republic of the Congo) called before 1966? **Banningville**
+  - Block C line 59: Bandundu | Democratic Republic of the Congo | Banningville | 1966 | Belgian colonial name dropped
+- Banningville is a former name of which city? **Bandundu (Democratic Republic of the Congo)**
+  - Block C line 59: Bandundu | Democratic Republic of the Congo | Banningville | 1966 | Belgian colonial name dropped
+- What was Kananga (Democratic Republic of the Congo) called before 1966? **Luluabourg**
+  - Block C line 60: Kananga | Democratic Republic of the Congo | Luluabourg | 1966 | colonial name replaced under Mobutu
+- Luluabourg is a former name of which city? **Kananga (Democratic Republic of the Congo)**
+  - Block C line 60: Kananga | Democratic Republic of the Congo | Luluabourg | 1966 | colonial name replaced under Mobutu
+- What was Kisangani (Democratic Republic of the Congo) called before 1966? **Stanleyville**
+  - Block C line 61: Kisangani | Democratic Republic of the Congo | Stanleyville | 1966 | colonial name replaced under authenticite policy
+- Stanleyville is a former name of which city? **Kisangani (Democratic Republic of the Congo)**
+  - Block C line 61: Kisangani | Democratic Republic of the Congo | Stanleyville | 1966 | colonial name replaced under authenticite policy
+- What was Likasi (Democratic Republic of the Congo) called before 1966? **Jadotville**
+  - Block C line 62: Likasi | Democratic Republic of the Congo | Jadotville | 1966 | Belgian colonial name dropped
+- Jadotville is a former name of which city? **Likasi (Democratic Republic of the Congo)**
+  - Block C line 62: Likasi | Democratic Republic of the Congo | Jadotville | 1966 | Belgian colonial name dropped
+- What was Lubumbashi (Democratic Republic of the Congo) called before 1966? **Elisabethville**
+  - Block C line 63: Lubumbashi | Democratic Republic of the Congo | Elisabethville | 1966 | Belgian colonial name replaced under Mobutu
+- Elisabethville is a former name of which city? **Lubumbashi (Democratic Republic of the Congo)**
+  - Block C line 63: Lubumbashi | Democratic Republic of the Congo | Elisabethville | 1966 | Belgian colonial name replaced under Mobutu
+- What was Mbandaka (Democratic Republic of the Congo) called before 1966? **Coquilhatville**
+  - Block C line 64: Mbandaka | Democratic Republic of the Congo | Coquilhatville | 1966 | renamed to honour a local leader
+- Coquilhatville is a former name of which city? **Mbandaka (Democratic Republic of the Congo)**
+  - Block C line 64: Mbandaka | Democratic Republic of the Congo | Coquilhatville | 1966 | renamed to honour a local leader
+- What was Manzini (Eswatini) called before 1960? **Bremersdorp**
+  - Block C line 65: Manzini | Eswatini | Bremersdorp | 1960 | original Swazi name restored
+- Bremersdorp is a former name of which city? **Manzini (Eswatini)**
+  - Block C line 65: Manzini | Eswatini | Bremersdorp | 1960 | original Swazi name restored
+- What was Adama (Ethiopia) called before 2000? **Nazret**
+  - Block C line 66: Adama | Ethiopia | Nazret | 2000 | Oromo name officially restored
+- Nazret is a former name of which city? **Adama (Ethiopia)**
+  - Block C line 66: Adama | Ethiopia | Nazret | 2000 | Oromo name officially restored
+- What was Noumea (France) called before 1866? **Port-de-France**
+  - Block C line 67: Noumea | France | Port-de-France | 1866 | New Caledonia capital renamed Noumea
+- Port-de-France is a former name of which city? **Noumea (France)**
+  - Block C line 67: Noumea | France | Port-de-France | 1866 | New Caledonia capital renamed Noumea
+- What was Chemnitz (Germany) called before 1990? **Karl-Marx-Stadt**
+  - Block C line 68: Chemnitz | Germany | Karl-Marx-Stadt | 1990 | historical name restored
+- Karl-Marx-Stadt is a former name of which city? **Chemnitz (Germany)**
+  - Block C line 68: Chemnitz | Germany | Karl-Marx-Stadt | 1990 | historical name restored
+- What was Eisenhuttenstadt (Germany) called before 1961? **Stalinstadt**
+  - Block C line 69: Eisenhuttenstadt | Germany | Stalinstadt | 1961 | renamed during de-Stalinization
+- Stalinstadt is a former name of which city? **Eisenhuttenstadt (Germany)**
+  - Block C line 69: Eisenhuttenstadt | Germany | Stalinstadt | 1961 | renamed during de-Stalinization
+- What was Dunaujvaros (Hungary) called before 1961? **Sztalinvaros**
+  - Block C line 70: Dunaujvaros | Hungary | Sztalinvaros | 1961 | Stalin name dropped, new name given
+- Sztalinvaros is a former name of which city? **Dunaujvaros (Hungary)**
+  - Block C line 70: Dunaujvaros | Hungary | Sztalinvaros | 1961 | Stalin name dropped, new name given
+- What was Bengaluru (India) called before 2014? **Bangalore**
+  - Block C line 71: Bengaluru | India | Bangalore | 2014 | officially renamed with 12 other Karnataka cities
+- Bangalore is a former name of which city? **Bengaluru (India)**
+  - Block C line 71: Bengaluru | India | Bangalore | 2014 | officially renamed with 12 other Karnataka cities
+- What was Chennai (India) called before 1996? **Madras**
+  - Block C line 72: Chennai | India | Madras | 1996 | official name changed to the Tamil name
+- Madras is a former name of which city? **Chennai (India)**
+  - Block C line 72: Chennai | India | Madras | 1996 | official name changed to the Tamil name
+- What was Gurugram (India) called before 2016? **Gurgaon**
+  - Block C line 73: Gurugram | India | Gurgaon | 2016 | Haryana renamed it with central approval
+- Gurgaon is a former name of which city? **Gurugram (India)**
+  - Block C line 73: Gurugram | India | Gurgaon | 2016 | Haryana renamed it with central approval
+- What was Kochi (India) called before 1996? **Cochin**
+  - Block C line 74: Kochi | India | Cochin | 1996 | reverted to its original Malayalam name
+- Cochin is a former name of which city? **Kochi (India)**
+  - Block C line 74: Kochi | India | Cochin | 1996 | reverted to its original Malayalam name
+- What was Kolkata (India) called before 2001? **Calcutta**
+  - Block C line 75: Kolkata | India | Calcutta | 2001 | official name changed to the Bengali form
+- Calcutta is a former name of which city? **Kolkata (India)**
+  - Block C line 75: Kolkata | India | Calcutta | 2001 | official name changed to the Bengali form
+- What was Mumbai (India) called before 1995? **Bombay**
+  - Block C line 76: Mumbai | India | Bombay | 1995 | state government adopted the Marathi name
+- Bombay is a former name of which city? **Mumbai (India)**
+  - Block C line 76: Mumbai | India | Bombay | 1995 | state government adopted the Marathi name
+- What was Mysuru (India) called before 2014? **Mysore**
+  - Block C line 77: Mysuru | India | Mysore | 2014 | officially renamed with other Karnataka cities
+- Mysore is a former name of which city? **Mysuru (India)**
+  - Block C line 77: Mysuru | India | Mysore | 2014 | officially renamed with other Karnataka cities
+- What was Puducherry (India) called before 2006? **Pondicherry**
+  - Block C line 78: Puducherry | India | Pondicherry | 2006 | territory and city renamed by Act of Parliament
+- Pondicherry is a former name of which city? **Puducherry (India)**
+  - Block C line 78: Puducherry | India | Pondicherry | 2006 | territory and city renamed by Act of Parliament
+- What was Thiruvananthapuram (India) called before 1991? **Trivandrum**
+  - Block C line 79: Thiruvananthapuram | India | Trivandrum | 1991 | official name restored to the Malayalam name
+- Trivandrum is a former name of which city? **Thiruvananthapuram (India)**
+  - Block C line 79: Thiruvananthapuram | India | Trivandrum | 1991 | official name restored to the Malayalam name
+- What was Vadodara (India) called before 1974? **Baroda**
+  - Block C line 80: Vadodara | India | Baroda | 1974 | official name changed to the local name
+- Baroda is a former name of which city? **Vadodara (India)**
+  - Block C line 80: Vadodara | India | Baroda | 1974 | official name changed to the local name
+- What was Banda Aceh (Indonesia) called before 1963? **Kutaraja**
+  - Block C line 81: Banda Aceh | Indonesia | Kutaraja | 1963 | Indonesian ministry restored the name Banda Aceh
+- Kutaraja is a former name of which city? **Banda Aceh (Indonesia)**
+  - Block C line 81: Banda Aceh | Indonesia | Kutaraja | 1963 | Indonesian ministry restored the name Banda Aceh
+- What was Makassar (Indonesia) called before 1999? **Ujung Pandang**
+  - Block C line 82: Makassar | Indonesia | Ujung Pandang | 1999 | name reverted to Makassar
+- Ujung Pandang is a former name of which city? **Makassar (Indonesia)**
+  - Block C line 82: Makassar | Indonesia | Ujung Pandang | 1999 | name reverted to Makassar
+- What was Bandar Anzali (Iran) called before 1979? **Bandar Pahlavi**
+  - Block C line 83: Bandar Anzali | Iran | Bandar Pahlavi | 1979 | Pahlavi-era name dropped after the revolution
+- Bandar Pahlavi is a former name of which city? **Bandar Anzali (Iran)**
+  - Block C line 83: Bandar Anzali | Iran | Bandar Pahlavi | 1979 | Pahlavi-era name dropped after the revolution
+- What was Cobh (Ireland) called before 1920? **Queenstown**
+  - Block C line 84: Cobh | Ireland | Queenstown | 1920 | Irish name adopted
+- Queenstown is a former name of which city? **Cobh (Ireland)**
+  - Block C line 84: Cobh | Ireland | Queenstown | 1920 | Irish name adopted
+- What was Dun Laoghaire (Ireland) called before 1920? **Kingstown**
+  - Block C line 85: Dun Laoghaire | Ireland | Kingstown | 1920 | Irish name adopted
+- Kingstown is a former name of which city? **Dun Laoghaire (Ireland)**
+  - Block C line 85: Dun Laoghaire | Ireland | Kingstown | 1920 | Irish name adopted
+- What was Agrigento (Italy) called before 1927? **Girgenti**
+  - Block C line 86: Agrigento | Italy | Girgenti | 1927 | Latin-based name adopted by decree
+- Girgenti is a former name of which city? **Agrigento (Italy)**
+  - Block C line 86: Agrigento | Italy | Girgenti | 1927 | Latin-based name adopted by decree
+- What was Latina (Italy) called before 1946? **Littoria**
+  - Block C line 87: Latina | Italy | Littoria | 1946 | Fascist-era name dropped
+- Littoria is a former name of which city? **Latina (Italy)**
+  - Block C line 87: Latina | Italy | Littoria | 1946 | Fascist-era name dropped
+- What was Aktau (Kazakhstan) called before 1991? **Shevchenko**
+  - Block C line 88: Aktau | Kazakhstan | Shevchenko | 1991 | original name restored at independence
+- Shevchenko is a former name of which city? **Aktau (Kazakhstan)**
+  - Block C line 88: Aktau | Kazakhstan | Shevchenko | 1991 | original name restored at independence
+- What was Konaev (Kazakhstan) called before 2022? **Kapchagay**
+  - Block C line 89: Konaev | Kazakhstan | Kapchagay | 2022 | renamed after Soviet-era leader Dinmukhamed Kunaev
+- Kapchagay is a former name of which city? **Konaev (Kazakhstan)**
+  - Block C line 89: Konaev | Kazakhstan | Kapchagay | 2022 | renamed after Soviet-era leader Dinmukhamed Kunaev
+- What was Ridder (Kazakhstan) called before 2002? **Leninogorsk**
+  - Block C line 90: Ridder | Kazakhstan | Leninogorsk | 2002 | original name restored
+- Leninogorsk is a former name of which city? **Ridder (Kazakhstan)**
+  - Block C line 90: Ridder | Kazakhstan | Leninogorsk | 2002 | original name restored
+- What was Semey (Kazakhstan) called before 2007? **Semipalatinsk**
+  - Block C line 91: Semey | Kazakhstan | Semipalatinsk | 2007 | city council voted for the Kazakh name
+- Semipalatinsk is a former name of which city? **Semey (Kazakhstan)**
+  - Block C line 91: Semey | Kazakhstan | Semipalatinsk | 2007 | city council voted for the Kazakh name
+- What was Taraz (Kazakhstan) called before 1997? **Zhambyl**
+  - Block C line 92: Taraz | Kazakhstan | Zhambyl | 1997 | ancient name Taraz restored
+- Zhambyl is a former name of which city? **Taraz (Kazakhstan)**
+  - Block C line 92: Taraz | Kazakhstan | Zhambyl | 1997 | ancient name Taraz restored
+- What was Karakol (Kyrgyzstan) called before 1991? **Przhevalsk**
+  - Block C line 93: Karakol | Kyrgyzstan | Przhevalsk | 1991 | original name restored at independence
+- Przhevalsk is a former name of which city? **Karakol (Kyrgyzstan)**
+  - Block C line 93: Karakol | Kyrgyzstan | Przhevalsk | 1991 | original name restored at independence
+- What was Kota Kinabalu (Malaysia) called before 1967? **Jesselton**
+  - Block C line 94: Kota Kinabalu | Malaysia | Jesselton | 1967 | Sabah assembly renamed the capital
+- Jesselton is a former name of which city? **Kota Kinabalu (Malaysia)**
+  - Block C line 94: Kota Kinabalu | Malaysia | Jesselton | 1967 | Sabah assembly renamed the capital
+- What was Port Klang (Malaysia) called before 1972? **Port Swettenham**
+  - Block C line 95: Port Klang | Malaysia | Port Swettenham | 1972 | colonial name replaced
+- Port Swettenham is a former name of which city? **Port Klang (Malaysia)**
+  - Block C line 95: Port Klang | Malaysia | Port Swettenham | 1972 | colonial name replaced
+- What was Nouadhibou (Mauritania) called before 1960? **Port-Etienne**
+  - Block C line 96: Nouadhibou | Mauritania | Port-Etienne | 1960 | French name dropped after independence
+- Port-Etienne is a former name of which city? **Nouadhibou (Mauritania)**
+  - Block C line 96: Nouadhibou | Mauritania | Port-Etienne | 1960 | French name dropped after independence
+- What was Ciudad Juarez (Mexico) called before 1888? **Paso del Norte**
+  - Block C line 97: Ciudad Juarez | Mexico | Paso del Norte | 1888 | renamed in honour of Benito Juarez
+- Paso del Norte is a former name of which city? **Ciudad Juarez (Mexico)**
+  - Block C line 97: Ciudad Juarez | Mexico | Paso del Norte | 1888 | renamed in honour of Benito Juarez
+- What was Ciudad Obregon (Mexico) called before 1928? **Cajeme**
+  - Block C line 98: Ciudad Obregon | Mexico | Cajeme | 1928 | renamed after Alvaro Obregon's murder
+- Cajeme is a former name of which city? **Ciudad Obregon (Mexico)**
+  - Block C line 98: Ciudad Obregon | Mexico | Cajeme | 1928 | renamed after Alvaro Obregon's murder
+- What was Ciudad Victoria (Mexico) called before 1825? **Santa Maria de Aguayo**
+  - Block C line 99: Ciudad Victoria | Mexico | Santa Maria de Aguayo | 1825 | made a city and named for Guadalupe Victoria
+- Santa Maria de Aguayo is a former name of which city? **Ciudad Victoria (Mexico)**
+  - Block C line 99: Ciudad Victoria | Mexico | Santa Maria de Aguayo | 1825 | made a city and named for Guadalupe Victoria
+- What was Coatzacoalcos (Mexico) called before 1936? **Puerto Mexico**
+  - Block C line 100: Coatzacoalcos | Mexico | Puerto Mexico | 1936 | old name restored to the port city
+- Puerto Mexico is a former name of which city? **Coatzacoalcos (Mexico)**
+  - Block C line 100: Coatzacoalcos | Mexico | Puerto Mexico | 1936 | old name restored to the port city
+- What was Morelia (Mexico) called before 1828? **Valladolid**
+  - Block C line 101: Morelia | Mexico | Valladolid | 1828 | renamed for independence hero Morelos
+- Valladolid is a former name of which city? **Morelia (Mexico)**
+  - Block C line 101: Morelia | Mexico | Valladolid | 1828 | renamed for independence hero Morelos
+- What was Piedras Negras (Mexico) called before 1911? **Ciudad Porfirio Diaz**
+  - Block C line 102: Piedras Negras | Mexico | Ciudad Porfirio Diaz | 1911 | old name restored after Diaz fell
+- Ciudad Porfirio Diaz is a former name of which city? **Piedras Negras (Mexico)**
+  - Block C line 102: Piedras Negras | Mexico | Ciudad Porfirio Diaz | 1911 | old name restored after Diaz fell
+- What was Kenitra (Morocco) called before 1956? **Port-Lyautey**
+  - Block C line 103: Kenitra | Morocco | Port-Lyautey | 1956 | French name dropped at independence
+- Port-Lyautey is a former name of which city? **Kenitra (Morocco)**
+  - Block C line 103: Kenitra | Morocco | Port-Lyautey | 1956 | French name dropped at independence
+- What was Chimoio (Mozambique) called before 1975? **Vila Pery**
+  - Block C line 104: Chimoio | Mozambique | Vila Pery | 1975 | renamed at a rally by Samora Machel
+- Vila Pery is a former name of which city? **Chimoio (Mozambique)**
+  - Block C line 104: Chimoio | Mozambique | Vila Pery | 1975 | renamed at a rally by Samora Machel
+- What was Pemba (Mozambique) called before 1975? **Porto Amelia**
+  - Block C line 105: Pemba | Mozambique | Porto Amelia | 1975 | Portuguese name dropped at end of colonial rule
+- Porto Amelia is a former name of which city? **Pemba (Mozambique)**
+  - Block C line 105: Pemba | Mozambique | Porto Amelia | 1975 | Portuguese name dropped at end of colonial rule
+- What was Xai-Xai (Mozambique) called before 1975? **Joao Belo**
+  - Block C line 106: Xai-Xai | Mozambique | Joao Belo | 1975 | Portuguese name dropped at independence
+- Joao Belo is a former name of which city? **Xai-Xai (Mozambique)**
+  - Block C line 106: Xai-Xai | Mozambique | Joao Belo | 1975 | Portuguese name dropped at independence
+- What was Trondheim (Norway) called before 1931? **Nidaros**
+  - Block C line 108: Trondheim | Norway | Nidaros | 1931 | Nidaros dropped after protests
+- Nidaros is a former name of which city? **Trondheim (Norway)**
+  - Block C line 108: Trondheim | Norway | Nidaros | 1931 | Nidaros dropped after protests
+- What was Attock (Pakistan) called before 1978? **Campbellpur**
+  - Block C line 109: Attock | Pakistan | Campbellpur | 1978 | Government of Pakistan restored the old name
+- Campbellpur is a former name of which city? **Attock (Pakistan)**
+  - Block C line 109: Attock | Pakistan | Campbellpur | 1978 | Government of Pakistan restored the old name
+- What was Faisalabad (Pakistan) called before 1979? **Lyallpur**
+  - Block C line 110: Faisalabad | Pakistan | Lyallpur | 1979 | renamed in honour of King Faisal of Saudi Arabia
+- Lyallpur is a former name of which city? **Faisalabad (Pakistan)**
+  - Block C line 110: Faisalabad | Pakistan | Lyallpur | 1979 | renamed in honour of King Faisal of Saudi Arabia
+- What was Ciudad del Este (Paraguay) called before 1989? **Puerto Presidente Stroessner**
+  - Block C line 111: Ciudad del Este | Paraguay | Puerto Presidente Stroessner | 1989 | renamed after the dictator was overthrown
+- Puerto Presidente Stroessner is a former name of which city? **Ciudad del Este (Paraguay)**
+  - Block C line 111: Ciudad del Este | Paraguay | Puerto Presidente Stroessner | 1989 | renamed after the dictator was overthrown
+- What was Gdansk (Poland) called before 1945? **Danzig**
+  - Block C line 112: Gdansk | Poland | Danzig | 1945 | German city became Polish Gdansk
+- Danzig is a former name of which city? **Gdansk (Poland)**
+  - Block C line 112: Gdansk | Poland | Danzig | 1945 | German city became Polish Gdansk
+- What was Katowice (Poland) called before 1956? **Stalinogrod**
+  - Block C line 113: Katowice | Poland | Stalinogrod | 1956 | Stalin name dropped, old name back
+- Stalinogrod is a former name of which city? **Katowice (Poland)**
+  - Block C line 113: Katowice | Poland | Stalinogrod | 1956 | Stalin name dropped, old name back
+- What was Szczecin (Poland) called before 1945? **Stettin**
+  - Block C line 114: Szczecin | Poland | Stettin | 1945 | German city became Polish Szczecin
+- Stettin is a former name of which city? **Szczecin (Poland)**
+  - Block C line 114: Szczecin | Poland | Stettin | 1945 | German city became Polish Szczecin
+- What was Wroclaw (Poland) called before 1945? **Breslau**
+  - Block C line 115: Wroclaw | Poland | Breslau | 1945 | German city became Polish Wroclaw
+- Breslau is a former name of which city? **Wroclaw (Poland)**
+  - Block C line 115: Wroclaw | Poland | Breslau | 1945 | German city became Polish Wroclaw
+- What was Dolisie (Republic of the Congo) called before 1991? **Loubomo**
+  - Block C line 116: Dolisie | Republic of the Congo | Loubomo | 1991 | earlier name Dolisie restored
+- Loubomo is a former name of which city? **Dolisie (Republic of the Congo)**
+  - Block C line 116: Dolisie | Republic of the Congo | Loubomo | 1991 | earlier name Dolisie restored
+- What was Brasov (Romania) called before 1960? **Orasul Stalin**
+  - Block C line 117: Brasov | Romania | Orasul Stalin | 1960 | Stalin name dropped, old name back
+- Orasul Stalin is a former name of which city? **Brasov (Romania)**
+  - Block C line 117: Brasov | Romania | Orasul Stalin | 1960 | Stalin name dropped, old name back
+- What was Baltiysk (Russia) called before 1946? **Pillau**
+  - Block C line 118: Baltiysk | Russia | Pillau | 1946 | German name replaced under Soviet rule
+- Pillau is a former name of which city? **Baltiysk (Russia)**
+  - Block C line 118: Baltiysk | Russia | Pillau | 1946 | German name replaced under Soviet rule
+- What was Engels (Russia) called before 1931? **Pokrovsk**
+  - Block C line 121: Engels | Russia | Pokrovsk | 1931 | renamed after Friedrich Engels
+- Pokrovsk is a former name of which city? **Engels (Russia)**
+  - Block C line 121: Engels | Russia | Pokrovsk | 1931 | renamed after Friedrich Engels
+- What was Izhevsk (Russia) called before 1987? **Ustinov**
+  - Block C line 123: Izhevsk | Russia | Ustinov | 1987 | historical name regained after protests
+- Ustinov is a former name of which city? **Izhevsk (Russia)**
+  - Block C line 123: Izhevsk | Russia | Ustinov | 1987 | historical name regained after protests
+- What was Kaliningrad (Russia) called before 1946? **Konigsberg**
+  - Block C line 124: Kaliningrad | Russia | Konigsberg | 1946 | renamed after Mikhail Kalinin under Soviet rule
+- Konigsberg is a former name of which city? **Kaliningrad (Russia)**
+  - Block C line 124: Kaliningrad | Russia | Konigsberg | 1946 | renamed after Mikhail Kalinin under Soviet rule
+- What was Kirov (Russia) called before 1934? **Vyatka**
+  - Block C line 125: Kirov | Russia | Vyatka | 1934 | renamed after Bolshevik Sergei Kirov
+- Vyatka is a former name of which city? **Kirov (Russia)**
+  - Block C line 125: Kirov | Russia | Vyatka | 1934 | renamed after Bolshevik Sergei Kirov
+- What was Krasnodar (Russia) called before 1920? **Yekaterinodar**
+  - Block C line 127: Krasnodar | Russia | Yekaterinodar | 1920 | renamed after the revolution
+- Yekaterinodar is a former name of which city? **Krasnodar (Russia)**
+  - Block C line 127: Krasnodar | Russia | Yekaterinodar | 1920 | renamed after the revolution
+- What was Makhachkala (Russia) called before 1921? **Petrovsk-Port**
+  - Block C line 128: Makhachkala | Russia | Petrovsk-Port | 1921 | renamed under Soviet rule
+- Petrovsk-Port is a former name of which city? **Makhachkala (Russia)**
+  - Block C line 128: Makhachkala | Russia | Petrovsk-Port | 1921 | renamed under Soviet rule
+- What was Naberezhnye Chelny (Russia) called before 1988? **Brezhnev**
+  - Block C line 129: Naberezhnye Chelny | Russia | Brezhnev | 1988 | Brezhnev name dropped, old name back
+- Brezhnev is a former name of which city? **Naberezhnye Chelny (Russia)**
+  - Block C line 129: Naberezhnye Chelny | Russia | Brezhnev | 1988 | Brezhnev name dropped, old name back
+- What was Nizhny Novgorod (Russia) called before 1990? **Gorky**
+  - Block C line 130: Nizhny Novgorod | Russia | Gorky | 1990 | original name reinstated
+- Gorky is a former name of which city? **Nizhny Novgorod (Russia)**
+  - Block C line 130: Nizhny Novgorod | Russia | Gorky | 1990 | original name reinstated
+- What was Novosibirsk (Russia) called before 1926? **Novonikolayevsk**
+  - Block C line 131: Novosibirsk | Russia | Novonikolayevsk | 1926 | given its present name
+- Novonikolayevsk is a former name of which city? **Novosibirsk (Russia)**
+  - Block C line 131: Novosibirsk | Russia | Novonikolayevsk | 1926 | given its present name
+- What was Orenburg (Russia) called before 1957? **Chkalov**
+  - Block C line 132: Orenburg | Russia | Chkalov | 1957 | original name regained
+- Chkalov is a former name of which city? **Orenburg (Russia)**
+  - Block C line 132: Orenburg | Russia | Chkalov | 1957 | original name regained
+- What was Perm (Russia) called before 1957? **Molotov**
+  - Block C line 133: Perm | Russia | Molotov | 1957 | historical name restored
+- Molotov is a former name of which city? **Perm (Russia)**
+  - Block C line 133: Perm | Russia | Molotov | 1957 | historical name restored
+- What was Pushkin (Russia) called before 1937? **Detskoye Selo**
+  - Block C line 134: Pushkin | Russia | Detskoye Selo | 1937 | renamed after the poet Pushkin
+- Detskoye Selo is a former name of which city? **Pushkin (Russia)**
+  - Block C line 134: Pushkin | Russia | Detskoye Selo | 1937 | renamed after the poet Pushkin
+- What was Rybinsk (Russia) called before 1989? **Andropov**
+  - Block C line 135: Rybinsk | Russia | Andropov | 1989 | Andropov name dropped, old name back
+- Andropov is a former name of which city? **Rybinsk (Russia)**
+  - Block C line 135: Rybinsk | Russia | Andropov | 1989 | Andropov name dropped, old name back
+- What was Saint Petersburg (Russia) called before 1991? **Leningrad**
+  - Block C line 136: Saint Petersburg | Russia | Leningrad | 1991 | old name restored after a city referendum
+- Leningrad is a former name of which city? **Saint Petersburg (Russia)**
+  - Block C line 136: Saint Petersburg | Russia | Leningrad | 1991 | old name restored after a city referendum
+- What was Samara (Russia) called before 1991? **Kuybyshev**
+  - Block C line 137: Samara | Russia | Kuybyshev | 1991 | historical name restored
+- Kuybyshev is a former name of which city? **Samara (Russia)**
+  - Block C line 137: Samara | Russia | Kuybyshev | 1991 | historical name restored
+- What was Sergiyev Posad (Russia) called before 1991? **Zagorsk**
+  - Block C line 139: Sergiyev Posad | Russia | Zagorsk | 1991 | original name restored
+- Zagorsk is a former name of which city? **Sergiyev Posad (Russia)**
+  - Block C line 139: Sergiyev Posad | Russia | Zagorsk | 1991 | original name restored
+- What was Sovetsk (Russia) called before 1946? **Tilsit**
+  - Block C line 141: Sovetsk | Russia | Tilsit | 1946 | German name replaced under Soviet rule
+- Tilsit is a former name of which city? **Sovetsk (Russia)**
+  - Block C line 141: Sovetsk | Russia | Tilsit | 1946 | German name replaced under Soviet rule
+- What was Tolyatti (Russia) called before 1964? **Stavropol**
+  - Block C line 142: Tolyatti | Russia | Stavropol | 1964 | renamed after Italian communist Togliatti
+- Stavropol is a former name of which city? **Tolyatti (Russia)**
+  - Block C line 142: Tolyatti | Russia | Stavropol | 1964 | renamed after Italian communist Togliatti
+- What was Tver (Russia) called before 1990? **Kalinin**
+  - Block C line 143: Tver | Russia | Kalinin | 1990 | historical name restored
+- Kalinin is a former name of which city? **Tver (Russia)**
+  - Block C line 143: Tver | Russia | Kalinin | 1990 | historical name restored
+- What was Ulyanovsk (Russia) called before 1924? **Simbirsk**
+  - Block C line 144: Ulyanovsk | Russia | Simbirsk | 1924 | renamed after Lenin (Vladimir Ulyanov)
+- Simbirsk is a former name of which city? **Ulyanovsk (Russia)**
+  - Block C line 144: Ulyanovsk | Russia | Simbirsk | 1924 | renamed after Lenin (Vladimir Ulyanov)
+- What was Ussuriysk (Russia) called before 1957? **Voroshilov**
+  - Block C line 145: Ussuriysk | Russia | Voroshilov | 1957 | Voroshilov name dropped
+- Voroshilov is a former name of which city? **Ussuriysk (Russia)**
+  - Block C line 145: Ussuriysk | Russia | Voroshilov | 1957 | Voroshilov name dropped
+- What was Vladikavkaz (Russia) called before 1990? **Ordzhonikidze**
+  - Block C line 146: Vladikavkaz | Russia | Ordzhonikidze | 1990 | old Russian name Vladikavkaz returned
+- Ordzhonikidze is a former name of which city? **Vladikavkaz (Russia)**
+  - Block C line 146: Vladikavkaz | Russia | Ordzhonikidze | 1990 | old Russian name Vladikavkaz returned
+- What was Volgograd (Russia) called before 1961? **Stalingrad**
+  - Block C line 147: Volgograd | Russia | Stalingrad | 1961 | renamed during de-Stalinization
+- Stalingrad is a former name of which city? **Volgograd (Russia)**
+  - Block C line 147: Volgograd | Russia | Stalingrad | 1961 | renamed during de-Stalinization
+- What was Yekaterinburg (Russia) called before 1991? **Sverdlovsk**
+  - Block C line 148: Yekaterinburg | Russia | Sverdlovsk | 1991 | historical name restored
+- Sverdlovsk is a former name of which city? **Yekaterinburg (Russia)**
+  - Block C line 148: Yekaterinburg | Russia | Sverdlovsk | 1991 | historical name restored
+- What was Dimitrovgrad (Serbia) called before 1950? **Caribrod**
+  - Block C line 149: Dimitrovgrad | Serbia | Caribrod | 1950 | renamed after Georgi Dimitrov
+- Caribrod is a former name of which city? **Dimitrovgrad (Serbia)**
+  - Block C line 149: Dimitrovgrad | Serbia | Caribrod | 1950 | renamed after Georgi Dimitrov
+- What was Zrenjanin (Serbia) called before 1946? **Petrovgrad**
+  - Block C line 150: Zrenjanin | Serbia | Petrovgrad | 1946 | renamed after partisan Zarko Zrenjanin
+- Petrovgrad is a former name of which city? **Zrenjanin (Serbia)**
+  - Block C line 150: Zrenjanin | Serbia | Petrovgrad | 1946 | renamed after partisan Zarko Zrenjanin
+- What was Bela-Bela (South Africa) called before 2002? **Warmbaths**
+  - Block C line 151: Bela-Bela | South Africa | Warmbaths | 2002 | officially renamed by government
+- Warmbaths is a former name of which city? **Bela-Bela (South Africa)**
+  - Block C line 151: Bela-Bela | South Africa | Warmbaths | 2002 | officially renamed by government
+- What was Gqeberha (South Africa) called before 2021? **Port Elizabeth**
+  - Block C line 152: Gqeberha | South Africa | Port Elizabeth | 2021 | name change officially gazetted
+- Port Elizabeth is a former name of which city? **Gqeberha (South Africa)**
+  - Block C line 152: Gqeberha | South Africa | Port Elizabeth | 2021 | name change officially gazetted
+- What was Kariega (South Africa) called before 2021? **Uitenhage**
+  - Block C line 153: Kariega | South Africa | Uitenhage | 2021 | name change officially gazetted
+- Uitenhage is a former name of which city? **Kariega (South Africa)**
+  - Block C line 153: Kariega | South Africa | Uitenhage | 2021 | name change officially gazetted
+- What was Lephalale (South Africa) called before 2002? **Ellisras**
+  - Block C line 154: Lephalale | South Africa | Ellisras | 2002 | renamed by Limpopo provincial government
+- Ellisras is a former name of which city? **Lephalale (South Africa)**
+  - Block C line 154: Lephalale | South Africa | Ellisras | 2002 | renamed by Limpopo provincial government
+- What was Makhanda (South Africa) called before 2018? **Grahamstown**
+  - Block C line 155: Makhanda | South Africa | Grahamstown | 2018 | officially renamed after colonial-era name
+- Grahamstown is a former name of which city? **Makhanda (South Africa)**
+  - Block C line 155: Makhanda | South Africa | Grahamstown | 2018 | officially renamed after colonial-era name
+- What was Mbombela (South Africa) called? **Nelspruit**
+  - Block C line 156: Mbombela | South Africa | Nelspruit | 2009 | renamed by government, upheld in court 2014
+- Nelspruit is a former name of which city? **Mbombela (South Africa)**
+  - Block C line 156: Mbombela | South Africa | Nelspruit | 2009 | renamed by government, upheld in court 2014
+- What was Mokopane (South Africa) called before 2003? **Potgietersrus**
+  - Block C line 158: Mokopane | South Africa | Potgietersrus | 2003 | name officially changed by government
+- Potgietersrus is a former name of which city? **Mokopane (South Africa)**
+  - Block C line 158: Mokopane | South Africa | Potgietersrus | 2003 | name officially changed by government
+- What was Polokwane (South Africa) called before 2005? **Pietersburg**
+  - Block C line 159: Polokwane | South Africa | Pietersburg | 2005 | government declared Polokwane official name
+- Pietersburg is a former name of which city? **Polokwane (South Africa)**
+  - Block C line 159: Polokwane | South Africa | Pietersburg | 2005 | government declared Polokwane official name
+- What was Qonce (South Africa) called before 2021? **King William's Town**
+  - Block C line 160: Qonce | South Africa | King William's Town | 2021 | officially renamed
+- King William's Town is a former name of which city? **Qonce (South Africa)**
+  - Block C line 160: Qonce | South Africa | King William's Town | 2021 | officially renamed
+- What was eMalahleni (South Africa) called before 2006? **Witbank**
+  - Block C line 161: eMalahleni | South Africa | Witbank | 2006 | officially renamed
+- Witbank is a former name of which city? **eMalahleni (South Africa)**
+  - Block C line 161: eMalahleni | South Africa | Witbank | 2006 | officially renamed
+- What was Bokhtar (Tajikistan) called before 2018? **Qurghonteppa**
+  - Block C line 162: Bokhtar | Tajikistan | Qurghonteppa | 2018 | city officially renamed Bokhtar
+- Qurghonteppa is a former name of which city? **Bokhtar (Tajikistan)**
+  - Block C line 162: Bokhtar | Tajikistan | Qurghonteppa | 2018 | city officially renamed Bokhtar
+- What was Istaravshan (Tajikistan) called before 2000? **Ura-Tyube**
+  - Block C line 163: Istaravshan | Tajikistan | Ura-Tyube | 2000 | Tajik government restored the historic name
+- Ura-Tyube is a former name of which city? **Istaravshan (Tajikistan)**
+  - Block C line 163: Istaravshan | Tajikistan | Ura-Tyube | 2000 | Tajik government restored the historic name
+- What was Istanbul (Turkiye) called before 1930? **Constantinople**
+  - Block C line 164: Istanbul | Turkiye | Constantinople | 1930 | Istanbul made the official name
+- Constantinople is a former name of which city? **Istanbul (Turkiye)**
+  - Block C line 164: Istanbul | Turkiye | Constantinople | 1930 | Istanbul made the official name
+- What was Turkmenbashi (Turkmenistan) called before 1993? **Krasnovodsk**
+  - Block C line 167: Turkmenbashi | Turkmenistan | Krasnovodsk | 1993 | renamed after President Niyazov's title
+- Krasnovodsk is a former name of which city? **Turkmenbashi (Turkmenistan)**
+  - Block C line 167: Turkmenbashi | Turkmenistan | Krasnovodsk | 1993 | renamed after President Niyazov's title
+- What was Ivano-Frankivsk (Ukraine) called before 1962? **Stanislav**
+  - Block C line 169: Ivano-Frankivsk | Ukraine | Stanislav | 1962 | renamed after writer Ivan Franko
+- Stanislav is a former name of which city? **Ivano-Frankivsk (Ukraine)**
+  - Block C line 169: Ivano-Frankivsk | Ukraine | Stanislav | 1962 | renamed after writer Ivan Franko
+- What was Khmelnytskyi (Ukraine) called before 1954? **Proskuriv**
+  - Block C line 170: Khmelnytskyi | Ukraine | Proskuriv | 1954 | renamed after Bohdan Khmelnytsky
+- Proskuriv is a former name of which city? **Khmelnytskyi (Ukraine)**
+  - Block C line 170: Khmelnytskyi | Ukraine | Proskuriv | 1954 | renamed after Bohdan Khmelnytsky
+- What was Kropyvnytskyi (Ukraine) called before 2016? **Kirovohrad**
+  - Block C line 171: Kropyvnytskyi | Ukraine | Kirovohrad | 2016 | renamed under decommunization law
+- Kirovohrad is a former name of which city? **Kropyvnytskyi (Ukraine)**
+  - Block C line 171: Kropyvnytskyi | Ukraine | Kirovohrad | 2016 | renamed under decommunization law
+- What was Austin (United States) called before 1839? **Waterloo**
+  - Block C line 173: Austin | United States | Waterloo | 1839 | renamed Austin when chosen as Texas capital
+- Waterloo is a former name of which city? **Austin (United States)**
+  - Block C line 173: Austin | United States | Waterloo | 1839 | renamed Austin when chosen as Texas capital
+- What was Bismarck (United States) called before 1873? **Edwinton**
+  - Block C line 174: Bismarck | United States | Edwinton | 1873 | railway renamed it for Otto von Bismarck
+- Edwinton is a former name of which city? **Bismarck (United States)**
+  - Block C line 174: Bismarck | United States | Edwinton | 1873 | railway renamed it for Otto von Bismarck
+- What was Hagatna (United States) called before 1998? **Agana**
+  - Block C line 175: Hagatna | United States | Agana | 1998 | Guam capital took its Chamorro name
+- Agana is a former name of which city? **Hagatna (United States)**
+  - Block C line 175: Hagatna | United States | Agana | 1998 | Guam capital took its Chamorro name
+- What was Jim Thorpe (United States) called before 1954? **Mauch Chunk**
+  - Block C line 176: Jim Thorpe | United States | Mauch Chunk | 1954 | merged boroughs renamed for athlete Jim Thorpe
+- Mauch Chunk is a former name of which city? **Jim Thorpe (United States)**
+  - Block C line 176: Jim Thorpe | United States | Mauch Chunk | 1954 | merged boroughs renamed for athlete Jim Thorpe
+- What was Sleepy Hollow (United States) called before 1996? **North Tarrytown**
+  - Block C line 177: Sleepy Hollow | United States | North Tarrytown | 1996 | village took the area's historical name
+- North Tarrytown is a former name of which city? **Sleepy Hollow (United States)**
+  - Block C line 177: Sleepy Hollow | United States | North Tarrytown | 1996 | village took the area's historical name
+- What was Truth or Consequences (United States) called before 1950? **Hot Springs**
+  - Block C line 178: Truth or Consequences | United States | Hot Springs | 1950 | renamed after a radio quiz show
+- Hot Springs is a former name of which city? **Truth or Consequences (United States)**
+  - Block C line 178: Truth or Consequences | United States | Hot Springs | 1950 | renamed after a radio quiz show
+- What was Utqiagvik (United States) called before 2016? **Barrow**
+  - Block C line 179: Utqiagvik | United States | Barrow | 2016 | English name replaced by Inupiaq name
+- Barrow is a former name of which city? **Utqiagvik (United States)**
+  - Block C line 179: Utqiagvik | United States | Barrow | 2016 | English name replaced by Inupiaq name
+- What was Ciudad Bolivar (Venezuela) called before 1846? **Angostura**
+  - Block C line 180: Ciudad Bolivar | Venezuela | Angostura | 1846 | renamed in honour of Simon Bolivar
+- Angostura is a former name of which city? **Ciudad Bolivar (Venezuela)**
+  - Block C line 180: Ciudad Bolivar | Venezuela | Angostura | 1846 | renamed in honour of Simon Bolivar
+- What was Ho Chi Minh City (Viet Nam) called before 1976? **Saigon**
+  - Block C line 181: Ho Chi Minh City | Viet Nam | Saigon | 1976 | renamed at Vietnam's reunification
+- Saigon is a former name of which city? **Ho Chi Minh City (Viet Nam)**
+  - Block C line 181: Ho Chi Minh City | Viet Nam | Saigon | 1976 | renamed at Vietnam's reunification
+- What was Kabwe (Zambia) called before 1966? **Broken Hill**
+  - Block C line 182: Kabwe | Zambia | Broken Hill | 1966 | colonial name dropped after independence
+- Broken Hill is a former name of which city? **Kabwe (Zambia)**
+  - Block C line 182: Kabwe | Zambia | Broken Hill | 1966 | colonial name dropped after independence
+- What was Chegutu (Zimbabwe) called before 1982? **Hartley**
+  - Block C line 183: Chegutu | Zimbabwe | Hartley | 1982 | colonial name officially replaced
+- Hartley is a former name of which city? **Chegutu (Zimbabwe)**
+  - Block C line 183: Chegutu | Zimbabwe | Hartley | 1982 | colonial name officially replaced
+- What was Hwange (Zimbabwe) called before 1982? **Wankie**
+  - Block C line 184: Hwange | Zimbabwe | Wankie | 1982 | colonial name replaced
+- Wankie is a former name of which city? **Hwange (Zimbabwe)**
+  - Block C line 184: Hwange | Zimbabwe | Wankie | 1982 | colonial name replaced
+- What was Kadoma (Zimbabwe) called before 1982? **Gatooma**
+  - Block C line 185: Kadoma | Zimbabwe | Gatooma | 1982 | renamed in 1982 gazette of new names
+- Gatooma is a former name of which city? **Kadoma (Zimbabwe)**
+  - Block C line 185: Kadoma | Zimbabwe | Gatooma | 1982 | renamed in 1982 gazette of new names
+- What was Masvingo (Zimbabwe) called before 1982? **Fort Victoria**
+  - Block C line 186: Masvingo | Zimbabwe | Fort Victoria | 1982 | colonial name replaced (briefly Nyanda)
+- Fort Victoria is a former name of which city? **Masvingo (Zimbabwe)**
+  - Block C line 186: Masvingo | Zimbabwe | Fort Victoria | 1982 | colonial name replaced (briefly Nyanda)
+- What was Mutare (Zimbabwe) called before 1982? **Umtali**
+  - Block C line 187: Mutare | Zimbabwe | Umtali | 1982 | colonial name officially replaced
+- Umtali is a former name of which city? **Mutare (Zimbabwe)**
+  - Block C line 187: Mutare | Zimbabwe | Umtali | 1982 | colonial name officially replaced
+- What was Zvishavane (Zimbabwe) called before 1982? **Shabani**
+  - Block C line 188: Zvishavane | Zimbabwe | Shabani | 1982 | colonial name replaced with indigenous one
+- Shabani is a former name of which city? **Zvishavane (Zimbabwe)**
+  - Block C line 188: Zvishavane | Zimbabwe | Shabani | 1982 | colonial name replaced with indigenous one
 
 ## What was it called?
 
@@ -2264,155 +3346,155 @@ Wrong answers are drawn from the other questions' right answers of the same kind
 
 ### No. 1, Sat (hard)
 
-1. Which came first? Berlin Wall opened, border crossings freed (1989) / Peace treaty transfers Italy's Dodecanese islands to Greece (1947)
-1. Put in order: The capital of Mozambique moves from Island of Mozambique to Lourenco Marques (1898) / The capital of Uzbekistan moves from Samarkand to Tashkent (1930) / Suez Canal opens (1869)
-1. Which came later? Mozambique becomes independent from Portugal (1975) / Laos becomes independent from France (1953)
-1. When was it? France captures Algiers (1830; slider 1801 to 1951)
-1. Which came later? The Comoros becomes independent from France (1975) / British India partitioned into India and Pakistan (1947)
-1. Which came first? The name Siam comes back into use for today's Thailand (1945) / Saar returns to Germany after a referendum (1935)
-1. Which came first? Treaty of Vereeniging: Boer republics become British colonies (1902) / Northern and Southern Nigeria merged into one colony (1914)
-1. Which came later? Britain leases the New Territories of Hong Kong (1898) / Iceland becomes a sovereign kingdom in union with Denmark (1918)
+1. Which came later? Santa Isabel, Equatorial Guinea, is renamed Malabo (1973) / Tuva is annexed into the Soviet Union (1944)
+1. Put in order: Lateran Treaty creates Vatican City as an independent state (1929) / Spain cedes the Philippines, Guam and Puerto Rico to US (1898) / Dual monarchy of Austria-Hungary established (1867)
+1. Which came first? Ustinov, Russia, is renamed Izhevsk (1987) / The name Syonan-to comes into use for today's Singapore (1942)
+1. When was it? United States buys Alaska from Russia (1867; slider 1819 to 1969)
+1. Which came first? Chaco peace treaty gives Paraguay most of the Gran Chaco (1938) / Saint Lawrence Seaway opens to ocean ships (1959)
+1. Which came first? British Crown takes over rule of India from the Company (1858) / Angostura, Venezuela, is renamed Ciudad Bolivar (1846)
+1. Which came first? British East India Company captures Aden (1839) / Valladolid, Mexico, is renamed Morelia (1828)
+1. Which came first? Six Trucial States form the United Arab Emirates (1971) / Sverdlovsk, Russia, is renamed Yekaterinburg (1991)
 
 ### No. 2, Sun (hardest)
 
-1. Which came first? Van Diemen's Land becomes a colony separate from New South Wales (1825) / United States buys southern Arizona strip from Mexico (1853)
-1. When was it? Soviet Union formally dissolved into 15 states (1991; slider 1859 to 2009)
-1. Which came first? North and South Vietnam formally reunified (1976) / Libya becomes independent as a united kingdom (1951)
-1. Put in order: Uganda becomes independent from the United Kingdom (1962) / Burundi makes Gitega its political capital instead of Bujumbura (2019) / Croatia becomes independent from Yugoslavia (1991)
-1. Which came first? Spain cedes Florida to the United States (1819) / Province of South Australia proclaimed (1836)
-1. How many years apart? Texas declares independence from Mexico (1836) / Cabo Verde becomes independent from Portugal (1975)
-1. Put in order: New Irish constitution names the state Eire (Ireland) (1937) / Egypt and Syria unite as the United Arab Republic (1958) / Treaty of Lima: Tacna returns to Peru, Chile keeps Arica (1929)
-1. Which came first? Lateran Treaty creates Vatican City as an independent state (1929) / Treaty of Lausanne sets the borders of modern Turkiye (1923)
+1. Which came first? Spain cedes Florida to the United States (1819) / Liberia declares independence (1847)
+1. When was it? Namibia becomes independent from South Africa (1990; slider 1869 to 2019)
+1. Which came first? The capital of Costa Rica moves from Cartago to San Jose (1823) / Liechtenstein is formed as a sovereign state (1806)
+1. Put in order: Alaska becomes the 49th US state (1959) / Cabo Verde becomes independent from Portugal (1975) / Zagorsk, Russia, is renamed Sergiyev Posad (1991)
+1. When was it? Haiti declares independence from France (1804; slider 1800 to 1990)
+1. How many years apart? Lourenco Marques, Mozambique, is renamed Maputo (1976) / Belgium declares independence from the Netherlands (1830)
+1. Put in order: North and South Vietnam formally reunified (1976) / Prespa Agreement in force; Macedonia renamed North Macedonia (2019) / Agana, United States, is renamed Hagatna (1998)
+1. What was Toronto (Canada) called before 1834? York (options: Pile o' Bones, Fort William and Port Arthur, Berlin, York)
 
 ### No. 3, Mon (easy)
 
-1. Which came later? Tanganyika and Zanzibar unite; renamed Tanzania same year (1964) / Sierra Leone becomes a British crown colony (1808)
-1. Put in order: The name Santo Domingo stops being used for today's Dominican Republic (1821) / Alberta and Saskatchewan become Canadian provinces (1905) / Kazakhstan renames its capital Astana to Nur-Sultan (2019)
-1. Which came first? Malawi becomes independent from the United Kingdom (1964) / The capital of Italy moves from Turin to Florence (1865)
-1. In 1822, Brazil became independent from… Portugal (options: Netherlands, Serbia and Montenegro, Portugal, Ethiopia)
-1. Put in order: Austria-Hungary annexes Bosnia and Herzegovina (1908) / Kuwait becomes independent from the United Kingdom (1961) / Samoa crosses International Date Line, skipping 30 December (2011)
-1. Dutch East Indies (until 1949) is a former name of which country? Indonesia (options: Indonesia, Mongolia, Yemen, Germany)
-1. In 1841, New Zealand moved its capital to Auckland. Where was it before? Okiato (options: Turin, Belgrade, Okiato, Florence)
-1. When was it? Canada and Denmark agree to split Hans Island between them (2022; slider 1936 to 2026)
+1. Which came first? Germany claims north-eastern New Guinea (1884) / Slovenia becomes independent from Yugoslavia (1991)
+1. Put in order: United Nations adopts Turkiye as the country's name (2022) / Konigsberg, Russia, is renamed Kaliningrad (1946) / Fiji ceded to Britain (1874)
+1. In 1821, Honduras became independent from… Spain (options: Ethiopia, Spain, Brazil, South Africa)
+1. Put in order: Dihua, China, is renamed Urumqi (1954) / Dominican Republic declares independence from Haiti (1844) / Montenegro declares independence, ending Serbia and Montenegro union (2006)
+1. What was Kisangani (Democratic Republic of the Congo) called before 1966? Stanleyville (options: Stanleyville, Berlin, Titov Veles, Lyallpur)
+1. Which of these is a former name of Kyrgyzstan, used until 1991? Kirghizia (options: United Provinces of the Rio de la Plata, French Togoland, Ellice Islands, Kirghizia)
+1. In 1879, which country moved its capital from Tarnovo to Sofia? Bulgaria (options: Bulgaria, Montenegro, United States, Malawi)
+1. When was it? Barrow, United States, is renamed Utqiagvik (2016; slider 1933 to 2023)
 
 ### No. 4, Tue (fairly easy)
 
-1. Which came first? Austria becomes independent on the dissolution of Austria-Hungary (1918) / Papua New Guinea becomes independent from Australia (1975)
-1. Put in order: Kiel Canal opens (1895) / Burma becomes independent outside the Commonwealth (1948) / Timor-Leste becomes independent after UN administration (2002)
-1. Which came first? Kingdom of Italy proclaimed (1861) / Saint Lucia becomes independent from the United Kingdom (1979)
-1. When was it? Chad becomes independent from France (1960; slider 1909 to 1999)
-1. Which came first? Treaty of Petropolis: Bolivia cedes Acre to Brazil (1903) / Guinea-Bissau becomes independent from Portugal (1973)
-1. How many years apart? Denmark sells Danish West Indies to the United States (1917) / Munich Agreement lets Germany annex the Sudetenland (1938)
-1. Which came later? Rio Protocol signed on the Peru-Ecuador border (1942) / Saint Kitts and Nevis becomes independent from the United Kingdom (1983)
-1. Which came later? Treaty of Versailles signed; Alsace-Lorraine restored to France (1919) / Tuva is annexed into the Soviet Union (1944)
+1. Which came first? Mysore, India, is renamed Mysuru (2014) / Western Samoa becomes independent from New Zealand (1962)
+1. Put in order: Port Elizabeth, South Africa, is renamed Gqeberha (2021) / Saigon, Viet Nam, is renamed Ho Chi Minh City (1976) / Edwinton, United States, is renamed Bismarck (1873)
+1. When was it? Littoria, Italy, is renamed Latina (1946; slider 1906 to 1976)
+1. Which came first? Treaty of London recognises Belgium and partitions Luxembourg (1839) / Paso del Norte, Mexico, is renamed Ciudad Juarez (1888)
+1. When was it? Bremersdorp, Eswatini, is renamed Manzini (1960; slider 1904 to 1994)
+1. How many years apart? Britain annexes Lagos (1861) / The name British Solomon Islands stops being used for today's Solomon Islands (1975)
+1. Which came first? Sudan becomes independent (1956) / Gottwaldov, Czechia, is renamed Zlin (1990)
+1. What was Austin (United States) called before 1839? Waterloo (options: Waterloo, Ciudad Porfirio Diaz, Port Swettenham, Kingstown)
 
 ### No. 5, Wed (medium)
 
-1. Which came later? Malaya, Sabah, Sarawak and Singapore federate as Malaysia (1963) / The name French Togoland comes into use for today's Togo (1916)
-1. Put in order: The capital of Portugal moves from Lisbon to Rio de Janeiro (1808) / The Swiss federal state is formed (1848) / The capital of Fiji moves from Levuka to Suva (1882)
-1. Which came later? The name Greater Lebanon comes into use for today's Lebanon (1920) / Seychelles becomes independent from the United Kingdom (1976)
-1. Germany moved its capital to Berlin. Where was it before? Bonn (options: Bissau, Bonn, Naypyidaw, Calcutta)
-1. Which came first? Main wall of Three Gorges Dam on the Yangtze completed (2006) / The name Russian SFSR stops being used for today's Russia (1991)
-1. Put in order: The capital of Bulgaria moves from Tarnovo to Sofia (1879) / Geneva Accords divide Viet Nam at the 17th parallel (1954) / The name Greater Lebanon stops being used for today's Lebanon (1926)
-1. Which came later? Dahomey renamed People's Republic of Benin (1975) / Malta becomes independent from the United Kingdom (1964)
-1. When was it? North and South Yemen unify as Republic of Yemen (1990; slider 1867 to 2017)
+1. Which came first? Treaty of Aigun moves Amur lands from China to Russia (1858) / The capital of Kenya moves from Mombasa to Nairobi (1907)
+1. In 1946, Montenegro moved its capital to Podgorica. Where was it before? Cetinje (options: Kyiv, Cetinje, Helsinki, Massawa)
+1. Put in order: Burma becomes independent outside the Commonwealth (1948) / Portugal transfers Macau to China (1999) / New Zealand forces capture German Samoa (1914)
+1. Which came first? Calcutta, India, is renamed Kolkata (2001) / Bathurst, Gambia, is renamed Banjul (1973)
+1. Put in order: Gorky, Russia, is renamed Nizhny Novgorod (1990) / Czech government adopts Czechia as official English short name (2016) / Stalinstadt, Germany, is renamed Eisenhuttenstadt (1961)
+1. When was it? Trivandrum, India, is renamed Thiruvananthapuram (1991; slider 1883 to 2003)
+1. What was Gurugram (India) called before 2016? Gurgaon (options: Pondicherry, Mysore, Bangalore, Gurgaon)
+1. When was it? Saint Petersburg renamed Petrograd (1914; slider 1849 to 1999)
 
 ### No. 6, Thu (medium)
 
-1. Which came first? Treaty of Bucharest: Bulgaria cedes Southern Dobruja to Romania (1913) / Rome becomes capital of Italy (1871)
-1. Pleasant Island is a former name of which country? Nauru (options: Papua New Guinea, Turkmenistan, United Arab Emirates, Nauru)
-1. In 1821, Peru became independent from… Spain (options: Malaysia, Spain, Yugoslavia, Serbia and Montenegro)
-1. Put in order: The name Bechuanaland comes into use for today's Botswana (1885) / Rideau Canal opens (1832) / Norway's capital Kristiania renamed Oslo (1925)
-1. When was it? The name Khmer Republic comes into use for today's Cambodia (1970; slider 1875 to 1995)
-1. Put in order: Netherlands Antilles dissolved; Curacao and Sint Maarten become countries (2010) / Italy merges Ethiopia, Eritrea and Somalia into Italian East Africa (1936) / Southern Rhodesia becomes independent Zimbabwe (1980)
-1. When was it? Peru and Ecuador sign Brasilia Presidential Act ending border dispute (1998; slider 1860 to 2010)
-1. How many years apart? Australia takes League mandate over former German New Guinea (1920) / Luxembourg ends personal union with the Netherlands (1890)
+1. Which came first? Indonesia becomes independent from the Netherlands (1945) / Czechoslovakia declares independence from Austria-Hungary (1918)
+1. Iceland became independent from… Denmark (options: Indonesia, Pakistan, Spain, Denmark)
+1. Eskimo Point is a former name of which city? Arviat (Canada) (options: Arviat (Canada), Kenitra (Morocco), Hahndorf (Australia), Ciudad Bolivar (Venezuela))
+1. Put in order: Argentina declares independence from Spain (1816) / The name German South West Africa stops being used for today's Namibia (1915) / China cedes Kowloon to Britain (1860)
+1. Which of these is a former name of Tuvalu? Ellice Islands (options: Kampuchea, Ellice Islands, United Provinces of the Rio de la Plata, Ukrainian SSR)
+1. Put in order: Algeria becomes independent from France (1962) / Timor-Leste becomes independent after UN administration (2002) / Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo (2026)
+1. When was it? Van Diemen's Land becomes a colony separate from New South Wales (1825; slider 1806 to 1956)
+1. How many years apart? Loubomo, Republic of the Congo, is renamed Dolisie (1991) / The capital of the Philippines moves from Quezon City to Manila (1976)
 
 ### No. 7, Fri (hard)
 
-1. Which came first? The capital of Eswatini moves from Bremersdorp to Mbabane (1902) / Kazakh SSR becomes a full Soviet union republic (1936)
-1. Put in order: Ellice Islands become independent as Tuvalu (1978) / The name Western Samoa stops being used for today's Samoa (1997) / Peljesac Bridge opens, linking Dubrovnik area to rest of Croatia (2022)
-1. In 1959, which country moved its capital from Karachi to Rawalpindi? Pakistan (options: Montenegro, Pakistan, Nigeria, Brazil)
-1. Put in order: Oresund Bridge opens linking Copenhagen and Malmo (2000) / Grenada becomes independent from the United Kingdom (1974) / The Democratic Republic of the Congo becomes independent from Belgium (1960)
-1. Which came later? The name Syonan-to stops being used for today's Singapore (1945) / Lithuania becomes independent from the Russian Empire (1918)
-1. When was it? Dominion of Canada created by Confederation (1867; slider 1808 to 1958)
-1. Which came later? Micronesia becomes independent from the United States (1986) / Montenegro declares independence, ending Serbia and Montenegro union (2006)
-1. How many years apart? Benin becomes independent from France (1960) / Sweden cedes Finland to Russia (1809)
+1. Which came later? Botswana becomes independent from the United Kingdom (1966) / Nazi Germany annexes Austria (Anschluss) (1938)
+1. In 1918, which country moved its capital from Petrograd to Moscow? Russia (options: Philippines, Russia, Guinea-Bissau, Montenegro)
+1. When was it? Flevoland, built on reclaimed polders, becomes 12th Dutch province (1986; slider 1879 to 1999)
+1. Kalinin is a former name of which city? Tver (Russia) (options: Saint Petersburg (Russia), Tver (Russia), Naberezhnye Chelny (Russia), Yekaterinburg (Russia))
+1. Put in order: Malawi becomes independent from the United Kingdom (1964) / King William's Town, South Africa, is renamed Qonce (2021) / Krasnovodsk, Turkmenistan, is renamed Turkmenbashi (1993)
+1. When was it? Bosnia and Herzegovina becomes independent from Yugoslavia (1992; slider 1867 to 2017)
+1. Put in order: Mauch Chunk, United States, is renamed Jim Thorpe (1954) / Coquilhatville, Democratic Republic of the Congo, is renamed Mbandaka (1966) / France accepts Lebanon's independence (1943)
+1. How many years apart? Dominion of Canada created by Confederation (1867) / Sierra Leone becomes a British crown colony (1808)
 
 ### No. 8, Sat (hard)
 
-1. Which came first? British Columbia joins Canada (1871) / Cuba becomes independent as the Republic of Cuba (1902)
-1. Put in order: Italy recognises Ethiopia's independence (1896) / Panama Canal opens (1914) / Victoria separates from New South Wales (1851)
-1. Which came first? Fiji becomes independent from the United Kingdom (1970) / Ibn Saud proclaims the Kingdom of Saudi Arabia (1932)
-1. Cisplatina is a former name of which country? Uruguay (options: Iran, Uruguay, Bangladesh, Eswatini)
-1. Which came first? Six Australian colonies federate as Commonwealth of Australia (1901) / League of Nations gives New Zealand mandate over Western Samoa (1920)
-1. When was it? Palau becomes independent in free association with United States (1994; slider 1864 to 2014)
-1. Which came later? Newfoundland joins Canada as its tenth province (1949) / West Indies Federation formed (1958)
-1. In 1946, Jordan became independent from… United Kingdom (options: Portugal, France, United Kingdom, Spain)
+1. Which came first? United States hands full control of Panama Canal to Panama (1999) / Victoria, Cameroon, is renamed Limbe (1982)
+1. Put in order: Qurghonteppa, Tajikistan, is renamed Bokhtar (2018) / Titov Veles, North Macedonia, is renamed Veles (1996) / Bangladesh declares independence from Pakistan, wins war that year (1971)
+1. Which came later? Panama separates from Colombia (1903) / Soviet Union formed by four founding republics (1922)
+1. In 1965, the Maldives became independent from… United Kingdom (options: Portugal, Spain, United Kingdom, France)
+1. When was it? Treaty of Lima: Tacna returns to Peru, Chile keeps Arica (1929; slider 1835 to 1985)
+1. What was Lubumbashi (Democratic Republic of the Congo) called before 1966? Elisabethville (options: Banningville, Leopoldville, Elisabethville, Coquilhatville)
+1. When was it? Stalinabad, Tajikistan, is renamed Dushanbe (1961; slider 1803 to 1993)
+1. Which of these is a former name of Mauritius, used until 1810? Isle de France (options: Ellice Islands, Isle de France, Bechuanaland, British Honduras)
 
 ### No. 9, Sun (hardest)
 
-1. Which came later? Nazi Germany annexes Austria (Anschluss) (1938) / Soviet Union formed by four founding republics (1922)
-1. Put in order: Philippines becomes independent from the United States (1946) / Estonia becomes independent from the Russian Empire (1918) / Germany claims north-eastern New Guinea (1884)
-1. Which came first? China cedes Hong Kong Island to Britain (1842) / Argentina declares independence from Spain (1816)
-1. Put in order: Iceland dissolves union with Denmark and becomes a republic (1944) / Bahrain becomes independent from the United Kingdom (1971) / United States hands full control of Panama Canal to Panama (1999)
-1. Which came first? Treaty of Portsmouth: Japan gains southern Sakhalin from Russia (1905) / Congo Free State established under Leopold II (1885)
-1. How many years apart? Salisbury, capital of Zimbabwe, renamed Harare (1982) / Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo (2026)
-1. In 1841, which country moved its capital from Kragujevac to Belgrade? Serbia (options: Albania, Serbia, Bulgaria, Greece)
-1. When was it? United Kingdom of the Netherlands created (1815; slider 1800 to 2026)
+1. Which came first? Alberta and Saskatchewan become Canadian provinces (1905) / Tunisia becomes a French protectorate (1881)
+1. Put in order: German Empire proclaimed (1871) / Korean Empire proclaimed (1897) / Burma separated from British India as its own colony (1937)
+1. Which came later? Zhongdian, China, is renamed Shangri-La (2001) / Southern Rhodesia becomes independent Zimbabwe (1980)
+1. Put in order: Kirovohrad, Ukraine, is renamed Kropyvnytskyi (2016) / Suriname becomes independent from the Netherlands (1975) / The name Russian SFSR stops being used for today's Russia (1991)
+1. Kuybyshev is a former name of which city? Samara (Russia) (options: Naberezhnye Chelny (Russia), Samara (Russia), Rybinsk (Russia), Nizhny Novgorod (Russia))
+1. How many years apart? New South Wales transfers Federal Capital Territory to Australia (1911) / Nunavut split from Northwest Territories as new Canadian territory (1999)
+1. In 1920, the capital of Albania moved from Durres to… Tirana (options: Nafplio, Tirana, Belgrade, Kragujevac)
+1. When was it? Persia cedes Erivan and Nakhchivan khanates to Russia (1828; slider 1800 to 2026)
 
 ### No. 10, Mon (easy)
 
-1. Which came first? Chile annexes Easter Island (1888) / Upper Volta renamed Burkina Faso (1984)
-1. When was it? Ceylon becomes a republic renamed Sri Lanka (1972; slider 1960 to 2010)
-1. Which came first? Tunisia becomes a French protectorate (1881) / United States returns Okinawa to Japan (1972)
-1. Put in order: Expanded Panama Canal with new larger locks opens (2016) / The Gambia becomes independent from the United Kingdom (1965) / The capital of Ghana moves from Cape Coast to Accra (1877)
-1. Which came first? Gold Coast becomes independent as Ghana (1957) / South Sudan becomes independent from Sudan (2011)
-1. Put in order: Treaty of Ouchy: Ottoman Empire cedes Libya to Italy (1912) / New constitution renames Bolivia the Plurinational State of Bolivia (2009) / Algeria becomes independent from France (1962)
-1. Which came later? Albania declares independence from the Ottoman Empire (1912) / The name Moldavia comes into use for today's Moldova (1940)
-1. Which came first? Western Samoa becomes independent from New Zealand (1962) / The name Byelorussia comes into use for today's Belarus (1920)
+1. Which came later? Britain annexes the Punjab (1849) / North Schleswig votes to join Denmark and is transferred (1920)
+1. When was it? The name Siam comes back into use for today's Thailand (1945; slider 1913 to 1963)
+1. Which came later? Leopoldville, Democratic Republic of the Congo, is renamed Kinshasa (1966) / Viet Nam cedes three southern provinces to France (1862)
+1. Put in order: Treaty of Portsmouth: Japan gains southern Sakhalin from Russia (1905) / Nelspruit, South Africa, is renamed Mbombela (2009) / Caribrod, Serbia, is renamed Dimitrovgrad (1950)
+1. When was it? Yekaterinodar, Russia, is renamed Krasnodar (1920; slider 1915 to 1985)
+1. What was Harare (Zimbabwe) called before 1982? Salisbury (options: Nur-Sultan, Bombay, Salisbury, Stalinabad)
+1. Which came first? Erie Canal opens (1825) / Rome becomes capital of Italy (1871)
+1. Put in order: Peljesac Bridge opens, linking Dubrovnik area to rest of Croatia (2022) / Channel Tunnel opens between England and France (1994) / The capital of Ukraine moves from Kharkiv to Kyiv (1934)
 
 ### No. 11, Tue (fairly easy)
 
-1. Which came first? Treaty of Aigun moves Amur lands from China to Russia (1858) / Svalbard Treaty takes effect under Norwegian sovereignty (1925)
-1. Put in order: British Crown takes over rule of India from the Company (1858) / Russia transfers part of Bolshoy Ussuriysky Island to China (2008) / The state of South Korea is founded (1948)
-1. Which of these is a former name of Colombia, used from 1863 to 1886? United States of Colombia (options: Santo Domingo, Empire of Brazil, Province of Canada, United States of Colombia)
-1. Put in order: Construction of the Berlin Wall begins (1961) / Belgium annexes the Congo Free State as Belgian Congo (1908) / Mexico cedes California and the Southwest to the United States (1848)
-1. When was it? British Guiana becomes independent as Guyana (1966; slider 1904 to 1994)
-1. How many years apart? Kingdom of Serbs, Croats and Slovenes is proclaimed (1918) / Haiti declares independence from France (1804)
-1. Romania became independent from… Ottoman Empire (options: Ottoman Empire, New Zealand, Pakistan, United Kingdom)
-1. In 1923, Turkiye moved its capital to Ankara. Where was it before? Istanbul (options: Koror, Thimphu, Istanbul, Beijing)
+1. Which came first? The state of South Korea is founded (1948) / Dnipropetrovsk, Ukraine, is renamed Dnipro (2016)
+1. What was Tolyatti (Russia) called before 1964? Stavropol (options: Tolbukhin, Stuart, Stavropol, Niislel Khuree)
+1. When was it? The name Transjordan comes into use for today's Jordan (1921; slider 1858 to 1928)
+1. In 1897, the capital of Eritrea moved from Massawa to… Asmara (options: Asmara, Almaty, Moroni, Auckland)
+1. When was it? Afsluitdijk closes off the Zuiderzee, creating the IJsselmeer (1932; slider 1869 to 1959)
+1. How many years apart? Semipalatinsk, Kazakhstan, is renamed Semey (2007) / Hawaii becomes the 50th US state (1959)
+1. Northern Rhodesia (from 1911 to 1964) is a former name of which country? Zambia (options: Egypt, Yemen, Zambia, Canada)
+1. Eritrea became independent from… Ethiopia (options: Ethiopia, Brazil, France, Colombia)
 
 ### No. 12, Wed (medium)
 
-1. Which came first? Burma's English name changed to Myanmar, Rangoon to Yangon (1989) / Mauritania becomes independent from France (1960)
-1. When was it? Japan annexes Korea (1910; slider 1888 to 1978)
-1. Which came first? Itaipu Dam reservoir forms, drowning the Guaira Falls (1982) / Finland declares independence from Russia (1917)
-1. Put in order: Tunisia becomes independent from France (1956) / East and West Germany reunify (1990) / India and Bangladesh exchange their border enclaves (2015)
-1. Which came first? Singapore separates from Malaysia as a sovereign state (1965) / Dominican capital Santo Domingo renamed Ciudad Trujillo (1936)
-1. When was it? Bangladesh declares independence from Pakistan, wins war that year (1971; slider 1896 to 2016)
-1. Which came first? Treaty of Fez makes Morocco a French protectorate (1912) / Korean Empire proclaimed (1897)
-1. How many years apart? Palau moves capital from Koror to Ngerulmud (2006) / The capital of China moves from Beijing to Nanjing (1928)
+1. Which came later? Swan River Colony founded in Western Australia (1829) / Britain annexes the Transvaal (1877)
+1. When was it? Expanded Panama Canal with new larger locks opens (2016; slider 1936 to 2026)
+1. Which came first? Kutaraja, Indonesia, is renamed Banda Aceh (1963) / Ali Bayramli, Azerbaijan, is renamed Shirvan (2008)
+1. Put in order: Federation of Rhodesia and Nyasaland created (1953) / Saint Kitts and Nevis becomes independent from the United Kingdom (1983) / South Sudan becomes independent from Sudan (2011)
+1. Which came first? The capital of Guinea-Bissau moves from Bolama to Bissau (1941) / Barbados becomes independent from the United Kingdom (1966)
+1. Stabroek is a former name of which city? Georgetown (Guyana) (options: Mutare (Zimbabwe), Georgetown (Guyana), Ciudad Obregon (Mexico), Mbandaka (Democratic Republic of the Congo))
+1. Which came first? The name Kampuchea comes into use for today's Cambodia (1976) / Ura-Tyube, Tajikistan, is renamed Istaravshan (2000)
+1. How many years apart? Kirovabad, Azerbaijan, is renamed Ganja (1989) / Pietersburg, South Africa, is renamed Polokwane (2005)
 
 ### No. 13, Thu (medium)
 
-1. Which came later? The name Isle de France stops being used for today's Mauritius (1810) / Oregon Treaty sets US-British border at the 49th parallel (1846)
-1. When was it? The capital of Pakistan moves from Rawalpindi to Islamabad (1967; slider 1890 to 1980)
-1. Which came later? Czechoslovakia declares independence from Austria-Hungary (1918) / Orange Free State becomes independent (1854)
-1. In 1981, Antigua and Barbuda became independent from… United Kingdom (options: South Africa, Spain, Yugoslavia, United Kingdom)
-1. Put in order: Zaire renamed back to Democratic Republic of the Congo (1997) / Britain declares Egypt independent, ending its protectorate (1922) / Cote d'Ivoire becomes independent from France (1960)
-1. In 1983, Cote d'Ivoire moved its capital to Yamoussoukro. Where was it before? Abidjan (options: Abidjan, Ngerulmud, Tarnovo, Malabo)
-1. Put in order: Slovenia becomes independent from Yugoslavia (1991) / The capital of the Philippines moves from Quezon City to Manila (1976) / Alaska becomes the 49th US state (1959)
-1. Afars and Issas (from 1967 to 1977) is a former name of which country? Djibouti (options: Burkina Faso, Togo, Mali, Djibouti)
+1. Which came later? Mali becomes independent from France (1960) / The name French Togoland comes into use for today's Togo (1916)
+1. Put in order: Croatia becomes independent from Yugoslavia (1991) / Voroshilov, Russia, is renamed Ussuriysk (1957) / Canada and Denmark agree to split Hans Island between them (2022)
+1. When was it? British Honduras officially renamed Belize (1973; slider 1893 to 1983)
+1. Which of these is a former name of Namibia, used until 1990? South West Africa (options: Transjordan, Italian Libya, South West Africa, British East Africa)
+1. In 1970, Belize moved its capital to Belmopan. Where was it before? Belize City (options: Dar es Salaam, Abuja, Nairobi, Belize City)
+1. In 1991, North Macedonia became independent from… Yugoslavia (options: Denmark, Yugoslavia, Portugal, Pakistan)
+1. What was Chennai (India) called before 1996? Madras (options: Madras, Trivandrum, Calcutta, Cochin)
+1. When was it? Burma's English name changed to Myanmar, Rangoon to Yangon (1989; slider 1849 to 1999)
 
 ### No. 14, Fri (hard)
 
-1. Which came first? Portugal transfers Macau to China (1999) / Chile and Argentina sign treaty ending Beagle Channel boundary dispute (1984)
-1. When was it? Japan annexes the Ryukyu Kingdom (1879; slider 1836 to 1956)
-1. Which came first? Kingdom of Swaziland renamed Kingdom of Eswatini (2018) / Suriname becomes independent from the Netherlands (1975)
-1. Put in order: China cedes Kowloon to Britain (1860) / Holy Roman Empire dissolved (1806) / The capital of Costa Rica moves from Cartago to San Jose (1823)
-1. Which came later? The capital of Botswana moves from Mafeking to Gaborone (1965) / Angola becomes independent from Portugal (1975)
-1. Put in order: Britain proclaims protectorate over south-eastern New Guinea (1884) / Britain annexes Lagos (1861) / The name Nyasaland comes into use for today's Malawi (1907)
-1. Which came first? Trinidad and Tobago becomes independent from the United Kingdom (1962) / Equatorial Guinea becomes independent from Spain (1968)
-1. How many years apart? Kingdom of Serbs, Croats and Slovenes renamed Yugoslavia (1929) / Aswan High Dam completed on the Nile, forming Lake Nasser (1970)
+1. Which came first? Equatorial Guinea becomes independent from Spain (1968) / Santa Fe de Bogota, Colombia, is renamed Bogota (2000)
+1. When was it? Siam officially renamed Thailand (1939; slider 1860 to 1980)
+1. Which came first? Kiribati moves International Date Line east around Line Islands (1995) / The Central African Republic becomes independent from France (1960)
+1. Parahyba do Norte is a former name of which city? Joao Pessoa (Brazil) (options: Makhachkala (Russia), Niteroi (Brazil), Joao Pessoa (Brazil), Kirov (Russia))
+1. When was it? Svalbard Treaty takes effect under Norwegian sovereignty (1925; slider 1827 to 1977)
+1. Put in order: Kingdom of Swaziland renamed Kingdom of Eswatini (2018) / Brunei Town, Brunei, is renamed Bandar Seri Begawan (1970) / Yamoussoukro made capital of Cote d'Ivoire instead of Abidjan (1983)
+1. Put in order: Myanmar's government moves capital from Yangon to Naypyidaw (2005) / Salazar, Angola, is renamed N'dalatando (1976) / The capital of Botswana moves from Mafeking to Gaborone (1965)
+1. How many years apart? Panama Canal opens (1914) / Mexico cedes California and the Southwest to the United States (1848)
 

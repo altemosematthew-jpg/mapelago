@@ -50,6 +50,14 @@ OVERLAP = [("Kiribati", "Tuvalu"), ("Zimbabwe", "Zambia"), ("Zimbabwe", "Malawi"
            ("Sudan", "South Sudan"), ("Russia", "Ukraine"), ("Russia", "Belarus"), ("Russia", "Kazakhstan"), ("Bangladesh", "Pakistan"),
            ("India", "Pakistan"), ("India", "Bangladesh"), ("Colombia", "Panama"), ("Colombia", "Venezuela"), ("Colombia", "Ecuador"),
            ("Benin", "Togo"), ("Papua New Guinea", "Solomon Islands"), ("Samoa", "New Zealand")]
+# Block C (renamed cities): lines with only one source are skipped, as Duet advised.
+C_ONE_SOURCE = {("Modimolle", "South Africa"), ("Chernyakhovsk", "Russia"), ("Korolyov", "Russia"), ("Gatchina", "Russia"),
+                ("Dimitrovgrad", "Russia"), ("Sarov", "Russia"), ("Sochi", "Russia")}
+C_FUZZY = {("Mbombela", "South Africa")}   # renamed 2009, upheld in court 2014: a defensible other year
+C_TEXT = {("Thunder Bay", "Canada"): "Fort William and Port Arthur, Canada, merge as Thunder Bay",
+          ("Niteroi", "Brazil"): "Vila Real da Praia Grande, Brazil, is renamed Nictheroy (now spelled Niteroi)",
+          ("Kahramanmaras", "Turkiye"): "Maras, Turkiye, is given the title kahraman (heroic): Kahramanmaras",
+          ("Sanliurfa", "Turkiye"): "Urfa, Turkiye, is given the title sanli (glorious): Sanliurfa"}
 GAP_FIRST = 5      # "which came first" and "put in order": events at least 5 years apart
 GAP_FUZZY = 20     # 20 for the defensible-year countries
 FACT_REST = 21     # the same fact (in any kind of question) comes back no sooner than 21 days later
@@ -73,7 +81,8 @@ def block(fn, tag):
 
 
 A_LINES, B_LINES = block("block-a.txt", "A"), block("block-b.txt", "B")
-assert len(A_LINES) == 193 and len(B_LINES) == 303
+C_LINES = block("block-c.txt", "C")
+assert len(A_LINES) == 193 and len(B_LINES) == 303 and len(C_LINES) == 188
 
 
 def split_top(s):  # split on ";" outside brackets
@@ -108,6 +117,11 @@ B = []
 for k, line in enumerate(B_LINES, 1):
     y, text, cs = [x.strip() for x in line.split(" | ")]
     B.append({"k": k, "line": line, "y": int(y), "text": text, "cs": [x.strip() for x in cs.split(",")]})
+
+C = []
+for k, line in enumerate(C_LINES, 1):
+    city, country, old, y, what = [x.strip() for x in line.split(" | ")]
+    C.append({"k": k, "line": line, "city": city, "c": country, "old": old, "y": int(y), "what": what})
 
 # ---------------------------------------------------------------- 3. facts: everything that has a year
 STOP = {"of", "the", "and", "republic", "kingdom", "united", "islands", "state", "states", "democratic", "people's", "federation", "empire", "union"}
@@ -238,6 +252,27 @@ for c, r in A.items():   # a name whose change was asked as the next name's star
                 for nm2, sp2 in r["names"]:
                     if any(s2 == e for s2, _ in sp2): name_facts[(c, nm)] += name_facts.get((c, nm2), [])
 
+city_fact, c_skipped = {}, []
+for e in C:
+    key = (e["city"], e["c"])
+    if key in C_ONE_SOURCE: c_skipped.append((e, "one source only")); continue
+    hits = [f for f in facts[:len(B)] if f["y"] == e["y"] and re.search(r"\b" + re.escape(e["city"]) + r"\b", f["text"]) and re.search(r"\b" + re.escape(e["old"]) + r"\b", f["text"])]
+    if hits:   # the same rename is a Block B event: one fact, both lines cited
+        h = hits[0]; h["src"].append("C:%d" % e["k"]); h["role"].append(("city", e["city"])); city_fact[e["k"]] = h
+        merges.append(("city name", e["city"], e["y"], h["text"])); continue
+    text = C_TEXT.get(key) or "%s, %s, is renamed %s" % (e["old"], e["c"], e["city"])
+    city_fact[e["k"]] = add_fact(e["y"], text, [e["c"]], ["C:%d" % e["k"]], tl=key not in C_FUZZY, fuzzy=key in C_FUZZY, role=("city", e["city"]))
+
+# Facts that name the same city never share a day, so one can't give the other away
+# (Leningrad in Block B and Block C, Lourenco Marques in Block A and Block C, and so on).
+related = collections.defaultdict(set)
+for e in C:
+    if e["k"] not in city_fact: continue
+    cf = city_fact[e["k"]]["id"]
+    pats = [re.compile(r"\b" + re.escape(n) + r"\b") for n in (e["city"], e["old"]) if len(n) >= 4]
+    for f in facts:
+        if f["id"] != cf and any(p.search(f["text"]) for p in pats): related[cf].add(f["id"]); related[f["id"]].add(cf)
+
 for f in facts:
     if f["y"] is None or f["y"] < YEAR_LO or f["y"] > YEAR_HI: f["tl"] = False; f["wf"] = f["wf"] and f["y"] is not None and YEAR_LO <= f["y"] <= YEAR_HI
 
@@ -352,6 +387,37 @@ for c, i, m in moves:
         if c2 != c and c2 not in E[c] and c2 not in [p for p, _ in cs]: cs.append((c2, (power_of(c2) == power_of(c)) * 2))
     Q.append({"kind": "capwho", "ask": "%swhich country moved its %s from %s to %s?" % (pre, word, m["from"], m["to"]), "ans": c, "pool": cs,
               "facts": fid, "src": ["A:" + c], "c": c})
+def squash(t): return re.sub(r"[^a-z]", "", t.lower())
+
+
+def dedupe(pool):
+    seen, out = set(), []
+    for lab, sim in pool:
+        if lab not in seen: seen.add(lab); out.append((lab, sim))
+    return out
+
+
+cities = [e for e in C if e["k"] in city_fact]
+c_trivial = []
+for e in cities:
+    a, b = squash(e["city"]), squash(e["old"])
+    if a in b or b in a: c_trivial.append(e); continue    # Bogota / Santa Fe de Bogota answers itself
+    fid = [city_fact[e["k"]]["id"]]
+    pool = []
+    for e2 in cities:
+        o = squash(e2["old"])
+        if e2 is e or o == b or o in a or a in o: continue
+        pool.append((e2["old"], (e2["c"] == e["c"]) * 2 + (abs(e2["y"] - e["y"]) <= 10) + bool(words(e2["old"]) & words(e["old"]))))
+    yr = "" if (e["city"], e["c"]) in C_FUZZY else " before %d" % e["y"]
+    Q.append({"kind": "city", "ask": "What was %s (%s) called%s?" % (e["city"], e["c"], yr), "ans": e["old"], "pool": dedupe(pool),
+              "facts": fid, "src": ["C:%d" % e["k"]], "c": e["c"], "note": e["what"]})
+    pool = []
+    for e2 in cities:
+        if e2 is e or squash(e2["city"]) == a or squash(e2["city"]) in b: continue
+        pool.append(("%s (%s)" % (e2["city"], e2["c"]), (e2["c"] == e["c"]) * 2 + (abs(e2["y"] - e["y"]) <= 10)))
+    Q.append({"kind": "cityof", "ask": "%s is a former name of which city?" % e["old"], "ans": "%s (%s)" % (e["city"], e["c"]), "pool": dedupe(pool),
+              "facts": fid, "src": ["C:%d" % e["k"]], "c": e["c"], "note": e["what"]})
+
 thin = [q for q in Q if len(q["pool"]) < 3]   # not enough fair wrong answers: left out, and listed in the review file
 Q = [q for q in Q if len(q["pool"]) >= 3]
 for q in Q:
@@ -362,7 +428,7 @@ for i, q in enumerate(Q): q["id"] = i
 TL = [f for f in facts if f["tl"]]
 WF = [f for f in facts if f["wf"]]
 BANK = {"tl": TL, "mc_name": [q for q in Q if q["kind"] in ("name", "nameof")], "mc_from": [q for q in Q if q["kind"] == "from"],
-        "mc_cap": [q for q in Q if q["kind"] in ("capto", "capfrom", "capwho")]}
+        "mc_cap": [q for q in Q if q["kind"] in ("capto", "capfrom", "capwho")], "mc_city": [q for q in Q if q["kind"] in ("city", "cityof")]}
 CYCLE = int(os.environ.get("LOGBOOK_CYCLE", "371"))   # days before any single-fact question comes back
 H = 2 * CYCLE                                         # the shipped schedule; it then starts again from No. 1
 R_ORDER = 1.75      # "put in order" questions a day, on average
@@ -413,6 +479,9 @@ def conflicts():
         for k, x in items:
             for f in fact_ids(k, x): seen[f].append(n)
     bad = []
+    for n, items in single.items():
+        fs = {f for k, x in items for f in fact_ids(k, x)}
+        bad += [(f, n) for f in fs if related[f] & fs]
     for f, ns in seen.items():
         ns.sort()
         for a, b in zip(ns, ns[1:] + [ns[0] + CYCLE]):
@@ -453,7 +522,7 @@ def cyc(a, b): d = abs(a - b) % H; return min(d, H - d)
 
 
 def free(f, n, today, rest=FACT_REST):
-    if f["id"] in today: return False
+    if f["id"] in today or related[f["id"]] & today: return False
     return all(cyc(n, m) >= rest for m in last_used.get(f["id"], []))
 
 
@@ -480,7 +549,7 @@ def pick_pair(n, d, today, r, gap_kind=False):
         r.shuffle(cand)
         for a in cand:
             for b in cand:
-                if b is a or not gap_ok(a, b, lo, hi): continue
+                if b is a or not gap_ok(a, b, lo, hi) or b["id"] in related[a["id"]]: continue
                 key = tuple(sorted((a["id"], b["id"])))
                 if key in used_pairs or not daily_ok([a, b], today): continue
                 used_pairs.add(key); return a, b
@@ -499,9 +568,9 @@ def pick_triple(n, d, today, r):
         by = sorted(cand, key=lambda f: f["y"])
         for a in cand:
             for b in cand:
-                if b["y"] <= a["y"] or not gap_ok(a, b, lo, hi): continue
+                if b["y"] <= a["y"] or not gap_ok(a, b, lo, hi) or b["id"] in related[a["id"]]: continue
                 for c in cand:
-                    if c["y"] <= b["y"] or not gap_ok(b, c, lo, hi) or c["cs"][0] == a["cs"][0]: continue
+                    if c["y"] <= b["y"] or not gap_ok(b, c, lo, hi) or c["cs"][0] == a["cs"][0] or c["id"] in related[a["id"]] | related[b["id"]]: continue
                     if (a["fuzzy"] or c["fuzzy"]) and c["y"] - a["y"] < GAP_FUZZY: continue
                     key = (a["id"], b["id"], c["id"])
                     if key in used_triples or not daily_ok([a, b, c], today): continue
@@ -627,22 +696,25 @@ open(os.path.join(ROOT, "history-data.js"), "w", encoding="utf8").write(js)
 # ---------------------------------------------------------------- 8. write review/history-questions.md
 def srcline(s):
     t, v = s.split(":", 1)
-    return ("Block A: " + A[v]["line"]) if t == "A" else ("Block B line %s: %s" % (v, B[int(v) - 1]["line"]))
+    if t == "A": return "Block A: " + A[v]["line"]
+    if t == "C": return "Block C line %s: %s" % (v, C[int(v) - 1]["line"])
+    return "Block B line %s: %s" % (v, B[int(v) - 1]["line"])
 
 
 out = []
 w = out.append
 w("# Logbook: every question the game can ask\n")
-w("Written by `review/history/build.py` from `review/history/block-a.txt` and `block-b.txt` (the source-checked blocks, unchanged). "
+w("Written by `review/history/build.py` from `review/history/block-a.txt`, `block-b.txt` and `block-c.txt` (the source-checked blocks, unchanged). "
   "Each entry quotes the Block line it came from. Regenerate this file by running the script; don't edit it by hand.\n")
 w("## The numbers\n")
 w("| | |\n|---|---|")
-w("| Dated facts (Block B events plus Block A years) | %d |" % len(facts))
+w("| Dated facts (Block B events, Block A years, Block C city renames) | %d |" % len(facts))
 w("| ...usable in \"Which came first?\" and \"Put in order\" | %d |" % len(WF))
 w("| ...usable in \"When was it?\" (the timeline slider) | %d |" % len(TL))
 w("| \"What was it called?\" questions | %d |" % len(BANK["mc_name"]))
 w("| \"Independent from whom?\" questions | %d |" % len(BANK["mc_from"]))
 w("| \"Capital on the move\" questions | %d |" % len(BANK["mc_cap"]))
+w("| \"What was this city called?\" questions | %d |" % len(BANK["mc_city"]))
 w("| Days before any question repeats | %d (the slider, name, from-whom and capital questions each run through their whole bank once in %d days; a pair or order of events is never repeated in the %d-day schedule) |" % (min_gap, CYCLE, H))
 w("| Shipped schedule | No. 1 to No. %d, then it starts again from No. 1 |" % H)
 w("| Shortest gap before the same fact appears again, in a different question | %d days |" % fact_gap)
@@ -688,7 +760,11 @@ for f in facts:
     w("%d. **%s** %s  [%s]" % (f["id"] + 1, f["y"] if f["y"] else "(no year)", f["text"], flags))
     for s in f["src"]: w("   - %s" % srcline(s))
 w("")
-for title, kinds in (("What was it called?", ("name", "nameof")), ("Independent from whom?", ("from",)), ("Capital on the move", ("capto", "capfrom", "capwho"))):
+w("## Block C lines not asked as \"What was this city called?\"\n")
+for e, why in c_skipped: w("- %s (%s), %s %d: %s, not asked at all" % (e["city"], e["c"], e["old"], e["y"], why))
+for e in c_trivial: w("- %s (%s), %s %d: the present name contains the old one, so it is only a dated fact" % (e["city"], e["c"], e["old"], e["y"]))
+w("")
+for title, kinds in (("What was this city called?", ("city", "cityof")), ("What was it called?", ("name", "nameof")), ("Independent from whom?", ("from",)), ("Capital on the move", ("capto", "capfrom", "capwho"))):
     w("## %s\n" % title)
     w("Wrong answers are drawn from the other questions' right answers of the same kind (all from Block A), never from the excluded pairs above.\n")
     for q in Q:

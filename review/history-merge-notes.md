@@ -16,7 +16,7 @@ The release version (`mapelago-0.14.0`, `?v=0.14.0`) is not changed anywhere. Lo
 | `history.js` | The game. The name "Logbook" is set once at the top (`NAME`); the page title, footer text and `site.js` entry say it too. |
 | `history-data.js` | Facts, questions and the 742-day schedule. Written by `review/history/build.py`; don't edit by hand. |
 | `og-history.png` | Link preview image (1200 × 630), in the same style as the others. |
-| `review/history/block-a.txt`, `block-b.txt` | The two source-checked blocks, unchanged. The only source of facts. |
+| `review/history/block-a.txt`, `block-b.txt`, `block-c.txt` | The source-checked blocks, unchanged. The only source of facts. |
 | `review/history/build.py` | Turns the blocks into `history-data.js` and `review/history-questions.md`. The rules that came with the data are the tables at its top. |
 | `review/history-questions.md` | Every question the game can ask, each with the Block line it came from, plus the first two weeks. |
 | `review/history-merge-notes.md` | This file. |
