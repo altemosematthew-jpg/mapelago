@@ -457,6 +457,18 @@ async function page(b, url, opts = {}) {
       check(/Nine free daily geography games[^"]*Logbook/.test(home), "home page search data lists all nine games");
     }
 
+    // 23. Crossings speaks in countries: par is the countries between, and the result shows one shortest route
+    {
+      const { ctx, p } = await page(b, U + "crossings.html#day-12", { wait: 400 });
+      const r0 = await p.evaluate(() => [document.querySelector("#par").textContent, __cross.P().par]);
+      check(Number(r0[0]) === r0[1] - 1, "crossings: par shows the countries between", JSON.stringify(r0));
+      await p.evaluate(() => { const X = __cross, P = X.P(); let x = P.from; while (X.dist[x][P.to] > 1) { x = X.C.map((_, i) => i).find((n) => X.dist[x][n] === 1 && X.dist[n][P.to] === X.dist[x][P.to] - 1); X.guess(x); } });
+      await p.waitForTimeout(300);
+      const r = await p.evaluate(() => [document.querySelector("#routeLine").textContent, document.querySelector("#shareText").textContent, document.querySelector("#bigScore").textContent]);
+      check(/a shortest one: .+ → .+/.test(r[0]) && /par \d+ countr(y|ies) · /.test(r[1]) && r[2] === "1,000", "crossings: result shows the route, par in countries, 1,000 with a comma", JSON.stringify(r));
+      await ctx.close();
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
@@ -474,7 +486,7 @@ async function page(b, url, opts = {}) {
       });
       check(r.score === 1000 && r.done, "crossings: a shortest route scores 1000", JSON.stringify(r));
       check(Math.min(...r.sizes) >= 105 && r.dup === 0, "crossings: every weekday has two years of pairs, none repeat", JSON.stringify([r.sizes, r.dup]));
-      check(/Crossings No\. 20 \u{1F422} 1000 points/u.test(r.share), "crossings: share text");
+      check(/Crossings No\. 20 \u{1F422} 1,000 points/u.test(r.share), "crossings: share text");
       await ctx.close();
       const k = await page(b, U + "crossings.html#day-21", { desktop: true, wait: 800 });
       const target = await k.p.evaluate(() => { const X = __cross, P = X.P(); return X.C.map((_, i) => i).filter((i) => i !== P.from && i !== P.to && X.heat(i) === 0).map((i) => X.name(i))[0]; });

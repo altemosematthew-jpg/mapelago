@@ -374,7 +374,7 @@
     if (me.id === "bigger" || me.id === "bigcountry") return /\b10\/10\b/.test(line);
     if (me.id === "stamps") return /\b6 of 6\b/.test(line);
     if (me.id === "fathoms") return /7,000 of 7,000/.test(line);
-    if (me.id === "crossings") return /\u{1F422} 1000 points/u.test(line);
+    if (me.id === "crossings") return /\u{1F422} 1,?000 points/u.test(line);
     return false;
   }
   function confetti(box) {
@@ -498,7 +498,7 @@
   function gameByPage(page) { return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(page); })[0]; }
   function said(id, mode, n) {
     if (mode === 1) return n >= 200 && n % 200 === 0 ? "found it on pin " + ((1000 - n) / 200 + 1) + " of 5 in Quick mode" : "didn't find it in 5 pins in Quick mode";
-    if (id === "city" || id === "country" || id === "crossings") return n + " points";
+    if (id === "city" || id === "country" || id === "crossings") return Number(n).toLocaleString("en-US") + " points";
     if (UNIT[id]) return UNIT[id](n);
     return String(n);
   }
