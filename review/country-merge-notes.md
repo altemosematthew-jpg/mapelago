@@ -4,21 +4,42 @@ Branch `claude/happy-archimedes-imexu1`. Mystery country plays by Mystery city's
 and is easier to find. This file lists every change to a shared file, so the branch can be merged
 into `claude/charming-bardeen-967w66` without guesswork.
 
-## The one conflict you will get: country.html, the game script line
+## The two conflicts you will get
+
+### country.html, the game script line
 
 The whole country game is one very long line of country.html (line 549 on main). Your branch changes
 it (the no-repeat schedule, now from No. 20), and so does this one, so git reports a conflict on it.
 To resolve, with your branch checked out and this one being merged in:
 
-    git checkout --ours country.html        # your branch's country.html
-    python3 review/country-rules-patch.py country.html
+    python3 review/country-rules-patch.py --take-ours country.html
+    git add country.html
 
 `--take-ours` keeps your side of each conflict block and leaves the parts git merged on its own; the
 script then makes every change this branch makes to country.html (the game script, the cost line, the
-rules sheet, the styles, the city/country strip). Run on main's country.html it gives this branch's copy byte for
-byte. It is safe to run twice and stops without writing anything if one of its anchors has changed.
-Checked by a throwaway merge into your branch at 10ea3ca (Quick mode for Mystery city): country.html
-was the only conflict, the recipe above resolved it, and the whole test suite passed (360 checks).
+rules sheet, the styles, the city/country strip). Run on main's country.html it gives this branch's
+copy byte for byte, except the explainer at the foot, which `copy/apply.py` writes from copy.json. It
+is safe to run twice (an edit already there is skipped) and stops without writing anything if an
+anchor has changed.
+
+### copy/copy.json
+
+Your branch rewrote every line of copy.json (one-space indent), so git can't line up this branch's four
+copy edits with it and reports conflicts there too. To resolve:
+
+    git checkout --ours copy/copy.json
+    python3 review/country-copy-patch.py
+    git add copy/copy.json copy.js games/index.html country.html
+
+The script sets Mystery country's explainer and steps and the city and country card lines, keeps
+everything else in your copy.json, writes it back in your format, and runs `copy/apply.py`.
+
+### Checked
+
+Throwaway merge of this branch into yours at 2169659 ("Keep review/, tests/, copy/ and data/ ... off
+the published site"): country.html and copy/copy.json were the only conflicts, the two recipes above
+resolved them (your quick-mode and Crossings text kept), and the whole test suite passed, 385 checks.
+Nothing else conflicted.
 
 Every function the script adds is named `Mx...` and sits on its own lines, after the comment
 `/* mx-country-rules ... */`.
@@ -36,6 +57,7 @@ Every function the script adds is named `Mx...` and sits on its own lines, after
 - `country.html` (see above, plus: cost line, rules sheet, `#toast.mxtop` style, `role="status"` on `#storm`,
   and the same city/country strip and style block as index.html)
 - `review/country-rules-patch.py` (new)
+- `review/country-copy-patch.py` (new)
 - `review/country-merge-notes.md` (this file, new)
 - `tests/fixtures/country-save-from-v0.14.json` (new: a save recorded on main at 0.14.0, country No. 12 and 13 finished, No. 14 in progress)
 
@@ -50,6 +72,18 @@ Every function the script adds is named `Mx...` and sits on its own lines, after
   - Not changed: Mystery city's end card already offers "Like guessing countries? Play the mystery
     country" (`at.next`, on the script line); the CSS block only centres its text.
 
+- `copy/copy.json`: country `explainer` and `howto`, and the `city` and `country` lines under
+  `home.cards` ("Guess the city: ..." / "Guess the country: ..."). Written in your branch's format
+  (`json.dumps(indent=1)`, no newline at the end) so git can merge it line by line; then
+  `python3 copy/apply.py` was run, which changed only:
+  - `copy.js`: the `city` and `country` card lines.
+  - `games/index.html`: the Mystery country section's paragraph and steps.
+  - `country.html`: its explainer block at the foot (between `<!-- copy:start -->` and `<!-- copy:end -->`).
+  copy.json will conflict: see "copy/copy.json" above.
+- `how-to-play/index.html`: one sentence added to the lede (a link to `#mystery-country`), and the
+  "The countries version" section replaced by a block between `<!-- mx-country-rules ... -->` and
+  `<!-- /mx-country-rules -->`: the rules, the nearest-point distance, and that they start with No. 14
+  (27 November 2026). Your Crossings paragraph and nav link are on other lines.
 - `tests/run.js`: one block between test 7 (keyboard pin) and test 8 (midnight), marked
   `// ---- mx-country-rules ... ----` and `// ---- end mx-country-rules ----`. 23 checks: start number
   (No. 13 old rules, No. 14 new), one clue to start, moves cost 6, a miss costs 150 and opens a clue,
@@ -59,4 +93,10 @@ Every function the script adds is named `Mx...` and sits on its own lines, after
   city's end card).
   The Arizona check uses No. 19 (Mexico), which is the same on both schedules.
 
-Not touched: `sw.js`, the `?v=` strings, `golden.json` (the country schedule is unchanged here).
+Not touched: `sw.js`, the `?v=` strings, `golden.json` (the country schedule is unchanged here),
+`site.js`, `extras.js`, `site.css`, `sitemap.xml` (its dates already read 2026-11-25).
+
+## Noticed, not changed
+
+- `hints.html` (Mystery city's hints page) says "Each move costs 8 points"; Mystery city's moves cost 6
+  since rules version 2. It's in the minified page text, so I left it for the city's owner.
