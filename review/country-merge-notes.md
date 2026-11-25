@@ -135,6 +135,7 @@ country.html conflict whichever way you merge. What worked both times, with this
     python3 review/scoring-patch.py
     python3 review/country-quick-patch.py
     python3 review/review-fixes-patch.py
+    python3 review/teachers-menu-patch.py
     python3 copy/apply.py
     git add index.html country.html
 
@@ -170,3 +171,16 @@ Made by `review/review-fixes-patch.py` (both pages; run after the other scripts)
   Your streaks; Quick mode not offered in the archive).
 - Not touched: site.js and extras.js. The country archive list lives in country.html, so it doesn't
   depend on extras.js (which the country page doesn't load).
+
+## Round 4: For teachers (/teachers/)
+
+- `teachers/index.html` (new), in the About page's look; it loads `../analytics.js?v=...` like About,
+  so include it when a release bumps the version strings.
+- `review/teachers-menu-patch.py` (new) adds `For teachers` just before `About` in the Site menu of
+  every page (index.html, country.html, the other games, hints.html, offline.html, about/, privacy/,
+  how-to-play/, games/) and a `teachers/` line in sitemap.xml after `about/`. It's safe to run again,
+  and a page added later gets the link the next time it runs. One line per page; in hints.html it's
+  inside the page's script text.
+- `tests/run.js`: a block `// ---- mx-teachers ... ----` (8 checks: the page at 375 and 1440 px with no
+  console errors or sideways scroll, its links and promises, the menu link on every page, the sitemap).
+- Not changed: sw.js (offline copies of the teachers page come from the normal page cache).

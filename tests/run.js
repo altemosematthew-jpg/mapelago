@@ -419,6 +419,24 @@ async function page(b, url, opts = {}) {
     }
     // ---- end mx-review ----
 
+    // ---- mx-teachers: the For teachers page (teachers/index.html, review/teachers-menu-patch.py) ----
+    {
+      for (const width of [375, 1440]) {
+        const { ctx, p } = await page(b, U + "teachers/", { ctx: { viewport: { width, height: 900 }, isMobile: width < 500, hasTouch: width < 500 }, wait: 800 });
+        const r = await p.evaluate(() => ({ h1: document.querySelector("h1").textContent, over: document.documentElement.scrollWidth > innerWidth + 1, links: [...document.querySelectorAll("main a")].map((a) => a.getAttribute("href")) }));
+        check(!p.errs.length && r.h1 === "Mapelago for teachers" && !r.over, `teachers page loads cleanly at ${width} px, no sideways scroll`, p.errs.join("; ") + JSON.stringify(r.over));
+        check(["../how-to-play/", "../privacy/"].every((h) => r.links.includes(h)), `teachers page links to How to play and Privacy (${width} px)`);
+        await ctx.close();
+      }
+      const t = fs.readFileSync(path.join(__dirname, "../teachers/index.html"), "utf8").replace(/<[^>]+>/g, " ");
+      check(["no accounts", "no ads", "no cookies", "Nothing to install", "same puzzles", "projector", "student devices", "offline", "Bigger country?", "Crossings", "Logbook", "Scale", "Borders", "Capitals", "History", "Place"].every((w) => t.includes(w)), "teachers page says what it promised");
+      const pages = ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "offline.html", "about/index.html", "privacy/index.html", "how-to-play/index.html", "games/index.html", "teachers/index.html"];
+      const missing = pages.filter((f) => { const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8"); return (s.match(/href="(?:\.\.?\/)?teachers\/"[^>]*>For teachers<\/a>/g) || []).length !== 1; });
+      check(!missing.length, "every page's menu has For teachers, once", missing.join());
+      check(/<loc>https:\/\/mapelago\.com\/teachers\/<\/loc>/.test(fs.readFileSync(path.join(__dirname, "../sitemap.xml"), "utf8")), "sitemap lists the teachers page");
+    }
+    // ---- end mx-teachers ----
+
     // 8. a game in progress survives midnight
     {
       const { ctx, p } = await page(b, U, { clock: new Date("2026-11-25T23:59:30"), ctx: { timezoneId: "Europe/London" } });
