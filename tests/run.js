@@ -15,7 +15,7 @@ function check(ok, name, detail) { if (ok) passed++; else failed.push(name + (de
 // What "the puzzle" is for each game, read from its test hook.
 const PUZZLE = {
   city: () => __lf.P.city,
-  country: () => __lf.P.name,
+  country: () => __lf.P.city,
   bigger: () => __big.S().pairs.map((p) => p.map((x) => x.name).join(" | ")),
   biggercountry: () => __big.S().pairs.map((p) => p.map((x) => x.name).join(" | ")),
   voyage: () => __voy.S().qs.map((q) => q.ask + " = " + q.options[q.answer]),
