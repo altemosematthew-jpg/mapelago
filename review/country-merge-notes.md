@@ -124,3 +124,17 @@ Changes to shared files, all marked `mx-scoring`:
   `python3 review/country-copy-patch.py` then `python3 review/scoring-copy-patch.py`.
 - `how-to-play/index.html`: a block `<!-- mx-scoring ... -->` after the first Scoring paragraph, and
   one sentence in the Mystery country block (misses at 50 to 150, the tile bonus).
+
+## Merging your releases into this branch (done twice, 0.15.2 and 0.15.3)
+
+A release bump changes the `?v=` lines right next to the game script lines, so index.html and
+country.html conflict whichever way you merge. What worked both times, with this branch checked out:
+
+    git checkout --theirs index.html country.html
+    python3 review/country-rules-patch.py country.html
+    python3 review/scoring-patch.py
+    python3 copy/apply.py
+    git add index.html country.html
+
+The result differed from this branch only in the version strings, and the whole suite passed.
+Merging this branch into yours: the same, with `--ours` (or `--take-ours` on the two patch scripts).

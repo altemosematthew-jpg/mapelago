@@ -470,6 +470,22 @@ async function page(b, url, opts = {}) {
       await ctx.close();
     }
 
+    // 19. Fathoms: Tuvalu is a country (from No. 20), and from No. 20 each day deals seven different kinds of prompt
+    {
+      const { ctx, p } = await page(b, U + "fathoms.html#day-20", { storage: { "dailycity:fathoms:v1": '{"results":{},"game":null}' }, wait: 600 });
+      const kinds = await p.evaluate(() => __fath.S().prompts.map((x) => x.kind));
+      check(new Set(kinds).size === 7, "fathoms: seven different kinds of prompt on No. 20", kinds.join(","));
+      const at = await p.evaluate(() => __fath.S().prompts.findIndex((x) => x.answers.includes("TV")));
+      for (let i = 0; i < at; i++) { await p.click("#fpass"); await p.waitForTimeout(150); await p.click("#fnext"); await p.waitForTimeout(150); }
+      await p.fill("#fin", "Tuvalu"); await p.waitForTimeout(100); await p.click("#fgo"); await p.waitForTimeout(400);
+      const r = await p.evaluate(() => __fath.S());
+      check(at >= 0 && r.picks[at] === "TV" && r.total > 0, "fathoms: Tuvalu is accepted as a right answer", JSON.stringify([at, r.picks, r.total]));
+      await ctx.close();
+      const o = await page(b, U + "fathoms.html#day-19", { wait: 600 });
+      check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 20 are dealt exactly as before");
+      await o.ctx.close();
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
