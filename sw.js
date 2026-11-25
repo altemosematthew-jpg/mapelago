@@ -5,7 +5,7 @@
 const C = "mapelago-0.15.0";
 const PRE = [
   "./", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html",
-  "offline.html", "copy.js?v=0.15.0", "site.js?v=0.15.0", "extras.js?v=0.15.0", "shapes.js?v=0.15.0", "world.js?v=0.15.0", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
+  "offline.html", "analytics.js?v=0.15.0", "copy.js?v=0.15.0", "site.js?v=0.15.0", "extras.js?v=0.15.0", "shapes.js?v=0.15.0", "world.js?v=0.15.0", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
   "fonts/overpass-latin-400-normal.woff2", "fonts/overpass-latin-600-normal.woff2",
   "fonts/overpass-latin-800-normal.woff2", "fonts/overpass-latin-800-italic.woff2"
 ];
@@ -17,6 +17,7 @@ self.addEventListener("install", (e) => {
 self.addEventListener("activate", (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== C).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", (e) => {
   const r = e.request;
+  // Only this site's own files are ever saved. Other hosts (such as the visit-counting beacon, when it is switched on) pass straight through.
   if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
   if (r.mode === "navigate") {
     e.respondWith(fetch(r).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(C).then((c) => c.put(r, copy)); } return res; })

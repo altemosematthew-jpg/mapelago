@@ -59,3 +59,11 @@ Then open `http://<your computer's local IP>:8000` on the phone (on a Mac, the I
 Over plain http the offline mode and the phone's share sheet are switched off by the browser; the copy buttons fall back to selecting the text. Everything else is the real thing.
 
 Alternative, a public preview: make a separate repository from this branch and turn on GitHub Pages there. **Delete its `CNAME` file first**, or it will try to claim mapelago.com.
+
+## Switching on visit counting (Cloudflare Web Analytics)
+Built and switched off. Nothing loads, and the privacy page says "no tracking scripts", while the token is empty.
+1. In Cloudflare, add mapelago.com under Web Analytics and copy the site token (32 letters and digits). Choose the JavaScript snippet; no DNS or proxy change is needed.
+2. In `analytics.js`, set `token` to it and `since` to the go-live date, for example `since: "1 December 2026"`.
+3. Bump the release version (`sw.js` and every `?v=`), run the tests, merge.
+
+From then on the privacy page shows its visit-counting wording automatically, and the beacon loads on mapelago.com only: never on localhost or the pages.dev previews, and never for a browser sending Global Privacy Control or Do Not Track.

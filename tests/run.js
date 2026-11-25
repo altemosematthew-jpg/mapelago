@@ -51,9 +51,9 @@ async function page(b, url, opts = {}) {
     // 1b. a release bumps the cache and every script address together, so returning players get it on their next visit
     {
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8"), v = /const C = "mapelago-([^"]+)"/.exec(sw)[1];
-      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "shapes.js", "sw.js"]) {
+      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/index.html", "shapes.js", "sw.js"]) {
         const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
-        const tags = [...s.matchAll(/["'](?:site|extras|shapes|world|copy)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
+        const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/)?(?:site|extras|shapes|world|copy|analytics)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
         check(tags.length > 0 && tags.every((t) => t === "?v=" + v), `script addresses carry the cache version ${v}: ${f}`, tags.join(" "));
       }
       check(fs.readFileSync(path.join(__dirname, "../CNAME"), "utf8").trim() === "mapelago.com", "CNAME still says mapelago.com");
@@ -210,6 +210,35 @@ async function page(b, url, opts = {}) {
       const o = await page(b, U + "fathoms.html?b=2#b-fa-" + (T - 3) + "-0-6000", { wait: 900 });
       check(/No\. \d+, an earlier puzzle/.test(await o.p.textContent(".mx-beat")) && (await o.p.getAttribute(".mx-beat a", "href")) === "fathoms.html", "beat link: another day's link says so kindly and offers today's");
       await o.ctx.close();
+    }
+
+    // 14. visitor counting is built but switched off; the privacy page always matches the switch
+    {
+      const hits = [];
+      const ctx = await b.newContext(PHONE);
+      ctx.on("request", (r) => { if (/cloudflareinsights/.test(r.url())) hits.push(r.url()); });
+      const p = await ctx.newPage();
+      for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/", "about/", "games/"]) {
+        await p.goto(U + f, { waitUntil: "load" }); await p.waitForTimeout(150);
+      }
+      check(hits.length === 0, "analytics: no request to the analytics host while the token is empty", hits.join(" "));
+      await p.goto(U + "privacy/", { waitUntil: "load" });
+      const off = await p.evaluate(() => [MXANALYTICS.on, [...document.querySelectorAll('[data-analytics="off"]')].every((e) => !e.hidden), [...document.querySelectorAll('[data-analytics="on"]')].every((e) => e.hidden), /no tracking scripts/.test(document.querySelector("main").innerText), /Cloudflare/.test(document.querySelector("main").innerText)]);
+      check(JSON.stringify(off) === "[false,true,true,true,false]", "analytics: switched off, the privacy page promises no tracking and doesn't mention Cloudflare", JSON.stringify(off));
+      const rules = await p.evaluate(() => { const a = MXANALYTICS.allowed; return [a("mapelago.com", {}), a("www.mapelago.com", {}), a("localhost", {}), a("claude-charming-bardeen-967w.mapelago.pages.dev", {}), a("mapelago.com", { globalPrivacyControl: true }), a("mapelago.com", { doNotTrack: "1" }), a("mapelago.com", {}, { doNotTrack: "1" })]; });
+      check(JSON.stringify(rules) === "[true,true,false,false,false,false,false]", "analytics: only mapelago.com, never previews, never with GPC or Do Not Track", JSON.stringify(rules));
+      await ctx.close();
+      // the same pages with a token set (served to this test only)
+      const on = await b.newContext(PHONE), hits2 = [];
+      on.on("request", (r) => { if (/cloudflareinsights/.test(r.url())) hits2.push(r.url()); });
+      await on.route(/analytics\.js/, async (route) => { const res = await route.fetch(); route.fulfill({ response: res, body: (await res.text()).replace('token: "", since: ""', 'token: "0123456789abcdef0123456789abcdef", since: "1 December 2026"') }); });
+      const q = await on.newPage(); await q.goto(U + "privacy/", { waitUntil: "load" }); await q.waitForTimeout(200);
+      const w = await q.evaluate(() => [MXANALYTICS.on, [...document.querySelectorAll('[data-analytics="on"]')].every((e) => !e.hidden), [...document.querySelectorAll('[data-analytics="off"]')].every((e) => e.hidden), /Cloudflare Web Analytics/.test(document.querySelector("main").innerText), /no tracking scripts/.test(document.querySelector("main").innerText), document.querySelector("#analyticsSince").textContent]);
+      check(JSON.stringify(w) === '[true,true,true,true,false,"1 December 2026"]', "analytics: switched on, the privacy page says what is counted and by whom", JSON.stringify(w));
+      check(hits2.length === 0, "analytics: even switched on, localhost is never counted", hits2.join(" "));
+      await on.close();
+      const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8");
+      check(/new URL\(r\.url\)\.origin !== location\.origin\) return/.test(sw), "analytics: the service worker never saves another host's files");
     }
 
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
