@@ -126,11 +126,27 @@
    ],
    "invite": "Can you cross it in par?",
    "image": "One border at a time."
+  },
+  "history": {
+   "file": "history.html",
+   "title": "Logbook: a daily history game about the world map | Mapelago",
+   "description": "Eight questions a day on how the world map has changed since 1800: which came first, when it was, and what it used to be called. Free, from Mapelago.",
+   "heading": "How has the world map changed since 1800?",
+   "explainer": "Logbook is Mapelago's daily history game. Each day brings eight questions about how the map has changed since 1800: which of two events came first, when something happened, what a country used to be called, who it became independent from, and where its capital moved. Some questions put a year on a timeline: slide to your guess and the game tells you how hot or cold you are, from a bullseye to freezing. Land within 5 years and it counts. The questions get harder through the round, and through the week, from easy on Monday to hardest on Sunday. Every fact comes from a source-checked list of independence dates, former names, capital moves and 303 dated changes to the map. Everyone gets the same eight questions, and a new logbook arrives at midnight, your time.",
+   "howto": [
+    "Answer eight questions. They get harder as you go.",
+    "For \"Which came first?\", tap the event that happened first.",
+    "For \"When was it?\", slide to the year and lock it in. You get two tries, with a hot or cold clue after the first. Within 5 years counts.",
+    "Each question is worth up to 100 points, 800 a day. The exact year scores most.",
+    "Share your row of results. It never gives the answers away."
+   ],
+   "invite": "How close to the year can you get?",
+   "image": "How has the map changed?"
   }
  },
  "home": {
   "headline": "A little geography, every day",
-  "line": "Eight free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for.",
+  "line": "Nine free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for.",
   "cards": {
    "city": "Guess the city: slide tiles for clues, then pin it on the map.",
    "country": "Guess the country: slide tiles for clues, then pin it on the map.",
@@ -139,10 +155,11 @@
    "voyage": "Ten islands of trivia. Keep your points or sail on.",
    "fathoms": "Name a country that fits. Less obvious answers go deeper.",
    "stamps": "Spin the wheel, answer the question, stamp all six.",
-   "crossings": "Name the countries between two others, border by border."
+   "crossings": "Name the countries between two others, border by border.",
+   "history": "Eight questions on the world map since 1800. Get warmer."
   }
  },
  "allGames": {
-  "intro": "Mapelago has eight daily geography games. They're all free, with no account and nothing to install, and everyone in the world gets the same puzzles each day. The two Bigger games take about a minute. Mystery city takes about three. Start with Mystery city, the tile-and-pin game where Mapelago began, then pick whatever catches your eye. Our turtle won't judge a wrong pin."
+  "intro": "Mapelago has nine daily geography games. They're all free, with no account and nothing to install, and everyone in the world gets the same puzzles each day. The two Bigger games take about a minute. Mystery city takes about three. Start with Mystery city, the tile-and-pin game where Mapelago began, then pick whatever catches your eye. Our turtle won't judge a wrong pin."
  }
 }
