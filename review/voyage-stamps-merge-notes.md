@@ -32,6 +32,41 @@ into `claude/charming-bardeen-967w66` without guesswork. Release version, `sw.js
   `dailycity:practice:v1` (`{"results":{},"voyage":{"best":n},"stamps":{"best":n}}`; the empty `results` keeps
   site.js's save repair from touching it). It travels with the save code like every `dailycity:` key.
 
+## Fixes from the hands-on review of live 0.15.2
+
+No. 12 and No. 13 keep their questions, answers and scoring (golden.json days 1 to 13 unchanged; the 0.14.0 and
+0.15.2 save tests still pass). Changes that alter a question apply from No. 14 only; the rest is wording and layout.
+
+Voyage
+- Harbors: an anchor on islands 3 and 6 of the route, the points ladder (50 up to 1,000) shown once under it with the
+  harbor values in bold, a key line, and a note under the score bar explaining "safe in harbor" while it is 0.
+- Harder as the value rises (from No. 14): islands are ordered by a difficulty score (how well known the subject is,
+  plus how hard the question type is), and the tests check it never goes down across an island run (No. 14 to 200).
+  The wrong options also come from the same continent from island 5 on.
+- Text alternative: the globe and outline pictures get role="img" and a label (the mark's latitude and longitude; the
+  outline's continent, coast and rough area), every day. The label never names the answer.
+- Share line: "I made it home: all ten islands. Can you?" after all ten; "How far would you sail?" after a wreck; the
+  existing "Did I drop anchor too soon?" only after anchoring.
+- The topic chips have a caption; a used spyglass stays visible, greyed, as "Spyglass used on this island" /
+  "Spyglass used (one a day)"; "1,000" has its comma in the score, choices, status bar and share text (the share
+  link keeps the plain number); city names read as in English from No. 14 (Nizhny Novgorod, Ludhiana, Prayagraj, Howrah,
+  Urumqi, Izmir ...); the footer says "which city has the most people" instead of "sizes".
+
+Stamps
+- Size questions say "largest by area" (from No. 14). The explanation no longer quotes a km² figure: it says how many
+  times bigger the answer is than the next largest option, which a few percent's difference in figures can't change.
+  Note for the data owner: Bigger country? and Stamps read area from the same shared table, whose larger-country
+  figures come from the map outlines and run a few percent under official total area (Nigeria 911,499 vs 923,768).
+  The full replacement listed under "Flagged" in review/data-changes.md would fix both games at once.
+- The answer message shows once (it was in the panel and again under it, and screen readers heard it twice), with no
+  stray ✓/✗ before it.
+- Explanations add a fact (every day; answers never change): "It's Bahrain. The highest point of Bahrain is Jabal ad
+  Dukhan, 135 m." Facts come only from the table's capitals and the pack facts the games already treat as safe; the
+  tests check each one against the pack. Border and continent explanations already added facts and are unchanged.
+- The share grid is labelled: two lines of three, "✅ Capitals  🟨 Borders  ❌ Size".
+- A line under the wheel: "Tap the wheel to stop it early. It skips categories that are already stamped or missed
+  twice, and when only one is left it picks that one for you." Hidden while a question is open and on the result.
+
 ## Facts never asked (from the pack's notes and review/data-pack-check.md)
 
 - Flag colours (not fully verified): no flag questions at all.
@@ -59,8 +94,8 @@ Only this branch touches (no conflicts expected):
 Shared files:
 
 - `tests/run.js`: one block before the final `} finally {`, between `// ---- vx: Voyage and Stamps ...` and
-  `// ---- vx end ----`. Nothing else in the file changed.
-- `tests/golden.json`: 42 entries, Voyage and Stamps for No. 14 to 30, 60, 100, 200 and 365. If your branch also
+  `// ---- vx end ----` (it includes the `// ---- vx review fixes` tests). Nothing else in the file changed.
+- `tests/golden.json`: Voyage and Stamps entries for No. 14 to 30, 60, 100, 200 and 365 only. If your branch also
   changes golden.json, take either side and re-run `cd tests && npm run golden` after the merge.
 - `copy/copy.json`: two strings only, the `explainer` of `voyage` and of `stamps` (they now name the new topics, say
   Stamps' six change daily, and mention Play more). Then `python3 copy/apply.py` rewrote the foot of voyage.html and

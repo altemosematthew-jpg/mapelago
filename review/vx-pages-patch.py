@@ -10,7 +10,11 @@ import sys
 def patch(path, edits):
     s = open(path, encoding="utf8").read()
     out = s
+    chained = {e[0] for e in edits}
     for old, new in edits:
+        # an edit that a later edit changes again (its result is that edit's anchor) is done once the later one is
+        if old not in out and new in chained:
+            continue
         if new in out or ("vx-pack:start" in new and "vx-pack:start" in out):
             continue
         # an edit already made and changed again by a later edit: its first new line is still there
@@ -87,6 +91,35 @@ voyage = [
      '.vx-practicing #dots,.vx-practicing .status,.vx-practicing #badges,.vx-practicing .vx-topics,.vx-practicing #say{display:none}\n.vxp .act'),
     # the practice Next button stays hidden until an answer is picked (.act sets display, which beats [hidden])
     ('.vx-topics{margin:0 0 6px}\n', '.vx-topics{margin:0 0 6px}\n#vxpNext[hidden]{display:none}\n'),
+    # review fixes (live 0.15.2): words for the pictures, harbors on the route, the spyglass stays visible, the points ladder, 1,000 with a comma
+    ('function we(n,cv){let a=cv||P("#show");', 'function we(n,cv){let a=cv||P("#show");window.VXV&&VXV.alt(n,a,xa);'),
+    ('function ve(){', 'function ve(){window.VXV&&VXV.ui(C,qn(et(),!0));'),
+    ('P("#spy").hidden=C.spy!==-1', '(P("#spy").hidden=!1,P("#spy").disabled=C.spy!==-1,P("#spy").textContent=C.spy===-1?"Use the spyglass: take away two wrong answers":C.spy===n?"Spyglass used on this island":"Spyglass used (one a day)")'),
+    ('Worth ${O.values[n]} points.', 'Worth ${VXN(O.values[n])} points.'),
+    ('Right. You have ${e} points.', 'Right. You have ${VXN(e)} points.'),
+    ('would leave you with ${o}.', 'would leave you with ${VXN(o)}.'),
+    ('for ${O.values[n+1]}', 'for ${VXN(O.values[n+1])}'),
+    ('Drop anchor and keep ${e}', 'Drop anchor and keep ${VXN(e)}'),
+    ('P("#bigScore").textContent=Hn()', 'P("#bigScore").textContent=VXN(Hn())'),
+    ('P("#vPoints").textContent=Hn()', 'P("#vPoints").textContent=VXN(Hn())'),
+    ('P("#vSafe").textContent=C.end?Hn():qn(et(),!0)', 'P("#vSafe").textContent=VXN(C.end?Hn():qn(et(),!0))'),
+    ('\\u{1F422} ${Hn()} points', '\\u{1F422} ${VXN(Hn())} points'),
+    # the share line fits how the trip ended
+    ('window.MXCOPY&&MXCOPY.invite&&MXCOPY.invite.voyage||"How far would you sail?"',
+     '(C.end==="home"?"I made it home: all ten islands. Can you?":C.end==="wreck"?"How far would you sail?":window.MXCOPY&&MXCOPY.invite&&MXCOPY.invite.voyage||"How far would you sail?")'),
+    ('<ol class="dots" id="dots" aria-label="The ten islands"></ol>',
+     '<ol class="dots" id="dots" aria-label="The ten islands"></ol>\n'
+     '  <!-- vx-ladder:start --><ol class="vx-ladder" aria-label="Points for reaching each island"><li>50</li><li>100</li><li class="h">150<span class="sr">, harbor</span></li><li>250</li><li>350</li><li class="h">500<span class="sr">, harbor</span></li><li>650</li><li>800</li><li>900</li><li>1,000</li></ol>\n'
+     '  <p class="vx-key" aria-hidden="true"><span class="vx-anchor">\u2693</span> Harbor: points you reach there are safe</p><!-- vx-ladder:end -->'),
+    ('  </section>\n  <!-- vx-topics: the topic chips moved under the question -->',
+     '  </section>\n  <p class="note vx-harbor" id="vxHarborNote">Safe in harbor is what you keep if a wrong answer wrecks you. It is 0 until you answer island 3 right.</p>\n  <!-- vx-topics: the topic chips moved under the question -->'),
+    ('#vxpNext[hidden]{display:none}\n',
+     '#vxpNext[hidden]{display:none}\n'
+     '.vx-ladder{list-style:none;margin:-8px 0 4px;padding:0;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;font-size:11px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;color:var(--ground-ink-2)}\n'
+     '.vx-ladder li.h{color:var(--ground-ink);font-weight:800}\n'
+     '.dots li.harbor:not(.done)::before{content:"\\2693";font-size:14px;line-height:1;color:var(--ink-2)}\n'
+     '.vx-key{margin:0 0 10px;font-size:13px;color:var(--ground-ink-2)}.vx-harbor{margin:-4px 0 10px}.vx-harbor[hidden]{display:none}\n'
+     '.spy:disabled{opacity:.6;cursor:default;border-style:dotted}\n'),
 ]
 
 stamps = [
@@ -126,6 +159,14 @@ stamps = [
     ('.vxp{margin-top:14px}',
      '#quiz:not([hidden]) + #say{display:none}\n.vx-practicing .passport,.vx-practicing #say{display:none}\n.vxp{margin-top:14px}'),
     ('#quiz:not([hidden]) + #say{display:none}\n', '#quiz:not([hidden]) + #say{display:none}\n#sxpNext[hidden]{display:none}\n'),
+    # review fixes (live 0.15.2): explanations add a fact; the share grid is labelled; the wheel says how it works
+    ('A=(window.SX&&SX.init({T:Ma,yn:I,sa,Wa,Ya,D,va}),window.SX&&b>=SX.FROM?SX.deal(b,n=>{k=p.cats=n}):pa(Ma,b))',
+     'A=(window.SX&&SX.init({T:Ma,yn:I,sa,Wa,Ya,D,va}),window.SX?SX.explainAll(b>=SX.FROM?SX.deal(b,n=>{k=p.cats=n}):pa(Ma,b),b):pa(Ma,b))'),
+    ('${k.map(t=>({1:"\\u2705",2:"\\u{1F7E8}",0:"\\u274C"})[a[t].got]).join("")}',
+     '${window.SX?SX.grid(k,a,D):k.map(t=>({1:"\\u2705",2:"\\u{1F7E8}",0:"\\u274C"})[a[t].got]).join("")}'),
+    ('  </div>\n  <button class="act" id="spin">Spin the wheel</button>',
+     '  </div>\n  <p class="note vx-wheel-note" id="vxWheelNote">Tap the wheel to stop it early. It skips categories that are already stamped or missed twice, and when only one is left it picks that one for you.</p>\n  <button class="act" id="spin">Spin the wheel</button>'),
+    ('#sxpNext[hidden]{display:none}\n', '#sxpNext[hidden]{display:none}\n.qsay.ok::before,.qsay.no::before{content:none}\n.vx-wheel-note{margin:0 0 10px;text-align:center}#wheelbox.asked + .vx-wheel-note,#wheelbox[hidden] + .vx-wheel-note{display:none}\n'),
 ]
 
 patch("voyage.html", voyage)

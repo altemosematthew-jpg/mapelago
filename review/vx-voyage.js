@@ -22,7 +22,7 @@
     if (k === "tongue") return !c.noLang && c.langs.length > 0;
     return F[k].ok(c);
   }
-  var cityName = function (h) { return h.name + ", " + h.country; };
+  var cityName = function (h) { return V.city(h.name) + ", " + h.country; };
 
   // One island's question. S is the island (0 to 9): from island 5 the wrong options come from the same continent.
   // Returns null when the question can't be made (too few wrong options, or the subject was already asked today).
@@ -118,6 +118,7 @@
       if (!q && x.city) q = make("mark", S, null, x.city, ctx);
       for (var i = 0; i < 400 && !q; i++) q = make(V.pick(["capital", "tongue", "web", "call"], ctx.r), S, V.pick(ctx.u.slice(0, 80), ctx.r), null, ctx);
       if (!q) throw new Error("No question found for island " + (S + 1) + " of day " + t);
+      q.ease = x.ease;
       ctx.used.add(q.about);
       return q;
     });
@@ -201,5 +202,24 @@
     $("#vxpOpts").onclick = function (e) { var b = e.target.closest(".opt"); if (b) answer(Number(b.dataset.k)); };
   }
 
-  window.VXV = { deal: deal, kinds: KINDS, labels: LABEL, plan: plan, ok: ok, wire: wire, practice: { open: open, close: close, state: function () { return pr; } } };
+  // ---- on every day: words for the pictures, and the first-time note on "safe in harbor" (they never change an answer) ----
+  // A screen reader can't see the outline or the globe, so the picture gets a description that is a fair clue, not the answer.
+  function alt(q, cv, table) {
+    if (!cv) return;
+    if (!q || !q.show) { cv.removeAttribute("role"); cv.removeAttribute("aria-label"); return; }
+    var d = function (v, pos, neg) { return Math.abs(Math.round(v)) + "\u00b0 " + (v >= 0 ? pos : neg); }, text;
+    if (q.show.cid != null) {
+      var c = (table || []).filter(function (x) { return x.cid === q.show.cid; })[0];
+      var size = c ? Number(c.area.toPrecision(2)).toLocaleString("en-US") : "";
+      text = c ? "The outline of a country in " + c.continent + (c.coast === "landlocked" ? ", with no sea coast" : c.coast === "island" ? ", an island country" : ", with a sea coast") +
+        ", covering about " + size + " square kilometres." : "The outline of a country.";
+    } else text = "A globe with a mark at about " + d(q.show.lat, "north", "south") + ", " + d(q.show.lon, "east", "west") + ".";
+    cv.setAttribute("role", "img"); cv.setAttribute("aria-label", text);
+  }
+  function ui(C, safe) {
+    var n = $("#vxHarborNote");
+    if (n) n.hidden = !!C.end || safe > 0;
+  }
+
+  window.VXV = { alt: alt, ui: ui, deal: deal, kinds: KINDS, labels: LABEL, plan: plan, ok: ok, wire: wire, practice: { open: open, close: close, state: function () { return pr; } } };
 })();

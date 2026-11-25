@@ -109,5 +109,28 @@
     } catch (e) { return 0; }
   }
 
-  window.VX = { FROM: 14, FAM: FAM, the: the, The: The, rng: rng, shuffle: shuffle, pick: pick, fact: fact, others: others, best: best, PKEY: PKEY };
+  // One fact about a country that the question didn't ask, for the explanation after an answer.
+  // Only facts the games already treat as safe: the table's capital, and the pack facts kept above.
+  function factAbout(c, skip, salt) {
+    if (!c) return "";
+    var f = fact(c), n = the(c.name), out = [];
+    if (skip !== "capital" && !c.noCap && c.capital && c.capital !== c.name) out.push("The capital of " + n + " is " + c.capital + ".");
+    if (skip !== "money" && f.m) out.push("The currency of " + n + " is the " + f.m + ".");
+    if (skip !== "peak" && f.p) out.push("The highest point of " + n + " is " + f.p + ", " + f.h.toLocaleString("en-US") + " m.");
+    if (skip !== "call" && f.c) out.push("Phone numbers in " + n + " start with " + f.c + ".");
+    if (skip !== "web" && f.w) out.push("Web addresses in " + n + " end in " + f.w + ".");
+    if (skip !== "drive" && f.l) out.push(The(c.name) + " drives on the left.");
+    if (skip !== "coast" && skip !== "inland" && c.coast === "landlocked" && !CASPIAN.test(c.cc)) out.push(The(c.name) + " has no sea coast.");
+    if (!out.length) return "";
+    var h = 7; String(c.cc + skip + (salt || "")).split("").forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) >>> 0; });
+    return out[h % out.length];
+  }
+  // Numbers as people write them: 1,000 not 1000.
+  function num(v) { return Number(v).toLocaleString("en-US"); }
+  // City names as they're usually written in English (from No. 14 and in practice; earlier days keep their text).
+  var CITY = { "Nizhniy Novgorod": "Nizhny Novgorod", "Allahābād": "Prayagraj", "Hāora": "Howrah", "León de los Aldama": "León", "Juárez": "Ciudad Juárez", "Montréal": "Montreal", "Ürümqi": "Urumqi", "İzmir": "Izmir", "Tai’an": "Tai'an", "Xi’an": "Xi'an" };
+  function city(n) { return CITY[n] || n.replace(/[āīūēō]/g, function (ch) { return { "ā": "a", "ī": "i", "ū": "u", "ē": "e", "ō": "o" }[ch]; }); }
+  window.VXN = num;
+
+  window.VX = { FROM: 14, factAbout: factAbout, num: num, city: city, FAM: FAM, the: the, The: The, rng: rng, shuffle: shuffle, pick: pick, fact: fact, others: others, best: best, PKEY: PKEY };
 })();

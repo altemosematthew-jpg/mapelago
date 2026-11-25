@@ -68,10 +68,43 @@
       var idx = j >= 0 ? H.yn(pool.length, 5501 + j * 131, (V.FROM - 1) * 2 + at, 2) : H.yn(pool.length, 7001 + NEW.indexOf(cat) * 131, at, 2);
       out[cat] = idx.map(function (i, k) {
         var seed = t * 8191 + ci * 313 + k * 17 + 3;
-        return j >= 0 ? H.Wa[cat](H.sa(seed), H.T, pool[i]) : fromFamily(cat, pool[i], V.rng(seed));
+        var q = j >= 0 ? H.Wa[cat](H.sa(seed), H.T, pool[i]) : fromFamily(cat, pool[i], V.rng(seed));
+        if (cat === "size") q.ask = "Which of these countries is the largest by area?";
+        return q;
       });
     });
     return out;
+  }
+
+  // ---- explanations: each one adds a fact instead of repeating the question (every day; answers never change) ----
+  var byName = null;
+  function country(n) { if (!byName) { byName = {}; H.T.forEach(function (c) { byName[c.name] = c; }); } return byName[n]; }
+  function explain(q, cat, salt) {
+    if (!q || cat === "border" || cat === "continent") return q; // these already name the neighbours, or the capital
+    var right = q.options[q.answer], c = country(right), f;
+    if (cat === "size") {
+      var areas = q.options.map(function (o) { var x = country(o); return x ? x.area : 0; }), second = 0, wi = -1;
+      areas.forEach(function (a, i) { if (i !== q.answer && a > second) { second = a; wi = i; } });
+      if (!second || wi < 0) return q;
+      var ratio = areas[q.answer] / second;
+      q.about = V.The(right) + " is the largest by area: about " + (ratio >= 10 ? Math.round(ratio) : ratio.toFixed(1)) + " times the size of " + V.the(q.options[wi]) + ", the next largest of the four.";
+      return q;
+    }
+    if (cat === "tongue") { var m = /official language of (.+)\?$/.exec(q.ask); c = m && country(m[1]); }
+    f = V.factAbout(c, cat, salt);
+    if (!f) return q;
+    q.about = cat === "peak" ? q.about + " " + f : "It's " + right + ". " + f;
+    return q;
+  }
+  function explainAll(A, t) {
+    Object.keys(A).forEach(function (cat) { A[cat].forEach(function (q, i) { explain(q, cat, String(t) + i); }); });
+    return A;
+  }
+  // The share grid, labelled so friends can tell which square is which
+  function grid(k, got, D) {
+    var e = { 1: "\u2705", 2: "\u{1F7E8}", 0: "\u274C" };
+    var cell = function (t) { return e[got[t].got] + " " + D[t]; };
+    return k.slice(0, 3).map(cell).join("  ") + "\n" + k.slice(3).map(cell).join("  ");
   }
 
   // ---- practice: endless questions from every category, a running streak and a best streak. Never touches the daily save. ----
@@ -85,7 +118,7 @@
       if (!pool.length) continue;
       var c = V.pick(pool, Math.random), seed = Math.floor(Math.random() * 4294967296);
       try { q = CLASSIC.indexOf(cat) >= 0 ? H.Wa[cat](H.sa(seed), H.T, c) : fromFamily(cat, c, V.rng(seed)); } catch (e) { q = null; }
-      if (q) { q.cat = cat; pr.recent.push(cat + c.cc); if (pr.recent.length > 60) pr.recent.shift(); }
+      if (q) { q.cat = cat; if (cat === "size") q.ask = "Which of these countries is the largest by area?"; explain(q, cat, seed); pr.recent.push(cat + c.cc); if (pr.recent.length > 60) pr.recent.shift(); }
     }
     return q;
   }
@@ -130,5 +163,5 @@
     $("#sxpNext").onclick = function () { show(); var b = $("#sxpOpts .opt"); if (b) b.focus(); };
     $("#sxpOpts").onclick = function (e) { var b = e.target.closest(".opt"); if (b) answer(Number(b.dataset.i)); };
   }
-  window.SX = { FROM: V.FROM, init: init, deal: deal, cats: cats, order: ORDER, labels: NAMES, wire: wire, practice: { open: open, close: close, state: function () { return pr; } } };
+  window.SX = { FROM: V.FROM, init: init, deal: deal, explainAll: explainAll, grid: grid, cats: cats, order: ORDER, labels: NAMES, wire: wire, practice: { open: open, close: close, state: function () { return pr; } } };
 })();

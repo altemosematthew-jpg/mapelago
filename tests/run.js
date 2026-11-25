@@ -497,6 +497,87 @@ async function page(b, url, opts = {}) {
       check(!p.errs.length, `vx: ${f} practice: no errors`, p.errs.join("; "));
       await ctx.close();
     }
+    // ---- vx review fixes (hands-on review of live 0.15.2). No. 12 and 13 keep their answers and scoring (golden.json). ----
+    {
+      const pack = require("../review/vx-pack.js"), P = {};
+      for (const c of pack.parse()) if (!pack.NOT_IN_GAMES.has(c.raw)) P[c.name] = c;
+      const fresh375 = { ctx: { viewport: { width: 375, height: 667 } }, wait: 1200 };
+      // Voyage: harbors on the route, the ladder once, the harbor note, the spyglass stays visible as used
+      {
+        const { ctx, p } = await page(b, U + "voyage.html#day-14", fresh375);
+        await p.waitForFunction(() => window.__WORLD);
+        const r = await p.evaluate(() => ({ harbors: [...document.querySelectorAll("#dots li")].map((l, i) => l.classList.contains("harbor") ? i + 1 : 0).filter(Boolean),
+          ladder: [...document.querySelectorAll(".vx-ladder li")].map((l) => l.textContent), note: !document.querySelector("#vxHarborNote").hidden,
+          key: getComputedStyle(document.querySelector(".vx-key")).display !== "none", caption: !!document.querySelector(".vx-topics") }));
+        check(JSON.stringify(r.harbors) === "[3,6]" && r.ladder.join("|") === "50|100|150, harbor|250|350|500, harbor|650|800|900|1,000" && r.note && r.key && r.caption,
+          "vx review: Voyage marks the harbors, shows the points ladder once, explains safe in harbor and the topic chips", JSON.stringify(r));
+        // alt text for the globe (island 1 on No. 14 is a globe question), and for an outline
+        const alt = await p.evaluate(() => { const c = document.querySelector("#show"), q = __voy.S().qs[0]; const H = VXH; let shape = null;
+          for (let d = 14; d < 40 && !shape; d++) shape = VXV.deal(H.xa, H.dt, d, H.yn).find((x) => x.kind === "shape") || null;
+          const cv = document.createElement("canvas"); VXV.alt(shape, cv, H.xa);
+          return { kind: q.kind, role: c.getAttribute("role"), label: c.getAttribute("aria-label"), shape: cv.getAttribute("aria-label"), answer: shape.options[shape.answer] }; });
+        check(alt.kind === "mark" && alt.role === "img" && /^A globe with a mark at about \d+° (north|south), \d+° (east|west)\.$/.test(alt.label) && /^The outline of a country in [A-Za-z ]+, .+ square kilometres\.$/.test(alt.shape) && !alt.shape.includes(alt.answer),
+          "vx review: the globe and outline pictures have a text alternative that doesn't give the answer away", JSON.stringify(alt));
+        const a0 = await p.evaluate(() => __voy.S().qs[0].answer);
+        await p.click("#spy"); await p.waitForTimeout(200);
+        const s1 = await p.evaluate(() => [document.querySelector("#spy").hidden, document.querySelector("#spy").disabled, document.querySelector("#spy").textContent, document.querySelectorAll("#opts .opt:not([hidden])").length]);
+        await p.click(`#opts .opt[data-k="${a0}"]`); await p.waitForTimeout(1500); await p.click("#sail"); await p.waitForTimeout(300);
+        const s2 = await p.evaluate(() => [document.querySelector("#spy").hidden, document.querySelector("#spy").disabled, document.querySelector("#spy").textContent, document.querySelector("#say").textContent]);
+        check(JSON.stringify(s1) === '[false,true,"Spyglass used on this island",2]' && JSON.stringify(s2) === '[false,true,"Spyglass used (one a day)","Worth 100 points."]', "vx review: a used spyglass stays visible as used", JSON.stringify([s1, s2]));
+        check(!p.errs.length, "vx review: Voyage, no errors", p.errs.join("; "));
+        // all ten islands: the share line fits, and 1,000 has its comma
+        const all = await p.evaluate(() => { const s = __voy.S(); return JSON.stringify({ results: { 14: { n: 14, at: 9, picks: s.qs.map((q) => q.answer), spy: -1, end: "home" } }, game: null }); });
+        await p.evaluate((v) => localStorage.setItem("dailycity:voyage:v1", v), all); await p.reload(); await p.waitForTimeout(800);
+        const h = await p.evaluate(() => [document.querySelector("#bigScore").textContent, document.querySelector("#shareText").textContent]);
+        check(h[0] === "1,000" && /🐢 1,000 points/u.test(h[1]) && /I made it home: all ten islands/.test(h[1]) && !/drop anchor too soon/.test(h[1]), "vx review: sailing all ten islands shares a fitting line, with 1,000 written with a comma", JSON.stringify(h));
+        await ctx.close();
+      }
+      // Voyage from No. 14: islands get harder as they're worth more, and city names read as in English
+      {
+        const { ctx, p } = await page(b, U + "voyage.html#day-14", { wait: 600 });
+        const r = await p.evaluate(() => { const H = VXH, bad = [], odd = []; for (let d = 14; d <= 200; d++) { const qs = VXV.deal(H.xa, H.dt, d, H.yn);
+          qs.forEach((q, i) => { if (i && q.ease < qs[i - 1].ease) bad.push(d); q.options.forEach((o) => { if (/[āīūēō’]|Nizhniy|Ürümqi|İzmir/.test(o)) odd.push(o); }); }); } return { bad, odd }; });
+        check(!r.bad.length && !r.odd.length, "vx review: Voyage islands never get easier as their value rises, and city names read as in English (No. 14 to 200)", JSON.stringify(r).slice(0, 300));
+        await ctx.close();
+      }
+      // Stamps: size questions say "by area"; explanations add a checked fact; one answer message; labelled share grid; the wheel explains itself
+      {
+        const { ctx, p } = await page(b, U + "stamps.html#day-14", { ...fresh375, ctx: { viewport: { width: 375, height: 667 }, reducedMotion: "reduce" } });
+        const r = await p.evaluate(() => { const out = []; for (let d = 14; d <= 80; d++) { const A = SX.explainAll(SX.deal(d, () => {}), d); for (const [k, qs] of Object.entries(A)) qs.forEach((q) => out.push([d, k, q])); } return out; });
+        let bad = [];
+        for (const [d, k, q] of r) {
+          const right = q.options[q.answer];
+          if (k === "size" && q.ask !== "Which of these countries is the largest by area?") bad.push([d, k, q.ask]);
+          if (k === "border" || k === "continent") continue;
+          if (k === "size") { if (!/^(The )?.+ is the largest by area: about [\d.]+ times the size of .+, the next largest of the four\.$/.test(q.about)) bad.push([d, k, q.about]); continue; }
+          const facts = q.about.split(/(?<=\.) /).slice(1).join(" ");
+          if (!facts) { bad.push([d, k, q.about]); continue; }
+          let m, ok = true;
+          if ((m = /^The currency of (?:the )?(.+) is the (.+)\.$/.exec(facts))) ok = P[m[1]] && pack.parse && P[m[1]].money.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").includes(m[2].normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase());
+          else if ((m = /^The highest point of (?:the )?(.+) is (.+), ([\d,]+) m\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].peak === m[2] && P[m[1]].height === +m[3].replace(/,/g, "");
+          else if ((m = /^Phone numbers in (?:the )?(.+) start with (.+)\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].call.split("/")[0] === m[2];
+          else if ((m = /^Web addresses in (?:the )?(.+) end in (.+)\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].web === m[2];
+          else if ((m = /^(?:The )?(.+) drives on the left\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].drive === "left";
+          else if ((m = /^(?:The )?(.+) has no sea coast\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].coast === "landlocked";
+          else if (!/^The capital of (?:the )?.+ is .+\.$/.test(facts)) ok = false;
+          if (!ok) bad.push([d, k, q.about]);
+        }
+        check(!bad.length, "vx review: Stamps size questions say by area, and every explanation adds a fact that matches the pack (No. 14 to 80)", JSON.stringify(bad.slice(0, 4)));
+        check(await p.isVisible("#vxWheelNote") && /stop it early.*skips categories.*picks that one for you/.test(await p.textContent("#vxWheelNote")), "vx review: the wheel says it can be tapped to stop, skips stamped categories and picks the last one");
+        await p.click("#spin"); await p.waitForTimeout(300);
+        const a = await p.evaluate(() => __stamp.S().cur.answer); await p.click(`#qopts .opt[data-i="${a}"]`); await p.waitForTimeout(200);
+        const m = await p.evaluate(() => ({ shown: [...document.querySelectorAll("p")].filter((x) => x.offsetParent && /is stamped/.test(x.textContent)).length, before: getComputedStyle(document.querySelector("#qsay"), "::before").content, note: !!document.querySelector("#vxWheelNote").offsetParent }));
+        check(m.shown === 1 && m.before === "none" && !m.note, "vx review: Stamps shows the answer message once, without stray marks", JSON.stringify(m));
+        // finish the page and check the share grid names each category
+        for (let i = 0; i < 14; i++) { if (await p.isVisible("#qnext")) { await p.click("#qnext"); await p.waitForTimeout(300); } if (!(await p.isVisible("#qopts .opt:not([disabled])"))) break; const x = await p.evaluate(() => __stamp.S().cur.answer); await p.click(`#qopts .opt[data-i="${x}"]`); await p.waitForTimeout(200); }
+        if (await p.isVisible("#qnext")) { await p.click("#qnext"); await p.waitForTimeout(300); }
+        const sh = await p.evaluate(() => ({ text: document.querySelector("#shareText").textContent, cats: Object.keys(__stamp.S().q).map((k) => SX.labels[k]) }));
+        check(sh.cats.length === 6 && sh.cats.every((c) => new RegExp("(✅|🟨|❌) " + c + "(  |\\n)").test(sh.text + "  ")), "vx review: the Stamps share grid labels each square", JSON.stringify(sh));
+        check(!p.errs.length, "vx review: Stamps, no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+    }
+
     // ---- vx end ----
   } finally { await b.close(); srv.close(); }
   console.log(`\n${passed} passed, ${failed.length} failed`);
