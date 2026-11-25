@@ -47,7 +47,7 @@ distance. Built on branch `claude/zealous-allen-u0n2ro` from main at `db566cc` (
 | `about/index.html` | "Nine games a day … Crossings and Dead Reckoning." |
 | `sw.js` | PRE list: `"dead-reckoning.html"` and `"dead-reckoning.js?v=<version>"` after `crossings.html`. |
 | `sitemap.xml` | `https://mapelago.com/dead-reckoning.html`. |
-| `tests/run.js` | `dead-reckoning.html` in the clean-load list (section 1), and section 10 calls `tests/dead-reckoning.test.js`. |
+| `tests/run.js` | `dead-reckoning.html` in the clean-load list (section 1); section 10 calls `tests/dead-reckoning.test.js`; the About-page check now expects nine games including Dead Reckoning ("Nine games a day"). |
 
 Not changed: `copy.js` / `copy/copy.json` (the card text falls back to `GAMES.about`; add a `cards.reckoning`
 line there if you want house copy), `manifest.webmanifest`, `hints.html`, `privacy/`. No other game's script or
@@ -91,6 +91,6 @@ data was touched, so no other game's puzzles change (the golden check in `tests/
 - **Map:** country outlines from `world.js` drawn as one SVG path, equirectangular, no labels. Tap places the pin,
   "Lock in my pin" confirms. Drag pans, pinch and wheel zoom, + / − / whole-world buttons (44 px). Keyboard as in
   Mystery city: arrow keys move the pin (Shift for 4× steps), Enter locks it in and goes on, + and − zoom.
-- **Layouts:** phone (375 px): map full width, 4 : 3.4. Desktop (≥ 900 px): map and a 340 px side column, map up to
-  640 px tall in a 1,180 px page. Every look sets its colours through the shared CSS variables (`--sea`, `--land`,
+- **Layouts:** phone (375 px): map full width, 5 : 4. Tablet: 16 : 10. Desktop (≥ 900 px): map and a 340 px side column
+  in a 1,180 px page, map 16 : 9.4 (about 795 × 465 px at 1440). Every look sets its colours through the shared CSS variables (`--sea`, `--land`,
   `--land-line`, `--accent`…); the tests load all six looks at both widths.

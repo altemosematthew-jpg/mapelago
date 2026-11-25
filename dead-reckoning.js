@@ -147,7 +147,7 @@
   function fit() {
     var b = box(), asp = b.w / b.h;
     if (asp > 360 / 170) { view.h = 170; view.w = 170 * asp; } else { view.w = 360; view.h = 360 / asp; }
-    view.x = 180 - view.w / 2; view.y = 90 - view.h / 2 - (view.h > 170 ? 0 : 5);
+    view.x = 180 - view.w / 2; view.y = 78 - view.h / 2; // centred a little north, where the places are
   }
   function clampView() {
     var b = box(), asp = b.w / b.h, minW = 4;
