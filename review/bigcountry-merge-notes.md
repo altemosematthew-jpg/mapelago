@@ -88,8 +88,8 @@ toast, the escape and icon helpers, and the rank names. It saves exactly what th
 
 ## Checked
 
-Throwaway merge of this branch into yours at 9c13c92 ("Release 0.15.4: source-checked city facts ..."),
-and before that at 13959f4 ("Release 0.15.2: Mystery country on Mystery
-city's rules"): no conflicts (bigger-country.html and tests/run.js merged on their own), and the whole
-test suite passed on the merged tree each time (454 checks at 0.15.4), including the version check (Bigger country?
-picks up `extras.js?v=` from the page's site.js tag). On this branch alone: 413 checks.
+Throwaway merges of this branch into yours, each with the whole test suite run on the merged tree:
+- at fc67a60 ("Release 0.15.5: visitor counting switched on"), with Play more: no conflicts, 491 checks passed.
+- earlier at 9c13c92 (0.15.4) and 13959f4 (0.15.2): no conflicts, all checks passed.
+bigger-country.html, bigger.html and tests/run.js merged on their own each time, and the version check
+passed (the pages pick up `extras.js?v=` from their own site.js tag). On this branch alone: 446 checks.
