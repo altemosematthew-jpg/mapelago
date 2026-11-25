@@ -203,5 +203,18 @@ def test_counts(s):
 
 edit("tests/run.js", lambda s: test_counts(s) == s, test_counts, f"test names and patterns say {W}")
 
+
+def every_save(s):
+    """0.15.10 section 24: a list of every game's save, to mark all the others played. Dead Reckoning's goes in too."""
+    def r(m):
+        body = m.group(0)
+        if "dailycity:reckoning:v1" in body or '"dailycity:stamps:v1"' not in body: return body
+        return body[:-1] + ', "dailycity:reckoning:v1"]'
+    return re.sub(r'\[(?:"dailycity:[\w:]+"(?:, )?){6,}\]', r, s)
+
+
+if re.search(r'\[(?:"dailycity:[\w:]+"(?:, )?){6,}\]', read("tests/run.js")):
+    edit("tests/run.js", lambda s: every_save(s) == s, every_save, "every-game save lists include Dead Reckoning")
+
 print("done" if not problems else "finished with problems in: " + ", ".join(sorted(set(problems))))
 sys.exit(1 if problems else 0)

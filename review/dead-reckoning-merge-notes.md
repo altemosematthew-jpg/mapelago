@@ -2,12 +2,13 @@
 
 Dead Reckoning is a new daily game: five places a day, tapped on a blank world map, scored by great-circle
 distance. It becomes the tenth game once Logbook (0.15.8, `history.html`) is out, the ninth before that.
-Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at **0.15.8** (`a87cb35`, Logbook) is already
-merged into it, with the patch re-applied on top, so merging the branch into 0.15.8 brings no conflicts.
+Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at **0.15.10** (`9ac9cda`) is already merged
+into it, with the patch re-applied on top, so merging the branch into 0.15.10 brings no conflicts. The version
+is not bumped here; `dead-reckoning.html`'s `?v=` follows `sw.js` (0.15.10).
 
 ## How to merge
 
-1. Merge the branch. If main has moved on past 0.15.8, the shared files may conflict: take **main's**
+1. Merge the branch. If main has moved on past 0.15.10, the shared files may conflict: take **main's**
    version of every shared file listed below (`git checkout --theirs` / `--ours` as appropriate, i.e. the side
    that is main), then run step 2, which puts Dead Reckoning back in.
 2. Run the patch for the shared files from anywhere:
@@ -21,12 +22,12 @@ merged into it, with the patch re-applied on top, so merging the branch into 0.1
    every `GAMES.push`).
    It prints `added`, `already there` or `NOT FOUND` for each edit and exits 1 if anything was not found.
 3. Run the tests: `cd tests && npm test` (`run.js`, then Logbook's `history.js`). Dead Reckoning's checks run just
-   before the end of `run.js`. On this branch: `run.js` 443 passed, `history.js` 66 passed.
+   before the end of `run.js`. See the end of this file for the latest counts on this branch.
 4. At release, bump the version as usual. The patch already set `dead-reckoning.html`'s `?v=` to the `sw.js`
    version at the time it ran, and `tests/run.js` section 1b now checks that page too. A global replace of the old
    `?v=` value covers it, along with `dead-reckoning.js?v=` in the `sw.js` PRE list.
 
-Checked on clean copies of 0.15.5, 0.15.7 and 0.15.8: every edit applies once and a second run adds nothing. On
+Checked on clean copies of 0.15.5, 0.15.7, 0.15.8 and 0.15.10: every edit applies once and a second run adds nothing. On
 0.15.8, Dead Reckoning goes after Logbook everywhere (menus, cards, streaks sheet, lists) and every count reads "ten".
 
 ## New files (no conflicts possible)
@@ -63,7 +64,7 @@ in `site.js` once Dead Reckoning is added (ten with Logbook).
 | `dead-reckoning.html` | Script addresses take the `sw.js` version. |
 | `sw.js` | PRE list: `"dead-reckoning.html"` and `"dead-reckoning.js?v=<version>"` on the line before `offline.html`. |
 | `sitemap.xml` | `https://mapelago.com/dead-reckoning.html`. |
-| `tests/run.js` | `dead-reckoning.html` added after the last game in every page list that names the games (clean load, the cache-version check 1b, the landmarks check 21); a call to `tests/dead-reckoning.test.js` before the end; the About-page check and the home search-data check (22) also name Dead Reckoning; their counts and test names say N. |
+| `tests/run.js` | `dead-reckoning.html` added after the last game in every page list that names the games (clean load, the cache-version check 1b, the landmarks check 21); Dead Reckoning's save in section 24's list of every game's save (so "last game left" still holds when all the others are played); a call to `tests/dead-reckoning.test.js` before the end; the About-page check and the home search-data check (22) also name Dead Reckoning; their counts and test names say N. |
 
 Not changed: `copy/copy.json` and `copy.js` (generated from it by `copy/apply.py`): the card text falls back to
 `GAMES.about`; add `reckoning` lines there if you want house copy, the manifest's shortcuts, `hints.html`, `privacy/`. No other game's script or
@@ -110,3 +111,18 @@ data was touched, so no other game's puzzles change (the golden check in `tests/
 - **Layouts:** phone (375 px): map full width, 5 : 4. Tablet: 16 : 10. Desktop (≥ 900 px): map and a 340 px side column
   in a 1,180 px page, map 16 : 9.4 (about 795 × 465 px at 1440). Every look sets its colours through the shared CSS variables (`--sea`, `--land`,
   `--land-line`, `--accent`…); the tests load all six looks at both widths.
+
+## Play-test notes (25 November, 0.15.10 merged)
+
+Played through at 375 px (touch) and 1440 px (mouse) on the branch's own files: the daily five, share text and
+clipboard, the stats sheet (Esc closes it), Play more for several places, back to today, reload, and a friend's
+`#b-dr-12-0-786` link in a fresh browser through to the "You / Your friend" comparison. No console errors.
+The branch's Cloudflare preview (claude-zealous-allen-u0n2ro.mapelago.pages.dev) could not be reached from the build
+session, whose network doesn't allow that host, so this was played on a local server with the same files.
+
+Fixed from the play-through (with tests):
+- Facts said "a city in Netherlands", "Netherlands's", "the Euro" and "Mount Scenery (Saba) (862 m)". They now read
+  "the Netherlands", "the Netherlands'", "the euro", "Mount Scenery (Saba), 862 m"; a test checks all 633 places.
+- On a phone the distance and Next button were below the fold after locking a pin; they now scroll into view.
+- The result card had no next-game button; it now has one, which 0.15.10's `nextButtons()` turns into
+  "Play <first unplayed game> next" like every other game.

@@ -101,4 +101,27 @@ module.exports = async function ({ b, U, page, check }) {
     check(/friend scored 640 of 1,000/i.test(await p.textContent(".mx-beat")), "dead reckoning: beat-my-score link", await p.textContent(".mx-beat"));
     await ctx.close();
   }
+  // facts read as English for every place: "the Netherlands", "the Philippines'", no doubled brackets, "the euro"
+  {
+    const { ctx, p } = await page(b, U + "dead-reckoning.html#day-12", { wait: 500 });
+    const bad = await p.evaluate(() => __dr.P.map((x) => __dr.fact(x).join(" ")).filter((t) =>
+      /\b(in|of) (Netherlands|United States|United Kingdom|Philippines|United Arab Emirates|Czech Republic|Dominican Republic|Gambia|Bahamas)\b/.test(t) ||
+      /s's\b/.test(t) || /\) \(/.test(t) || /the Euro\b/.test(t) || /\.\./.test(t) || !/^[A-Z].*\.$/.test(t)));
+    check(!bad.length, "dead reckoning: every place's fact reads as English", bad.slice(0, 3).join(" | "));
+    await ctx.close();
+  }
+
+  // on a phone, locking a pin brings the distance and the Next button into view; the result card offers the next game
+  {
+    const { ctx, p } = await page(b, U + "dead-reckoning.html#day-14", { ctx: { viewport: { width: 375, height: 667 } }, wait: 500 });
+    await p.evaluate(() => { const x = __dr.P[__dr.daily(14)[0]]; __dr.tapAt(x.lat + 3, x.lon); });
+    await p.click("#lockBtn"); await p.waitForTimeout(700);
+    const seen = await p.evaluate(() => { const r = document.querySelector("#nextBtn").getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; });
+    check(seen, "dead reckoning: on a phone the result and Next button scroll into view");
+    for (let i = 0; i < 5; i++) { if (i) { await p.evaluate(() => { const x = __dr.P[__dr.daily(14)[__dr.S().guesses.length]]; __dr.tapAt(x.lat, x.lon); }); await p.click("#lockBtn"); } await p.click("#nextBtn"); }
+    await p.waitForTimeout(300);
+    const nb = await p.evaluate(() => { const a = document.querySelector("#done .row2 a.act.plain"); return a && [a.getAttribute("href"), a.textContent]; });
+    check(nb && /^Play .+ next$|^All done today/.test(nb[1]) && nb[0] !== "dead-reckoning.html", "dead reckoning: the result card offers the next unplayed game", JSON.stringify(nb));
+    await ctx.close();
+  }
 };

@@ -62,16 +62,24 @@
 
   // ---------- facts: two lines from the site's own data ----------
   function popText(n) { return n >= 1e6 ? (Math.round(n / 1e5) / 10).toLocaleString("en-US") + " million" : (Math.round(n / 1e4) * 1e4).toLocaleString("en-US"); }
+  // country names that take "the" in a sentence
+  var THE = /^(Netherlands|United States|United Kingdom|United Arab Emirates|Philippines|Czech Republic|Dominican Republic|Central African Republic|Democratic Republic of the Congo|Republic of the Congo|Gambia|Bahamas|Maldives|Comoros|Seychelles|Marshall Islands|Solomon Islands|Vatican City)$/;
+  function the(c) { return THE.test(c) ? "the " + c : c; }
+  function owns(c) { return the(c) + (/s$/.test(c) ? "'" : "'s"); }
+  function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
   function fact(p) {
     var c = (window.DR_COUNTRIES || {})[p.country] || [], kind = c[0], cur = c[1], high = c[2];
-    var one = p.capital ? "The capital of " + p.country + ", home to about " + popText(p.pop) + " people." : "A city in " + p.country + " of about " + popText(p.pop) + " people.";
+    var one = p.capital ? "The capital of " + the(p.country) + ", home to about " + popText(p.pop) + " people." : "A city in " + the(p.country) + " of about " + popText(p.pop) + " people.";
     var two = [];
-    if (kind === "island") two.push(p.country + " is an island country");
-    else if (kind === "landlocked") two.push(p.country + " has no coastline");
-    if (high) { var h = high.split(", "); two.push((two.length ? "its" : p.country + "'s") + " highest point is " + h[0] + " (" + Number(h[1]).toLocaleString("en-US") + " m)"); }
-    if (cur && two.length < 2) two.push((two.length ? "its" : p.country + "'s") + " currency is the " + cur);
-    var t2 = two.join("; ");
-    return [one, t2 ? t2.charAt(0).toUpperCase() + t2.slice(1) + "." : ""];
+    if (kind === "island") two.push(the(p.country) + " is an island country");
+    else if (kind === "landlocked") two.push(the(p.country) + " has no coastline");
+    if (high) {
+      var at = high.lastIndexOf(", "), peak = high.slice(0, at), m = Number(high.slice(at + 2));
+      if (peak && isFinite(m)) two.push((two.length ? "its" : owns(p.country)) + " highest point is " + peak + ", " + m.toLocaleString("en-US") + " m");
+    }
+    // one-word currencies are common nouns (the euro, the leone); longer names keep their capitals (the Pakistan rupee)
+    if (cur && two.length < 2) two.push((two.length ? "its" : owns(p.country)) + " currency is the " + (/\s/.test(cur) ? cur : cur.toLowerCase()));
+    return [one, two.length ? cap(two.join("; ")) + "." : ""];
   }
 
   // ---------- saves ----------
@@ -305,6 +313,8 @@
     drawDots();
     $("#run").textContent = mode === "daily" ? String(total(roundsOf(guesses, places).map(function (r) { return r.s; }))) : "avg " + Math.round(practice.sum / practice.n);
     $("#nextBtn").focus({ preventScroll: true });
+    // on a phone the result sits under the map: bring it into view, map still partly showing
+    if (window.innerWidth < 900) { var rv = $("#reveal"); if (rv.scrollIntoView) rv.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
   }
   function next() {
     revealed = false; answerShown = null; pin = null;
