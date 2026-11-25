@@ -1,0 +1,207 @@
+# Mapelago country reference pack (source-checked by a separate researcher, received 25 Nov 2026)
+# 197 lines: the 193 UN members plus Vatican City, Palestine, Kosovo and Taiwan (marked non-member).
+# Format, one country per line, fields separated by |
+#   Country|land neighbours|landlocked, coastal or island|currency|drives|calling code|domain|UTC offsets|highest point, metres|flag colours
+# Review notes that come with it (see review/data-pack-check.md for how the games use it):
+# - Not fully verified: right-hand driving (taken as everything not on the left-driving list), flag colours,
+#   and the domains .ye, .za, .zm and .zw.
+# - Recent changes, flagged for review: Bulgaria uses the euro from 2026; Zimbabwe's currency is Zimbabwe Gold;
+#   the United States' highest peak is federally named Mount McKinley (Denali); accept both names.
+# - Time zones are for the main territory only.
+Afghanistan|China, Iran, Pakistan, Tajikistan, Turkmenistan, Uzbekistan|landlocked|Afghani (AFN)|right|+93|.af|+4:30|Noshak, 7492|black, red, green, white
+Albania|Greece, Kosovo, Montenegro, North Macedonia|coastal|Lek (ALL)|right|+355|.al|+1 (DST +2)|Korab, 2764|red, black
+Algeria|Libya, Mali, Mauritania, Morocco, Niger, Tunisia|coastal|Algerian dinar (DZD)|right|+213|.dz|+1|Tahat, 2908|green, white, red
+Andorra|France, Spain|landlocked|Euro (EUR)|right|+376|.ad|+1 (DST +2)|Pic de Coma Pedrosa, 2946|blue, yellow, red
+Angola|Democratic Republic of the Congo, Namibia, Republic of the Congo, Zambia|coastal|Kwanza (AOA)|right|+244|.ao|+1|Moco, 2620|red, black, yellow
+Antigua and Barbuda|none|island|East Caribbean dollar (XCD)|left|+1-268|.ag|-4|Mount Obama, 402|red, black, blue, white, yellow
+Argentina|Bolivia, Brazil, Chile, Paraguay, Uruguay|coastal|Argentine peso (ARS)|right|+54|.ar|-3|Aconcagua, 6962|light blue, white, yellow
+Armenia|Azerbaijan, Georgia, Iran, Turkey|landlocked|Armenian dram (AMD)|right|+374|.am|+4|Aragats, 4090|red, blue, orange
+Australia|none|coastal|Australian dollar (AUD)|left|+61|.au|+8 to +10 (DST +10:30 to +11)|Mount Kosciuszko, 2228|blue, red, white
+Austria|Czech Republic, Germany, Hungary, Italy, Liechtenstein, Slovakia, Slovenia, Switzerland|landlocked|Euro (EUR)|right|+43|.at|+1 (DST +2)|Grossglockner, 3798|red, white
+Azerbaijan|Armenia, Georgia, Iran, Russia, Turkey|landlocked|Azerbaijan manat (AZN)|right|+994|.az|+4|Bazarduzu Dagi, 4466|blue, red, green, white
+Bahamas|none|island|Bahamian dollar (BSD)|left|+1-242|.bs|-5 (DST -4)|Cat Island (unnamed), 64|aquamarine, gold, black
+Bahrain|none|island|Bahraini dinar (BHD)|right|+973|.bh|+3|Jabal ad Dukhan, 135|red, white
+Bangladesh|India, Myanmar|coastal|Taka (BDT)|left|+880|.bd|+6|Mowdok Taung, 1060|green, red
+Barbados|none|island|Barbados dollar (BBD)|left|+1-246|.bb|-4|Mount Hillaby, 336|blue, gold, black
+Belarus|Latvia, Lithuania, Poland, Russia, Ukraine|landlocked|Belarusian ruble (BYN)|right|+375|.by|+3|Dzyarzhynskaya Hara, 346|red, green, white
+Belgium|France, Germany, Luxembourg, Netherlands|coastal|Euro (EUR)|right|+32|.be|+1 (DST +2)|Botrange, 694|black, yellow, red
+Belize|Guatemala, Mexico|coastal|Belize dollar (BZD)|right|+501|.bz|-6|Doyle's Delight, 1124|blue, red, white, green
+Benin|Burkina Faso, Niger, Nigeria, Togo|coastal|West African CFA franc (XOF)|right|+229|.bj|+1|Unnamed, near Kotopounga, 675|green, yellow, red
+Bhutan|China, India|landlocked|Ngultrum (BTN), Indian rupee (INR)|left|+975|.bt|+6|Gangkar Puensum, 7570|yellow, orange, white, black
+Bolivia|Argentina, Brazil, Chile, Paraguay, Peru|landlocked|Boliviano (BOB)|right|+591|.bo|-4|Sajama, 6542|red, yellow, green
+Bosnia and Herzegovina|Croatia, Montenegro, Serbia|coastal|Convertible mark (BAM)|right|+387|.ba|+1 (DST +2)|Maglic, 2386|blue, yellow, white
+Botswana|Namibia, South Africa, Zambia, Zimbabwe|landlocked|Pula (BWP)|left|+267|.bw|+2|Manyelanong Hill, 1495|light blue, white, black
+Brazil|Argentina, Bolivia, Colombia, France, Guyana, Paraguay, Peru, Suriname, Uruguay, Venezuela|coastal|Brazilian real (BRL)|right|+55|.br|-5 to -3|Pico da Neblina, 2994|green, yellow, blue, white
+Brunei|Malaysia|island|Brunei dollar (BND)|left|+673|.bn|+8|Bukit Pagon, 1850|yellow, white, black, red
+Bulgaria|Greece, North Macedonia, Romania, Serbia, Turkey|coastal|Euro (EUR)|right|+359|.bg|+2 (DST +3)|Musala, 2925|white, green, red
+Burkina Faso|Benin, Ghana, Ivory Coast, Mali, Niger, Togo|landlocked|West African CFA franc (XOF)|right|+226|.bf|+0|Tena Kourou, 749|red, green, yellow
+Burundi|Democratic Republic of the Congo, Rwanda, Tanzania|landlocked|Burundi franc (BIF)|right|+257|.bi|+2|Mukike Range (unnamed), 2685|red, green, white
+Cape Verde|none|island|Cabo Verde escudo (CVE)|right|+238|.cv|-1|Mount Fogo, 2829|blue, white, red, yellow
+Cambodia|Laos, Thailand, Vietnam|coastal|Riel (KHR)|right|+855|.kh|+7|Phnum Aoral, 1810|blue, red, white
+Cameroon|Central African Republic, Chad, Equatorial Guinea, Gabon, Nigeria, Republic of the Congo|coastal|Central African CFA franc (XAF)|right|+237|.cm|+1|Mount Cameroon, 4045|green, red, yellow
+Canada|Denmark, United States|coastal|Canadian dollar (CAD)|right|+1|.ca|-8 to -3:30 (DST -7 to -2:30)|Mount Logan, 5959|red, white
+Central African Republic|Cameroon, Chad, Democratic Republic of the Congo, Republic of the Congo, South Sudan, Sudan|landlocked|Central African CFA franc (XAF)|right|+236|.cf|+1|Mont Ngaoui, 1410|blue, white, green, yellow, red
+Chad|Cameroon, Central African Republic, Libya, Niger, Nigeria, Sudan|landlocked|Central African CFA franc (XAF)|right|+235|.td|+1|Emi Koussi, 3445|blue, gold, red
+Chile|Argentina, Bolivia, Peru|coastal|Chilean peso (CLP)|right|+56|.cl|-4 to -3 (DST -3)|Ojos del Salado, 6893|white, red, blue
+China|Afghanistan, Bhutan, India, Kazakhstan, Kyrgyzstan, Laos, Mongolia, Myanmar, Nepal, North Korea, Pakistan, Russia, Tajikistan, Vietnam|coastal|Yuan renminbi (CNY)|right|+86|.cn|+8|Mount Everest, 8849|red, yellow
+Colombia|Brazil, Ecuador, Panama, Peru, Venezuela|coastal|Colombian peso (COP)|right|+57|.co|-5|Pico Cristobal Colon, 5730|yellow, blue, red
+Comoros|none|island|Comorian franc (KMF)|right|+269|.km|+3|Karthala, 2360|yellow, white, red, blue, green
+Democratic Republic of the Congo|Angola, Burundi, Central African Republic, Republic of the Congo, Rwanda, South Sudan, Tanzania, Uganda, Zambia|coastal|Congolese franc (CDF)|right|+243|.cd|+1 to +2|Margherita Peak (Mount Stanley), 5110|sky blue, red, yellow
+Republic of the Congo|Angola, Cameroon, Central African Republic, Democratic Republic of the Congo, Gabon|coastal|Central African CFA franc (XAF)|right|+242|.cg|+1|Mont Nabeba, 1020|green, yellow, red
+Costa Rica|Nicaragua, Panama|coastal|Costa Rican colon (CRC)|right|+506|.cr|-6|Cerro Chirripo, 3819|blue, white, red
+Ivory Coast|Burkina Faso, Ghana, Guinea, Liberia, Mali|coastal|West African CFA franc (XOF)|right|+225|.ci|+0|Mount Nimba, 1752|orange, white, green
+Croatia|Bosnia and Herzegovina, Hungary, Montenegro, Serbia, Slovenia|coastal|Euro (EUR)|right|+385|.hr|+1 (DST +2)|Dinara, 1831|red, white, blue
+Cuba|none|island|Cuban peso (CUP)|right|+53|.cu|-5 (DST -4)|Pico Turquino, 1974|blue, white, red
+Cyprus|none|island|Euro (EUR)|left|+357|.cy|+2 (DST +3)|Mount Olympus, 1951|white, copper, green
+Czech Republic|Austria, Germany, Poland, Slovakia|landlocked|Czech koruna (CZK)|right|+420|.cz|+1 (DST +2)|Snezka, 1602|white, red, blue
+Denmark|Canada, Germany|coastal|Danish krone (DKK)|right|+45|.dk|+1 (DST +2)|Store Mollehoj, 171|red, white
+Djibouti|Eritrea, Ethiopia, Somalia|coastal|Djibouti franc (DJF)|right|+253|.dj|+3|Moussa Ali, 2021|light blue, green, white, red
+Dominica|none|island|East Caribbean dollar (XCD)|left|+1-767|.dm|-4|Morne Diablotins, 1447|green, yellow, black, white, red
+Dominican Republic|Haiti|island|Dominican peso (DOP)|right|+1-809/829/849|.do|-4|Pico Duarte, 3098|blue, red, white
+Ecuador|Colombia, Peru|coastal|US dollar (USD)|right|+593|.ec|-5|Chimborazo, 6267|yellow, blue, red
+Egypt|Israel, Libya, Palestine, Sudan|coastal|Egyptian pound (EGP)|right|+20|.eg|+2 (DST +3)|Mount Catherine, 2629|red, white, black, gold
+El Salvador|Guatemala, Honduras|coastal|US dollar (USD), colon (SVC)|right|+503|.sv|-6|Cerro El Pital, 2730|blue, white
+Equatorial Guinea|Cameroon, Gabon|coastal|Central African CFA franc (XAF)|right|+240|.gq|+1|Pico Basile, 3008|green, white, red, blue
+Eritrea|Djibouti, Ethiopia, Sudan|coastal|Nakfa (ERN)|right|+291|.er|+3|Soira, 3018|red, green, blue, gold
+Estonia|Latvia, Russia|coastal|Euro (EUR)|right|+372|.ee|+2 (DST +3)|Suur Munamagi, 318|blue, black, white
+Eswatini|Mozambique, South Africa|landlocked|Lilangeni (SZL)|left|+268|.sz|+2|Emlembe, 1862|blue, yellow, red, black, white
+Ethiopia|Djibouti, Eritrea, Kenya, Somalia, South Sudan, Sudan|landlocked|Ethiopian birr (ETB)|right|+251|.et|+3|Ras Dejen, 4550|green, yellow, red, blue
+Fiji|none|island|Fiji dollar (FJD)|left|+679|.fj|+12|Tomanivi, 1324|light blue, red, white
+Finland|Norway, Russia, Sweden|coastal|Euro (EUR)|right|+358|.fi|+2 (DST +3)|Halti, 1328|white, blue
+France|Andorra, Belgium, Brazil, Germany, Italy, Luxembourg, Monaco, Spain, Suriname, Switzerland|coastal|Euro (EUR)|right|+33|.fr|+1 (DST +2)|Mont Blanc, 4810|blue, white, red
+Gabon|Cameroon, Equatorial Guinea, Republic of the Congo|coastal|Central African CFA franc (XAF)|right|+241|.ga|+1|Mont Bengoue, 1050|green, yellow, blue
+The Gambia|Senegal|coastal|Dalasi (GMD)|right|+220|.gm|+0|Unnamed, near Sabi, 63|red, blue, green, white
+Georgia|Armenia, Azerbaijan, Russia, Turkey|coastal|Lari (GEL)|right|+995|.ge|+4|Shkhara, 5193|white, red
+Germany|Austria, Belgium, Czech Republic, Denmark, France, Luxembourg, Netherlands, Poland, Switzerland|coastal|Euro (EUR)|right|+49|.de|+1 (DST +2)|Zugspitze, 2963|black, red, gold
+Ghana|Burkina Faso, Ivory Coast, Togo|coastal|Ghana cedi (GHS)|right|+233|.gh|+0|Mount Afadjato, 885|red, yellow, green, black
+Greece|Albania, Bulgaria, North Macedonia, Turkey|coastal|Euro (EUR)|right|+30|.gr|+2 (DST +3)|Mount Olympus, 2917|blue, white
+Grenada|none|island|East Caribbean dollar (XCD)|left|+1-473|.gd|-4|Mount Saint Catherine, 840|red, yellow, green
+Guatemala|Belize, El Salvador, Honduras, Mexico|coastal|Quetzal (GTQ)|right|+502|.gt|-6|Tajumulco, 4220|light blue, white
+Guinea|Guinea-Bissau, Ivory Coast, Liberia, Mali, Senegal, Sierra Leone|coastal|Guinean franc (GNF)|right|+224|.gn|+0|Mount Nimba, 1752|red, yellow, green
+Guinea-Bissau|Guinea, Senegal|coastal|West African CFA franc (XOF)|right|+245|.gw|+0|Dongol Ronde, 277|red, yellow, green, black
+Guyana|Brazil, Suriname, Venezuela|coastal|Guyana dollar (GYD)|left|+592|.gy|-4|Mount Roraima, 2775|green, yellow, red, black, white
+Haiti|Dominican Republic|island|Gourde (HTG), US dollar (USD)|right|+509|.ht|-5 (DST -4)|Pic la Selle, 2674|blue, red, white
+Honduras|El Salvador, Guatemala, Nicaragua|coastal|Lempira (HNL)|right|+504|.hn|-6|Cerro Las Minas, 2870|blue, white
+Hungary|Austria, Croatia, Romania, Serbia, Slovakia, Slovenia, Ukraine|landlocked|Forint (HUF)|right|+36|.hu|+1 (DST +2)|Kekes, 1014|red, white, green
+Iceland|none|island|Iceland krona (ISK)|right|+354|.is|+0|Hvannadalshnukur, 2110|blue, white, red
+India|Bangladesh, Bhutan, China, Myanmar, Nepal, Pakistan|coastal|Indian rupee (INR)|left|+91|.in|+5:30|Kanchenjunga, 8586|saffron, white, green, blue
+Indonesia|Malaysia, Papua New Guinea, Timor-Leste|island|Rupiah (IDR)|left|+62|.id|+7 to +9|Puncak Jaya, 4884|red, white
+Iran|Afghanistan, Armenia, Azerbaijan, Iraq, Pakistan, Turkey, Turkmenistan|coastal|Iranian rial (IRR)|right|+98|.ir|+3:30|Damavand, 5625|green, white, red
+Iraq|Iran, Jordan, Kuwait, Saudi Arabia, Syria, Turkey|coastal|Iraqi dinar (IQD)|right|+964|.iq|+3|Cheekha Dar, 3611|red, white, black, green
+Ireland|United Kingdom|island|Euro (EUR)|left|+353|.ie|+0 (DST +1)|Carrauntoohil, 1041|green, white, orange
+Israel|Egypt, Jordan, Lebanon, Palestine, Syria|coastal|New Israeli shekel (ILS)|right|+972|.il|+2 (DST +3)|Mount Hermon slope, 2224|white, blue
+Italy|Austria, France, San Marino, Slovenia, Switzerland, Vatican City|coastal|Euro (EUR)|right|+39|.it|+1 (DST +2)|Mont Blanc de Courmayeur, 4748|green, white, red
+Jamaica|none|island|Jamaican dollar (JMD)|left|+1-876/658|.jm|-5|Blue Mountain Peak, 2256|green, yellow, black
+Japan|none|island|Yen (JPY)|left|+81|.jp|+9|Mount Fuji, 3776|white, red
+Jordan|Iraq, Israel, Palestine, Saudi Arabia, Syria|coastal|Jordanian dinar (JOD)|right|+962|.jo|+3|Jabal Umm ad Dami, 1854|black, white, green, red
+Kazakhstan|China, Kyrgyzstan, Russia, Turkmenistan, Uzbekistan|landlocked|Tenge (KZT)|right|+7|.kz|+5|Khan Tengri, 7010|sky blue, gold
+Kenya|Ethiopia, Somalia, South Sudan, Tanzania, Uganda|coastal|Kenyan shilling (KES)|left|+254|.ke|+3|Mount Kenya, 5199|black, red, green, white
+Kiribati|none|island|Australian dollar (AUD)|left|+686|.ki|+12|Banaba (unnamed), 81|red, yellow, blue, white
+Kuwait|Iraq, Saudi Arabia|coastal|Kuwaiti dinar (KWD)|right|+965|.kw|+3|Unnamed, near Al-Salmi, 300|green, white, red, black
+Kyrgyzstan|China, Kazakhstan, Tajikistan, Uzbekistan|landlocked|Som (KGS)|right|+996|.kg|+6|Jengish Chokusu, 7439|red, yellow
+Laos|Cambodia, China, Myanmar, Thailand, Vietnam|landlocked|Lao kip (LAK)|right|+856|.la|+7|Phu Bia, 2817|red, blue, white
+Latvia|Belarus, Estonia, Lithuania, Russia|coastal|Euro (EUR)|right|+371|.lv|+2 (DST +3)|Gaizina Kalns, 312|maroon, white
+Lebanon|Israel, Syria|coastal|Lebanese pound (LBP)|right|+961|.lb|+2 (DST +3)|Qornet es Saouda, 3088|red, white, green
+Lesotho|South Africa|landlocked|Loti (LSL), rand (ZAR)|left|+266|.ls|+2|Thabana Ntlenyana, 3482|blue, white, green, black
+Liberia|Guinea, Ivory Coast, Sierra Leone|coastal|Liberian dollar (LRD)|right|+231|.lr|+0|Mount Wuteve, 1447|red, white, blue
+Libya|Algeria, Chad, Egypt, Niger, Sudan, Tunisia|coastal|Libyan dinar (LYD)|right|+218|.ly|+2|Bikku Bitti, 2267|red, black, green, white
+Liechtenstein|Austria, Switzerland|landlocked|Swiss franc (CHF)|right|+423|.li|+1 (DST +2)|Vorder-Grauspitz, 2599|blue, red, gold
+Lithuania|Belarus, Latvia, Poland, Russia|coastal|Euro (EUR)|right|+370|.lt|+2 (DST +3)|Aukstojas, 294|yellow, green, red
+Luxembourg|Belgium, France, Germany|landlocked|Euro (EUR)|right|+352|.lu|+1 (DST +2)|Buurgplaatz, 559|red, white, light blue
+Madagascar|none|island|Malagasy ariary (MGA)|right|+261|.mg|+3|Maromokotro, 2876|white, red, green
+Malawi|Mozambique, Tanzania, Zambia|landlocked|Malawi kwacha (MWK)|left|+265|.mw|+2|Sapitwa (Mulanje), 3002|black, red, green
+Malaysia|Brunei, Indonesia, Thailand|coastal|Malaysian ringgit (MYR)|left|+60|.my|+8|Gunung Kinabalu, 4095|red, white, blue, yellow
+Maldives|none|island|Rufiyaa (MVR)|left|+960|.mv|+5|Villingili Island (unnamed), 5|red, green, white
+Mali|Algeria, Burkina Faso, Guinea, Ivory Coast, Mauritania, Niger, Senegal|landlocked|West African CFA franc (XOF)|right|+223|.ml|+0|Hombori Tondo, 1155|green, yellow, red
+Malta|none|island|Euro (EUR)|left|+356|.mt|+1 (DST +2)|Ta' Dmejrek, 253|white, red
+Marshall Islands|none|island|US dollar (USD)|right|+692|.mh|+12|Airik Island, Maloelap (unnamed), 14|blue, orange, white
+Mauritania|Algeria, Mali, Senegal|coastal|Ouguiya (MRU)|right|+222|.mr|+0|Kediet Ijill, 915|green, yellow, red
+Mauritius|none|island|Mauritius rupee (MUR)|left|+230|.mu|+4|Mont Piton, 828|red, blue, yellow, green
+Mexico|Belize, Guatemala, United States|coastal|Mexican peso (MXN)|right|+52|.mx|-8 to -5 (DST -7 to -5)|Pico de Orizaba, 5636|green, white, red
+Micronesia|none|island|US dollar (USD)|right|+691|.fm|+10 to +11|Nanlaud (Pohnpei), 782|light blue, white
+Moldova|Romania, Ukraine|landlocked|Moldovan leu (MDL)|right|+373|.md|+2 (DST +3)|Dealul Balanesti, 430|blue, yellow, red
+Monaco|France|coastal|Euro (EUR)|right|+377|.mc|+1 (DST +2)|Chemin des Revoires, 162|red, white
+Mongolia|China, Russia|landlocked|Tugrik (MNT)|right|+976|.mn|+7 to +8|Khuiten Peak, 4374|red, blue, yellow
+Montenegro|Albania, Bosnia and Herzegovina, Croatia, Kosovo, Serbia|coastal|Euro (EUR)|right|+382|.me|+1 (DST +2)|Zla Kolata, 2534|red, gold
+Morocco|Algeria, Spain|coastal|Moroccan dirham (MAD)|right|+212|.ma|+1 (+0 in Ramadan)|Jebel Toubkal, 4165|red, green
+Mozambique|Eswatini, Malawi, South Africa, Tanzania, Zambia, Zimbabwe|coastal|Mozambique metical (MZN)|left|+258|.mz|+2|Monte Binga, 2436|green, black, yellow, red, white
+Myanmar|Bangladesh, China, India, Laos, Thailand|coastal|Kyat (MMK)|right|+95|.mm|+6:30|Gamlang Razi, 5870|yellow, green, red, white
+Namibia|Angola, Botswana, South Africa, Zambia|coastal|Namibia dollar (NAD), rand (ZAR)|left|+264|.na|+2|Konigstein (Brandberg), 2573|blue, red, green, white, yellow
+Nauru|none|island|Australian dollar (AUD)|left|+674|.nr|+12|Command Ridge, 70|blue, yellow, white
+Nepal|China, India|landlocked|Nepalese rupee (NPR)|left|+977|.np|+5:45|Mount Everest, 8849|crimson, blue, white
+Netherlands|Belgium, Germany|coastal|Euro (EUR)|right|+31|.nl|+1 (DST +2)|Mount Scenery (Saba), 862|red, white, blue
+New Zealand|none|island|New Zealand dollar (NZD)|left|+64|.nz|+12 (DST +13)|Aoraki/Mount Cook, 3724|blue, red, white
+Nicaragua|Costa Rica, Honduras|coastal|Cordoba oro (NIO)|right|+505|.ni|-6|Mogoton, 2085|blue, white
+Niger|Algeria, Benin, Burkina Faso, Chad, Libya, Mali, Nigeria|landlocked|West African CFA franc (XOF)|right|+227|.ne|+1|Idoukal-n-Taghes, 2022|orange, white, green
+Nigeria|Benin, Cameroon, Chad, Niger|coastal|Naira (NGN)|right|+234|.ng|+1|Chappal Waddi, 2419|green, white
+North Korea|China, Russia, South Korea|coastal|North Korean won (KPW)|right|+850|.kp|+9|Paektu-san, 2744|blue, red, white
+North Macedonia|Albania, Bulgaria, Greece, Kosovo, Serbia|landlocked|Denar (MKD)|right|+389|.mk|+1 (DST +2)|Golem Korab, 2764|red, yellow
+Norway|Finland, Russia, Sweden|coastal|Norwegian krone (NOK)|right|+47|.no|+1 (DST +2)|Galdhopiggen, 2469|red, white, blue
+Oman|Saudi Arabia, United Arab Emirates, Yemen|coastal|Rial Omani (OMR)|right|+968|.om|+4|Jabal Shams, 3004|white, red, green
+Pakistan|Afghanistan, China, India, Iran|coastal|Pakistan rupee (PKR)|left|+92|.pk|+5|K2, 8611|green, white
+Palau|none|island|US dollar (USD)|right|+680|.pw|+9|Mount Ngerchelchuus, 242|light blue, yellow
+Panama|Colombia, Costa Rica|coastal|Balboa (PAB), US dollar (USD)|right|+507|.pa|-5|Volcan Baru, 3475|white, red, blue
+Papua New Guinea|Indonesia|island|Kina (PGK)|left|+675|.pg|+10|Mount Wilhelm, 4509|red, black, yellow, white
+Paraguay|Argentina, Bolivia, Brazil|landlocked|Guarani (PYG)|right|+595|.py|-3|Cerro Pero, 842|red, white, blue
+Peru|Bolivia, Brazil, Chile, Colombia, Ecuador|coastal|Sol (PEN)|right|+51|.pe|-5|Huascaran, 6746|red, white
+Philippines|none|island|Philippine peso (PHP)|right|+63|.ph|+8|Mount Apo, 2954|blue, red, white, yellow
+Poland|Belarus, Czech Republic, Germany, Lithuania, Russia, Slovakia, Ukraine|coastal|Zloty (PLN)|right|+48|.pl|+1 (DST +2)|Rysy, 2499|white, red
+Portugal|Spain|coastal|Euro (EUR)|right|+351|.pt|+0 (DST +1)|Ponta do Pico (Azores), 2351|green, red, yellow
+Qatar|Saudi Arabia|coastal|Qatari rial (QAR)|right|+974|.qa|+3|Tuwayyir al Hamir, 103|maroon, white
+Romania|Bulgaria, Hungary, Moldova, Serbia, Ukraine|coastal|Romanian leu (RON)|right|+40|.ro|+2 (DST +3)|Moldoveanu, 2544|blue, yellow, red
+Russia|Azerbaijan, Belarus, China, Estonia, Finland, Georgia, Kazakhstan, Latvia, Lithuania, Mongolia, North Korea, Norway, Poland, Ukraine|coastal|Russian ruble (RUB)|right|+7|.ru|+3 to +12|Elbrus, 5642|white, blue, red
+Rwanda|Burundi, Democratic Republic of the Congo, Tanzania, Uganda|landlocked|Rwanda franc (RWF)|right|+250|.rw|+2|Karisimbi, 4519|sky blue, yellow, green
+Saint Kitts and Nevis|none|island|East Caribbean dollar (XCD)|left|+1-869|.kn|-4|Mount Liamuiga, 1156|green, red, black, yellow, white
+Saint Lucia|none|island|East Caribbean dollar (XCD)|left|+1-758|.lc|-4|Mount Gimie, 948|blue, yellow, black, white
+Saint Vincent and the Grenadines|none|island|East Caribbean dollar (XCD)|left|+1-784|.vc|-4|La Soufriere, 1234|blue, yellow, green
+Samoa|none|island|Tala (WST)|left|+685|.ws|+13|Mount Silisili, 1857|red, blue, white
+San Marino|Italy|landlocked|Euro (EUR)|right|+378|.sm|+1 (DST +2)|Monte Titano, 739|white, light blue
+Sao Tome and Principe|none|island|Dobra (STN)|right|+239|.st|+0|Pico de Sao Tome, 2024|green, yellow, red, black
+Saudi Arabia|Iraq, Jordan, Kuwait, Oman, Qatar, United Arab Emirates, Yemen|coastal|Saudi riyal (SAR)|right|+966|.sa|+3|Sarawat range (unnamed), 3000|green, white
+Senegal|Guinea, Guinea-Bissau, Mali, Mauritania, The Gambia|coastal|West African CFA franc (XOF)|right|+221|.sn|+0|Unnamed, near Nepen Diaka, 648|green, yellow, red
+Serbia|Bosnia and Herzegovina, Bulgaria, Croatia, Hungary, Kosovo, Montenegro, North Macedonia, Romania|landlocked|Serbian dinar (RSD)|right|+381|.rs|+1 (DST +2)|Midzor, 2169|red, blue, white
+Seychelles|none|island|Seychelles rupee (SCR)|left|+248|.sc|+4|Morne Seychellois, 905|blue, yellow, red, white, green
+Sierra Leone|Guinea, Liberia|coastal|Leone (SLE)|right|+232|.sl|+0|Loma Mansa (Bintimani), 1948|green, white, blue
+Singapore|none|island|Singapore dollar (SGD)|left|+65|.sg|+8|Bukit Timah, 166|red, white
+Slovakia|Austria, Czech Republic, Hungary, Poland, Ukraine|landlocked|Euro (EUR)|right|+421|.sk|+1 (DST +2)|Gerlachovsky Stit, 2655|white, blue, red
+Slovenia|Austria, Croatia, Hungary, Italy|coastal|Euro (EUR)|right|+386|.si|+1 (DST +2)|Triglav, 2864|white, blue, red
+Solomon Islands|none|island|Solomon Islands dollar (SBD)|left|+677|.sb|+11|Mount Popomanaseu, 2335|blue, yellow, green, white
+Somalia|Djibouti, Ethiopia, Kenya|coastal|Somali shilling (SOS)|right|+252|.so|+3|Mount Shimbiris, 2460|light blue, white
+South Africa|Botswana, Eswatini, Lesotho, Mozambique, Namibia, Zimbabwe|coastal|Rand (ZAR)|left|+27|.za|+2|Ntheledi, 3450|red, blue, green, black, yellow, white
+South Korea|North Korea|coastal|Won (KRW)|right|+82|.kr|+9|Halla-san, 1950|white, red, blue, black
+South Sudan|Central African Republic, Democratic Republic of the Congo, Ethiopia, Kenya, Sudan, Uganda|landlocked|South Sudanese pound (SSP)|right|+211|.ss|+2|Kinyeti, 3187|black, red, green, white, blue, yellow
+Spain|Andorra, France, Morocco, Portugal|coastal|Euro (EUR)|right|+34|.es|+1 (DST +2)|Teide (Canary Islands), 3718|red, yellow
+Sri Lanka|none|island|Sri Lanka rupee (LKR)|left|+94|.lk|+5:30|Pidurutalagala, 2524|yellow, maroon, green, orange
+Sudan|Central African Republic, Chad, Egypt, Eritrea, Ethiopia, Libya, South Sudan|coastal|Sudanese pound (SDG)|right|+249|.sd|+2|Jabal Marrah, 3042|red, white, black, green
+Suriname|Brazil, France, Guyana|coastal|Surinam dollar (SRD)|left|+597|.sr|-3|Juliana Top, 1230|green, white, red, yellow
+Sweden|Finland, Norway|coastal|Swedish krona (SEK)|right|+46|.se|+1 (DST +2)|Kebnekaise South, 2100|blue, yellow
+Switzerland|Austria, France, Germany, Italy, Liechtenstein|landlocked|Swiss franc (CHF)|right|+41|.ch|+1 (DST +2)|Dufourspitze on Monte Rosa, 4634|red, white
+Syria|Iraq, Israel, Jordan, Lebanon, Turkey|coastal|Syrian pound (SYP)|right|+963|.sy|+3|Mount Hermon, 2814|green, white, black, red
+Tajikistan|Afghanistan, China, Kyrgyzstan, Uzbekistan|landlocked|Somoni (TJS)|right|+992|.tj|+5|Qullai Somoniyon, 7495|red, white, green, gold
+Tanzania|Burundi, Democratic Republic of the Congo, Kenya, Malawi, Mozambique, Rwanda, Uganda, Zambia|coastal|Tanzanian shilling (TZS)|left|+255|.tz|+3|Kilimanjaro, 5895|green, yellow, black, blue
+Thailand|Cambodia, Laos, Malaysia, Myanmar|coastal|Baht (THB)|left|+66|.th|+7|Doi Inthanon, 2565|red, white, blue
+Timor-Leste|Indonesia|island|US dollar (USD)|left|+670|.tl|+9|Foho Tatamailau, 2963|red, yellow, black, white
+Togo|Benin, Burkina Faso, Ghana|coastal|West African CFA franc (XOF)|right|+228|.tg|+0|Mont Agou, 986|green, yellow, red, white
+Tonga|none|island|Pa'anga (TOP)|left|+676|.to|+13|Kao, 1046|red, white
+Trinidad and Tobago|none|island|Trinidad and Tobago dollar (TTD)|left|+1-868|.tt|-4|El Cerro del Aripo, 940|red, white, black
+Tunisia|Algeria, Libya|coastal|Tunisian dinar (TND)|right|+216|.tn|+1|Jebel ech Chambi, 1544|red, white
+Turkey|Armenia, Azerbaijan, Bulgaria, Georgia, Greece, Iran, Iraq, Syria|coastal|Turkish lira (TRY)|right|+90|.tr|+3|Mount Ararat, 5137|red, white
+Turkmenistan|Afghanistan, Iran, Kazakhstan, Uzbekistan|landlocked|Turkmenistan new manat (TMT)|right|+993|.tm|+5|Gora Ayribaba, 3139|green, red, white
+Tuvalu|none|island|Australian dollar (AUD)|left|+688|.tv|+12|Unnamed, 5|light blue, red, white, yellow
+Uganda|Democratic Republic of the Congo, Kenya, Rwanda, South Sudan, Tanzania|landlocked|Uganda shilling (UGX)|left|+256|.ug|+3|Margherita Peak (Mount Stanley), 5110|black, yellow, red, white
+Ukraine|Belarus, Hungary, Moldova, Poland, Romania, Russia, Slovakia|coastal|Hryvnia (UAH)|right|+380|.ua|+2 (DST +3)|Hora Hoverla, 2061|blue, yellow
+United Arab Emirates|Oman, Saudi Arabia|coastal|UAE dirham (AED)|right|+971|.ae|+4|Jabal Bil 'Ays, 1905|red, green, white, black
+United Kingdom|Ireland|island|Pound sterling (GBP)|left|+44|.uk|+0 (DST +1)|Ben Nevis, 1345|blue, red, white
+United States|Canada, Mexico|coastal|US dollar (USD)|right|+1|.us|-8 to -5 (DST -7 to -4)|Denali (Mount McKinley), 6190|red, white, blue
+Uruguay|Argentina, Brazil|coastal|Peso uruguayo (UYU)|right|+598|.uy|-3|Cerro Catedral, 514|white, blue, yellow
+Uzbekistan|Afghanistan, Kazakhstan, Kyrgyzstan, Tajikistan, Turkmenistan|landlocked|Uzbekistan sum (UZS)|right|+998|.uz|+5|Hazrat Sulton, 4643|blue, white, green, red
+Vanuatu|none|island|Vatu (VUV)|right|+678|.vu|+11|Tabwemasana, 1877|red, green, black, yellow
+Venezuela|Brazil, Colombia, Guyana|coastal|Bolivar (VES)|right|+58|.ve|-4|Pico Bolivar, 4978|yellow, blue, red, white
+Vietnam|Cambodia, China, Laos|coastal|Dong (VND)|right|+84|.vn|+7|Fan Si Pan, 3144|red, yellow
+Yemen|Oman, Saudi Arabia|coastal|Yemeni rial (YER)|right|+967|.ye|+3|Jabal an Nabi Shu'ayb, 3666|red, white, black
+Zambia|Angola, Botswana, Democratic Republic of the Congo, Malawi, Mozambique, Namibia, Tanzania, Zimbabwe|landlocked|Zambian kwacha (ZMW)|left|+260|.zm|+2|Mafinga Central, 2330|green, red, black, orange
+Zimbabwe|Botswana, Mozambique, South Africa, Zambia|landlocked|Zimbabwe Gold (ZWG)|left|+263|.zw|+2|Inyangani, 2592|green, yellow, red, black, white
+Vatican City (non-member)|Italy|landlocked|Euro (EUR)|right|+39|.va|+1 (DST +2)|Vatican Hill, 78|yellow, white
+Palestine (non-member)|Egypt, Israel, Jordan|coastal|New Israeli shekel (ILS), Jordanian dinar (JOD)|right|+970|.ps|+2 (DST +3)|Khallat al Batrakh, 1020|black, white, green, red
+Kosovo (non-member)|Albania, Montenegro, North Macedonia, Serbia|landlocked|Euro (EUR)|right|+383|none|+1 (DST +2)|Gjeravica, 2656|blue, gold, white
+Taiwan (non-member)|none|island|New Taiwan dollar (TWD)|right|+886|.tw|+8|Yu Shan, 3952|red, blue, white

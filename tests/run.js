@@ -137,6 +137,33 @@ async function page(b, url, opts = {}) {
       check(before === (await p.textContent("#num")) && (await p.locator("#newDay").isVisible()), "city: an unfinished round survives midnight with a banner");
       await ctx.close();
     }
+    // 10. after a missed pin opens a clue early, "Next clue: make a N" matches the highlighted locked slot
+    {
+      const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}' } });
+      await p.waitForFunction(() => window.__WORLD);
+      const read = () => p.evaluate(() => ({ label: (document.querySelector("#nextClue").textContent.match(/\d+/) || [""])[0], slot: (document.querySelector("#track .upnext") || {}).textContent, open: document.querySelectorAll("#clues li").length }));
+      const before = await read();
+      await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+      const after = await read();
+      check(after.open === before.open + 1, "missed pin opens the next clue", JSON.stringify([before, after]));
+      check(after.label && after.label === after.slot, "next-clue label matches the highlighted slot after a missed pin", JSON.stringify(after));
+      await ctx.close();
+    }
+
+    // 11. a save from the live release (0.14.0, recorded on that version) loads with its results, streaks and round in progress
+    {
+      const live = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/save-from-v0.14.json"), "utf8"));
+      const { ctx, p } = await page(b, U + "#day-12", { storage: live, clock: new Date("2026-11-25T12:00:00"), wait: 1200 });
+      const r = await p.evaluate(() => ({ moves: document.querySelector("#swipes").textContent, info: MXS.info().map((s) => [s.game.id, s.cur, s.played]) }));
+      check(r.moves === "3", "0.14.0 save: today's mystery city round in progress replays (3 moves)", r.moves);
+      const city = r.info.find((x) => x[0] === "city"), country = r.info.find((x) => x[0] === "country");
+      check(city[1] === 3 && city[2] === 3 && country[1] === 2 && country[2] === 2, "0.14.0 save: streaks kept (city 3, country 2)", JSON.stringify(r.info));
+      await p.evaluate(() => (location.hash = "#day-11")); await p.waitForTimeout(1200);
+      check((await p.evaluate(() => __lf.S().score)) === 1000, "0.14.0 save: a finished day keeps its score");
+      check(!p.errs.length, "0.14.0 save: no errors", p.errs.join("; "));
+      await ctx.close();
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
