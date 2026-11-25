@@ -66,7 +66,8 @@ toast, the escape and icon helpers, and the rank names. It saves exactly what th
 
 ## Checked
 
-Throwaway merge of this branch into yours at 13959f4 ("Release 0.15.2: Mystery country on Mystery
+Throwaway merge of this branch into yours at 9c13c92 ("Release 0.15.4: source-checked city facts ..."),
+and before that at 13959f4 ("Release 0.15.2: Mystery country on Mystery
 city's rules"): no conflicts (bigger-country.html and tests/run.js merged on their own), and the whole
-test suite passed on the merged tree, 450 checks, including the 0.15.2 version check (Bigger country?
-picked up `extras.js?v=0.15.2` from the page's site.js tag). On this branch alone: 413 checks.
+test suite passed on the merged tree each time (454 checks at 0.15.4), including the version check (Bigger country?
+picks up `extras.js?v=` from the page's site.js tag). On this branch alone: 413 checks.
