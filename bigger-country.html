@@ -746,11 +746,13 @@ a.act{text-decoration:none}
       shownAt = Date.now();
     }
 
+    var settle = null; // the verdict for the pair just picked, run once
     function pick(j, viaKey) {
       if (phase === "cards") return reveal();
       if (phase !== "choose" || done() || Date.now() - shownAt < 280) return;
       kb = !!viaKey;
-      var i = h.length, p = pair(i), big = p[0].pop >= p[1].pop ? 0 : 1, close = !!heat(i);
+      var i = h.length, p = pair(i), big = p[0].pop >= p[1].pop ? 0 : 1, close = !!heat(i) && !reduce;
+      var before = runAt(i).cur;
       h.push(j);
       var right = G.ok(i);
       // the save, exactly as before
@@ -758,30 +760,49 @@ a.act{text-decoration:none}
       G.save();
       var st = runAt(h.length);
       phase = "cards";
-      var lag = close && !reduce ? 1150 : 520;
+      // A close pair races first: both bars grow at the same speed and both areas count up, so the smaller
+      // one stops first. The verdict lands when the race ends. Other pairs answer at once.
+      var race = close ? 1050 : 0;
       cards.forEach(function (c, o) {
         var w = Math.round(100 * p[o].pop / Math.max(p[0].pop, p[1].pop));
-        if (o === big) c.classList.add("big");
-        if (o === j) c.classList.add(right ? "right" : "wrong");
         c.classList.add("shown");
-        c.querySelector(".pop").innerHTML = (o === j ? G.icon(right ? "landed" : "far", 18) : "") + "<span>" + km2(p[o].pop) + '</span><i class="barw"><i class="bar" style="--w:' + w + "%;animation-duration:" + (close ? Math.max(0.15, 1.05 * w / 100) : 0.45) + 's"></i></i>';
+        c.querySelector(".pop").innerHTML = '<span class="num">' + km2(p[o].pop) + '</span><i class="barw"><i class="bar" style="--w:' + w + "%;animation-duration:" + (close ? Math.max(0.15, race / 1000 * w / 100) : 0.45) + 's"></i></i>';
+        if (close) countArea(c.querySelector(".num"), p[o].pop, race * w / 100);
       });
-      dots(); bar(right ? "bump" : runAt(i).cur ? "lost" : "");
-      if (close && !reduce) [0, 0.25, 0.5, 0.75].forEach(function (t) { setTimeout(function () { if (phase === "cards") sfx("slide"); }, t * 1000); });
-      setTimeout(function () {
+      settle = function () {
+        settle = null;
+        cards.forEach(function (c, o) {
+          if (o === big) c.classList.add("big");
+          if (o === j) { c.classList.add(right ? "right" : "wrong"); c.querySelector(".pop").insertAdjacentHTML("afterbegin", G.icon(right ? "landed" : "far", 18)); }
+        });
+        dots(); bar(right ? "bump" : before ? "lost" : "");
         if (right) {
           sfx("merge", Math.pow(2, Math.min(st.cur, 12)));
           if (close || st.cur === 3 || st.cur === 5 || st.cur === 7 || st.cur === N) sfx("clue");
           buzz(close ? [12, 40, 24] : 10);
         } else { sfx("stuck"); buzz([30, 40, 30]); }
-      }, close && !reduce ? 1050 : 0);
-      timer = setTimeout(reveal, lag);
+      };
+      if (close) {
+        [0, 0.25, 0.5, 0.75].forEach(function (t) { setTimeout(function () { if (phase === "cards" && settle) sfx("slide"); }, t * race); });
+        setTimeout(function () { if (settle) settle(); }, race);
+      } else settle();
+      timer = setTimeout(reveal, race + 700);
+    }
+    function countArea(el, to, ms) {
+      var t0 = performance.now();
+      (function f(t) {
+        var q = Math.min(1, (t - t0) / Math.max(1, ms));
+        if (!el.isConnected) return;
+        el.textContent = q < 1 ? km2(Math.max(1, to * q)) : km2(to);
+        if (q < 1) requestAnimationFrame(f);
+      })(t0);
     }
 
     // the reveal: both countries at one scale, their areas, and how many times bigger
     function detail(i, withNext) {
       var p = pair(i), r = rat[i], right = G.ok(i), chose = h[i], st = runAt(i + 1);
-      var verdict = right ? (st.cur >= 3 ? st.cur + " in a row!" : heat(i) ? "Right, and it was close." : "Right.") : "Not this time.";
+      var was = runAt(i).cur;
+      var verdict = right ? (st.cur >= 3 ? st.cur + " in a row!" : heat(i) ? "Right, and it was close." : "Right.") : was >= 3 ? "Not this time. That ends a run of " + was + "." : "Not this time.";
       var labs = p.map(function (c, o) {
         return '<div class="bclab' + (c === r.big ? " big" : "") + '"><b>' + (o === chose ? G.icon(right ? "landed" : "far", 15) : "") + G.esc(c.name) + "</b><span>" + km2(c.pop) + "</span></div>";
       }).join("");
@@ -808,7 +829,9 @@ a.act{text-decoration:none}
     }
     function reveal() {
       if (phase !== "cards") return;
-      clearTimeout(timer); phase = "reveal";
+      clearTimeout(timer);
+      if (settle) settle();
+      phase = "reveal";
       var i = h.length - 1;
       panel.innerHTML = detail(i, true);
       wrapC.hidden = true; panel.hidden = false;
