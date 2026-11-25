@@ -316,6 +316,40 @@ async function page(b, url, opts = {}) {
     }
     // ---- end mx-scoring ----
 
+    // ---- mx-country-quick: Quick mode for Mystery country from No. 14 (review/country-quick-patch.py) ----
+    {
+      const fresh = { "dailycity:country:v1": '{"games":{},"results":{},"seenHelp":true}' };
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-13", { storage: fresh });
+        check(!(await p.isVisible("#mxMode")), "country quick: no Tiles/Quick choice before No. 14");
+        await ctx.close();
+      }
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-14", { storage: fresh, ctx: { viewport: { width: 375, height: 667 } } });
+        await p.waitForFunction(() => window.__WORLD);
+        check(await p.isVisible("#mxMode"), "country quick: the Tiles/Quick choice shows on a fresh No. 14");
+        await p.focus("#mxMode [data-m=quick]"); await p.keyboard.press("Enter"); await p.waitForTimeout(200);
+        const s0 = await p.evaluate(() => ({ pins: document.querySelector("#pinsText").textContent, board: getComputedStyle(document.querySelector("#board")).display, label: document.querySelector("#nextClue").textContent, clues: document.querySelectorAll("#clues li").length, mode: localStorage.getItem("dailycity:country:mode"), city: localStorage.getItem("dailycity:mode") }));
+        check(s0.pins === "5 pins left" && s0.board === "none" && s0.label === "Next clue: after a missed pin" && s0.clues === 1 && s0.mode === "quick" && s0.city === null, "country quick: picked by keyboard; no tiles, one clue, five pins; the city's choice untouched", JSON.stringify(s0));
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const s1 = await p.evaluate(() => ({ pts: document.querySelector("#score").textContent, clues: document.querySelectorAll("#clues li").length, live: document.querySelector("#live").textContent }));
+        check(s1.pts === "800" && s1.clues === 2 && /Free clue:/.test(s1.live), "country quick: a miss opens the next clue; 800 left", JSON.stringify(s1));
+        await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
+        const e = await p.evaluate(() => ({ S: __lf.S(), res: JSON.parse(localStorage.getItem("dailycity:country:v1")).results[14], share: document.querySelector("#endBody .share").textContent, big: document.querySelector("#endBody .score b").textContent }));
+        check(e.S.score === 800 && e.res.q === 1 && e.big === "2/5" && e.share.includes("quick mode") && e.share.includes("★★☆ Found in 2/5 pins") && /#b-mn-14-1-800/.test(await p.evaluate((t) => MXS.beat.upgrade(t), e.share)), "country quick: found on pin 2 scores 800, saved as Quick, shared as Quick", JSON.stringify(e));
+        check(!p.errs.length, "country quick: no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-15", { storage: fresh });
+        await p.waitForFunction(() => window.__WORLD);
+        await p.keyboard.press("ArrowUp"); await p.keyboard.press("ArrowLeft"); await p.waitForTimeout(200);
+        check(!(await p.isVisible("#mxMode")) && (await p.evaluate(() => !__lf.S().r || __lf.S().swipes > 0)), "country quick: once a round has started it can't switch mode");
+        await ctx.close();
+      }
+    }
+    // ---- end mx-country-quick ----
+
     // 8. a game in progress survives midnight
     {
       const { ctx, p } = await page(b, U, { clock: new Date("2026-11-25T23:59:30"), ctx: { timezoneId: "Europe/London" } });

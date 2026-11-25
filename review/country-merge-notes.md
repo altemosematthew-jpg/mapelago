@@ -133,8 +133,24 @@ country.html conflict whichever way you merge. What worked both times, with this
     git checkout --theirs index.html country.html
     python3 review/country-rules-patch.py country.html
     python3 review/scoring-patch.py
+    python3 review/country-quick-patch.py
     python3 copy/apply.py
     git add index.html country.html
 
 The result differed from this branch only in the version strings, and the whole suite passed.
 Merging this branch into yours: the same, with `--ours` (or `--take-ours` on the two patch scripts).
+
+## Round 2: Quick mode for Mystery country (from No. 14)
+
+Made by `review/country-quick-patch.py` (country.html only; run after the rules and scoring scripts).
+Its copy is in `review/scoring-copy-patch.py` (country explainer and a Quick step) and one paragraph
+in the `mx-country-rules` block of how-to-play. Tests: the `// ---- mx-country-quick ... ----` block.
+The country remembers its own choice in `dailycity:country:mode`, separate from the city's
+`dailycity:mode`. Checked against your branch at fc67a60 (0.15.5): all five scripts apply cleanly
+and give this branch's index.html, country.html, copy.json, copy.js and games/index.html, apart
+from your newer release content (version strings, the city facts).
+
+Noticed in Mystery city, not changed (your code): the Tiles/Quick choice stays on screen after the
+first move until the page redraws, and tapping it then does nothing. The country version hides it on
+the first move (one extra call after a move); the same fix in the city would be adding `MxModeUi()`
+to the move handler `za`.
