@@ -1,0 +1,194 @@
+Source-checked history data, part 2a: Block C, 188 cities renamed since 1800 (the 22 national capitals first, then by country). Built by Duet (a research assistant that opens web sources), which opened a source for every line. Pasted unchanged.
+Fields: present name | country | former name | year of the change | what changed.
+Notes from Duet: Harare, Tokyo, Oslo and Astana also appear as Part 1 Block B events; don't ask the same rename twice on one day. One source only, so ask with care or skip: Modimolle; Chernyakhovsk, Korolyov, Gatchina, Dimitrovgrad (Russia), Sarov and Sochi. Kahramanmaras and Sanliurfa kept their old names with an honorific added; Niteroi's 1835 rename was a spelling change; Kota Kinabalu is 1967; there are two Dimitrovgrads (Russia and Serbia), so always say which. Left out as unsettled: Nauru's name change, Myanmar's capital move and Equatorial Guinea's move to Ciudad de la Paz.
+
+BLOCK C
+Astana | Kazakhstan | Nur-Sultan | 2022 | capital's name changed back to Astana
+Bandar Seri Begawan | Brunei | Brunei Town | 1970 | renamed to honour Sultan Omar Ali Saifuddien III
+Banjul | Gambia | Bathurst | 1973 | capital renamed after independence
+Bishkek | Kyrgyzstan | Frunze | 1991 | Soviet-era name dropped
+Bogota | Colombia | Santa Fe de Bogota | 2000 | constitutional reform made the name just Bogota
+Bratislava | Slovakia | Pressburg | 1919 | name Bratislava officially adopted
+Dushanbe | Tajikistan | Stalinabad | 1961 | renamed in de-Stalinization
+Gaborone | Botswana | Gaberones | 1969 | capital's name officially changed
+Georgetown | Guyana | Stabroek | 1812 | British renamed it for King George III
+Harare | Zimbabwe | Salisbury | 1982 | capital renamed two years after independence
+Kinshasa | Democratic Republic of the Congo | Leopoldville | 1966 | capital renamed under Mobutu's Africanization drive
+Malabo | Equatorial Guinea | Santa Isabel | 1973 | European name replaced under Macias Nguema
+Maputo | Mozambique | Lourenco Marques | 1976 | capital renamed after independence
+N'Djamena | Chad | Fort-Lamy | 1973 | capital renamed by President Tombalbaye
+Oslo | Norway | Kristiania | 1925 | original name Oslo restored
+Ottawa | Canada | Bytown | 1855 | renamed Ottawa on gaining city status
+Podgorica | Montenegro | Titograd | 1992 | original name restored
+Santo Domingo | Dominican Republic | Ciudad Trujillo | 1961 | old name restored after the dictator's death
+Seoul | South Korea | Gyeongseong | 1946 | US military government named it Seoul
+Tbilisi | Georgia | Tiflis | 1936 | official Russian name changed to Tbilisi
+Tokyo | Japan | Edo | 1868 | renamed Eastern Capital under Emperor Meiji
+Ulaanbaatar | Mongolia | Niislel Khuree | 1924 | renamed at founding of People's Republic
+Kucove | Albania | Qyteti Stalin | 1990 | Stalin name dropped, old name back
+Skikda | Algeria | Philippeville | 1962 | French name dropped at independence
+Huambo | Angola | Nova Lisboa | 1975 | original name restored after independence
+N'dalatando | Angola | Salazar | 1976 | original name restored after independence
+La Plata | Argentina | Ciudad Eva Peron | 1955 | original name restored after Peron fell
+Alice Springs | Australia | Stuart | 1933 | town gazetted under its waterhole name
+Bendigo | Australia | Sandhurst | 1891 | official name changed back to Bendigo
+Darwin | Australia | Palmerston | 1911 | town renamed after Charles Darwin
+Gold Coast | Australia | South Coast | 1958 | Town of South Coast renamed Town of Gold Coast
+Hahndorf | Australia | Ambleside | 1935 | German name restored after WWI-era change
+Holbrook | Australia | Germanton | 1915 | German name dropped in WWI
+Ganja | Azerbaijan | Kirovabad | 1989 | original name restored during perestroika
+Shirvan | Azerbaijan | Ali Bayramli | 2008 | Azerbaijan parliament renamed the city
+Joao Pessoa | Brazil | Parahyba do Norte | 1930 | state capital renamed for a murdered governor
+Niteroi | Brazil | Vila Real da Praia Grande | 1835 | renamed Nictheroy (now spelled Niteroi)
+Dobrich | Bulgaria | Tolbukhin | 1990 | old name restored by decree
+Varna | Bulgaria | Stalin | 1956 | Stalin name dropped, old name back
+Bujumbura | Burundi | Usumbura | 1962 | capital renamed at independence
+Limbe | Cameroon | Victoria | 1982 | renamed by presidential decree
+Arviat | Canada | Eskimo Point | 1989 | English name replaced by Inuktitut name
+Iqaluit | Canada | Frobisher Bay | 1987 | English name replaced by Inuktitut name
+Kenora | Canada | Rat Portage | 1905 | new name built from Keewatin, Norman, Rat Portage
+Kitchener | Canada | Berlin | 1916 | German name dropped by referendum in WWI
+Kugluktuk | Canada | Coppermine | 1996 | English name replaced by Inuinnaqtun name
+Kuujjuaq | Canada | Fort Chimo | 1980 | took the Inuit name of the Koksoak River
+Qikiqtarjuaq | Canada | Broughton Island | 1998 | English name replaced by Inuktitut name
+Regina | Canada | Pile o' Bones | 1882 | renamed Regina in honour of Queen Victoria
+Thunder Bay | Canada | Fort William and Port Arthur | 1970 | two cities merged into Thunder Bay
+Toronto | Canada | York | 1834 | incorporated as a city under the name Toronto
+Vancouver | Canada | Granville | 1886 | renamed Vancouver on incorporation as a city
+Kaga-Bandoro | Central African Republic | Crampel | 1974 | colonial name (Fort-Crampel) replaced
+Sarh | Chad | Fort-Archambault | 1972 | renamed in Tombalbaye's authenticite campaign
+Shangri-La | China | Zhongdian | 2001 | county renamed after the novel's paradise
+Urumqi | China | Dihua | 1954 | name Urumqi restored by the government
+Zhangjiajie | China | Dayong | 1994 | city renamed after its famous scenic area
+Zlin | Czechia | Gottwaldov | 1990 | Gottwald name dropped, old name back
+Bandundu | Democratic Republic of the Congo | Banningville | 1966 | Belgian colonial name dropped
+Kananga | Democratic Republic of the Congo | Luluabourg | 1966 | colonial name replaced under Mobutu
+Kisangani | Democratic Republic of the Congo | Stanleyville | 1966 | colonial name replaced under authenticite policy
+Likasi | Democratic Republic of the Congo | Jadotville | 1966 | Belgian colonial name dropped
+Lubumbashi | Democratic Republic of the Congo | Elisabethville | 1966 | Belgian colonial name replaced under Mobutu
+Mbandaka | Democratic Republic of the Congo | Coquilhatville | 1966 | renamed to honour a local leader
+Manzini | Eswatini | Bremersdorp | 1960 | original Swazi name restored
+Adama | Ethiopia | Nazret | 2000 | Oromo name officially restored
+Noumea | France | Port-de-France | 1866 | New Caledonia capital renamed Noumea
+Chemnitz | Germany | Karl-Marx-Stadt | 1990 | historical name restored
+Eisenhuttenstadt | Germany | Stalinstadt | 1961 | renamed during de-Stalinization
+Dunaujvaros | Hungary | Sztalinvaros | 1961 | Stalin name dropped, new name given
+Bengaluru | India | Bangalore | 2014 | officially renamed with 12 other Karnataka cities
+Chennai | India | Madras | 1996 | official name changed to the Tamil name
+Gurugram | India | Gurgaon | 2016 | Haryana renamed it with central approval
+Kochi | India | Cochin | 1996 | reverted to its original Malayalam name
+Kolkata | India | Calcutta | 2001 | official name changed to the Bengali form
+Mumbai | India | Bombay | 1995 | state government adopted the Marathi name
+Mysuru | India | Mysore | 2014 | officially renamed with other Karnataka cities
+Puducherry | India | Pondicherry | 2006 | territory and city renamed by Act of Parliament
+Thiruvananthapuram | India | Trivandrum | 1991 | official name restored to the Malayalam name
+Vadodara | India | Baroda | 1974 | official name changed to the local name
+Banda Aceh | Indonesia | Kutaraja | 1963 | Indonesian ministry restored the name Banda Aceh
+Makassar | Indonesia | Ujung Pandang | 1999 | name reverted to Makassar
+Bandar Anzali | Iran | Bandar Pahlavi | 1979 | Pahlavi-era name dropped after the revolution
+Cobh | Ireland | Queenstown | 1920 | Irish name adopted
+Dun Laoghaire | Ireland | Kingstown | 1920 | Irish name adopted
+Agrigento | Italy | Girgenti | 1927 | Latin-based name adopted by decree
+Latina | Italy | Littoria | 1946 | Fascist-era name dropped
+Aktau | Kazakhstan | Shevchenko | 1991 | original name restored at independence
+Konaev | Kazakhstan | Kapchagay | 2022 | renamed after Soviet-era leader Dinmukhamed Kunaev
+Ridder | Kazakhstan | Leninogorsk | 2002 | original name restored
+Semey | Kazakhstan | Semipalatinsk | 2007 | city council voted for the Kazakh name
+Taraz | Kazakhstan | Zhambyl | 1997 | ancient name Taraz restored
+Karakol | Kyrgyzstan | Przhevalsk | 1991 | original name restored at independence
+Kota Kinabalu | Malaysia | Jesselton | 1967 | Sabah assembly renamed the capital
+Port Klang | Malaysia | Port Swettenham | 1972 | colonial name replaced
+Nouadhibou | Mauritania | Port-Etienne | 1960 | French name dropped after independence
+Ciudad Juarez | Mexico | Paso del Norte | 1888 | renamed in honour of Benito Juarez
+Ciudad Obregon | Mexico | Cajeme | 1928 | renamed after Alvaro Obregon's murder
+Ciudad Victoria | Mexico | Santa Maria de Aguayo | 1825 | made a city and named for Guadalupe Victoria
+Coatzacoalcos | Mexico | Puerto Mexico | 1936 | old name restored to the port city
+Morelia | Mexico | Valladolid | 1828 | renamed for independence hero Morelos
+Piedras Negras | Mexico | Ciudad Porfirio Diaz | 1911 | old name restored after Diaz fell
+Kenitra | Morocco | Port-Lyautey | 1956 | French name dropped at independence
+Chimoio | Mozambique | Vila Pery | 1975 | renamed at a rally by Samora Machel
+Pemba | Mozambique | Porto Amelia | 1975 | Portuguese name dropped at end of colonial rule
+Xai-Xai | Mozambique | Joao Belo | 1975 | Portuguese name dropped at independence
+Veles | North Macedonia | Titov Veles | 1996 | Tito name dropped
+Trondheim | Norway | Nidaros | 1931 | Nidaros dropped after protests
+Attock | Pakistan | Campbellpur | 1978 | Government of Pakistan restored the old name
+Faisalabad | Pakistan | Lyallpur | 1979 | renamed in honour of King Faisal of Saudi Arabia
+Ciudad del Este | Paraguay | Puerto Presidente Stroessner | 1989 | renamed after the dictator was overthrown
+Gdansk | Poland | Danzig | 1945 | German city became Polish Gdansk
+Katowice | Poland | Stalinogrod | 1956 | Stalin name dropped, old name back
+Szczecin | Poland | Stettin | 1945 | German city became Polish Szczecin
+Wroclaw | Poland | Breslau | 1945 | German city became Polish Wroclaw
+Dolisie | Republic of the Congo | Loubomo | 1991 | earlier name Dolisie restored
+Brasov | Romania | Orasul Stalin | 1960 | Stalin name dropped, old name back
+Baltiysk | Russia | Pillau | 1946 | German name replaced under Soviet rule
+Chernyakhovsk | Russia | Insterburg | 1946 | German name replaced under Soviet rule
+Dimitrovgrad | Russia | Melekess | 1972 | renamed after Georgi Dimitrov
+Engels | Russia | Pokrovsk | 1931 | renamed after Friedrich Engels
+Gatchina | Russia | Krasnogvardeysk | 1944 | historical name restored
+Izhevsk | Russia | Ustinov | 1987 | historical name regained after protests
+Kaliningrad | Russia | Konigsberg | 1946 | renamed after Mikhail Kalinin under Soviet rule
+Kirov | Russia | Vyatka | 1934 | renamed after Bolshevik Sergei Kirov
+Korolyov | Russia | Kaliningrad | 1996 | renamed after rocket designer Korolev
+Krasnodar | Russia | Yekaterinodar | 1920 | renamed after the revolution
+Makhachkala | Russia | Petrovsk-Port | 1921 | renamed under Soviet rule
+Naberezhnye Chelny | Russia | Brezhnev | 1988 | Brezhnev name dropped, old name back
+Nizhny Novgorod | Russia | Gorky | 1990 | original name reinstated
+Novosibirsk | Russia | Novonikolayevsk | 1926 | given its present name
+Orenburg | Russia | Chkalov | 1957 | original name regained
+Perm | Russia | Molotov | 1957 | historical name restored
+Pushkin | Russia | Detskoye Selo | 1937 | renamed after the poet Pushkin
+Rybinsk | Russia | Andropov | 1989 | Andropov name dropped, old name back
+Saint Petersburg | Russia | Leningrad | 1991 | old name restored after a city referendum
+Samara | Russia | Kuybyshev | 1991 | historical name restored
+Sarov | Russia | Kremlyov | 1995 | secret nuclear town took the name Sarov
+Sergiyev Posad | Russia | Zagorsk | 1991 | original name restored
+Sochi | Russia | Dakhovsky Posad | 1896 | renamed Sochi
+Sovetsk | Russia | Tilsit | 1946 | German name replaced under Soviet rule
+Tolyatti | Russia | Stavropol | 1964 | renamed after Italian communist Togliatti
+Tver | Russia | Kalinin | 1990 | historical name restored
+Ulyanovsk | Russia | Simbirsk | 1924 | renamed after Lenin (Vladimir Ulyanov)
+Ussuriysk | Russia | Voroshilov | 1957 | Voroshilov name dropped
+Vladikavkaz | Russia | Ordzhonikidze | 1990 | old Russian name Vladikavkaz returned
+Volgograd | Russia | Stalingrad | 1961 | renamed during de-Stalinization
+Yekaterinburg | Russia | Sverdlovsk | 1991 | historical name restored
+Dimitrovgrad | Serbia | Caribrod | 1950 | renamed after Georgi Dimitrov
+Zrenjanin | Serbia | Petrovgrad | 1946 | renamed after partisan Zarko Zrenjanin
+Bela-Bela | South Africa | Warmbaths | 2002 | officially renamed by government
+Gqeberha | South Africa | Port Elizabeth | 2021 | name change officially gazetted
+Kariega | South Africa | Uitenhage | 2021 | name change officially gazetted
+Lephalale | South Africa | Ellisras | 2002 | renamed by Limpopo provincial government
+Makhanda | South Africa | Grahamstown | 2018 | officially renamed after colonial-era name
+Mbombela | South Africa | Nelspruit | 2009 | renamed by government, upheld in court 2014
+Modimolle | South Africa | Nylstroom | 2002 | officially renamed
+Mokopane | South Africa | Potgietersrus | 2003 | name officially changed by government
+Polokwane | South Africa | Pietersburg | 2005 | government declared Polokwane official name
+Qonce | South Africa | King William's Town | 2021 | officially renamed
+eMalahleni | South Africa | Witbank | 2006 | officially renamed
+Bokhtar | Tajikistan | Qurghonteppa | 2018 | city officially renamed Bokhtar
+Istaravshan | Tajikistan | Ura-Tyube | 2000 | Tajik government restored the historic name
+Istanbul | Turkiye | Constantinople | 1930 | Istanbul made the official name
+Kahramanmaras | Turkiye | Maras | 1973 | parliament added the title kahraman (heroic)
+Sanliurfa | Turkiye | Urfa | 1984 | parliament added the title sanli (glorious)
+Turkmenbashi | Turkmenistan | Krasnovodsk | 1993 | renamed after President Niyazov's title
+Dnipro | Ukraine | Dnipropetrovsk | 2016 | renamed under decommunization law
+Ivano-Frankivsk | Ukraine | Stanislav | 1962 | renamed after writer Ivan Franko
+Khmelnytskyi | Ukraine | Proskuriv | 1954 | renamed after Bohdan Khmelnytsky
+Kropyvnytskyi | Ukraine | Kirovohrad | 2016 | renamed under decommunization law
+Pereiaslav | Ukraine | Pereiaslav-Khmelnytskyi | 2019 | historic name reinstated by parliament
+Austin | United States | Waterloo | 1839 | renamed Austin when chosen as Texas capital
+Bismarck | United States | Edwinton | 1873 | railway renamed it for Otto von Bismarck
+Hagatna | United States | Agana | 1998 | Guam capital took its Chamorro name
+Jim Thorpe | United States | Mauch Chunk | 1954 | merged boroughs renamed for athlete Jim Thorpe
+Sleepy Hollow | United States | North Tarrytown | 1996 | village took the area's historical name
+Truth or Consequences | United States | Hot Springs | 1950 | renamed after a radio quiz show
+Utqiagvik | United States | Barrow | 2016 | English name replaced by Inupiaq name
+Ciudad Bolivar | Venezuela | Angostura | 1846 | renamed in honour of Simon Bolivar
+Ho Chi Minh City | Viet Nam | Saigon | 1976 | renamed at Vietnam's reunification
+Kabwe | Zambia | Broken Hill | 1966 | colonial name dropped after independence
+Chegutu | Zimbabwe | Hartley | 1982 | colonial name officially replaced
+Hwange | Zimbabwe | Wankie | 1982 | colonial name replaced
+Kadoma | Zimbabwe | Gatooma | 1982 | renamed in 1982 gazette of new names
+Masvingo | Zimbabwe | Fort Victoria | 1982 | colonial name replaced (briefly Nyanda)
+Mutare | Zimbabwe | Umtali | 1982 | colonial name officially replaced
+Zvishavane | Zimbabwe | Shabani | 1982 | colonial name replaced with indigenous one
+END BLOCK C

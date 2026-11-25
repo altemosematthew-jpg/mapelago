@@ -1,0 +1,198 @@
+Source-checked history data, part 1 of 2: Block A, one line per UN member state. Built by Duet (a research assistant that opens web sources), which opened a source for every row. Pasted unchanged.
+Fields: Country | year it became independent or was founded | from whom or what | former names with years | capital changes with years.
+
+BLOCK A
+Afghanistan | 1919 | United Kingdom (control of foreign affairs) | none | none
+Albania | 1912 | Ottoman Empire | none | Durres to Tirana (1920)
+Algeria | 1962 | France | none | none
+Andorra | don't ask | co-principality, never independent from anyone | none | none
+Angola | 1975 | Portugal | none | none
+Antigua and Barbuda | 1981 | United Kingdom | none | none
+Argentina | 1816 | Spain | United Provinces of the Rio de la Plata (1816-1831) | none
+Armenia | 1991 | Soviet Union (dissolution) | none | none
+Australia | 1901 | United Kingdom (federation of colonies) | none | Melbourne to Canberra (1927)
+Austria | 1918 | Austria-Hungary (dissolution) | German-Austria (1918-1919) | none
+Azerbaijan | 1991 | Soviet Union (dissolution) | none | none
+Bahamas | 1973 | United Kingdom | none | none
+Bahrain | 1971 | United Kingdom (protectorate) | none | none
+Bangladesh | 1971 | Pakistan | East Pakistan (to 1971) | none
+Barbados | 1966 | United Kingdom | none | none
+Belarus | 1991 | Soviet Union (dissolution) | Byelorussia (1920-1991) | none
+Belgium | 1830 | Netherlands | none | none
+Belize | 1981 | United Kingdom | British Honduras (to 1973) | Belize City to Belmopan (1970)
+Benin | 1960 | France | Dahomey (to 1975) | none
+Bhutan | don't ask | never colonised | none | Punakha to Thimphu (1961)
+Bolivia | 1825 | Spain | Upper Peru (to 1825) | don't ask
+Bosnia and Herzegovina | 1992 | Yugoslavia | none | none
+Botswana | 1966 | United Kingdom | Bechuanaland (1885-1966) | Mafeking to Gaborone (1965)
+Brazil | 1822 | Portugal | Empire of Brazil (1822-1889) | Rio de Janeiro to Brasilia (1960)
+Brunei | 1984 | United Kingdom (protectorate) | none | none
+Bulgaria | 1908 | Ottoman Empire | none | Tarnovo to Sofia (1879)
+Burkina Faso | 1960 | France | Upper Volta (to 1984) | none
+Burundi | 1962 | Belgium (UN trust territory) | none | Bujumbura to Gitega (2019)
+Cabo Verde | 1975 | Portugal | none | none
+Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
+Cameroon | 1960 | France (British Southern Cameroons joined 1961) | none | none
+Canada | 1867 | United Kingdom (confederation, not independence) | Province of Canada (1841-1867) | none
+Central African Republic | 1960 | France | Ubangi-Shari (to 1958); Central African Empire (1976-1979) | none
+Chad | 1960 | France | none | none
+Chile | 1818 | Spain | none | none
+China | 1949 | People's Republic proclaimed (not independence) | Qing Empire (to 1912) | Beijing to Nanjing (1928); Nanjing to Beijing (1949)
+Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
+Comoros | 1975 | France | none | Dzaoudzi to Moroni (1958)
+Costa Rica | 1821 | Spain | none | Cartago to San Jose (1823)
+Cote d'Ivoire | 1960 | France | none | Abidjan to Yamoussoukro (1983)
+Croatia | 1991 | Yugoslavia | none | none
+Cuba | 1902 | Spain, then US occupation | none | none
+Cyprus | 1960 | United Kingdom | none | none
+Czechia | 1993 | Czechoslovakia (dissolution) | none | none
+Democratic Republic of the Congo | 1960 | Belgium | Congo Free State (1885-1908); Belgian Congo (1908-1960); Zaire (1971-1997) | none
+Denmark | don't ask | ancient kingdom | none | none
+Djibouti | 1977 | France | French Somaliland (to 1967); Afars and Issas (1967-1977) | Obock to Djibouti (1894)
+Dominica | 1978 | United Kingdom | none | none
+Dominican Republic | 1844 | Haiti | Santo Domingo (to 1821) | none
+Ecuador | 1830 | Gran Colombia | none | none
+Egypt | 1922 | United Kingdom (protectorate) | United Arab Republic (1958-1971) | none
+El Salvador | 1821 | Spain | none | none
+Equatorial Guinea | 1968 | Spain | Spanish Guinea (to 1968) | Malabo to Ciudad de la Paz (2026)
+Eritrea | 1993 | Ethiopia | none | Massawa to Asmara (1897)
+Estonia | 1918 | Russian Empire (restored 1991 from Soviet Union) | none | none
+Eswatini | 1968 | United Kingdom | Swaziland (to 2018) | Bremersdorp to Mbabane (1902)
+Ethiopia | don't ask | never colonised | none | none
+Fiji | 1970 | United Kingdom | none | Levuka to Suva (1882)
+Finland | 1917 | Russia | none | Turku to Helsinki (1812)
+France | don't ask | ancient kingdom | none | none
+Gabon | 1960 | France | none | none
+Gambia | 1965 | United Kingdom | none | none
+Georgia | 1991 | Soviet Union (dissolution) | none | none
+Germany | don't ask | unification 1871, refounded 1949, reunified 1990 | West Germany (1949-1990) | Bonn to Berlin (1990)
+Ghana | 1957 | United Kingdom | Gold Coast (to 1957) | Cape Coast to Accra (1877)
+Greece | 1830 | Ottoman Empire | none | Nafplio to Athens (1834)
+Grenada | 1974 | United Kingdom | none | none
+Guatemala | 1821 | Spain | none | none
+Guinea | 1958 | France | French Guinea (to 1958) | none
+Guinea-Bissau | 1973 | Portugal | Portuguese Guinea (to 1974) | Bolama to Bissau (1941)
+Guyana | 1966 | United Kingdom | British Guiana (1831-1966) | none
+Haiti | 1804 | France | Saint-Domingue (to 1804) | none
+Honduras | 1821 | Spain | none | Comayagua to Tegucigalpa (1880)
+Hungary | don't ask | ancient kingdom | none | none
+Iceland | 1944 | Denmark | Kingdom of Iceland (1918-1944) | none
+India | 1947 | United Kingdom | none | Calcutta to Delhi (1911); Delhi to New Delhi (1931)
+Indonesia | 1945 | Netherlands | Dutch East Indies (to 1949) | none
+Iran | don't ask | never colonised | Persia (to 1935) | none
+Iraq | 1932 | United Kingdom (mandate) | Mesopotamia (to 1921) | none
+Ireland | 1922 | United Kingdom | Irish Free State (1922-1937) | none
+Israel | 1948 | United Kingdom (end of mandate) | none | don't ask
+Italy | 1861 | unification of Italian states | none | Turin to Florence (1865); Florence to Rome (1871)
+Jamaica | 1962 | United Kingdom | none | Spanish Town to Kingston (1872)
+Japan | don't ask | never colonised | none | Kyoto to Tokyo (1868-1869)
+Jordan | 1946 | United Kingdom (mandate) | Transjordan (1921-1949) | none
+Kazakhstan | 1991 | Soviet Union (dissolution) | none | Almaty to Astana (1997)
+Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
+Kiribati | 1979 | United Kingdom | Gilbert Islands (to 1979) | none
+Kuwait | 1961 | United Kingdom (protectorate) | none | none
+Kyrgyzstan | 1991 | Soviet Union (dissolution) | Kirghizia (to 1991) | none
+Laos | 1953 | France | none | none
+Latvia | 1918 | Russian Empire (restored 1991 from Soviet Union) | none | none
+Lebanon | 1943 | France (mandate) | Greater Lebanon (1920-1926) | none
+Lesotho | 1966 | United Kingdom | Basutoland (to 1966) | none
+Liberia | 1847 | American Colonization Society | none | none
+Libya | 1951 | UK and French administration | Italian Libya (1934-1943) | don't ask
+Liechtenstein | 1806 | Holy Roman Empire (dissolution) | none | none
+Lithuania | 1918 | Russian Empire (restored 1990 from Soviet Union) | none | don't ask
+Luxembourg | don't ask | grand duchy, union with Netherlands ended 1890 | none | none
+Madagascar | 1960 | France | none | none
+Malawi | 1964 | United Kingdom | Nyasaland (1907-1964) | Zomba to Lilongwe (1975)
+Malaysia | 1957 | United Kingdom | Malaya (1948-1963) | none
+Maldives | 1965 | United Kingdom (protectorate) | none | none
+Mali | 1960 | France (via the Mali Federation) | French Sudan (to 1958) | none
+Malta | 1964 | United Kingdom | none | none
+Marshall Islands | 1986 | US-administered UN trust territory | none | none
+Mauritania | 1960 | France | none | none
+Mauritius | 1968 | United Kingdom | Isle de France (to 1810) | none
+Mexico | 1821 | Spain | New Spain (to 1821) | none
+Micronesia | 1986 | US-administered UN trust territory | none | Kolonia to Palikir (1989)
+Moldova | 1991 | Soviet Union (dissolution) | Moldavia (1940-1991) | none
+Monaco | don't ask | Grimaldi principality, never independent from anyone | none | none
+Mongolia | don't ask | Qing China, then Republic of China | Outer Mongolia (to 1911) | none
+Montenegro | 2006 | Serbia and Montenegro | none | Cetinje to Podgorica (1946)
+Morocco | 1956 | France and Spain (protectorates) | none | Fez to Rabat (1912)
+Mozambique | 1975 | Portugal | none | Island of Mozambique to Lourenco Marques (1898)
+Myanmar | 1948 | United Kingdom | Burma (to 1989) | Yangon to Naypyidaw (2005)
+Namibia | 1990 | South Africa | German South West Africa (1884-1915); South West Africa (to 1990) | none
+Nauru | 1968 | Australia (UN trust territory) | Pleasant Island (to 1888) | none
+Nepal | don't ask | never colonised | none | none
+Netherlands | don't ask | Spain (1581 or 1648) | none | don't ask
+New Zealand | don't ask | United Kingdom (no single date) | none | Okiato to Auckland (1841); Auckland to Wellington (1865)
+Nicaragua | 1821 | Spain | none | don't ask
+Niger | 1960 | France | none | don't ask
+Nigeria | 1960 | United Kingdom | none | Lagos to Abuja (1991)
+North Korea | 1948 | Japanese rule ended 1945, state founded 1948 | none | none
+North Macedonia | 1991 | Yugoslavia | Macedonia (1991-2019) | none
+Norway | 1905 | Sweden (union dissolved) | none | none
+Oman | don't ask | never colonised | Muscat and Oman (1856-1970) | don't ask
+Pakistan | 1947 | United Kingdom | none | Karachi to Rawalpindi (1959); Rawalpindi to Islamabad (1967)
+Palau | 1994 | US-administered UN trust territory | none | Koror to Ngerulmud (2006)
+Panama | 1903 | Colombia | none | none
+Papua New Guinea | 1975 | Australia | Papua and New Guinea (1949-1971) | none
+Paraguay | 1811 | Spain | none | none
+Peru | 1821 | Spain | none | none
+Philippines | 1946 | United States | none | Manila to Quezon City (1948); Quezon City to Manila (1976)
+Poland | 1918 | partitioning powers (Russia, Prussia, Austria) | none | none
+Portugal | don't ask | ancient kingdom | none | Lisbon to Rio de Janeiro (1808)
+Qatar | 1971 | United Kingdom (protectorate) | none | none
+Republic of the Congo | 1960 | France | Middle Congo (to 1958) | none
+Romania | 1877 | Ottoman Empire | none | none
+Russia | don't ask | ancient state; continues the Soviet Union | Russian SFSR (1917-1991) | Petrograd to Moscow (1918)
+Rwanda | 1962 | Belgium (UN trust territory) | none | none
+Saint Kitts and Nevis | 1983 | United Kingdom | none | none
+Saint Lucia | 1979 | United Kingdom | none | none
+Saint Vincent and the Grenadines | 1979 | United Kingdom | none | none
+Samoa | 1962 | New Zealand (UN trust territory) | German Samoa (1900-1914); Western Samoa (to 1997) | none
+San Marino | don't ask | traditional founding 301 | none | none
+Sao Tome and Principe | 1975 | Portugal | none | none
+Saudi Arabia | 1932 | unification of Hejaz and Nejd | Hejaz and Nejd (to 1932) | don't ask
+Senegal | 1960 | France (via the Mali Federation) | none | don't ask
+Serbia | 1878 | Ottoman Empire | none | Kragujevac to Belgrade (1841)
+Seychelles | 1976 | United Kingdom | none | none
+Sierra Leone | 1961 | United Kingdom | none | none
+Singapore | 1965 | Malaysia | Syonan-to (1942-1945) | none
+Slovakia | 1993 | Czechoslovakia (dissolution) | none | none
+Slovenia | 1991 | Yugoslavia | none | none
+Solomon Islands | 1978 | United Kingdom | British Solomon Islands (to 1975) | Tulagi to Honiara (1952)
+Somalia | 1960 | union of British and Italian Somaliland | none | none
+South Africa | 1910 | United Kingdom (union, full sovereignty 1931) | Union of South Africa (1910-1961) | don't ask
+South Korea | 1948 | Japanese rule ended 1945, state founded 1948 | none | none
+South Sudan | 2011 | Sudan | none | none
+Spain | don't ask | ancient kingdom | none | none
+Sri Lanka | 1948 | United Kingdom | Ceylon (to 1972) | Colombo to Sri Jayawardenepura Kotte (1982)
+Sudan | 1956 | United Kingdom and Egypt (condominium) | Anglo-Egyptian Sudan (1899-1956) | none
+Suriname | 1975 | Netherlands | Dutch Guiana (to 1954) | none
+Sweden | don't ask | ancient kingdom | none | none
+Switzerland | 1848 | federal state formed | none | don't ask
+Syria | 1946 | France (mandate) | none | none
+Tajikistan | 1991 | Soviet Union (dissolution) | none | none
+Tanzania | 1964 | union of Tanganyika and Zanzibar | Tanganyika (to 1964) | Dar es Salaam to Dodoma (1996)
+Thailand | don't ask | never colonised | Siam (to 1939; 1945-1949) | none
+Timor-Leste | 2002 | Indonesia (via UN administration) | Portuguese Timor (to 1975) | none
+Togo | 1960 | France | French Togoland (1916-1960) | none
+Tonga | don't ask | never colonised | none | none
+Trinidad and Tobago | 1962 | United Kingdom | none | none
+Tunisia | 1956 | France | none | none
+Turkiye | 1923 | Ottoman Empire (successor republic) | none | Istanbul to Ankara (1923)
+Turkmenistan | 1991 | Soviet Union (dissolution) | Turkmenia (to 1991) | none
+Tuvalu | 1978 | United Kingdom | Ellice Islands (to 1975) | none
+Uganda | 1962 | United Kingdom | none | Entebbe to Kampala (1962)
+Ukraine | 1991 | Soviet Union (dissolution) | Ukrainian SSR (1919-1991) | Kharkiv to Kyiv (1934)
+United Arab Emirates | 1971 | United Kingdom (protectorate) | Trucial States (to 1971) | none
+United Kingdom | don't ask | never independent from anyone | Kingdom of Great Britain (to 1800) | none
+United States | 1776 | Great Britain | none | Philadelphia to Washington (1800)
+Uruguay | 1828 | Brazil | Cisplatina (1821-1828) | none
+Uzbekistan | 1991 | Soviet Union (dissolution) | none | Samarkand to Tashkent (1930)
+Vanuatu | 1980 | United Kingdom and France | New Hebrides (to 1980) | none
+Venezuela | 1830 | Gran Colombia | none | none
+Viet Nam | 1976 | reunification of North and South | Dai Nam (1839-1945) | Hue to Hanoi (1945)
+Yemen | 1990 | unification of North and South Yemen | North Yemen and South Yemen (to 1990) | none
+Zambia | 1964 | United Kingdom | Northern Rhodesia (1911-1964) | Livingstone to Lusaka (1935)
+Zimbabwe | 1980 | United Kingdom | Southern Rhodesia (1898-1965); Rhodesia (1965-1979) | none
+END BLOCK A

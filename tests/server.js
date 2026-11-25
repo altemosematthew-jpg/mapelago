@@ -7,7 +7,9 @@ module.exports = function start() {
     const srv = http.createServer((req, res) => {
       let p = decodeURIComponent(req.url.split("?")[0]);
       if (p.endsWith("/")) p += "index.html";
-      const f = path.join(ROOT, p);
+      let f = path.join(ROOT, p);
+      // like GitHub Pages and the Cloudflare previews, /bigger serves bigger.html
+      if (!path.extname(f) && !fs.existsSync(f) && fs.existsSync(f + ".html")) f += ".html";
       if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end("not found"); return; }
       res.writeHead(200, { "Content-Type": TYPES[path.extname(f)] || "application/octet-stream" });
       fs.createReadStream(f).pipe(res);

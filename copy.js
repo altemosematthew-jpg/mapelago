@@ -8,20 +8,22 @@ window.MXCOPY = {
   "voyage": "Did I drop anchor too soon? Try the ten islands.",
   "fathoms": "How deep can you go? I skipped the obvious answers.",
   "stamps": "Can you fill all six in fewer spins than me?",
-  "crossings": "Can you cross it in par?"
+  "crossings": "Can you cross it in par?",
+  "history": "How close to the year can you get?"
  },
  "cards": {
-  "city": "Slide tiles to earn clues, then pin today's city on the map.",
-  "country": "The same tile-and-pin game, with a mystery country.",
+  "city": "Guess the city: slide tiles for clues, then pin it on the map.",
+  "country": "Guess the country: slide tiles for clues, then pin it on the map.",
   "bigger": "Two cities, one tap: which has more people? Ten pairs.",
   "bigcountry": "Which covers more land? Ten pairs, closer as you go.",
   "voyage": "Ten islands of trivia. Keep your points or sail on.",
   "fathoms": "Name a country that fits. Less obvious answers go deeper.",
   "stamps": "Spin the wheel, answer the question, stamp all six.",
-  "crossings": "Name the countries between two others, border by border."
+  "crossings": "Name the countries between two others, border by border.",
+  "history": "Eight questions on the world map since 1800. Get warmer."
  },
  "home": {
   "headline": "A little geography, every day",
-  "line": "Eight free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for."
+  "line": "Nine free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for."
  }
 };
