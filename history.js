@@ -18,6 +18,12 @@
   var dm = /^#day-(\d+)$/.exec(location.hash);
   if (dm && local) dayNo = Number(dm[1]);   // test hook: only on this computer, never on the live site
   dayNo = Math.max(1, dayNo);
+  // Modes: "daily" (today's round, counts for streaks), "past" (an earlier day from the archive, #past-N, saved apart and
+  // never counted), "practice" (Play more: endless questions from the whole bank, never saved).
+  var MODE = "daily";
+  var pm = /^#past-(\d+)$/.exec(location.hash);
+  if (pm && Number(pm[1]) >= 1 && Number(pm[1]) < today) { MODE = "past"; dayNo = Number(pm[1]); }
+  var ARCH_KEY = "dailycity:history:past:v1";
   var WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   function weekday(n) { return (n + 5) % 7; } // No. 1 was Saturday 14 November 2026
   var ITEMS = D.D[(dayNo - 1) % D.days];
@@ -27,9 +33,17 @@
   save.v = 1;
   save.games = save.games && typeof save.games === "object" ? save.games : {};
   save.results = save.results && typeof save.results === "object" ? save.results : {};
-  var mine = save.games[dayNo] && Array.isArray(save.games[dayNo].a) ? save.games[dayNo] : { a: [] };
-  save.games[dayNo] = mine;
-  function store() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
+  var arch = (function () { try { var s = JSON.parse(localStorage.getItem(ARCH_KEY)); if (s && typeof s === "object") return s; } catch (e) {} return {}; })();
+  arch.v = 1;
+  arch.games = arch.games && typeof arch.games === "object" ? arch.games : {};
+  arch.results = arch.results && typeof arch.results === "object" ? arch.results : {};
+  var home = MODE === "past" && !(save.games[dayNo] && save.results[dayNo]) ? arch : save;   // a day already played as the daily shows that result
+  var mine = home.games[dayNo] && Array.isArray(home.games[dayNo].a) ? home.games[dayNo] : { a: [] };
+  home.games[dayNo] = mine;
+  function store() {
+    if (MODE === "practice") return;   // practice is never saved
+    try { localStorage.setItem(home === arch ? ARCH_KEY : KEY, JSON.stringify(home)); } catch (e) {}
+  }
 
   // ---------- heat: how close a year (or a gap in years) was ----------
   // The first try ends the question if it lands within 5 years; otherwise it gets a band and a direction, and one more try.
@@ -121,6 +135,7 @@
   // ---------- drawing ----------
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function drawDots() {
+    if (MODE === "practice") return practiceTally();
     var c = cur();
     $("#dots").innerHTML = QS.map(function (q, i) {
       var j = judge(i);
@@ -231,7 +246,7 @@
     if (judge(i).done) return;
     mine.a[i] = a;
     var j = judge(i);
-    if (j.done && cur() === QS.length) finishSave();
+    if (j.done && cur() === QS.length && MODE !== "practice") finishSave();
     store();
     if (!j.done) { // a first slider try outside 5 years: say how warm, and go again
       heatSound(j.first); pins(i); firstSay(i, j);
@@ -285,8 +300,9 @@
       s.textContent = (j.right ? "Right: " : "It was ") + ans + "." + (mq[0] === "from" && mq[5] && mq[5] !== ans ? " (" + mq[5] + ")" : "") + factLine(mq[3]) + (changed(mq) ? " " + changed(mq) : "");
     }
     var nx = $("#qnext"), last = i === QS.length - 1;
-    nx.hidden = false; nx.textContent = last ? "See today's log" : "Next question";
-    nx.onclick = function () { if (last) finish(true); else show(i + 1, true); };
+    nx.hidden = false; nx.textContent = MODE === "practice" ? "Another question" : last ? (MODE === "past" ? "See this day's log" : "See today's log") : "Next question";
+    nx.onclick = function () { if (MODE === "practice") practiceNext(); else if (last) finish(true); else show(i + 1, true); };
+    if (MODE === "practice") practiceTally();
     if (!quiet) setTimeout(function () { nx.focus({ preventScroll: true }); }, 30);
   }
   function factLine(ids) {
@@ -296,7 +312,7 @@
 
   // ---------- the end ----------
   function finishSave() {
-    save.results[dayNo] = { score: total(), right: QS.filter(function (_, i) { return judge(i).right; }).length, marks: marks() };
+    home.results[dayNo] = { score: total(), right: QS.filter(function (_, i) { return judge(i).right; }).length, marks: marks() };
   }
   function shareText() {
     var sc = total();
@@ -329,7 +345,11 @@
     $("#bigScore").textContent = sc;
     $("#shareText").textContent = shareText();
     $("#recap").innerHTML = QS.map(function (_, i) { return recapItem(i); }).join("");
-    if (window.MXS) {
+    var past = MODE === "past";
+    ["#shareText", "#shareBtn", ".mx-img", "#streakNote"].forEach(function (sel) { var el = $(sel); if (el) el.hidden = past; });
+    $("#pastNote").hidden = !past;
+    if (past) $("#pastNote").textContent = "No. " + dayNo + " from the archive. " + (home === save ? "You played it on the day, so this is your real result." : "Archive rounds don't count toward your streak or stats.");
+    if (window.MXS && !past) {
       var s = MXS.streak(save.results, today);
       $("#streakNote").hidden = false;
       $("#streakNote").textContent = "Streak: " + s.cur + (s.cur === 1 ? " day" : " days") + ". Best: " + s.best + "." + (s.freezes ? " \u{1F9CA} " + s.freezes + (s.freezes === 1 ? " freeze" : " freezes") + " ready." : "");
@@ -340,6 +360,86 @@
       (sc >= 800 ? SFX.win : SFX.end)();
       setTimeout(function () { $("#doneTitle").focus({ preventScroll: false }); }, 50);
     }
+  }
+
+  // ---------- stats (daily rounds only) ----------
+  function stats() {
+    var days = Object.keys(save.results).map(Number).filter(function (n) { return n > 0 && save.results[n] && save.results[n].score != null; });
+    var scores = days.map(function (n) { return Number(save.results[n].score) || 0; });
+    var s = window.MXS ? MXS.streak(save.results, today) : { cur: 0, best: 0 };
+    var buckets = [0, 0, 0, 0, 0];   // 0-199, 200-399, 400-599, 600-799, 800
+    scores.forEach(function (v) { buckets[Math.min(4, Math.floor(v / 200))]++; });
+    return { played: days.length, avg: scores.length ? Math.round(scores.reduce(function (a, b) { return a + b; }, 0) / scores.length) : 0,
+      best: scores.length ? Math.max.apply(null, scores) : 0, cur: s.cur, bestStreak: s.best, buckets: buckets, todayScore: save.results[today] ? save.results[today].score : null };
+  }
+  function openStats() {
+    var st = stats(), max = Math.max.apply(null, st.buckets.concat(1)), labels = ["0\u2013199", "200\u2013399", "400\u2013599", "600\u2013799", "800"];
+    var mineB = st.todayScore != null ? Math.min(4, Math.floor(st.todayScore / 200)) : -1;
+    $("#statsBody").innerHTML = '<div class="stats">'
+      + [[st.played, "Played"], [st.avg, "Average"], [st.best, "Best"], [st.cur, "Streak"]].map(function (x) { return "<div><b>" + x[0] + "</b><span>" + x[1] + "</span></div>"; }).join("")
+      + '</div><p class="note">Best streak: ' + st.bestStreak + (st.bestStreak === 1 ? " day" : " days") + ". Only daily rounds count; past logbooks and practice don't.</p>"
+      + '<h3 class="sh">Your scores</h3><div class="hist">' + st.buckets.map(function (c, k) {
+        return '<div class="hrow"><span>' + labels[k] + '</span><div class="hbar' + (k === mineB ? " me" : "") + '" style="width:' + Math.max(8, c / max * 100) + '%">' + c + "</div></div>";
+      }).join("") + "</div>" + (st.played ? "" : '<p class="note">Finish a daily round to start your stats.</p>');
+    $("#statsSheet").hidden = false;
+  }
+
+  // ---------- past logbooks ----------
+  function openPast() {
+    var rows = [];
+    for (var n = today - 1; n >= 1; n--) {
+      var r = save.results[n] || arch.results[n], d = new Date(Date.UTC(2026, 10, 13 + n));
+      rows.push('<li><a href="#past-' + n + '">No. ' + n + " \u00b7 " + WEEK[d.getUTCDay()] + " " + d.getUTCDate() + " " + ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()]
+        + "</a><span>" + (r ? r.score + " points" + (save.results[n] ? "" : " (archive)") : "not played") + "</span></li>");
+    }
+    $("#pastList").innerHTML = rows.join("") || "<li>No earlier logbooks yet. Come back tomorrow.</li>";
+    $("#pastSheet").hidden = false;
+  }
+
+  // ---------- play more (practice) ----------
+  // Questions drawn at random from the whole bank under the same rules as the daily rounds. Nothing is saved:
+  // the daily result, streak, stats and share text never change.
+  var NT = {}, NW = {}, Z = {}, practiced = 0, practicePts = 0;
+  (D.nt || []).forEach(function (i) { NT[i] = 1; }); (D.nw || []).forEach(function (i) { NW[i] = 1; }); (D.z || []).forEach(function (i) { Z[i] = 1; });
+  function rint(n) { return Math.floor(Math.random() * n); }
+  function pickFact(ok) { for (var t = 0; t < 4000; t++) { var i = rint(F.length); if (ok(i)) return i; } return -1; }
+  function okPair(a, b, min) { var g = Math.abs(F[a][0] - F[b][0]); return a !== b && D.pc[a] !== D.pc[b] && g >= Math.max(min, Z[a] || Z[b] ? 20 : 5); }
+  function practiceItem() {
+    var roll = rint(13), wf = function (i) { return F[i][0] && !NW[i]; }, tl = function (i) { return F[i][0] && !NT[i]; };
+    for (var tries = 0; tries < 200; tries++) {
+      if (roll < 3) { var a = pickFact(wf), b = pickFact(wf); if (okPair(a, b, 5)) return ["w", a, b, Math.random() < 0.3 ? 1 : 0]; }
+      else if (roll < 5) {
+        var x = [pickFact(wf), pickFact(wf), pickFact(wf)].sort(function (p, q) { return F[p][0] - F[q][0]; });
+        if (okPair(x[0], x[1], 5) && okPair(x[1], x[2], 5) && okPair(x[0], x[2], 10)) return ["o"].concat(x.sort(function () { return Math.random() - 0.5; }));
+      } else if (roll < 8) {
+        var f = pickFact(tl), y = F[f][0], w = 60 + rint(110), lo = Math.max(1800, Math.min(y - 4 - rint(Math.max(1, w - 8)), 2026 - w));
+        if (lo <= y - 4 || lo === 1800) return ["t", f, lo, Math.min(2026, lo + w)];
+      } else if (roll < 9) { var g1 = pickFact(tl), g2 = pickFact(tl); if (okPair(g1, g2, 8) && !Z[g1] && !Z[g2]) return ["g", g1, g2]; }
+      else {
+        var qi = rint(Q.length), wrong = (D.qd[qi] || []).slice().sort(function () { return Math.random() - 0.5; }).slice(0, 3);
+        if (wrong.length === 3) { var opts = wrong.concat([Q[qi][2]]).sort(function () { return Math.random() - 0.5; }); return ["m", qi, opts, opts.indexOf(Q[qi][2])]; }
+      }
+    }
+    return ["w", 0, F.length - 1, 0];
+  }
+  function practiceTally() {
+    var done = QS.filter(function (_, i) { return judge(i).done; });
+    practiced = done.length; practicePts = QS.reduce(function (s, _, i) { var j = judge(i); return s + (j.done ? j.pts : 0); }, 0);
+    $("#qn").textContent = "Practice \u00b7 " + practiced + (practiced === 1 ? " question" : " questions");
+    $("#pts").textContent = practicePts + " points, not saved";
+  }
+  function startPractice() {
+    MODE = "practice"; QS = []; mine = { a: [] };
+    $("#done").hidden = true; $("#dots").hidden = true; $("#lede").hidden = false; $("#tally").hidden = false; $("#quiz").hidden = false; $("#practiceBar").hidden = false;
+    $("#lede").textContent = "Practice: questions from the whole logbook, as many as you like. Nothing here is saved or shared, and today's result stays as it was.";
+    $("#num").textContent = "Practice \u00b7 not saved";
+    practiceNext();
+  }
+  function practiceNext() {
+    QS.push(make(practiceItem()));
+    show(QS.length - 1, true);
+    $("#qkind").textContent = "Practice \u00b7 " + kindName(QS[QS.length - 1]);
+    practiceTally();
   }
 
   function countdown() {
@@ -360,7 +460,18 @@
   }
 
   function init() {
-    $("#num").textContent = "No. " + dayNo + " · " + WEEK[weekday(dayNo)] + " · " + D.level[weekday(dayNo)];
+    $("#num").textContent = "No. " + dayNo + " · " + WEEK[weekday(dayNo)] + " · " + D.level[weekday(dayNo)] + (MODE === "past" ? " · archive" : "");
+    if (MODE === "past") $("#lede").textContent = "An earlier logbook, No. " + dayNo + ". It doesn't count toward your streak or stats.";
+    $("#statsBtn").onclick = openStats; $("#statsLink").onclick = openStats;
+    $("#closeStats").onclick = function () { $("#statsSheet").hidden = true; };
+    $("#pastBtn").onclick = openPast; $("#pastLink").onclick = openPast;
+    $("#closePast").onclick = function () { $("#pastSheet").hidden = true; };
+    ["#statsSheet", "#pastSheet"].forEach(function (id) { $(id).addEventListener("click", function (e) { if (e.target === $(id)) $(id).hidden = true; }); });
+    $("#pastList").addEventListener("click", function (e) { if (e.target.closest("a")) setTimeout(function () { location.reload(); }, 0); });
+    $("#moreBtn").onclick = startPractice;
+    $("#practiceDone").onclick = function () { location.hash = ""; location.reload(); };
+    $("#todayLink").hidden = MODE !== "past";
+    window.addEventListener("hashchange", function () { if (/^#(past-\d+)?$/.test(location.hash) || location.hash === "") location.reload(); });
     drawMute();
     $("#soundBtn").onclick = function () { muted = !muted; try { localStorage.setItem("dailycity:sound", muted ? "off" : "on"); } catch (e) {} drawMute(); if (!muted) SFX.right(); };
     $("#shareBtn").onclick = async function () {
@@ -369,7 +480,7 @@
       try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); }
     };
     var c = cur();
-    if (c >= QS.length) { if (!save.results[dayNo]) { finishSave(); store(); } finish(false); }
+    if (c >= QS.length) { if (!home.results[dayNo]) { finishSave(); store(); } finish(false); }
     else {
       // a round in progress picks up where it was left: the answered question stays on screen until "Next"
       show(c, false);
@@ -381,7 +492,8 @@
     }
     if (local) {
       window.__hist = {
-        day: dayNo, D: D, QS: QS, judge: judge, total: total, shareText: shareText, cur: cur, show: show,
+        day: dayNo, D: D, get QS() { return QS; }, judge: judge, total: total, shareText: shareText, cur: cur, show: show,
+        mode: function () { return MODE; }, practiceItem: practiceItem, stats: stats,
         // the right answer to question i, in the form answer() takes
         right: function (i) {
           var q = QS[i];

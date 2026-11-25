@@ -721,6 +721,18 @@ data = {
     "rest": None,                                  # filled in below: the shortest gap before a fact comes back
 }
 data["rest"] = fact_gap
+# For "Play more" (practice): which facts may go on the slider or in pairs, each fact's main country (pairs never
+# share one), and six fair wrong answers for each four-choice question. Made after the schedule with their own
+# random numbers, so the daily rounds above don't change.
+prnd = random.Random(SEED + 7)
+data["nt"] = [f["id"] for f in facts if not f["tl"]]
+data["nw"] = [f["id"] for f in facts if not f["wf"]]
+data["pc"] = [L(f["cs"][0]) for f in facts]
+data["qd"] = []
+for q in Q:
+    pool = [p for p, _ in q["pool"]]; prnd.shuffle(pool)
+    data["qd"].append([L(x) for x in pool[:6]])
+data["T"] = labels
 js = ("// Logbook (history game) data. Written by review/history/build.py from review/history/block-a.txt and block-b.txt.\n"
       "// Do not edit by hand: change the blocks or the rules in build.py and run it again.\n"
       "window.MX_HIST=" + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n")
