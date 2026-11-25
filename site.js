@@ -276,6 +276,85 @@
     setTimeout(function () { location.reload(); }, 900);
   }
 
+
+  // 18.6 a share image for the games that had none, drawn from their own share text
+  var TURTLE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200"><g fill="#9fc98b" stroke="#000000" stroke-width="2.2" stroke-linejoin="round"><path d="M45.5 24h9v12h-9z"/><path d="M50 8c6 0 9.5 5 9.5 10.5S56 28 50 28s-9.5-4-9.5-9.5S44 8 50 8z"/><path d="M32 41C21 30 9 30 8.5 37.5c-.4 5.6 9 10 23.5 12z"/><path d="M68 41c11-11 23-11 23.5-3.5.4 5.6-9 10-23.5 12z"/><path d="M35 73c-9 4-16 11-12 15 4.5 3.8 12-3 17-10z"/><path d="M65 73c9 4 16 11 12 15-4.5 3.8-12-3-17-10z"/><path d="M46.5 80 50 91l3.5-11z"/></g><circle cx="46" cy="16.5" r="1.8" fill="#000000"/><circle cx="54" cy="16.5" r="1.8" fill="#000000"/><rect x="29" y="34" width="42" height="43" rx="15" fill="#ffffff" stroke="#000000" stroke-width="2.4"/><rect x="34.2" y="39.2" width="10.8" height="10.8" fill="#ffffff" stroke="#000000" stroke-width="1.4"/><rect x="45" y="39.2" width="10.8" height="10.8" fill="#dcedf5" stroke="#000000" stroke-width="1.4"/><rect x="55.800000000000004" y="39.2" width="10.8" height="10.8" fill="#a9d3e8" stroke="#000000" stroke-width="1.4"/><rect x="34.2" y="50" width="10.8" height="10.8" fill="#9fc98b" stroke="#000000" stroke-width="1.4"/><rect x="45" y="50" width="10.8" height="10.8" fill="#b4237d" stroke="#000000" stroke-width="1.4"/><path d="M50.4 58.9c-.7-1.4-3-3.3-3-5.2a3 3 0 0 1 6 0c0 1.9-2.3 3.8-3 5.2z" fill="#ffffff"/><circle cx="50.4" cy="53.8" r="1" fill="#b4237d"/><rect x="55.800000000000004" y="50" width="10.8" height="10.8" fill="#f3d98a" stroke="#000000" stroke-width="1.4"/><rect x="34.2" y="60.800000000000004" width="10.8" height="10.8" fill="#a9d3e8" stroke="#000000" stroke-width="1.4"/><rect x="45" y="60.800000000000004" width="10.8" height="10.8" fill="#dcedf5" stroke="#000000" stroke-width="1.4"/><rect x="55.800000000000004" y="60.800000000000004" width="10.8" height="10.8" fill="#ffffff" stroke="#000000" stroke-width="1.4"/></svg>';
+  function shareImage(text, me) {
+    var lines = text.split("\n"), W = 1080, H = 1350, c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    var x = c.getContext("2d"), font = "Overpass, 'Helvetica Neue', Arial, sans-serif";
+    x.fillStyle = "#e6f1f7"; x.fillRect(0, 0, W, H);
+    x.fillStyle = "#fff"; x.fillRect(48, 48, W - 96, H - 96); x.lineWidth = 6; x.strokeStyle = "#000"; x.strokeRect(48, 48, W - 96, H - 96);
+    x.fillStyle = "#dcedf5"; x.beginPath(); x.moveTo(51, H - 260); x.quadraticCurveTo(W / 2, H - 330, W - 51, H - 260); x.lineTo(W - 51, H - 51); x.lineTo(51, H - 51); x.fill();
+    var head = lines[0].split(" \u{1F422} "), title = head[0].replace(/^Mapelago /, ""), score = head[1] || "";
+    x.fillStyle = "#000"; x.font = "italic 800 84px " + font; x.fillText(title.replace(/ No\. \d+$/, ""), 300, 190);
+    x.font = "600 44px " + font; x.fillStyle = "#3d4a52"; x.fillText("Mapelago · " + (title.match(/No\. \d+$/) || [""])[0], 300, 255);
+    x.fillStyle = "#000"; x.font = "italic 800 " + (score.length > 10 ? 120 : 170) + "px " + font; x.fillText(score.replace(/ points$/, ""), 110, 520);
+    if (/points$/.test(score)) { x.font = "600 46px " + font; x.fillStyle = "#3d4a52"; x.fillText("points", 116, 590); }
+    // marks as shapes, so they read the same on every phone
+    var marks = Array.from(lines[1] || "").filter(function (ch) { return /\S/.test(ch) && ch !== "️"; }), size = Math.min(110, Math.floor((W - 220) / Math.max(1, marks.length)) - 12);
+    marks.forEach(function (m, i) {
+      var px = 110 + i * (size + 12), py = 680;
+      x.lineWidth = 5; x.strokeStyle = "#000"; x.setLineDash([]);
+      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8" }[m];
+      if (m === "❌") { x.setLineDash([12, 8]); x.strokeRect(px, py, size, size); x.setLineDash([]); x.beginPath(); x.moveTo(px + size * .28, py + size * .28); x.lineTo(px + size * .72, py + size * .72); x.moveTo(px + size * .72, py + size * .28); x.lineTo(px + size * .28, py + size * .72); x.stroke(); return; }
+      x.fillStyle = fill || "#ffffff"; x.fillRect(px, py, size, size); x.strokeRect(px, py, size, size);
+      if (m === "✅") { x.strokeStyle = "#fff"; x.lineWidth = 8; x.beginPath(); x.moveTo(px + size * .25, py + size * .52); x.lineTo(px + size * .43, py + size * .7); x.lineTo(px + size * .76, py + size * .3); x.stroke(); }
+      if (m === "⚓") { x.fillStyle = "#000"; x.font = "800 " + Math.round(size * .6) + "px " + font; x.fillText("⚓", px + size * .2, py + size * .72); }
+    });
+    var last = lines[lines.length - 1] || "", ask = last.replace(/\s*\S+$/, ""), url = (last.match(/\S+$/) || [""])[0].replace(/#.*$/, "");
+    x.fillStyle = "#000"; x.font = "800 56px " + font; x.fillText(ask, 110, H - 180);
+    x.fillStyle = "#b4237d"; x.font = "800 46px " + font; x.fillText(url, 110, H - 110);
+    return new Promise(function (done) {
+      var img = new Image();
+      img.onload = function () { x.drawImage(img, 80, 80, 200, 200); done(c); };
+      img.onerror = function () { done(c); };
+      img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(TURTLE);
+    });
+  }
+  async function shareImageClick(me) {
+    var t = document.getElementById("shareText"); if (!t) return;
+    var c = await shareImage(t.textContent, me), blob = await new Promise(function (r) { c.toBlob(r, "image/png"); });
+    try {
+      var f = new File([blob], "mapelago-" + me.id + ".png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], text: t.textContent }); return; }
+    } catch (e) { if (e && e.name === "AbortError") return; }
+    var m = document.getElementById("mxImg");
+    if (!m) {
+      m = document.createElement("div"); m.className = "modal mxm"; m.id = "mxImg"; m.hidden = true;
+      m.innerHTML = '<div class="mxs" role="dialog" aria-modal="true" aria-labelledby="mxImgT"><button class="x" id="closeMxImg" aria-label="Close">×</button><h2 id="mxImgT">Your result card</h2><p>Press and hold the image to save it, or download it, then post it.</p><img id="mxImgPic" alt="Your result card" style="width:100%;border:2px solid #000;border-radius:8px"><div class="btns"><a class="go" id="mxImgDl" download="mapelago.png" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:2px solid #000;border-radius:12px;text-decoration:none;font-weight:800">Download</a></div></div>';
+      document.body.appendChild(m);
+      m.querySelector("#closeMxImg").onclick = function () { m.hidden = true; };
+      m.addEventListener("click", function (e) { if (e.target === m) m.hidden = true; });
+    }
+    var url = c.toDataURL("image/png");
+    m.querySelector("#mxImgPic").src = url; m.querySelector("#mxImgDl").href = url; m.querySelector("#mxImgDl").download = "mapelago-" + me.id + ".png";
+    m.hidden = false;
+  }
+  function addImageButton() {
+    var me = here(), btn = document.getElementById("shareBtn");
+    if (!me || !btn || document.getElementById("imgBtn") || me.id === "city" || me.id === "country") return;
+    var b = document.createElement("button");
+    b.className = btn.className + " mx-img"; b.type = "button"; b.textContent = "Share image";
+    b.onclick = function () { shareImageClick(me); };
+    btn.parentNode.insertBefore(b, btn.nextSibling);
+  }
+
+  // 18.7 one message for everything you played today
+  function todayText() {
+    var t = today(), parts = [];
+    info().forEach(function (s) {
+      var r = s.res[t]; if (!r) return;
+      var id = s.game.id, v =
+        id === "city" || id === "country" ? (r.score != null ? r.score : "✓") :
+        id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
+        id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
+        id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") : "✓";
+      parts.push(s.game.icon + " " + v);
+    });
+    return { n: parts.length, text: "Mapelago today, No. " + t + " \u{1F422}\n" + parts.join(" · ") + "\nmapelago.com/games/" };
+  }
+
   // 16.5 Today's games: a card for every game with today's status, and what to play next
   function today_games(app) {
     var me = here(), all = info();
@@ -287,6 +366,17 @@
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
       return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc(g.about) + '</span><span class="st">' + st + "</span></a></li>";
     }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">All seven done today. See you tomorrow.</p>');
+    var tt = todayText();
+    if (tt.n >= 2) {
+      var share = document.createElement("p"); share.className = "mx-next";
+      share.innerHTML = '<button class="mx-link" type="button" id="mxToday">Copy today\'s results (' + tt.n + " games)</button>";
+      sec.appendChild(share);
+      share.querySelector("button").onclick = async function () {
+        var txt = todayText().text, b = this;
+        try { await navigator.clipboard.writeText(txt); b.textContent = "Copied. Paste it in your group chat."; }
+        catch (e) { window.prompt("Copy your results:", txt); }
+      };
+    }
     var foot = app.querySelector("footer");
     if (foot && foot.parentNode === app) app.insertBefore(sec, foot); else app.appendChild(sec);
   }
@@ -312,6 +402,7 @@
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
     if (app) { riskNote(app); challenge(app); today_games(app); }
+    addImageButton();
     var nav = document.querySelector('nav[aria-label="Daily games"]');
     var me = here();
     if (nav && me) Array.prototype.forEach.call(nav.querySelectorAll("a"), function (a) { if (a.getAttribute("href") === me.url || (me.url === "./" && /^(\.\/|index\.html|\.)$/.test(a.getAttribute("href")))) a.setAttribute("aria-current", "page"); });
