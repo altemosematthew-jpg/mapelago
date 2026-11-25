@@ -353,6 +353,7 @@
     if (L.daily) {
       share.hidden = false; sb.hidden = false;
       share.textContent = "Mapelago Ballast No. " + L.daily + " \u{1F422} " + fmt(save.results[L.daily].score) + " points\n" + marks + "\n" + "Stack " + fmt(save.results[L.daily].h) + " km · " + save.results[L.daily].named + " of " + L.list.length + " named\n" + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.ballast) || "Can you stack higher?") + " mapelago.com/ballast.html#c-" + L.daily + "-" + save.results[L.daily].score;
+      if (window.MXS && MXS.beat) share.textContent = MXS.beat.upgrade(share.textContent);
       $("#nextLvl").hidden = true;
     } else {
       share.hidden = true; sb.hidden = true;

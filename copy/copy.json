@@ -142,11 +142,27 @@
    ],
    "invite": "How close to the year can you get?",
    "image": "How has the map changed?"
+  },
+  "ballast": {
+   "file": "ballast.html",
+   "title": "Ballast: a daily stack-the-countries game | Mapelago",
+   "description": "Stack real country outlines on a rocking ship without toppling them, and name each one for bonus points. A free daily geography game from Mapelago.",
+   "heading": "Stack the world without tipping it over.",
+   "explainer": "Ballast is Mapelago's stacking game. Real country outlines, all drawn at the same scale, come one at a time. Move each one, turn it, and drop it on the ship's deck. The stack obeys gravity, so a careless Chile can bring the whole load down, and anything that falls in the sea is lost. Before you drop a country you can name it for 100 bonus points: from four choices on early voyages, typed later. Daily Ballast gives everyone the same ten countries each day, calm on Mondays and rough by Sunday, and scores the height of your stack in kilometres plus your names. The thirty voyages are levels grouped by region, with swell, wind and narrower decks as they go: load each ship to its load line for one star, lose nothing overboard for two, and name every country for three.",
+   "howto": [
+    "Name the country for +100: tap a choice, or type it on later voyages.",
+    "Drag to move it, tap to turn it. On a keyboard: arrows move, Q and E turn.",
+    "Press Drop (or Space). It falls and settles on the stack.",
+    "Keep the stack on the deck. Anything that topples into the sea is lost.",
+    "Daily Ballast scores the stack's height in km plus 100 per name. Voyages give 1 to 3 stars."
+   ],
+   "invite": "Can you stack higher?",
+   "image": "Stack the world."
   }
  },
  "home": {
   "headline": "A little geography, every day",
-  "line": "Nine free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for.",
+  "line": "Eleven free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for.",
   "cards": {
    "city": "Guess the city: slide tiles for clues, then pin it on the map.",
    "country": "Guess the country: slide tiles for clues, then pin it on the map.",
@@ -156,10 +172,11 @@
    "fathoms": "Name a country that fits. Less obvious answers go deeper.",
    "stamps": "Spin the wheel, answer the question, stamp all six.",
    "crossings": "Name the countries between two others, border by border.",
-   "history": "Eight questions on the world map since 1800. Get warmer."
+   "history": "Eight questions on the world map since 1800. Get warmer.",
+   "ballast": "Stack real countries on a ship. Name them for bonus points."
   }
  },
  "allGames": {
-  "intro": "Mapelago has nine daily geography games. They're all free, with no account and nothing to install, and everyone in the world gets the same puzzles each day. The two Bigger games take about a minute. Mystery city takes about three. Start with Mystery city, the tile-and-pin game where Mapelago began, then pick whatever catches your eye. Our turtle won't judge a wrong pin."
+  "intro": "Mapelago has eleven daily geography games. They're all free, with no account and nothing to install, and everyone in the world gets the same puzzles each day. The two Bigger games take about a minute. Mystery city takes about three. Start with Mystery city, the tile-and-pin game where Mapelago began, then pick whatever catches your eye. Our turtle won't judge a wrong pin."
  }
 }
