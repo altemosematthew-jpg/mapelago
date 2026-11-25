@@ -23,12 +23,13 @@
    "title": "Mystery country: a daily guess-the-country game | Mapelago",
    "description": "Slide tiles to earn clues about today's mystery country, then pin it on the map. Three pins, one country for everyone. A free daily geography game.",
    "heading": "Find today's mystery country",
-   "explainer": "Mystery country is the guess-the-country version of Mapelago. Slide the tiles to merge matching pairs, like 2048. Each new tile size you make earns a clue, in this order: hemisphere, continent, coast and borders, languages, the first letter of the capital, then the country's outline. Every move costs 8 of your 1,000 points, so pin once you're fairly sure. You get three pins. A pin inside the country, or within 50 km of it, counts as found. A miss shows the distance, the direction, and whether you're getting warmer. Everyone gets the same country, and a new one arrives at midnight, your time.",
+   "explainer": "Mystery country is the guess-the-country version of Mapelago, and it plays by the same rules as Mystery city. Slide the tiles to merge matching pairs, like 2048. Each new tile size you make, up to 64, earns a clue, in this order: hemisphere, continent, coast and borders, languages, the first letter of the capital, then the country's outline. Every move costs 6 of your 1,000 points, so each clue is a small bet. When you think you know it, drop a pin. You get three. A pin inside the country, or within 50 km of it, counts as found. A miss costs 150 points. It tells you how far your pin was from the nearest point of the country, which way to go and whether you're getting warmer, and it opens the next clue for free. Everyone gets the same country, and a new one arrives at midnight, your time.",
    "howto": [
     "Slide the tiles. Two matching tiles merge into one worth double.",
-    "Each new tile size unlocks a clue, ending with the country's outline. Every move costs 8 points.",
-    "Drop a pin when you have a guess. You get three.",
-    "A pin inside the country, or within 50 km of it, counts as found. A miss shows the distance, direction and whether you're warmer or colder."
+    "Each new tile size, up to 64, unlocks a clue, ending with the country's outline. Every move costs 6 of your 1,000 points.",
+    "When you have a guess, drop a pin on the map. You get three.",
+    "A pin inside the country, or within 50 km of it, finds it. A miss shows the distance to the nearest point of the country, an arrow toward it, whether you're warmer or colder, and opens the next clue.",
+    "Share your result: your clues and how close each pin came, never the country."
    ],
    "invite": "How many clues will you need to pin it?",
    "image": "Can you find today's country?"
@@ -130,8 +131,8 @@
   "headline": "A little geography, every day",
   "line": "Eight free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for.",
   "cards": {
-   "city": "Slide tiles to earn clues, then pin today's city on the map.",
-   "country": "The same tile-and-pin game, with a mystery country.",
+   "city": "Guess the city: slide tiles for clues, then pin it on the map.",
+   "country": "Guess the country: slide tiles for clues, then pin it on the map.",
    "bigger": "Two cities, one tap: which has more people? Ten pairs.",
    "bigcountry": "Which covers more land? Ten pairs, closer as you go.",
    "voyage": "Ten islands of trivia. Keep your points or sail on.",

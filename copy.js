@@ -11,8 +11,8 @@ window.MXCOPY = {
   "crossings": "Can you cross it in par?"
  },
  "cards": {
-  "city": "Slide tiles to earn clues, then pin today's city on the map.",
-  "country": "The same tile-and-pin game, with a mystery country.",
+  "city": "Guess the city: slide tiles for clues, then pin it on the map.",
+  "country": "Guess the country: slide tiles for clues, then pin it on the map.",
   "bigger": "Two cities, one tap: which has more people? Ten pairs.",
   "bigcountry": "Which covers more land? Ten pairs, closer as you go.",
   "voyage": "Ten islands of trivia. Keep your points or sail on.",

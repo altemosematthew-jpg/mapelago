@@ -426,6 +426,14 @@ a.act{text-decoration:none}
 /* 7.2 the number and the day's level wrap under the name on narrow phones rather than run under the buttons */
 @media (max-width:380px){.tools{gap:5px}.tools .tool{width:40px;min-width:40px}.word{font-size:22px}}
 .mark{min-width:0;flex:1}.name{min-width:0}.name .no{display:block;white-space:normal;line-height:1.15}
+/* mx-find: Mystery city and Mystery country side by side at the top of both games (review/country-merge-notes.md) */
+.mx-find{display:grid;grid-template-columns:1fr 1fr;margin:0 0 10px;border-bottom:var(--bw) solid var(--line)}
+.mx-find a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:6px 4px;margin-bottom:calc(-1 * var(--bw));border-bottom:5px solid transparent;color:var(--ink-2);font-weight:800;font-size:16px;text-decoration:none;text-align:center;line-height:1.15}
+.mx-find a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+.mx-find a:not([aria-current]):hover{color:var(--ink);border-bottom-color:var(--line)}
+.mx-find a:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+#endBody .also{text-align:center}
+/* /mx-find */
 
 /* 7.1 archive: no streaks or stats, they belong to the daily game */
 .archive .stats,.archive .hist,.archive .freeze,.archive #yday{display:none}
@@ -450,6 +458,8 @@ a.act{text-decoration:none}
       <button class="tool" id="statsBtn" aria-label="Your stats"></button>
     </nav>
   </header>
+  <!-- mx-find: Mystery city and Mystery country side by side at the top -->
+  <nav class="mx-find" aria-label="Find a city or a country"><a href="./" aria-current="page"><span aria-hidden="true">🏙️</span>Mystery city</a><a href="country.html"><span aria-hidden="true">🌍</span>Mystery country</a></nav>
 
   <section class="status" aria-label="Your game">
     <div class="stat"><b id="score">1000</b><span>points left</span></div>
