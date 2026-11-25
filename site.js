@@ -2,7 +2,7 @@
 // 1. A damaged save never stops a game from starting.
 // 2. Dialogs behave like dialogs: focus moves in and stays in, Escape closes only the top one
 //    (through its own close button, so the game saves what it needs), and focus goes back after.
-// 3. Streaks across all seven games: freezes, a note when a streak is waiting, one stats panel, a save code.
+// 3. Streaks across all the games: freezes, a note when a streak is waiting, one stats panel, a save code.
 (function () {
   "use strict";
 
@@ -93,7 +93,7 @@
     }
   }, true);
 
-  // ---------- 3. streaks across all seven games (5.1, 5.2, 5.3, 5.4) ----------
+  // ---------- 3. streaks across all the games (5.1, 5.2, 5.3, 5.4) ----------
   var GAMES = [
     { id: "city", name: "Mystery city", key: "dailycity:v2", url: "./", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
     { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "The same, with a country to find." },
@@ -101,7 +101,8 @@
     { id: "bigcountry", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
     { id: "voyage", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
     { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html", icon: "\u{1F30A}", about: "Name the least obvious right answer." },
-    { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." }
+    { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." },
+    { id: "crossings", name: "Crossings", key: "dailycity:crossings:v1", url: "crossings.html", icon: "\u{1F9ED}", about: "Name the countries between two others, border by border." }
   ];
   var FREEZE_EVERY = 7, FREEZE_MAX = 2;
   function today() {
@@ -162,8 +163,8 @@
     + '.mx-card .ic{grid-row:span 3;font-size:26px;line-height:1.1}.mx-card b{font-size:16px;line-height:1.2}.mx-card .ab{font-size:13px;line-height:1.3;color:var(--ink-2,#3d4a52)}'
     + '.mx-card .st{font-size:12.5px;font-weight:800;color:var(--accent-ink,#b4237d)}.mx-card.done a{background:var(--tint,#dcedf5)}.mx-card.here a{outline:3px solid var(--accent,#b4237d);outline-offset:-3px}'
     + '.mx-next{margin:10px 0 0;font-size:15px;font-weight:600}.mx-next a{font-weight:800;color:inherit}'
-    + '@media (min-width:700px){.mx-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}'
     + '.mx-passport{margin:18px 0 0}.mx-passport h3{margin:0 0 4px;font-size:17px}.mx-passport p{margin:0 0 8px;font-size:14px}.mx-passport ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.mx-passport li{display:grid;justify-items:center;gap:2px;padding:6px 2px;border:1.5px dashed var(--line,#000);border-radius:8px;font-size:12px}.mx-passport b{font-size:11px;letter-spacing:-1px;color:var(--accent-ink,#b4237d);word-break:break-all;text-align:center;line-height:1.1}'
+    + '.mx-vs{margin:0 0 10px;padding:10px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000)}.mx-vs-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center}.mx-vs-cols span{display:block;font-size:13px;font-weight:600}.mx-vs-cols b{font-size:34px;font-weight:800;font-style:var(--num-style,normal)}.mx-vs p{margin:6px 0 0;font-weight:700;text-align:center}.mx-vs .mx-link{display:block;margin:0 auto}'
     + '.mx-past{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}.mx-past li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1.5px solid var(--rule,#c9e1ec);border-radius:8px}.mx-past a{font-weight:800;color:inherit}';
 
   function here() {
@@ -298,7 +299,7 @@
     marks.forEach(function (m, i) {
       var px = 110 + i * (size + 12), py = 680;
       x.lineWidth = 5; x.strokeStyle = "#000"; x.setLineDash([]);
-      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8" }[m];
+      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8", "\u{1F4A1}": "#f3d98a" }[m];
       if (m === "❌") { x.setLineDash([12, 8]); x.strokeRect(px, py, size, size); x.setLineDash([]); x.beginPath(); x.moveTo(px + size * .28, py + size * .28); x.lineTo(px + size * .72, py + size * .72); x.moveTo(px + size * .72, py + size * .28); x.lineTo(px + size * .28, py + size * .72); x.stroke(); return; }
       x.fillStyle = fill || "#ffffff"; x.fillRect(px, py, size, size); x.strokeRect(px, py, size, size);
       if (m === "✅") { x.strokeStyle = "#fff"; x.lineWidth = 8; x.beginPath(); x.moveTo(px + size * .25, py + size * .52); x.lineTo(px + size * .43, py + size * .7); x.lineTo(px + size * .76, py + size * .3); x.stroke(); }
@@ -348,10 +349,11 @@
     info().forEach(function (s) {
       var r = s.res[t]; if (!r) return;
       var id = s.game.id, v =
-        id === "city" || id === "country" ? (r.score != null ? r.score : "✓") :
+        id === "city" || id === "country" ? (r.q ? (r.won ? r.pins + "/5 quick" : "X/5 quick") : r.score != null ? r.score : "✓") :
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
         id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
-        id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") : "✓";
+        id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") :
+        id === "crossings" ? (r.score != null ? r.score : "✓") : "✓";
       parts.push(s.game.icon + " " + v);
     });
     return { n: parts.length, text: "Mapelago today, No. " + t + " \u{1F422}\n" + parts.join(" · ") + "\nmapelago.com/games/" };
@@ -366,6 +368,7 @@
     if (me.id === "bigger" || me.id === "bigcountry") return /\b10\/10\b/.test(line);
     if (me.id === "stamps") return /\b6 of 6\b/.test(line);
     if (me.id === "fathoms") return /7,000 of 7,000/.test(line);
+    if (me.id === "crossings") return /\u{1F422} 1000 points/u.test(line);
     return false;
   }
   function confetti(box) {
@@ -426,7 +429,7 @@
       var g = s.game, isMe = me && g.id === me.id;
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
       return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
-    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">All seven done today. See you tomorrow.</p>');
+    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">Every game done today. See you tomorrow.</p>');
     var tt = todayText();
     if (tt.n >= 2) {
       var share = document.createElement("p"); share.className = "mx-next";
@@ -444,7 +447,7 @@
 
   // 18.5 a friend's challenge link (#c-<number>-<score>) on the games that had none
   var UNIT = { bigger: function (n) { return n + " of 10"; }, bigcountry: function (n) { return n + " of 10"; }, voyage: function (n) { return n + " points"; },
-    fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; } };
+    fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; }, crossings: function (n) { return n + " points"; } };
   function challenge(app) {
     var me = here(), m = /^#c-(\d+)-(\d+)$/.exec(location.hash);
     if (!me || !m || !UNIT[me.id]) return;
@@ -459,10 +462,120 @@
     if (head && head.parentNode === app) app.insertBefore(el, head.nextSibling); else app.insertBefore(el, app.firstChild);
   }
 
+  // Beat my score. A shared result carries #b-<game>-<puzzle>-<mode>-<score>: a two-letter game code and
+  // whole numbers only, nothing about the person and never the answer. Everything read from the address is
+  // checked against fixed lists and ranges, and only ever written into the page as text.
+  var BEAT = {
+    city: { code: "mc", max: 1000, modes: 2 }, country: { code: "mn", max: 1000, modes: 2 },
+    bigger: { code: "bc", max: 10, modes: 1 }, bigcountry: { code: "bn", max: 10, modes: 1 },
+    voyage: { code: "vy", max: 1000, modes: 1 }, fathoms: { code: "fa", max: 7000, modes: 1 },
+    stamps: { code: "st", max: 6, modes: 1 }, crossings: { code: "cr", max: 1000, modes: 1 }
+  };
+  function gameByCode(c) { var id = Object.keys(BEAT).filter(function (k) { return BEAT[k].code === c; })[0]; return id ? GAMES.filter(function (g) { return g.id === id; })[0] : null; }
+  function gameByPage(page) { page = page || ""; return GAMES.filter(function (g) { return g.url === (page === "index.html" || page === "" ? "./" : page); })[0]; }
+  function said(id, mode, n) {
+    if (mode === 1) return n >= 200 && n % 200 === 0 ? "found it on pin " + ((1000 - n) / 200 + 1) + " of 5 in Quick mode" : "didn't find it in 5 pins in Quick mode";
+    if (id === "city" || id === "country" || id === "crossings") return n + " points";
+    if (UNIT[id]) return UNIT[id](n);
+    return String(n);
+  }
+  function parseBeat(hash) {
+    var m = /^#b-([a-z]{2})-(\d{1,5})-([0-9])-(\d{1,5})$/.exec(hash || "");
+    if (!m) return null;
+    var g = gameByCode(m[1]); if (!g) return null;
+    var n = Number(m[2]), mode = Number(m[3]), sc = Number(m[4]), b = BEAT[g.id];
+    if (n < 1 || n > today() + 1 || mode >= b.modes || sc > b.max) return null;
+    return { game: g, n: n, mode: mode, score: sc };
+  }
+  // the game's own link, old style (#c-<puzzle>-<score>[-<pins>]) or new, turned into the new style
+  var LINK = /(mapelago\.com\/)([\w.-]*)#(?:c-(\d+)-(\d+)(?:-\d+)?|b-[a-z]{2}-\d+-\d-\d+)/;
+  function upgrade(text) {
+    if (typeof text !== "string") return text;
+    return text.replace(new RegExp(LINK.source, "g"), function (all, host, page, n, sc) {
+      if (n === undefined) return all;
+      var g = gameByPage(page); if (!g || !BEAT[g.id]) return all;
+      var mode = BEAT[g.id].modes > 1 && /quick mode/i.test(text) ? 1 : 0;
+      return host + page + "#b-" + BEAT[g.id].code + "-" + n + "-" + mode + "-" + sc;
+    });
+  }
+  function ownResult(text) {
+    var m = /#b-([a-z]{2})-(\d+)-(\d)-(\d+)/.exec(upgrade(text || ""));
+    return m ? { n: Number(m[2]), mode: Number(m[3]), score: Number(m[4]) } : null;
+  }
+  // every copy and share goes out with the new link
+  (function wrap() {
+    try {
+      var cb = navigator.clipboard;
+      if (cb && cb.writeText && !cb.__mx) { var w = cb.writeText.bind(cb); cb.writeText = function (t) { return w(upgrade(t)); }; cb.__mx = 1; }
+      if (navigator.share && !navigator.__mxs) { var sh = navigator.share.bind(navigator); navigator.share = function (d) { if (d && d.text) d = Object.assign({}, d, { text: upgrade(d.text) }); return sh(d); }; navigator.__mxs = 1; }
+    } catch (e) {}
+  })();
+  function upgradeShown() {
+    Array.prototype.forEach.call(document.querySelectorAll("#shareText, .share"), function (el) {
+      if (LINK.test(el.textContent) && /#c-/.test(el.textContent)) el.textContent = upgrade(el.textContent);
+    });
+  }
+  var friend = null;
+  function beat(app) {
+    var me = here(), f = parseBeat(location.hash);
+    if (!me || !f) return;
+    if (f.game.id !== me.id) { location.replace(f.game.url + location.hash); return; }
+    var t = today(), el = document.createElement("p");
+    el.className = "mx-risk mx-beat"; el.setAttribute("role", "status");
+    if (f.n === t) {
+      friend = f;
+      el.textContent = "A friend " + (f.mode === 1 ? "" : "scored ") + said(me.id, f.mode, f.score) + " on today's " + me.name + ". Can you beat it?";
+    } else {
+      el.appendChild(document.createTextNode("This challenge is for No. " + f.n + ", " + (f.n < t ? "an earlier puzzle" : "which is tomorrow's where you are (your friend is a day ahead)") + ". Today's " + me.name + " is No. " + t + ". "));
+      var a = document.createElement("a"); a.href = me.url; a.textContent = "Play today's and send your score back";
+      el.appendChild(a);
+    }
+    var head = app.querySelector("header");
+    if (head && head.parentNode === app) app.insertBefore(el, head.nextSibling); else app.insertBefore(el, app.firstChild);
+  }
+  function compareInto(box, shareEl) {
+    if (!friend || !box || box.querySelector(".mx-vs")) return;
+    var me = here(), mine = ownResult(shareEl && shareEl.textContent);
+    if (!mine || mine.n !== friend.n) return;
+    var d = mine.score - friend.score, sec = document.createElement("section");
+    sec.className = "mx-vs"; sec.setAttribute("aria-label", "You and your friend");
+    var cols = document.createElement("div"); cols.className = "mx-vs-cols";
+    [["Your friend", friend], ["You", mine]].forEach(function (x) {
+      var c = document.createElement("div"), b = document.createElement("b"), s = document.createElement("span");
+      s.textContent = x[0]; b.textContent = x[1].mode === 1 ? (x[1].score >= 200 && x[1].score % 200 === 0 ? (1000 - x[1].score) / 200 + 1 + "/5" : "X/5") : String(x[1].score);
+      c.appendChild(s); c.appendChild(b); cols.appendChild(c);
+    });
+    var v = document.createElement("p");
+    v.textContent = (mine.mode !== friend.mode ? "Different modes, so take this lightly: " : "") + (d > 0 ? "You win." : d === 0 ? "A tie." : "Your friend wins this one.");
+    var btn = document.createElement("button"); btn.type = "button"; btn.className = "mx-link"; btn.textContent = "Send yours back";
+    btn.onclick = async function () {
+      var txt = upgrade(shareEl.textContent);
+      try { if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) { await navigator.share({ text: txt }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(txt); btn.textContent = "Copied. Paste it to your friend."; } catch (e) { window.prompt("Copy your result:", txt); }
+    };
+    sec.appendChild(cols); sec.appendChild(v); sec.appendChild(btn);
+    shareEl.parentNode.insertBefore(sec, shareEl);
+  }
+  function watchEnd() {
+    var pending = false;
+    new MutationObserver(function () {
+      if (pending) return; pending = true;
+      setTimeout(function () {
+        pending = false; upgradeShown();
+        var done = document.getElementById("done"), end = document.getElementById("endModal");
+        if (done && !done.hidden) compareInto(done, document.getElementById("shareText"));
+        if (end && !end.hidden) compareInto(document.getElementById("endBody"), document.querySelector("#endBody .share"));
+      }, 30);
+    }).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["hidden"] });
+  }
+
+  window.MXS.beat = { parse: parseBeat, upgrade: upgrade };
+
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
-    if (app) { riskNote(app); challenge(app); today_games(app); }
+    if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
+    watchEnd(); upgradeShown();
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');

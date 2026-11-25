@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crossings: a daily border-route geography game | Mapelago</title>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Crossings","url":"https://mapelago.com/crossings.html","description":"Walk from one country to another overland, naming the countries in between. Shortest route is par. A free daily geography game from Mapelago.","image":"https://mapelago.com/og-crossings.png","applicationCategory":"GameApplication","genre":["Puzzle","Geography","Word"],"operatingSystem":"Any","browserRequirements":"Requires JavaScript","gamePlatform":"Web browser","playMode":"SinglePlayer","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"isPartOf":{"@type":"WebSite","name":"Mapelago","url":"https://mapelago.com/"}}</script>
+<meta name="description" content="Walk from one country to another overland, naming the countries in between. Shortest route is par. A free daily geography game from Mapelago.">
+<link rel="canonical" href="https://mapelago.com/crossings.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="fonts/overpass-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/overpass-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/overpass-latin-800-italic.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="theme-color" content="#e6f1f7">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mapelago">
+<meta property="og:title" content="Crossings: a daily border-route geography game | Mapelago">
+<meta property="og:description" content="Walk from one country to another overland, naming the countries in between. Shortest route is par. A free daily geography game from Mapelago.">
+<meta property="og:url" content="https://mapelago.com/crossings.html">
+<meta property="og:image" content="https://mapelago.com/og-crossings.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Crossings on Mapelago: a turtle and a route of countries across a map">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+// Use the look the player picked in the mystery city game.
+try{var k=localStorage.getItem("dailycity:look");if(k)document.documentElement.setAttribute("data-look",k)}catch(e){}
+</script>
+<style>
+@font-face { font-family: 'Overpass'; font-style: normal; font-display: swap; font-weight: 400; src: url(fonts/overpass-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Overpass'; font-style: normal; font-display: swap; font-weight: 400; src: url(fonts/overpass-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Overpass'; font-style: normal; font-display: swap; font-weight: 600; src: url(fonts/overpass-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Overpass'; font-style: normal; font-display: swap; font-weight: 600; src: url(fonts/overpass-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Overpass'; font-style: normal; font-display: swap; font-weight: 800; src: url(fonts/overpass-latin-ext-800-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Overpass'; font-style: normal; font-display: swap; font-weight: 800; src: url(fonts/overpass-latin-800-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Overpass'; font-style: italic; font-display: swap; font-weight: 800; src: url(fonts/overpass-latin-ext-800-italic.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Overpass'; font-style: italic; font-display: swap; font-weight: 800; src: url(fonts/overpass-latin-800-italic.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-display: swap; font-weight: 500; src: url(fonts/baloo-2-latin-ext-500-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-display: swap; font-weight: 500; src: url(fonts/baloo-2-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-display: swap; font-weight: 600; src: url(fonts/baloo-2-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-display: swap; font-weight: 600; src: url(fonts/baloo-2-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-display: swap; font-weight: 800; src: url(fonts/baloo-2-latin-ext-800-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-display: swap; font-weight: 800; src: url(fonts/baloo-2-latin-800-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Zilla Slab'; font-style: normal; font-display: swap; font-weight: 500; src: url(fonts/zilla-slab-latin-ext-500-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Zilla Slab'; font-style: normal; font-display: swap; font-weight: 500; src: url(fonts/zilla-slab-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Zilla Slab'; font-style: normal; font-display: swap; font-weight: 600; src: url(fonts/zilla-slab-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Zilla Slab'; font-style: normal; font-display: swap; font-weight: 600; src: url(fonts/zilla-slab-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Zilla Slab'; font-style: normal; font-display: swap; font-weight: 700; src: url(fonts/zilla-slab-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Zilla Slab'; font-style: normal; font-display: swap; font-weight: 700; src: url(fonts/zilla-slab-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Patrick Hand'; font-style: normal; font-display: swap; font-weight: 400; src: url(fonts/patrick-hand-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Patrick Hand'; font-style: normal; font-display: swap; font-weight: 400; src: url(fonts/patrick-hand-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-display: swap; font-weight: 500; src: url(fonts/barlow-latin-ext-500-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-display: swap; font-weight: 500; src: url(fonts/barlow-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-display: swap; font-weight: 600; src: url(fonts/barlow-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-display: swap; font-weight: 600; src: url(fonts/barlow-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-display: swap; font-weight: 800; src: url(fonts/barlow-latin-ext-800-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-display: swap; font-weight: 800; src: url(fonts/barlow-latin-800-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: 'Jersey 20'; font-style: normal; font-display: swap; font-weight: 400; src: url(fonts/jersey-20-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+@font-face { font-family: 'Jersey 20'; font-style: normal; font-display: swap; font-weight: 400; src: url(fonts/jersey-20-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+
+:root,[data-look="chart"]{--font:"Overpass","Helvetica Neue",Arial,sans-serif;--hand:inherit;--num-style:italic;--ground:#e6f1f7;--ground-ink:#000000;--ground-ink-2:#3d4a52;--paper:#ffffff;--ink:#000000;--ink-2:#3d4a52;--accent:#b4237d;--on-accent:#ffffff;--accent-ink:#b4237d;--accent-lip:#000000;--focus:#b4237d;--line:#000000;--tile-line:#000000;--bw:2px;--lip:6px;--tint:#dcedf5;--tint-2:#a9d3e8;--grid:#b9d6e4;--rule:#c9e1ec;--muted:#6b777e;--muted-ink:#4a565d;--board:#ffffff;--cell:transparent;--deco:block;--sea:#ffffff;--land:#f3d98a;--land-line:#6f5d22;--grat:#c9e1ec;--turtle:#9fc98b;--turtle-2:#6fa85b;--shell:#ffffff;--r:12px;--r-tile:10px;--r-board:14px;--r-tool:10px;--r-btn:12px;--scrim:rgba(0,0,0,.32);--t2:#ffffff;--t2-ink:#000000;--t2-lip:#000000;--t4:#dcedf5;--t4-ink:#000000;--t4-lip:#000000;--t8:#a9d3e8;--t8-ink:#000000;--t8-lip:#000000;--t16:#9fc98b;--t16-ink:#000000;--t16-lip:#000000;--t32:#f3d98a;--t32-ink:#000000;--t32-lip:#000000;--t64:#b4237d;--t64-ink:#ffffff;--t64-lip:#000000;--t128:#000000;--t128-ink:#ffffff;--t128-lip:#000000;--ground-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'65'%20height%3D'65'%3E%3Cpath%20d%3D'M64.5%200V65M0%2064.5H65'%20fill%3D'none'%20stroke%3D'%23d2e5ef'%2F%3E%3C%2Fsvg%3E")}
+[data-look="island"]{--font:"Baloo 2","Arial Rounded MT Bold","Trebuchet MS",sans-serif;--hand:inherit;--num-style:normal;--ground:#1cb7c5;--ground-ink:#0b2a4a;--ground-ink-2:#0b2a4a;--paper:#ffffff;--ink:#0b2a4a;--ink-2:#34536f;--accent:#ff6b57;--on-accent:#0b2a4a;--accent-ink:#0b2a4a;--accent-lip:#d9442f;--focus:#0b2a4a;--line:transparent;--tile-line:transparent;--bw:0px;--lip:0px;--tint:#d8f3f6;--tint-2:#a9dfe5;--grid:#2a9eab;--rule:#d8eef1;--muted:#0b2a4a;--muted-ink:#0b2a4a;--board:#0d8795;--cell:#2a9eab;--deco:none;--sea:#c9f1f4;--land:#ffe9a6;--land-line:#b98a2e;--grat:#a5e0e6;--turtle:#8be3a8;--turtle-2:#2fa56c;--shell:#ffffff;--r:18px;--r-tile:16px;--r-board:24px;--r-tool:999px;--r-btn:18px;--scrim:rgba(11,42,74,.45);--t2:#f6fcff;--t2-ink:#0b2a4a;--t2-lip:#cfe6ef;--t4:#a8ebf0;--t4-ink:#0b2a4a;--t4-lip:#6fcbd3;--t8:#ffe08a;--t8-ink:#0b2a4a;--t8-lip:#e5b94c;--t16:#8fe3a6;--t16-ink:#0b2a4a;--t16-lip:#57c07a;--t32:#ffb36b;--t32-ink:#0b2a4a;--t32-lip:#e58a36;--t64:#ff6b57;--t64-ink:#0b2a4a;--t64-lip:#d9442f;--t128:#0b2a4a;--t128-ink:#ffffff;--t128-lip:#06182b;--ground-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'180'%20height%3D'150'%3E%3Cg%20fill%3D'none'%20stroke%3D'%2363d3dc'%20stroke-width%3D'3'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M14%2026q7-7%2014%200t14%200t14%200'%2F%3E%3Cpath%20d%3D'M112%2098q7-7%2014%200t14%200'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E")}
+[data-look="postcard"]{--font:"Zilla Slab",Georgia,"Times New Roman",serif;--hand:"Patrick Hand","Comic Sans MS",cursive;--num-style:normal;--ground:#fbfaf6;--ground-ink:#1c2541;--ground-ink-2:#4a5578;--paper:#ffffff;--ink:#1c2541;--ink-2:#4a5578;--accent:#c8102e;--on-accent:#ffffff;--accent-ink:#a50e26;--accent-lip:#1c2541;--focus:#1b4f9c;--line:#1c2541;--tile-line:#e7eef8;--bw:1.5px;--lip:1.5px;--tint:#e7eef8;--tint-2:#cfdcf0;--grid:#8f9bb8;--rule:#d9deea;--muted:#8f9bb8;--muted-ink:#4a5578;--board:#e7eef8;--cell:transparent;--deco:none;--sea:#e7eef8;--land:#f3ecd8;--land-line:#1c2541;--grat:#cfd8e8;--turtle:#b5e0cd;--turtle-2:#7fc3a6;--shell:#ffffff;--r:6px;--r-tile:0px;--r-board:8px;--r-tool:8px;--r-btn:8px;--scrim:rgba(28,37,65,.4);--t2:#d6e8f7;--t2-ink:#1c2541;--t2-lip:#5b6890;--t4:#b5e0cd;--t4-ink:#1c2541;--t4-lip:#5b6890;--t8:#f7d774;--t8-ink:#1c2541;--t8-lip:#5b6890;--t16:#f2a25c;--t16-ink:#1c2541;--t16-lip:#5b6890;--t32:#1b4f9c;--t32-ink:#ffffff;--t32-lip:#c9d8f0;--t64:#c8102e;--t64-ink:#ffffff;--t64-lip:#f3c2ca;--t128:#1c2541;--t128-ink:#ffffff;--t128-lip:#aab3cc;--ground-art:none}
+[data-look="night"]{--font:"Overpass","Helvetica Neue",Arial,sans-serif;--hand:inherit;--num-style:italic;--ground:#0e1a28;--ground-ink:#f3ecd9;--ground-ink-2:#a9b9c9;--paper:#152536;--ink:#f3ecd9;--ink-2:#a9b9c9;--accent:#ffb000;--on-accent:#1a1200;--accent-ink:#ffb000;--accent-lip:#8a5f00;--focus:#ffb000;--line:#6f879d;--tile-line:#050b12;--bw:2px;--lip:6px;--tint:#1d3349;--tint-2:#2a4a68;--grid:#2a425a;--rule:#24384d;--muted:#5f7791;--muted-ink:#a9b9c9;--board:#0a141f;--cell:transparent;--deco:block;--sea:#0e1a28;--land:#4a4631;--land-line:#9a9361;--grat:#1f3348;--turtle:#4f9a7c;--turtle-2:#2f6f58;--shell:#152536;--r:12px;--r-tile:10px;--r-board:14px;--r-tool:10px;--r-btn:12px;--scrim:rgba(0,0,0,.6);--t2:#1b3048;--t2-ink:#f3ecd9;--t2-lip:#050b12;--t4:#26496a;--t4-ink:#f3ecd9;--t4-lip:#050b12;--t8:#2f6f8f;--t8-ink:#ffffff;--t8-lip:#050b12;--t16:#3f9a86;--t16-ink:#04201a;--t16-lip:#050b12;--t32:#e0b860;--t32-ink:#1a1200;--t32-lip:#050b12;--t64:#ffb000;--t64-ink:#1a1200;--t64-lip:#050b12;--t128:#f3ecd9;--t128-ink:#0e1a28;--t128-lip:#050b12;--ground-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'65'%20height%3D'65'%3E%3Cpath%20d%3D'M64.5%200V65M0%2064.5H65'%20fill%3D'none'%20stroke%3D'%2317293b'%2F%3E%3C%2Fsvg%3E")}
+[data-look="metro"]{--font:"Barlow","Helvetica Neue",Arial,sans-serif;--hand:inherit;--num-style:normal;--ground:#ffffff;--ground-ink:#000000;--ground-ink-2:#4d4d4d;--paper:#ffffff;--ink:#000000;--ink-2:#4d4d4d;--accent:#d81f26;--on-accent:#ffffff;--accent-ink:#c4161c;--accent-lip:#000000;--focus:#0064b0;--line:#000000;--tile-line:transparent;--bw:3px;--lip:3px;--tint:#f1f1ee;--tint-2:#d9d9d6;--grid:#cfcfca;--rule:#000000;--muted:#9a9a96;--muted-ink:#5c5c58;--board:#f1f1ee;--cell:transparent;--deco:none;--sea:#ffffff;--land:#e9e8e2;--land-line:#a9a8a1;--grat:#e6e6e2;--turtle:#2fa873;--turtle-2:#007a4d;--shell:#ffffff;--r:0px;--r-tile:50%;--r-board:0px;--r-tool:50%;--r-btn:8px;--scrim:rgba(0,0,0,.4);--t2:#ffffff;--t2-ink:#000000;--t2-lip:#000000;--t4:#ffd100;--t4-ink:#000000;--t4-lip:#000000;--t8:#f58220;--t8-ink:#000000;--t8-lip:#000000;--t16:#d81f26;--t16-ink:#ffffff;--t16-lip:#000000;--t32:#0064b0;--t32-ink:#ffffff;--t32-lip:#000000;--t64:#007a4d;--t64-ink:#ffffff;--t64-lip:#000000;--t128:#000000;--t128-ink:#ffffff;--t128-lip:#000000;--ground-art:none}
+[data-look="arcade"]{--font:"Jersey 20","Courier New",monospace;--hand:inherit;--num-style:normal;--ground:#c9d4a3;--ground-ink:#0f380f;--ground-ink-2:#274f1c;--paper:#e3ebc4;--ink:#0f380f;--ink-2:#274f1c;--accent:#0f380f;--on-accent:#e3ebc4;--accent-ink:#0f380f;--accent-lip:#000000;--focus:#0f380f;--line:#0f380f;--tile-line:#0f380f;--bw:3px;--lip:7px;--tint:#b9c78c;--tint-2:#9fb072;--grid:#8fa163;--rule:#9fb072;--muted:#5f7f3a;--muted-ink:#274f1c;--board:#aebd80;--cell:#a3b374;--deco:none;--sea:#e3ebc4;--land:#8fae45;--land-line:#0f380f;--grat:#c3cf9c;--turtle:#7fa32e;--turtle-2:#4f7f2a;--shell:#eef3d2;--r:0px;--r-tile:0px;--r-board:0px;--r-tool:0px;--r-btn:0px;--scrim:rgba(15,56,15,.5);--t2:#eef3d2;--t2-ink:#0f380f;--t2-lip:#0f380f;--t4:#cfdc8a;--t4-ink:#0f380f;--t4-lip:#0f380f;--t8:#a9c24a;--t8-ink:#0f380f;--t8-lip:#0f380f;--t16:#86ad33;--t16-ink:#0f380f;--t16-lip:#0f380f;--t32:#3f6b24;--t32-ink:#eef3d2;--t32-lip:#0f380f;--t64:#2a5a2a;--t64-ink:#eef3d2;--t64-lip:#0f380f;--t128:#0f380f;--t128-ink:#eef3d2;--t128-lip:#000000;--ground-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'6'%20height%3D'6'%3E%3Cpath%20d%3D'M5.5%200V6M0%205.5H6'%20fill%3D'none'%20stroke%3D'%23bfcb97'%2F%3E%3C%2Fsvg%3E")}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground) var(--ground-art);color:var(--ink);font:400 16px/1.45 var(--font)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,#board:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.app{max-width:440px;margin:0 auto;padding:12px 16px 32px;color:var(--ground-ink)}
+
+/* header: mascot, wordmark with the puzzle number under it, three tools */
+.top{display:flex;align-items:center;gap:8px;margin-bottom:12px;min-height:44px}
+.mark{display:flex;align-items:center;gap:8px;min-width:0}
+.mark svg{display:block}
+.name{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+.word{margin:0;font-weight:800;font-style:var(--num-style);font-size:25px;line-height:1;letter-spacing:-.015em}
+.no{font-weight:600;font-size:13px;line-height:1;color:var(--ground-ink-2)}
+.tools{margin-left:auto;display:flex;gap:8px}
+.tool{width:44px;height:44px;flex:none;display:grid;place-items:center;border:var(--bw) solid var(--line);border-radius:var(--r-tool);background:var(--paper);color:var(--ink);padding:0}
+
+/* running totals: points, moves, pins */
+.status{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;min-height:56px;margin-bottom:10px;background:var(--paper);color:var(--ink);border:var(--bw) solid var(--line);border-radius:var(--r)}
+.stat{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px}
+.stat + .stat{border-left:1.5px solid var(--rule)}
+.stat b{font-weight:800;font-style:var(--num-style);font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;font-weight:600;line-height:1;color:var(--ink-2)}
+.pins{display:flex;gap:4px;height:26px;align-items:center}
+.pins svg{display:block}
+#guesses{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:4px;font-size:14px;font-weight:600}
+#guesses:empty{display:none}
+#guesses li{display:flex;align-items:center;gap:8px}
+.banner{border:var(--bw) solid var(--line);border-radius:var(--r);background:var(--tint);color:var(--ink);padding:10px 12px;margin:0 0 10px;font-size:15px}
+
+/* the board */
+.board{position:relative;aspect-ratio:1;border:var(--bw) solid var(--line);border-radius:var(--r-board);background:var(--board);touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden;contain:layout paint}
+.board::before{content:"";display:block;padding-top:100%}
+.board .chart{position:absolute;inset:0;width:100%;height:100%;display:var(--deco)}
+.board .chart .shoal{fill:var(--tint)}
+.board .chart .depth{fill:none;stroke:var(--tint-2);stroke-width:.7;stroke-dasharray:2 1.4}
+.cells{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);gap:3%;padding:3%}
+.cells div{border:1.5px dashed var(--grid);border-radius:var(--r-tile);background:var(--cell)}
+#tiles{position:absolute;inset:0}
+.tile,.sw,.dot{--bg:var(--t2);--fg:var(--t2-ink);--lipc:var(--t2-lip)}
+[data-v="4"]{--bg:var(--t4);--fg:var(--t4-ink);--lipc:var(--t4-lip)}
+[data-v="8"]{--bg:var(--t8);--fg:var(--t8-ink);--lipc:var(--t8-lip)}
+[data-v="16"]{--bg:var(--t16);--fg:var(--t16-ink);--lipc:var(--t16-lip)}
+[data-v="32"]{--bg:var(--t32);--fg:var(--t32-ink);--lipc:var(--t32-lip)}
+[data-v="64"]{--bg:var(--t64);--fg:var(--t64-ink);--lipc:var(--t64-lip)}
+[data-v="128"]{--bg:var(--t128);--fg:var(--t128-ink);--lipc:var(--t128-lip)}
+.tile{position:absolute;left:0;top:0;width:21.25%;height:21.25%;font-size:calc(var(--cell,80px)*.46);display:grid;place-items:center;border:var(--bw) solid var(--tile-line);border-bottom-width:var(--lip);border-radius:var(--r-tile);background:var(--bg);color:var(--fg);font-weight:800;font-style:var(--num-style);letter-spacing:-.03em;transition:translate .11s cubic-bezier(.25,.9,.3,1),transform .11s cubic-bezier(.25,.9,.3,1);will-change:translate;z-index:2}
+.tile[data-d="3"]{font-size:calc(var(--cell,80px)*.36)}
+.tile[data-d="4"],.tile[data-d="5"]{font-size:calc(var(--cell,80px)*.3)}
+.tile.new{animation:drop .16s ease-out}
+.tile.pop{animation:pop .16s ease-out}
+@keyframes drop{from{scale:.3;opacity:0}to{scale:1;opacity:1}}
+@keyframes pop{50%{scale:1.1}}
+.board.bump{animation:bump .18s}
+@keyframes bump{30%{translate:-4px 0}70%{translate:4px 0}}
+
+/* clues: a six-step track, then the clues earned so far */
+.legend{position:relative;margin:10px 0;background:var(--paper);color:var(--ink);border:var(--bw) solid var(--line);border-radius:var(--r);padding:10px 12px}
+.lhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
+.legend h2{margin:0;font-size:15px;font-weight:800;line-height:1.2}
+.nextclue{font-size:13px;font-weight:600;line-height:1.2;color:var(--accent-ink);text-align:right}
+.track{list-style:none;margin:0 0 8px;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.sw{height:34px;display:grid;place-items:center;border:2px dashed var(--muted);border-radius:7px;font-weight:800;font-style:var(--num-style);font-size:15px;line-height:1;color:var(--muted-ink)}
+.sw.open{border:var(--bw) solid var(--tile-line);background:var(--bg);color:var(--fg)}
+.sw.upnext{border:3px solid var(--accent);background:var(--paper);color:var(--accent-ink)}
+.sw.fresh{animation:stamp .4s ease-out}
+#clues{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.clue{display:grid;grid-template-columns:11px minmax(0,1fr);gap:9px;align-items:start;font-size:14.5px;font-weight:600;line-height:1.35}
+.dot{width:11px;height:11px;margin-top:4px;border:2px solid var(--ink);border-radius:50%;background:var(--bg)}
+.clue.fresh{animation:fresh 1.4s ease-out}
+@keyframes fresh{from{background:var(--tint)}to{background:transparent}}
+@keyframes stamp{0%{scale:1.4}100%{scale:1}}
+.sil{display:block;height:44px;width:auto;max-width:100%}
+.sil path{fill:var(--land);stroke:var(--ink)}
+.blanks{display:block;font-weight:800;letter-spacing:.1em;white-space:pre;overflow:hidden;text-overflow:clip}
+.coach{display:none}
+.ladder{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;font-weight:600;font-size:15px;line-height:1.2}
+
+/* actions */
+.act{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border:var(--bw) solid var(--line);border-bottom-width:var(--lip);border-radius:var(--r-btn);background:var(--accent);color:var(--on-accent);font-weight:800;font-size:19px;padding:0 16px}
+.act:active{translate:0 2px}
+a.act{text-decoration:none}
+.also{margin-top:8px;font-size:16px}
+/* The main button stays within thumb reach at the bottom of the screen, on a solid strip so the clues scroll cleanly under it. */
+.actbar{position:sticky;bottom:0;z-index:5;margin:0 -16px;padding:8px 16px calc(10px + env(safe-area-inset-bottom));background:var(--ground)}
+.act:disabled{opacity:.45;cursor:default}
+.plain{background:var(--paper);color:var(--ink)}
+.note{margin:9px 0 0;font-size:14px;color:var(--ground-ink-2)}
+.actbar + .note,.actbar + .note + .note{margin-top:0}
+.linkbtn{background:none;border:0;padding:4px 0;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.confetti{position:absolute;left:0;right:0;top:0;height:0;pointer-events:none;z-index:3}
+.confetti i{position:absolute;top:0;width:9px;height:9px;border-radius:2px}
+.sheet .note{color:var(--ink-2)}
+.pad{display:flex;justify-content:center;gap:8px;margin:8px 0 2px}
+.pad button{width:48px;height:44px;border:var(--bw) solid var(--line);border-radius:var(--r-tool);background:var(--paper);color:var(--ink);display:grid;place-items:center;padding:0}
+
+/* below the game: what this is, in words a search engine and a first-time visitor can read */
+.about{margin-top:40px;padding-top:16px;border-top:2px solid var(--ground-ink)}
+.about h2{margin:0 0 6px;font-size:18px;font-weight:800}
+.about p{margin:0 0 10px;font-size:15px;color:var(--ground-ink-2)}
+.about nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;font-size:15px;font-weight:600}
+.about a{color:var(--ground-ink);text-decoration-thickness:2px;text-underline-offset:3px}
+
+/* sheets */
+.modal{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;z-index:50;padding:10px}
+.modal[hidden]{display:none}
+.sheet{background:var(--paper);color:var(--ink);border:var(--bw) solid var(--line);border-radius:var(--r);width:100%;max-width:460px;max-height:95vh;overflow:auto;padding:18px 18px 20px;position:relative}
+.sheet h2{font-size:25px;font-weight:800;line-height:1.12;margin:0 0 10px;padding-right:48px}
+.x{position:absolute;right:10px;top:10px}
+.help h2{padding-right:0}
+.help ol{padding-left:22px;margin:0 0 12px}
+.help li{margin:0 0 8px}
+.help .ladders{list-style:none;margin:2px 0 12px;padding:0;display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px 12px}
+.help .ladders li{margin:0}
+
+/* choosing a look. Each option carries its own data-look, so it paints itself in that look's
+   colours and typeface: the list is a set of small previews, not just names. */
+#lookList{display:grid;gap:8px;margin-top:12px}
+.lookopt{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;align-items:center;width:100%;min-height:68px;padding:8px 12px;text-align:left;border:2px solid var(--muted);border-radius:var(--r);background:var(--paper);color:var(--ink);font-family:var(--font)}
+.lookopt .chips{grid-row:1 / span 2;display:grid;grid-template-columns:repeat(3,15px);gap:3px;padding:6px;background:var(--board);border:2px solid var(--ink)}
+.lookopt .chips i{display:block;width:15px;height:15px;background:var(--bg);border-radius:min(var(--r-tile),4px)}
+.lookopt .chips i:first-child{--bg:var(--t2)}
+.lookopt .lname{align-self:end;font-weight:800;font-size:17px;line-height:1.2}
+.lookopt .labout{grid-column:2;align-self:start;font-size:13px;line-height:1.3;color:var(--ink-2)}
+.lookopt .on{grid-row:1 / span 2;grid-column:3;display:none;align-items:center;gap:4px;font-size:13px;font-weight:800}
+.lookopt[aria-checked="true"]{border:3px solid var(--ink);padding:7px 11px}
+.lookopt[aria-checked="true"] .on{display:flex}
+.lookopt[data-look="arcade"]{font-synthesis:none}
+.lookopt[data-look="arcade"] .lname{font-size:22px}
+.lookopt[data-look="arcade"] .labout,.lookopt[data-look="arcade"] .on{font-size:16px}
+.lookopt[data-look="metro"] .chips i{border-radius:50%}
+
+/* map */
+.mapsheet{max-width:920px;padding:12px}
+.maphead{display:flex;align-items:baseline;gap:12px;padding-right:48px;margin-bottom:8px;flex-wrap:wrap;min-height:34px}
+#mapTitle{font-weight:800;font-size:20px}
+#mapHint{font-size:14px;color:var(--ink-2)}
+.mapwrap{position:relative;border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--sea);margin-bottom:10px}
+#map{position:relative;overflow:hidden;width:100%;height:min(64vh,560px);touch-action:none;cursor:crosshair}
+#mapCv{position:absolute;transform-origin:0 0;will-change:transform}
+#marks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.mk-line{stroke:var(--accent)}
+.mk-ring{fill:none;stroke:var(--accent)}
+.mk-dot{fill:var(--accent)}
+.mk-pin{stroke:var(--ink)}
+.mk-new{fill:var(--paper);fill-opacity:.7;stroke:var(--accent)}
+.rose{position:absolute;left:8px;top:8px;pointer-events:none;opacity:.9}
+.zoombtns{position:absolute;right:8px;bottom:8px;display:grid;gap:6px}
+.erapick{position:absolute;left:8px;bottom:8px;height:44px;max-width:calc(100% - 68px);padding:0 8px;font:700 16px var(--font);color:var(--ink);background:var(--paper);border:var(--bw) solid var(--line);border-radius:var(--r-tool)}
+.erapick:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#past{margin:0 0 14px}
+#past h3{margin:0;font-size:17px;font-weight:800}
+#past .facts{margin:6px 0 8px}
+#past .facts b{display:inline-block;min-width:62px}
+#past .note{margin:0 0 6px}
+
+/* result */
+.result .mascot{margin-bottom:2px}
+.result .mascot.sad svg{rotate:180deg}
+.place{font-size:31px;font-weight:800;line-height:1.08;margin:0}
+.country{color:var(--ink-2);margin:2px 0 10px}
+#miniMap{width:100%;height:auto;display:block;border:var(--bw) solid var(--line);border-radius:var(--r);background:var(--sea)}
+.facts{margin:12px 0;padding-left:20px}
+.facts li{margin-bottom:4px}
+.score{display:flex;align-items:baseline;gap:8px;margin:14px 0 10px;flex-wrap:wrap}
+.score b{font-size:60px;font-weight:800;font-style:var(--num-style);letter-spacing:-.03em;line-height:.85}
+.score .rankname{margin-left:auto;font-weight:800;font-size:18px}
+.share{font-family:var(--font);white-space:pre-wrap;border:2px dashed var(--muted);border-radius:var(--r);padding:10px 12px;font-size:15px;margin:0 0 10px}
+.vs{border:var(--bw) solid var(--line);border-radius:var(--r);background:var(--tint);padding:10px 12px;margin:0 0 10px;font-weight:600}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row2 .act{font-size:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:18px 0 8px}
+.stats b{display:block;font-size:26px;font-weight:800;line-height:1}
+.stats span{font-size:13px;color:var(--ink-2)}
+.hist{display:grid;gap:5px;margin-top:8px}
+.hrow{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:center;font-size:13px;color:var(--ink-2)}
+.hbar{background:var(--tint-2);border:1.5px solid var(--ink);border-radius:3px;height:20px;min-width:24px;font-weight:800;font-size:12px;color:var(--ink);padding:1px 6px;text-align:right}
+.next{margin-top:16px;font-size:15px}
+.countdown{font-weight:800;font-variant-numeric:tabular-nums}
+#shareImg{width:100%;display:block;margin-top:10px;border:2px solid var(--ink);border-radius:6px}
+
+#toast{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translate(-50%,-220%);background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:var(--r-btn);font-weight:600;font-size:15px;transition:transform .2s;z-index:99;max-width:92vw;pointer-events:none}
+#toast.show{transform:translate(-50%,0)}
+.devreset{position:fixed;left:8px;bottom:8px;z-index:100;font-size:12px;border:1.5px solid #000;background:#fff;color:#000;border-radius:4px;padding:4px 8px}
+[data-look="island"] .word{font-size:30px;letter-spacing:-.01em}
+[data-look="island"] .no{padding:5px 9px 4px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px}
+[data-look="island"] .name{gap:1px}
+[data-look="island"] .tool,[data-look="island"] .pad button{box-shadow:inset 0 -4px 0 var(--tint-2);padding-bottom:3px}
+[data-look="island"] .status{gap:8px;min-height:0;background:none;border-radius:0}
+[data-look="island"] .stat{flex-direction:row;justify-content:center;align-items:center;gap:5px;min-height:40px;padding:6px 4px 2px;background:var(--paper);border-radius:999px}
+[data-look="island"] .stat + .stat{border-left:0}
+[data-look="island"] .stat b{font-size:19px}
+[data-look="island"] .stat span{font-size:14px;color:var(--ink)}
+[data-look="island"] .pins{display:none}
+[data-look="island"] .board{box-shadow:inset 0 6px 0 #0a6f7b}
+[data-look="island"] .cells div{border:0}
+[data-look="island"] .tile{box-shadow:inset 0 -7px 0 var(--lipc);padding-bottom:5px}
+[data-look="island"] .legend{padding:0;background:none;color:var(--ground-ink)}
+[data-look="island"] .nextclue{display:none}
+[data-look="island"] .track{gap:8px;justify-items:center}
+[data-look="island"] .sw{width:44px;height:44px;border:2.5px dashed var(--ink);border-radius:50%;font-size:18px;color:var(--ink)}
+[data-look="island"] .sw.open{border:0;box-shadow:inset 0 -4px 0 var(--lipc);padding-bottom:3px}
+[data-look="island"] .sw.upnext{border:3px solid #fff;background:var(--bg);color:var(--fg)}
+[data-look="island"] #clues{padding:10px 14px;background:var(--paper);color:var(--ink);border-radius:18px}
+[data-look="island"] .clue{font-size:15px}
+[data-look="island"] .coach{display:flex;align-items:flex-end;gap:10px;margin:10px 0}
+[data-look="island"] .coach svg{display:block;flex:none}
+[data-look="island"] .coach p{flex:1;margin:0 0 6px;padding:9px 14px;background:var(--paper);color:var(--ink);border-radius:18px 18px 18px 5px;font-size:15px;font-weight:600;line-height:1.35}
+[data-look="island"] .act{min-height:60px;padding-bottom:6px;box-shadow:inset 0 -7px 0 var(--accent-lip);font-size:22px}
+[data-look="island"] .plain{background:var(--tint);box-shadow:inset 0 -7px 0 var(--tint-2)}
+[data-look="island"] .row2 .act{font-size:17px}
+[data-look="island"] .sheet{border-radius:24px}
+[data-look="island"] .sheet .tool{background:var(--tint)}
+[data-look="island"] .banner{border-radius:18px}
+[data-look="postcard"]{--airmail:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='10'%3E%3Cpath d='M7 0h11l-7 10H0z' fill='%23c8102e'/%3E%3Cpath d='M25 0h11l-7 10H18z' fill='%231b4f9c'/%3E%3C/svg%3E")}
+[data-look="postcard"] body::before,[data-look="postcard"] body::after{content:"";display:block;height:10px;background:var(--airmail) repeat-x}
+[data-look="postcard"] .word{font-size:28px;letter-spacing:-.01em}
+[data-look="postcard"] .status{grid-template-columns:auto auto auto;justify-content:space-between;min-height:0;background:none;border:0;border-bottom:1.5px dashed var(--muted);border-radius:0;color:var(--ground-ink)}
+[data-look="postcard"] .stat{flex-direction:row;align-items:baseline;justify-content:center;gap:5px;padding:2px 2px 8px}
+[data-look="postcard"] .stat + .stat{border-left:0}
+[data-look="postcard"] .stat b{font-size:22px;font-variant-numeric:normal}
+[data-look="postcard"] .stat span{font-size:14px;white-space:nowrap}
+[data-look="postcard"] .pins{height:auto;gap:2px;align-self:center}
+[data-look="postcard"] .pins svg{width:17px;height:17px}
+[data-look="postcard"] #guesses{color:var(--accent-ink)}
+[data-look="postcard"] .cells div{border-style:dotted}
+[data-look="postcard"] .tile{border:4px dotted var(--board);outline:1.5px solid var(--lipc);outline-offset:-11px}
+[data-look="postcard"] .legend{min-height:132px;padding:12px 88px 12px 16px;rotate:-.7deg}
+[data-look="postcard"] .legend::after{content:"No. " attr(data-no);position:absolute;right:12px;top:12px;width:62px;height:74px;display:grid;place-items:end center;padding-bottom:5px;background:var(--t2) var(--mascot-url) center 8px / 36px no-repeat;border:4px dotted var(--paper);font-size:11px;font-weight:700;line-height:1}
+[data-look="postcard"] .lhead{display:block;margin-bottom:6px}
+[data-look="postcard"] .legend h2{font-size:14px;font-weight:600;color:var(--ink-2)}
+[data-look="postcard"] .nextclue{display:block;text-align:left;margin-top:2px}
+[data-look="postcard"] .track{display:none}
+[data-look="postcard"] #clues{gap:1px}
+[data-look="postcard"] #clues::before{content:"Dear friend,";font:400 18px/1.3 var(--hand);color:#1c3f8f}
+[data-look="postcard"] .clue{grid-template-columns:minmax(0,1fr);font:400 18px/1.3 var(--hand);color:#1c3f8f}
+[data-look="postcard"] .dot{display:none}
+[data-look="postcard"] .blanks{font-family:var(--font);font-weight:700;font-size:15px}
+[data-look="postcard"] .sw{border-radius:0}
+[data-look="postcard"] .sw.open{border:3px dotted var(--paper)}
+[data-look="night"] .sw.open{border-color:var(--line)}
+[data-look="night"] .dot{border-color:var(--line)}
+[data-look="metro"] .word{padding:6px 10px 7px;background:#000;color:#fff;border-radius:4px;font-size:22px;letter-spacing:0}
+[data-look="metro"] .status{min-height:54px;border-width:3px 0}
+[data-look="metro"] .stat + .stat{border-left-width:3px}
+[data-look="metro"] .cells div{display:grid;place-items:center;border:0}
+[data-look="metro"] .cells div::after{content:"";width:24%;aspect-ratio:1;border:3px solid var(--grid);border-radius:50%}
+[data-look="metro"] .tile{border:0}
+[data-look="metro"] .tile[data-v="2"]{border:5px solid #000}
+[data-look="metro"] .legend{padding:4px 0 0;border:0}
+[data-look="metro"] .track{position:relative;gap:0;margin:10px 0 12px;justify-items:center}
+[data-look="metro"] .track::before,[data-look="metro"] .track::after{content:"";position:absolute;left:8.33%;top:50%;height:6px;translate:0 -50%}
+[data-look="metro"] .track::before{right:8.33%;background:var(--grid)}
+[data-look="metro"] .track::after{width:calc(83.34% * var(--p,0));background:#000}
+[data-look="metro"] .sw{position:relative;z-index:1;width:36px;height:36px;border:3px solid var(--grid);border-radius:50%;background:#fff;font-size:13px}
+[data-look="metro"] .sw.open{border:3px solid #000;background:var(--bg)}
+[data-look="metro"] .sw.upnext{border:3px solid var(--accent);background:#fff}
+[data-look="metro"] .act{border:0;background:#000;color:#fff}
+[data-look="metro"] .plain{border:3px solid #000;background:#fff;color:#000}
+[data-look="metro"] .about{border-top-width:3px}
+[data-look="metro"] .hbar{border-radius:0}
+[data-look="arcade"] body{font-size:19px;line-height:1.3;font-synthesis:none}
+[data-look="arcade"] .word{font-size:34px;letter-spacing:0}
+[data-look="arcade"] .no{font-size:16px}
+[data-look="arcade"] .stat b{font-size:32px}
+[data-look="arcade"] .stat span{font-size:16px}
+[data-look="arcade"] #guesses{font-size:18px}
+[data-look="arcade"] .cells div{border:0}
+[data-look="arcade"] .tile{letter-spacing:0}
+[data-look="arcade"] .legend h2{font-size:19px}
+[data-look="arcade"] .nextclue{font-size:17px}
+[data-look="arcade"] .sw{border-width:3px;border-radius:0;font-size:20px}
+[data-look="arcade"] .sw.upnext{border-style:solid;background:var(--ink);color:var(--paper)}
+[data-look="arcade"] .dot{margin-top:6px;border-radius:0}
+[data-look="arcade"] .clue{font-size:19px;line-height:1.25}
+[data-look="arcade"] .act{font-size:26px}
+[data-look="arcade"] .row2 .act{font-size:21px}
+[data-look="arcade"] .note,[data-look="arcade"] .about p,[data-look="arcade"] .about nav,[data-look="arcade"] #mapHint,[data-look="arcade"] .share,[data-look="arcade"] .next{font-size:17px}
+[data-look="arcade"] .stats span,[data-look="arcade"] .hrow,[data-look="arcade"] .hbar{font-size:15px}
+[data-look="arcade"] .hbar,[data-look="arcade"] #shareImg{border-radius:0}
+[data-look="arcade"] #toast{font-size:18px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (min-width:700px){.app{padding-top:24px}}
+
+.lede{margin:0 0 12px;font-size:16px;font-weight:600}
+.dots{list-style:none;margin:0 0 14px;padding:0;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
+.dots li{height:28px;display:grid;place-items:center;border:2px dashed var(--muted);border-radius:6px}
+.dots li.done{border:2px solid var(--ink);background:var(--paper)}
+.dots li.now{border:3px solid var(--accent);background:var(--paper)}
+.dots li.harbor{border-bottom-width:6px}
+.dots svg{display:block}
+#say{min-height:26px;margin:12px 0 0;font-size:17px;font-weight:800}
+.panel{position:relative;background:var(--paper);color:var(--ink);border:var(--bw) solid var(--line);border-radius:var(--r);padding:14px 14px 16px}
+.panel h2{margin:0;font-size:24px;font-weight:800;line-height:1.15}
+.panel .note{color:var(--ink-2)}
+#recap{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:9px;font-size:15px}
+#recap li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;align-items:start}
+#recap svg{margin-top:3px}
+#recap b{font-weight:800}
+#logoMascot{display:block}
+[data-look="island"] .panel{border-radius:18px}
+[data-look="metro"] .dots li,[data-look="arcade"] .dots li{border-radius:0}
+#dots{grid-template-columns:repeat(7,minmax(0,1fr))}
+.kind{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--ink-2)}
+#ask{margin:0 0 12px;font-size:21px}
+#fin{display:block;width:100%;height:52px;padding:0 12px;font:600 17px var(--font);color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-btn)}
+#fin:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sugs{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.sug{width:100%;min-height:46px;padding:6px 12px;text-align:left;font-size:16px;font-weight:600;background:var(--paper);color:var(--ink);border:2px solid var(--muted);border-radius:var(--r-btn)}
+.sug.on{border-color:var(--ink);background:var(--tint);font-weight:800}
+.panel .act{margin-top:12px}
+.pass{margin-top:10px}
+.depth{height:16px;margin:12px 0 8px;border:2px solid var(--ink);border-radius:999px;background:var(--paper);overflow:hidden}
+.depth i{display:block;height:100%;background:var(--accent)}
+[data-look="arcade"] .depth,[data-look="metro"] .depth{border-radius:0}
+
+/* 14.3 every right answer, deepest first */
+.allans{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:3px;max-height:40vh;overflow:auto;font-size:14.5px}
+.allans li{display:flex;justify-content:space-between;gap:10px;padding:4px 10px;border:1.5px solid var(--rule,#c9e1ec);border-radius:8px;background:var(--paper)}
+.allans li.you{border:2px solid var(--accent);font-weight:800}
+.allans li.you span::after{content:"  \2190 yours"}
+.allans b{font-variant-numeric:tabular-nums}
+.about-h{margin:0 0 10px;font-size:22px;line-height:1.2}.howto{margin:6px 0 14px;padding-left:22px;line-height:1.45}
+
+/* Crossings */
+.endpoints{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;margin:0 0 10px}
+.endpoints .pt{background:var(--paper);color:var(--ink);border:var(--bw) solid var(--line);border-bottom-width:var(--lip);border-radius:var(--r);padding:8px 10px;min-width:0}
+.endpoints .pt span{display:block;font-size:12px;font-weight:600;color:var(--ink-2)}
+.endpoints .pt b{display:block;font-size:19px;font-weight:800;line-height:1.15;overflow-wrap:anywhere}
+.endpoints .arrow{font-size:24px;font-weight:800;color:var(--ground-ink)}
+#map{position:relative;width:auto;height:auto;touch-action:auto;cursor:auto;aspect-ratio:4/3;margin:0 0 10px;border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--sea)}
+#map svg{display:block;width:100%;height:100%}
+#map.wait::after{content:"Unrolling the map\2026";position:absolute;inset:0;display:grid;place-items:center;font-weight:800;color:var(--ink-2)}
+#map .end{stroke:var(--paper)}
+#map .lb{fill:var(--ink);stroke:var(--paper);paint-order:stroke;text-anchor:middle;dominant-baseline:middle;font-family:var(--font);font-weight:700}
+#map .lb.end{font-weight:800}
+.status .stat b small{font-size:15px}
+#steps{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+#steps li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 6px 10px;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:var(--r-btn)}
+#steps .nm{font-weight:800;min-width:0;overflow-wrap:anywhere}
+#steps .chip{flex:none;font-size:12.5px;font-weight:800;padding:3px 8px;border-radius:999px;border:1.5px solid var(--ink)}
+.keyline{display:flex;flex-wrap:wrap;gap:4px 10px;margin:8px 0 0;padding:0;list-style:none;font-size:12.5px;font-weight:600;color:var(--ground-ink-2)}
+.keyline i{display:inline-block;width:12px;height:12px;border:1.5px solid var(--ink);border-radius:3px;vertical-align:-2px;margin-right:4px}
+.cbar{display:flex;gap:8px;margin-top:10px}
+.cbar .act{flex:1}
+#hintBtn{flex:none;width:auto;background:var(--paper);color:var(--ink);font-size:16px}
+#cin{display:block;width:100%;height:52px;padding:0 12px;font:600 17px var(--font);color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-btn);box-sizing:border-box}
+#cin:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#routeLine{font-weight:600}
+.practice{margin:12px 0 0;display:flex;flex-wrap:wrap;gap:4px 14px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="mark"><a href="./" id="logoMascot" aria-label="Mapelago home"></a><div class="name"><p class="word">Crossings</p><span class="no" id="num"></span></div></div>
+    <div class="tools"><button class="tool" id="soundBtn" type="button"></button></div>
+  </header>
+  <p class="lede">Get from one country to the other overland. Name the countries in between, one border at a time.</p>
+  <div class="endpoints">
+    <div class="pt"><span>From</span><b id="fromName"></b></div><span class="arrow" aria-hidden="true">→</span><div class="pt"><span>To</span><b id="toName"></b></div>
+  </div>
+  <div id="map" class="wait" role="img" aria-label="Map of the crossing. Countries you name are coloured by how close they are to a shortest route."></div>
+  <section class="status" aria-label="Your crossing">
+    <div class="stat"><b id="par"></b><span>par (borders)</span></div>
+    <div class="stat"><b id="left"></b><span>guesses left</span></div>
+    <div class="stat"><b id="pts"></b><span>points</span></div>
+  </section>
+  <section id="play" class="panel" aria-label="Name a country">
+    <p class="kind" id="parNote"></p>
+    <label class="sr" for="cin">A country on the way</label>
+    <input id="cin" type="text" role="combobox" aria-autocomplete="list" aria-controls="sugs" aria-expanded="false" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Type a country">
+    <ul class="sugs" id="sugs" role="listbox" aria-label="Matching countries"></ul>
+    <div class="cbar"><button class="act" id="cgo" type="button" disabled>Cross</button><button class="act" id="hintBtn" type="button">Hint −150</button></div>
+    <ul class="keyline" aria-label="Map colours"><li><i style="background:#7a0177"></i>on a shortest route</li><li><i style="background:#c51b8a"></i>1 off</li><li><i style="background:#f768a1"></i>2 off</li><li><i style="background:#fbb4b9"></i>3–4 off</li><li><i style="background:#feebe2"></i>5+ off</li></ul>
+  </section>
+  <p id="say" aria-live="polite"></p>
+  <ol id="steps" aria-label="Countries you've named" hidden></ol>
+
+  <section id="done" hidden>
+    <div class="panel">
+      <h2 id="doneTitle"></h2>
+      <div class="score"><b id="bigScore"></b><span>points out of 1,000</span></div>
+      <p id="routeLine"></p>
+      <pre class="share" id="shareText"></pre>
+      <div class="row2"><button id="shareBtn" class="act">Copy result</button><a class="act plain" href="./">Mystery city</a></div>
+      <p class="next">A new crossing in <b class="countdown" id="countdown"></b></p>
+      <p class="note" id="fresh" hidden>Today's crossing is ready. <a href="crossings.html">Play it</a></p>
+      <p class="note" id="streakNote" hidden></p>
+      <p class="practice"><button class="linkbtn practiceBtn" type="button">Practice a random crossing</button><button class="linkbtn" id="dailyBtn" type="button">Back to today's</button></p>
+    </div>
+  </section>
+
+  <footer class="about">
+    <!-- copy:start -->
+    <h1 class="about-h">Cross the map, one border at a time.</h1>
+    <p>Crossings is Mapelago&#x27;s daily route game. You get two countries joined by land, such as France and Poland, and you name the countries in between until your chain links them border to border. Par is the shortest route. Each country you name is coloured by how far it is from a shortest route, so the map warms up as you close in. Every guess beyond par costs 100 points, and a hint, which reveals a country on a shortest route, costs 150. Six guesses beyond par and the border stays shut. Only land borders count, so island countries can&#x27;t be on a route. Borders that exist only through an exclave or overseas territory, such as Kaliningrad or French Guiana, aren&#x27;t used in daily crossings. Monday&#x27;s crossing is short and Sunday&#x27;s is a long haul. Everyone gets the same crossing, and a new one arrives at midnight, your time.</p>
+    <h2>How to play</h2>
+    <ol class="howto"><li>Read today&#x27;s two countries and par, the fewest borders between them.</li><li>Type a country you&#x27;d pass through on the way.</li><li>Its colour shows how far it is from a shortest route. The darkest colour is on one.</li><li>Keep naming countries until your chain joins the two, border to border.</li><li>Score 1,000 at par. Each extra guess costs 100 and each hint 150.</li></ol>
+    <!-- copy:end -->
+    <nav aria-label="Daily games"><a href="./">Mystery city</a>
+      <a href="country.html">Mystery country</a>
+      <a href="bigger.html">Bigger city?</a>
+      <a href="bigger-country.html">Bigger country?</a>
+      <a href="voyage.html">Voyage</a>
+      <a href="fathoms.html">Fathoms</a>
+      <a href="stamps.html">Stamps</a>
+      <a href="crossings.html">Crossings</a></nav>
+    <nav aria-label="Site">
+      <a href="games/">All games</a>
+    <a href="how-to-play/">How to play</a>
+      <a href="about/">About</a>
+      <a href="privacy/">Privacy</a>
+    </nav>
+  </footer>
+  <noscript><p class="note">This game needs JavaScript to run. Turn it on in your browser settings, then reload this page.</p></noscript>
+</div>
+<div id="toast" role="status"></div>
+<script src="copy.js?v=0.15.0"></script>
+<script src="site.js?v=0.15.0"></script>
+<script>window.MX_CROSS={"c":[["AF","Afghanistan",4,4589000],["AL","Albania",8,520000],["DZ","Algeria",12,2854000],["AD","Andorra",20,23000],["AO","Angola",24,9292000],["AG","Antigua and Barbuda",28,21000],["AR","Argentina",32,15490000],["AM","Armenia",51,1095000],["AU","Australia",36,5235000],["AT","Austria",40,1975000],["AZ","Azerbaijan",31,2432000],["BS","Bahamas",44,280000],["BH","Bahrain",48,689000],["BD","Bangladesh",50,23210000],["BB","Barbados",52,89000],["BY","Belarus",112,2049000],["BE","Belgium",56,2110000],["BZ","Belize",84,67169],["BJ","Benin",204,1189000],["BT","Bhutan",64,203000],["BO","Bolivia",68,1908000],["BA","Bosnia and Herzegovina",70,344000],["BW","Botswana",72,269000],["BR","Brazil",76,22620000],["BN","Brunei",96,241000],["BG","Bulgaria",100,1287000],["BF","Burkina Faso",854,3056000],["BI","Burundi",108,1139000],["CV","Cabo Verde",132,168000],["KH","Cambodia",116,2211000],["CM","Cameroon",120,4164000],["CA","Canada",124,6372000],["CF","Central African Republic",140,933000],["TD","Chad",148,1533000],["CL","Chile",152,6903000],["CN","China",156,29211000],["CO","Colombia",170,11508000],["KM","Comoros",174,62000],["CR","Costa Rica",188,1441000],["HR","Croatia",191,684000],["CU","Cuba",192,2149000],["CY","Cyprus",196,269000],["CZ","Czechia",203,1318000],["CD","Democratic Republic of the Congo",180,16316000],["DK","Denmark",208,1370000],["DJ","Djibouti",262,591000],["DM","Dominica",212,15000],["DO","Dominican Republic",214,3524000],["TL","East Timor",626,281000],["EC","Ecuador",218,3142000],["EG","Egypt",818,22183000],["SV","El Salvador",222,1116000],["GQ","Equatorial Guinea",226,309345],["ER","Eritrea",232,1073000],["EE","Estonia",233,452000],["SZ","Eswatini",748,68000],["ET","Ethiopia",231,5461000],["FJ","Fiji",242,178000],["FI","Finland",246,1328000],["FR","France",250,11208000],["GA","Gabon",266,857000],["GM","Gambia",270,470000],["GE","Georgia",268,1203000],["DE","Germany",276,3574000],["GH","Ghana",288,3630000],["GR","Greece",300,3154000],["GD","Grenada",308,39000],["GT","Guatemala",320,3095000],["GN","Guinea",324,2049000],["GW","Guinea-Bissau",624,643000],["GY","Guyana",328,110000],["HT","Haiti",332,2915000],["HN","Honduras",340,1568000],["HU","Hungary",348,1775000],["IS","Iceland",352,216000],["IN","India",356,32941000],["ID","Indonesia",360,11249000],["IR","Iran",364,9500000],["IQ","Iraq",368,7711000],["IE","Ireland",372,1256000],["IL","Israel",376,4344000],["IT","Italy",380,4316000],["CI","Ivory Coast",384,5516000],["JM","Jamaica",388,595000],["JP","Japan",392,37194000],["JO","Jordan",400,2210000],["KZ","Kazakhstan",398,1987000],["KE","Kenya",404,5325000],["KI","Kiribati",296,64000],["KW","Kuwait",414,3298000],["KG","Kyrgyzstan",417,1105000],["LA","Laos",418,706000],["LV","Latvia",428,625000],["LB","Lebanon",422,2433000],["LS","Lesotho",426,350000],["LR","Liberia",430,1623000],["LY","Libya",434,1183000],["LI","Liechtenstein",438,6250],["LT","Lithuania",440,541000],["LU","Luxembourg",442,120000],["MG","Madagascar",450,3700000],["MW","Malawi",454,1222000],["MY","Malaysia",458,8622000],["MV","Maldives",462,177000],["ML","Mali",466,2817000],["MT","Malta",470,213000],["MH","Marshall Islands",584,31000],["MR","Mauritania",478,1432000],["MU","Mauritius",480,149000],["MX","Mexico",484,22281000],["FM","Micronesia",583,13856],["MD","Moldova",498,491000],["MC","Monaco",492,39000],["MN","Mongolia",496,1645000],["ME","Montenegro",499,177000],["MA","Morocco",504,3893000],["MZ","Mozambique",508,1797000],["MM","Myanmar",104,5610000],["NA","Namibia",516,461000],["NR","Nauru",520,0],["NP","Nepal",524,1521000],["NL","Netherlands",528,2480000],["NZ","New Zealand",554,1652000],["NI","Nicaragua",558,1095000],["NE","Niger",562,1384000],["NG","Nigeria",566,15946000],["KP","North Korea",408,3158000],["MK","North Macedonia",807,606000],["NO","Norway",578,1071000],["OM","Oman",512,1623000],["PK","Pakistan",586,17236000],["PW","Palau",585,12676],["PA","Panama",591,1977000],["PG","Papua New Guinea",598,410000],["PY","Paraguay",600,3511000],["PE","Peru",604,11204000],["PH","Philippines",608,14667000],["PL","Poland",616,1798000],["PT","Portugal",620,3001000],["QA","Qatar",634,652000],["CG","Republic of the Congo",178,2638000],["RO","Romania",642,1785000],["RU","Russia",643,12680000],["RW","Rwanda",646,1208000],["KN","Saint Kitts and Nevis",659,14000],["LC","Saint Lucia",662,22000],["VC","Saint Vincent and the Grenadines",670,27000],["WS","Samoa",882,36000],["SM","San Marino",674,11226],["ST","Sao Tome and Principe",678,80000],["SA","Saudi Arabia",682,7682000],["SN","Senegal",686,3326000],["RS","Serbia",688,1405000],["SC","Seychelles",690,28000],["SL","Sierra Leone",694,1272000],["SG","Singapore",702,6081000],["SK","Slovakia",703,439000],["SI","Slovenia",705,286000],["SB","Solomon Islands",90,82000],["SO","Somalia",706,2610000],["ZA","South Africa",710,10316000],["KR","South Korea",410,9988000],["SS","South Sudan",728,459000],["ES","Spain",724,6751000],["LK","Sri Lanka",144,633000],["SD","Sudan",729,6344000],["SR","Suriname",740,239000],["SE","Sweden",752,1659000],["CH","Switzerland",756,1420000],["SY","Syria",760,2585000],["TJ","Tajikistan",762,962000],["TZ","Tanzania",834,7776000],["TH","Thailand",764,10500000],["TG","Togo",768,1926000],["TO","Tonga",776,23000],["TT","Trinidad and Tobago",780,545000],["TN","Tunisia",788,2439000],["TM","Turkmenistan",795,883000],["TR","Türkiye",792,15848000],["UG","Uganda",800,3652000],["UA","Ukraine",804,3010000],["AE","United Arab Emirates",784,2964000],["GB","United Kingdom",826,9648000],["US","United States",840,18937000],["UY","Uruguay",858,1767000],["UZ","Uzbekistan",860,2574000],["VU","Vanuatu",548,53000],["VA","Vatican City",336,1000],["VE","Venezuela",862,2972000],["VN","Vietnam",704,9321000],["YE","Yemen",887,3182000],["ZM","Zambia",894,3042000],["ZW","Zimbabwe",716,1558000]],"e":[["AD","ES"],["AD","FR"],["AE","OM"],["AE","SA"],["AF","CN"],["AF","IR"],["AF","PK"],["AF","TJ"],["AF","TM"],["AF","UZ"],["AL","GR"],["AL","ME"],["AL","MK"],["AM","AZ"],["AM","GE"],["AM","IR"],["AM","TR"],["AO","CD"],["AO","CG"],["AO","NA"],["AO","ZM"],["AR","BO"],["AR","BR"],["AR","CL"],["AR","PY"],["AR","UY"],["AT","CH"],["AT","CZ"],["AT","DE"],["AT","HU"],["AT","IT"],["AT","LI"],["AT","SI"],["AT","SK"],["AZ","GE"],["AZ","IR"],["AZ","RU"],["AZ","TR"],["BA","HR"],["BA","ME"],["BA","RS"],["BD","IN"],["BD","MM"],["BE","DE"],["BE","FR"],["BE","LU"],["BE","NL"],["BF","BJ"],["BF","CI"],["BF","GH"],["BF","ML"],["BF","NE"],["BF","TG"],["BG","GR"],["BG","MK"],["BG","RO"],["BG","RS"],["BG","TR"],["BI","CD"],["BI","RW"],["BI","TZ"],["BJ","NE"],["BJ","NG"],["BJ","TG"],["BN","MY"],["BO","BR"],["BO","CL"],["BO","PE"],["BO","PY"],["BR","CO"],["BR","GY"],["BR","PE"],["BR","PY"],["BR","SR"],["BR","UY"],["BR","VE"],["BT","CN"],["BT","IN"],["BW","NA"],["BW","ZA"],["BW","ZM"],["BW","ZW"],["BY","LT"],["BY","LV"],["BY","PL"],["BY","RU"],["BY","UA"],["BZ","GT"],["BZ","MX"],["CA","US"],["CD","CF"],["CD","CG"],["CD","RW"],["CD","SS"],["CD","TZ"],["CD","UG"],["CD","ZM"],["CF","CG"],["CF","CM"],["CF","SD"],["CF","SS"],["CF","TD"],["CG","CM"],["CG","GA"],["CH","DE"],["CH","FR"],["CH","IT"],["CH","LI"],["CI","GH"],["CI","GN"],["CI","LR"],["CI","ML"],["CL","PE"],["CM","GA"],["CM","GQ"],["CM","NG"],["CM","TD"],["CN","IN"],["CN","KG"],["CN","KP"],["CN","KZ"],["CN","LA"],["CN","MM"],["CN","MN"],["CN","NP"],["CN","PK"],["CN","RU"],["CN","TJ"],["CN","VN"],["CO","EC"],["CO","PA"],["CO","PE"],["CO","VE"],["CR","NI"],["CR","PA"],["CZ","DE"],["CZ","PL"],["CZ","SK"],["DE","DK"],["DE","FR"],["DE","LU"],["DE","NL"],["DE","PL"],["DJ","ER"],["DJ","ET"],["DJ","SO"],["DO","HT"],["DZ","LY"],["DZ","MA"],["DZ","ML"],["DZ","MR"],["DZ","NE"],["DZ","TN"],["EC","PE"],["EE","LV"],["EE","RU"],["EG","IL"],["EG","LY"],["EG","SD"],["ER","ET"],["ER","SD"],["ES","FR"],["ES","PT"],["ET","KE"],["ET","SD"],["ET","SO"],["ET","SS"],["FI","NO"],["FI","RU"],["FI","SE"],["FR","IT"],["FR","LU"],["FR","MC"],["GA","GQ"],["GB","IE"],["GE","RU"],["GE","TR"],["GH","TG"],["GM","SN"],["GN","GW"],["GN","LR"],["GN","ML"],["GN","SL"],["GN","SN"],["GR","MK"],["GR","TR"],["GT","HN"],["GT","MX"],["GT","SV"],["GW","SN"],["GY","SR"],["GY","VE"],["HN","NI"],["HN","SV"],["HR","HU"],["HR","ME"],["HR","RS"],["HR","SI"],["HU","RO"],["HU","RS"],["HU","SI"],["HU","SK"],["HU","UA"],["ID","MY"],["ID","PG"],["ID","TL"],["IL","JO"],["IL","LB"],["IN","MM"],["IN","NP"],["IN","PK"],["IQ","IR"],["IQ","JO"],["IQ","KW"],["IQ","SA"],["IQ","SY"],["IQ","TR"],["IR","PK"],["IR","TM"],["IR","TR"],["IT","SI"],["IT","SM"],["IT","VA"],["JO","SA"],["JO","SY"],["KE","SO"],["KE","SS"],["KE","TZ"],["KE","UG"],["KG","KZ"],["KG","TJ"],["KG","UZ"],["KH","LA"],["KH","TH"],["KH","VN"],["KP","KR"],["KP","RU"],["KW","SA"],["KZ","RU"],["KZ","TM"],["KZ","UZ"],["LA","MM"],["LA","TH"],["LA","VN"],["LB","SY"],["LR","SL"],["LS","ZA"],["LT","LV"],["LT","PL"],["LV","RU"],["LY","NE"],["LY","SD"],["LY","TD"],["LY","TN"],["MD","RO"],["MD","UA"],["ME","RS"],["MK","RS"],["ML","MR"],["ML","NE"],["ML","SN"],["MM","TH"],["MN","RU"],["MR","SN"],["MW","MZ"],["MW","TZ"],["MW","ZM"],["MX","US"],["MY","TH"],["MZ","SZ"],["MZ","TZ"],["MZ","ZA"],["MZ","ZM"],["MZ","ZW"],["NA","ZA"],["NA","ZM"],["NE","NG"],["NE","TD"],["NG","TD"],["NO","RU"],["NO","SE"],["OM","SA"],["OM","YE"],["PL","SK"],["PL","UA"],["QA","SA"],["RO","RS"],["RO","UA"],["RU","UA"],["RW","TZ"],["RW","UG"],["SA","YE"],["SD","SS"],["SD","TD"],["SK","UA"],["SS","UG"],["SY","TR"],["SZ","ZA"],["TJ","UZ"],["TM","UZ"],["TZ","UG"],["TZ","ZM"],["ZA","ZW"],["ZM","ZW"]],"x":[["BR","FR","French Guiana"],["CA","DK","Hans Island (Greenland)"],["ES","MA","Ceuta and Melilla"],["FR","SR","French Guiana"],["IL","SY","the disputed Israel–Syria line (Golan Heights)"],["LT","RU","Kaliningrad"],["PL","RU","Kaliningrad"]]};window.MX_TURTLE="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"38\" height=\"38\" aria-hidden=\"true\">\n  \n  <g fill=\"#9fc98b\" stroke=\"#000000\" stroke-width=\"2.2\" stroke-linejoin=\"round\">\n    <path d=\"M45.5 24h9v12h-9z\"/>\n    <path d=\"M50 8c6 0 9.5 5 9.5 10.5S56 28 50 28s-9.5-4-9.5-9.5S44 8 50 8z\"/>\n    <path d=\"M32 41C21 30 9 30 8.5 37.5c-.4 5.6 9 10 23.5 12z\"/>\n    <path d=\"M68 41c11-11 23-11 23.5-3.5.4 5.6-9 10-23.5 12z\"/>\n    <path d=\"M35 73c-9 4-16 11-12 15 4.5 3.8 12-3 17-10z\"/>\n    <path d=\"M65 73c9 4 16 11 12 15-4.5 3.8-12-3-17-10z\"/>\n    <path d=\"M46.5 80 50 91l3.5-11z\"/>\n  </g>\n  <circle cx=\"46\" cy=\"16.5\" r=\"1.8\" fill=\"#000000\"/><circle cx=\"54\" cy=\"16.5\" r=\"1.8\" fill=\"#000000\"/>\n  <rect x=\"29\" y=\"34\" width=\"42\" height=\"43\" rx=\"15\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"2.4\"/>\n  <rect x=\"34.2\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#dcedf5\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"55.800000000000004\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#a9d3e8\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"34.2\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#9fc98b\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#b4237d\" stroke=\"#000000\" stroke-width=\"1.4\"/><path d=\"M50.4 58.9c-.7-1.4-3-3.3-3-5.2a3 3 0 0 1 6 0c0 1.9-2.3 3.8-3 5.2z\" fill=\"#ffffff\"/><circle cx=\"50.4\" cy=\"53.8\" r=\"1\" fill=\"#b4237d\"/><rect x=\"55.800000000000004\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#f3d98a\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"34.2\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#a9d3e8\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#dcedf5\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"55.800000000000004\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"1.4\"/>\n</svg>";</script>
+<script>
+"use strict";
+// Crossings: walk overland from one country to another, one border at a time.
+// Everyone gets the same pair each day. The shortest route sets par.
+(function () {
+  var D = window.MX_CROSS; // { c: [[cc, name, numericId, fame]], e: [[cc, cc]] }
+  var KEY = "dailycity:crossings:v1";
+  var EXTRA = 6;          // guesses allowed beyond par before the crossing fails
+  var STEP = 100, HINT = 150, FULL = 1000;
+  var $ = function (s) { return document.querySelector(s); };
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- the border graph ----------
+  // Two graphs. Daily puzzles leave out borders that exist only through an exclave or overseas territory,
+  // or along a disputed line (D.x); practice mode accepts them, with a note.
+  var C = D.c, N = C.length, at = {};
+  C.forEach(function (c, i) { at[c[0]] = i; });
+  function graph(edges) {
+    var a = C.map(function () { return []; });
+    edges.forEach(function (e) { var x = at[e[0]], y = at[e[1]]; a[x].push(y); a[y].push(x); });
+    var d = C.map(function (_, s) {
+      var r = new Array(N).fill(-1), q = [s]; r[s] = 0;
+      for (var h = 0; h < q.length; h++) a[q[h]].forEach(function (n) { if (r[n] < 0) { r[n] = r[q[h]] + 1; q.push(n); } });
+      return r;
+    });
+    return { adj: a, dist: d };
+  }
+  var DAILY = graph(D.e), FULL_G = graph(D.e.concat(D.x || []));
+  var adj = DAILY.adj, dist = DAILY.dist;
+  function useGraph(g) { adj = g.adj; dist = g.dist; }
+  function extraNote(a, b) { var hit = (D.x || []).filter(function (e) { return (at[e[0]] === a && at[e[1]] === b) || (at[e[0]] === b && at[e[1]] === a); })[0]; return hit ? hit[2] : null; }
+  var rank = []; C.map(function (c, i) { return i; }).sort(function (a, b) { return C[b][3] - C[a][3] || (C[a][0] < C[b][0] ? -1 : 1); }).forEach(function (i, r) { rank[i] = r; });
+
+  // ---------- the schedule ----------
+  // Monday short and famous, building to Sunday's long haul. Each weekday draws from its own shuffled list,
+  // so a pair can't come back until its weekday has used every other pair (two years or more for each).
+  var CLASSES = [
+    { name: "Sunday's long haul", ok: function (L) { return L === 7; } },
+    { name: "Monday's short hop", ok: function (L, a, b) { return L === 3 && rank[a] < 66 && rank[b] < 66; } },
+    { name: "Tuesday's short hop", ok: function (L, a, b) { return L === 3 && !(rank[a] < 66 && rank[b] < 66); } },
+    { name: "Wednesday's middle distance", ok: function (L, a, b) { return L === 4 && rank[a] < 100 && rank[b] < 100; } },
+    { name: "Thursday's middle distance", ok: function (L, a, b) { return L === 4 && !(rank[a] < 100 && rank[b] < 100); } },
+    { name: "Friday's long road", ok: function (L) { return L === 5; } },
+    { name: "Saturday's long road", ok: function (L) { return L === 6; } }
+  ];
+  function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  var lists = CLASSES.map(function (k, w) {
+    var out = [];
+    for (var a = 0; a < N; a++) for (var b = a + 1; b < N; b++) { var L = dist[a][b]; if (L > 0 && k.ok(L, a, b)) out.push([a, b]); }
+    var r = rng(9001 + w * 7919);
+    for (var i = out.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = out[i]; out[i] = out[j]; out[j] = t; }
+    return out;
+  });
+  function weekday(n) { return (6 + n - 1) % 7; } // No. 1 was Saturday 14 November 2026
+  function daily(n) {
+    var w = weekday(n), list = lists[w], k = Math.floor((n - 1) / 7), p = list[k % list.length];
+    var flip = rng(n * 31 + 7)() < 0.5;
+    return { from: flip ? p[1] : p[0], to: flip ? p[0] : p[1], kind: CLASSES[w].name };
+  }
+  function practicePair() {
+    var w = 1 + Math.floor(Math.random() * 5), list = lists[w], p = list[Math.floor(Math.random() * list.length)];
+    return Math.random() < 0.5 ? { from: p[0], to: p[1], kind: "Practice" } : { from: p[1], to: p[0], kind: "Practice" };
+  }
+
+  // ---------- names ----------
+  var ALIAS = {"US":["usa","us","united states of america","america"],"GB":["uk","britain","great britain"],"TR":["turkey","republic of turkiye","turkiye"],"CZ":["czech republic"],"MM":["burma"],"CI":["cote d'ivoire","ivory coast"],"CV":["cape verde","cabo verde"],"SZ":["swaziland"],"MK":["macedonia","fyrom"],"TL":["timor-leste","east timor"],"NL":["holland","the netherlands"],"RU":["russian federation"],"KR":["korea","republic of korea"],"KP":["dprk"],"CD":["dr congo","drc","congo-kinshasa","democratic republic of the congo"],"CG":["congo","congo-brazzaville","republic of the congo"],"VN":["viet nam","vietnam"],"LA":["lao pdr"],"MD":["moldavia"],"BY":["byelorussia"],"TZ":["united republic of tanzania"],"BN":["brunei darussalam"],"BA":["bosnia","bih"],"AE":["uae","emirates"],"CF":["car"],"GM":["the gambia"],"IE":["republic of ireland","eire"],"VA":["holy see","vatican"],"SR":["surinam"]};
+  function norm(x) {
+    return String(x).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+      .replace(/[’'`.\-]/g, " ").replace(/\bthe\b/g, " ").replace(/\bsaint\b/g, "st").replace(/\s+/g, " ").trim();
+  }
+  var names = []; // [normalised, index]
+  C.forEach(function (c, i) { names.push([norm(c[1]), i]); (ALIAS[c[0]] || []).forEach(function (a) { names.push([norm(a), i]); }); });
+  function exact(t) { var n = norm(t), hit = names.filter(function (x) { return x[0] === n; })[0]; return hit ? hit[1] : -1; }
+  function suggest(t) {
+    var n = norm(t); if (!n) return [];
+    var seen = {}, out = [];
+    names.forEach(function (x) { if (!seen[x[1]] && (x[0].indexOf(n) === 0 || x[0].indexOf(" " + n) >= 0)) { seen[x[1]] = 1; out.push(x[1]); } });
+    out.sort(function (a, b) { var pa = norm(C[a][1]).indexOf(n) === 0 ? 0 : 1, pb = norm(C[b][1]).indexOf(n) === 0 ? 0 : 1; return pa - pb || (C[a][1] < C[b][1] ? -1 : 1); });
+    return out.slice(0, 5);
+  }
+
+  // ---------- state ----------
+  var today = (window.MXS ? MXS.today() : 1), dayNo = today, practice = false;
+  var dm = /^#day-(\d+)$/.exec(location.hash);
+  if (dm && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) dayNo = Number(dm[1]);
+  var save = (function () { try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && typeof s === "object") return s; } catch (e) {} return {}; })();
+  save.v = 1; save.games = save.games && typeof save.games === "object" ? save.games : {}; save.results = save.results && typeof save.results === "object" ? save.results : {};
+  function store() { if (practice) return; try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
+
+  var P, G; // P: puzzle {from,to,kind,par}; G: game {steps:[{i,hint}], over, won}
+  function start(pz, saved) {
+    P = pz; P.par = dist[P.from][P.to];
+    G = { steps: [], over: false, won: false };
+    if (saved && Array.isArray(saved.steps)) saved.steps.forEach(function (s) { if (C[at[s.c]]) G.steps.push({ i: at[s.c], hint: !!s.h }); });
+    settle(true);
+    draw();
+  }
+  function heat(i) {
+    var a = dist[P.from][i], b = dist[i][P.to];
+    return a < 0 || b < 0 ? Infinity : a + b - P.par;
+  }
+  function guesses() { return G.steps.filter(function (s) { return !s.hint; }).length; }
+  function hints() { return G.steps.filter(function (s) { return s.hint; }).length; }
+  function allowed() { return P.par - 1 + EXTRA; }
+  function score() { return Math.max(0, FULL - STEP * Math.max(0, guesses() - (P.par - 1)) - HINT * hints()); }
+  function have() { var h = {}; h[P.from] = 1; h[P.to] = 1; G.steps.forEach(function (s) { h[s.i] = 1; }); return h; }
+  // the route through countries you've named, if there is one (fewest borders)
+  function route() {
+    var h = have(), prev = {}, q = [P.from]; prev[P.from] = -1;
+    for (var k = 0; k < q.length; k++) {
+      var x = q[k]; if (x === P.to) break;
+      adj[x].forEach(function (n) { if (h[n] && !(n in prev)) { prev[n] = x; q.push(n); } });
+    }
+    if (!(P.to in prev)) return null;
+    var r = [], x = P.to; while (x !== -1) { r.unshift(x); x = prev[x]; } return r;
+  }
+  function shortest() { // one shortest route, for the reveal after a failed crossing
+    var r = [P.from], x = P.from;
+    while (x !== P.to) { x = adj[x].filter(function (n) { return dist[n][P.to] === dist[x][P.to] - 1; }).sort(function (a, b) { return rank[a] - rank[b]; })[0]; r.push(x); }
+    return r;
+  }
+  function settle(quiet) {
+    if (G.over) return;
+    if (route()) { G.over = true; G.won = true; }
+    else if (guesses() >= allowed()) { G.over = true; G.won = false; }
+    if (G.over && !practice) {
+      save.results[dayNo] = { score: G.won ? score() : 0, par: P.par, guesses: guesses(), hints: hints(), won: G.won };
+    }
+    if (!practice) { save.games[dayNo] = { steps: G.steps.map(function (s) { return { c: C[s.i][0], h: s.hint ? 1 : 0 }; }) }; store(); }
+    if (G.over && !quiet) finish();
+  }
+
+  // ---------- sound (shared mute setting with the other games) ----------
+  var muted = (function () { try { return localStorage.getItem("dailycity:sound") === "off"; } catch (e) { return false; } })(), ac = null;
+  function note(f, t0, len, vol, type, to) {
+    if (muted) return;
+    try {
+      if (!ac) { var A = window.AudioContext || window.webkitAudioContext; if (!A) return; ac = new A(); }
+      if (ac.state === "suspended") ac.resume();
+      var t = ac.currentTime + t0, o = ac.createOscillator(), g = ac.createGain();
+      o.type = type || "triangle"; o.frequency.setValueAtTime(f, t); if (to) o.frequency.exponentialRampToValueAtTime(to, t + len);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime((vol || 0.4) * 0.16, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + len + 0.05);
+    } catch (e) {}
+  }
+  var SFX = {
+    on: function () { note(659, 0, 0.12); note(880, 0.09, 0.18); },
+    warm: function () { note(523, 0, 0.16); },
+    cold: function () { note(330, 0, 0.24, 0.35, "sine", 220); },
+    bad: function () { note(196, 0, 0.12); note(147, 0.12, 0.2); },
+    hint: function () { note(784, 0, 0.1, 0.3, "sine"); note(988, 0.08, 0.16, 0.3, "sine"); },
+    win: function () { [523, 659, 784, 1047].forEach(function (f, i) { note(f, i * 0.11, i === 3 ? 0.45 : 0.14, 0.45); }); },
+    lose: function () { [392, 330, 262].forEach(function (f, i) { note(f, i * 0.16, 0.25, 0.35, "sine"); }); }
+  };
+  var ICON_ON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+  var ICON_OFF = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+  function drawMute() { var b = $("#soundBtn"); b.innerHTML = muted ? ICON_OFF : ICON_ON; b.setAttribute("aria-pressed", muted ? "true" : "false"); b.setAttribute("aria-label", muted ? "Sound is off. Turn sound on" : "Sound is on. Turn sound off"); }
+
+  // ---------- the turtle ----------
+  function turtle(move) {
+    var t = $("#logoMascot svg"); if (!t || reduce || !t.animate) return;
+    if (move === "swim") t.animate([{ transform: "translate(0,0) rotate(0)" }, { transform: "translate(6px,-5px) rotate(8deg)" }, { transform: "translate(-6px,-5px) rotate(-8deg)" }, { transform: "translate(0,0) rotate(0)" }], { duration: 700, iterations: 3 });
+    if (move === "peek") t.animate([{ transform: "translateY(0)" }, { transform: "translateY(7px) scale(.94)" }, { transform: "translateY(-3px)" }, { transform: "translateY(0)" }], { duration: 650 });
+  }
+
+  // ---------- heat words and colours ----------
+  // Light to dark in one hue family, so the order reads without colour vision; every chip also says it in words.
+  var HEAT = [
+    { max: 0, word: "On a shortest route", fill: "#7a0177", ink: "#fff", mark: "✅" },
+    { max: 1, word: "1 border off", fill: "#c51b8a", ink: "#fff", mark: "\u{1F7E8}" },
+    { max: 2, word: "2 borders off", fill: "#f768a1", ink: "#000", mark: "\u{1F7E8}" },
+    { max: 4, word: "3 or 4 borders off", fill: "#fbb4b9", ink: "#000", mark: "⬜" },
+    { max: Infinity - 1, word: "5 or more borders off", fill: "#feebe2", ink: "#000", mark: "⬜" }
+  ];
+  function band(h) { if (h === Infinity) return { word: "No land route from here", fill: "#ffffff", ink: "#000", mark: "❌", none: true }; return HEAT.filter(function (b) { return h <= b.max; })[0]; }
+
+  // ---------- the map ----------
+  var arcsCache = null;
+  function arcs() {
+    if (arcsCache) return arcsCache;
+    var W = window.__WORLD, T = W.transform;
+    arcsCache = W.arcs.map(function (a) { var x = 0, y = 0; return a.map(function (p) { x += p[0]; y += p[1]; return [x * T.scale[0] + T.translate[0], y * T.scale[1] + T.translate[1]]; }); });
+    return arcsCache;
+  }
+  var geoms = null;
+  function geomOf(cid) { if (!geoms) { geoms = {}; window.__WORLD.objects.countries.geometries.forEach(function (g) { geoms[Number(g.id)] = g; }); } return geoms[cid]; }
+  function ringsOf(cid) {
+    var g = geomOf(cid); if (!g) return [];
+    var A = arcs(), polys = g.type === "Polygon" ? [g.arcs] : g.type === "MultiPolygon" ? g.arcs : [];
+    return polys.map(function (p) { var out = []; p[0].forEach(function (i) { var a = i >= 0 ? A[i] : A[~i].slice().reverse(); out = out.concat(out.length ? a.slice(1) : a); }); return out; });
+  }
+  function mainRing(rs) { return rs.reduce(function (m, r) { return r.length > m.length ? r : m; }, rs[0] || []); }
+  var VIEW = null; // projection for the current pair
+  function project(lon, lat) { var dl = ((lon - VIEW.lon0 + 540) % 360) - 180; return [dl * VIEW.k, -lat]; }
+  // A whole ring, kept in one piece: no jump where it crosses the far side of the world from the map's middle.
+  function projRing(r) {
+    var out = [], prev = null, sum = 0;
+    r.forEach(function (p) {
+      var dl = ((p[0] - VIEW.lon0 + 540) % 360) - 180;
+      if (prev !== null) { while (dl - prev > 180) dl -= 360; while (prev - dl > 180) dl += 360; }
+      prev = dl; sum += dl; out.push([dl, -p[1]]);
+    });
+    var shift = Math.round(sum / Math.max(1, out.length) / 360) * 360;
+    return out.map(function (q) { return [(q[0] - shift) * VIEW.k, q[1]]; });
+  }
+  function frame() {
+    var pts = [], on = [];
+    for (var i = 0; i < N; i++) if (dist[P.from][i] >= 0 && dist[P.from][i] + dist[i][P.to] === P.par) on.push(i);
+    var mr = on.map(function (i) { return mainRing(ringsOf(C[i][2])); });
+    var all = [].concat.apply([], mr);
+    var lon0 = all.reduce(function (s, p) { return s + p[0]; }, 0) / all.length, lat0 = all.reduce(function (s, p) { return s + p[1]; }, 0) / all.length;
+    VIEW = { lon0: lon0, k: Math.cos(lat0 * Math.PI / 180) };
+    // Frame the route, not all of a giant: Russia or China only count near the smaller countries on the way.
+    function bb(pts) { var b = [Infinity, Infinity, -Infinity, -Infinity]; pts.forEach(function (q) { b[0] = Math.min(b[0], q[0]); b[1] = Math.min(b[1], q[1]); b[2] = Math.max(b[2], q[0]); b[3] = Math.max(b[3], q[1]); }); return b; }
+    var pr = mr.map(projRing), boxes = pr.map(bb);
+    var small = pr.filter(function (r, k) { return boxes[k][2] - boxes[k][0] < 30 && boxes[k][3] - boxes[k][1] < 22; });
+    var b;
+    if (small.length) {
+      var core = bb([].concat.apply([], small)), m = 7, pts = [].concat.apply([], small);
+      pr.forEach(function (r) {
+        if (small.indexOf(r) >= 0) return;
+        var dd = r.map(function (q) { return Math.max(core[0] - q[0], q[0] - core[2], core[1] - q[1], q[1] - core[3], 0); }), lim = Math.max(m, Math.min.apply(null, dd) + 8);
+        r.forEach(function (q, k) { if (dd[k] <= lim) pts.push(q); });
+      });
+      b = bb(pts);
+    } else b = bb([].concat.apply([], pr));
+    var w = b[2] - b[0], h = b[3] - b[1], pad = Math.max(w, h) * 0.18 + 1.5;
+    b = [b[0] - pad, b[1] - pad, b[2] + pad, b[3] + pad];
+    // match the box on the page (4:3)
+    w = b[2] - b[0]; h = b[3] - b[1];
+    if (w / h < 4 / 3) { var dw = h * 4 / 3 - w; b[0] -= dw / 2; b[2] += dw / 2; } else { var dh = w * 3 / 4 - h; b[1] -= dh / 2; b[3] += dh / 2; }
+    VIEW.box = b;
+  }
+  function pathOf(rs) {
+    var b = VIEW.box;
+    return rs.map(function (r) { return "M" + projRing(r).map(function (q) { return (q[0] - b[0]).toFixed(2) + " " + (q[1] - b[1]).toFixed(2); }).join("L") + "Z"; }).join("");
+  }
+  function centre(cid) {
+    // the middle of the part you can see, kept inside the frame
+    var b = VIEW.box, w = b[2] - b[0], h = b[3] - b[1], x = 0, y = 0, n = 0, all = [];
+    ringsOf(cid).forEach(function (r) { projRing(r).forEach(function (q) { all.push(q); if (q[0] > b[0] && q[0] < b[2] && q[1] > b[1] && q[1] < b[3]) { x += q[0]; y += q[1]; n++; } }); });
+    if (!n) { var mr = projRing(mainRing(ringsOf(cid))); mr.forEach(function (q) { x += q[0]; y += q[1]; }); n = mr.length; }
+    x = x / n - b[0]; y = y / n - b[1];
+    return [Math.min(w * 0.85, Math.max(w * 0.15, x)), Math.min(h * 0.92, Math.max(h * 0.08, y))];
+  }
+  var drawn = false;
+  function drawMap() {
+    var box = $("#map");
+    if (!window.__WORLD) { box.classList.add("wait"); return; }
+    box.classList.remove("wait");
+    if (!drawn) frame();
+    drawn = true;
+    var b = VIEW.box, w = b[2] - b[0], h = b[3] - b[1], fills = {}, sw = (w / 400).toFixed(3);
+    G.steps.forEach(function (s) { var x = band(heat(s.i)); fills[s.i] = s.hint ? "#7a0177" : x.fill; });
+    var shown = G.over ? (G.won ? route() : shortest()) : null, onShown = {};
+    if (shown && !G.won) shown.forEach(function (i) { onShown[i] = 1; });
+    var land = "", marks = "", labels = "";
+    for (var i = 0; i < N; i++) {
+      var rs = ringsOf(C[i][2]); if (!rs.length) continue;
+      var inside = rs.some(function (r) { return projRing(r).some(function (q) { return q[0] > b[0] - w && q[0] < b[2] + w && q[1] > b[1] - h && q[1] < b[3] + h; }); });
+      if (!inside) continue;
+      var end = i === P.from || i === P.to, f = end ? "var(--ink)" : fills[i] || (onShown[i] ? "url(#hatch)" : "var(--land)");
+      land += '<path d="' + pathOf(rs) + '" fill="' + f + '"' + (end ? ' class="end"' : "") + "/>";
+    }
+    function label(i, cls) {
+      var c = centre(C[i][2]), fs = (w / 26).toFixed(2);
+      labels += '<text x="' + c[0].toFixed(2) + '" y="' + c[1].toFixed(2) + '" font-size="' + fs + '" class="' + cls + '">' + C[i][1].replace(/&/g, "&amp;") + "</text>";
+    }
+    label(P.from, "lb end"); label(P.to, "lb end");
+    G.steps.forEach(function (s) { label(s.i, "lb"); });
+    if (shown && !G.won) shown.forEach(function (i) { if (!fills[i] && i !== P.from && i !== P.to) label(i, "lb"); });
+    box.innerHTML = '<svg viewBox="0 0 ' + w.toFixed(2) + " " + h.toFixed(2) + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">'
+      + '<defs><pattern id="hatch" width="' + (w / 60).toFixed(2) + '" height="' + (w / 60).toFixed(2) + '" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="100%" height="100%" fill="var(--land)"/><line x1="0" y1="0" x2="0" y2="' + (w / 60).toFixed(2) + '" stroke="#7a0177" stroke-width="' + (w / 120).toFixed(2) + '"/></pattern></defs>'
+      + '<rect width="100%" height="100%" fill="var(--sea)"/><g stroke="var(--land-line)" stroke-width="' + sw + '" stroke-linejoin="round">' + land + "</g>" + marks
+      + '<g class="lbs" stroke-width="' + (w / 160).toFixed(3) + '">' + labels + "</g></svg>";
+  }
+
+  // ---------- drawing the page ----------
+  function nameOf(i) { return C[i][1]; }
+  function draw() {
+    $("#num").textContent = practice ? "Practice · not saved" : "No. " + dayNo + " · " + P.kind;
+    $("#fromName").textContent = nameOf(P.from); $("#toName").textContent = nameOf(P.to);
+    $("#par").textContent = P.par;
+    $("#left").textContent = Math.max(0, allowed() - guesses());
+    $("#pts").textContent = score();
+    $("#parNote").textContent = "Par: " + P.par + " borders, so " + (P.par - 1) + " countries in between.";
+    var list = $("#steps");
+    list.innerHTML = G.steps.map(function (s, k) {
+      var b = s.hint ? { word: "Hint", fill: "#7a0177", ink: "#fff" } : band(heat(s.i));
+      return '<li><span class="nm">' + nameOf(s.i) + '</span><span class="chip" style="background:' + b.fill + ";color:" + b.ink + '">' + b.word + "</span></li>";
+    }).join("");
+    list.hidden = !G.steps.length;
+    $("#hintBtn").disabled = G.over;
+    $("#play").hidden = G.over;
+    drawMap();
+    if (G.over) showDone();
+  }
+  var toastT = 0;
+  function say(t) { $("#say").textContent = t; }
+  function toast(t) { var el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove("show"); }, 1800); }
+
+  function guess(i) {
+    if (G.over) return;
+    if (i === P.from || i === P.to) { say(nameOf(i) + " is where the crossing " + (i === P.from ? "starts" : "ends") + ". Name a country in between."); SFX.bad(); return; }
+    if (G.steps.some(function (s) { return s.i === i; })) { say("You've already named " + nameOf(i) + "."); SFX.bad(); return; }
+    G.steps.push({ i: i, hint: false });
+    var h = heat(i), b = band(h);
+    settle();
+    draw();
+    if (G.over) return;
+    if (b.none) { say(nameOf(i) + ": no land route connects it to this crossing." + (adj[i].length ? "" : " It has no land borders at all.")); SFX.cold(); }
+    else { say(nameOf(i) + ": " + b.word.toLowerCase() + "." + (h === 0 ? " Keep going." : "")); (h === 0 ? SFX.on : h <= 2 ? SFX.warm : SFX.cold)(); if (h === 1) turtle("peek"); }
+    if (allowed() - guesses() === 2) toast("Two guesses left.");
+  }
+  function hint() {
+    if (G.over) return;
+    // a country on a shortest route, next to what you can already reach from the start
+    var h = have(), reach = {}, q = [P.from]; reach[P.from] = 1;
+    for (var k = 0; k < q.length; k++) adj[q[k]].forEach(function (n) { if (h[n] && !reach[n]) { reach[n] = 1; q.push(n); } });
+    var best = -1;
+    Object.keys(reach).forEach(function (x) {
+      adj[x].forEach(function (n) {
+        if (h[n] || dist[P.from][n] + dist[n][P.to] !== P.par) return;
+        if (best < 0 || dist[n][P.to] < dist[best][P.to] || (dist[n][P.to] === dist[best][P.to] && rank[n] < rank[best])) best = n;
+      });
+    });
+    if (best < 0) { // every shortest-route country next to you is already named: reveal from the far end instead
+      for (var i = 0; i < N; i++) if (!h[i] && dist[P.from][i] + dist[i][P.to] === P.par && (best < 0 || rank[i] < rank[best])) best = i;
+    }
+    if (best < 0) return;
+    G.steps.push({ i: best, hint: true });
+    SFX.hint();
+    settle(); draw();
+    if (!G.over) say("Hint: " + nameOf(best) + " is on a shortest route. That cost " + HINT + " points.");
+  }
+
+  // ---------- the end ----------
+  function shareText() {
+    var marks = G.steps.map(function (s) { return s.hint ? "\u{1F4A1}" : band(heat(s.i)).mark; }).join("");
+    var sc = G.won ? score() : 0;
+    return "Mapelago Crossings No. " + dayNo + " \u{1F422} " + sc + " points\n" + marks + "\n"
+      + nameOf(P.from) + " to " + nameOf(P.to) + " · par " + P.par + " · " + (G.won ? guesses() + (guesses() === 1 ? " guess" : " guesses") + (hints() ? ", " + hints() + (hints() === 1 ? " hint" : " hints") : "") : "didn't make it") + "\n"
+      + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.crossings) || "Can you cross it?") + " mapelago.com/crossings.html#c-" + dayNo + "-" + sc;
+  }
+  function showDone() {
+    var d = $("#done"), r = G.won ? route() : shortest();
+    $("#doneTitle").textContent = G.won ? (guesses() <= P.par - 1 && !hints() ? "A perfect crossing" : "You made it across") : "The border stayed shut";
+    $("#bigScore").textContent = G.won ? score() : 0;
+    var notes = [];
+    for (var k = 1; k < r.length; k++) { var nt = extraNote(r[k - 1], r[k]); if (nt) notes.push(nameOf(r[k - 1]) + "–" + nameOf(r[k]) + " (" + nt + ")"); }
+    $("#routeLine").textContent = (G.won ? "Your route: " : "A shortest route: ") + r.map(nameOf).join(" → ") + "." + (notes.length ? " It crosses " + notes.join(" and ") + ", a border that counts in practice only, never in a daily crossing." : "");
+    if (practice) {
+      $("#shareText").hidden = true; $("#shareBtn").hidden = true; $("#streakNote").hidden = true;
+      var im = document.getElementById("imgBtn") || document.querySelector(".mx-img"); if (im) im.hidden = true;
+    } else {
+      $("#shareText").hidden = false; $("#shareBtn").hidden = false;
+      $("#shareText").textContent = shareText();
+      if (window.MXS) {
+        var s = MXS.streak(save.results, today);
+        $("#streakNote").hidden = false;
+        $("#streakNote").textContent = "Streak: " + s.cur + (s.cur === 1 ? " day" : " days") + ". Best: " + s.best + "." + (s.freezes ? " \u{1F9CA} " + s.freezes + (s.freezes === 1 ? " freeze" : " freezes") + " ready." : "");
+      }
+    }
+    d.hidden = false;
+  }
+  function finish() {
+    draw();
+    if (G.won) { SFX.win(); turtle("swim"); say("Across in " + guesses() + (guesses() === 1 ? " guess" : " guesses") + (hints() ? " and " + hints() + (hints() === 1 ? " hint" : " hints") : "") + "."); }
+    else { SFX.lose(); say("Out of guesses. The map shows a shortest route."); }
+    var t = $("#doneTitle"); if (t) setTimeout(function () { t.setAttribute("tabindex", "-1"); t.focus({ preventScroll: false }); }, 50);
+  }
+
+  // ---------- input ----------
+  var sel = -1, opts = [];
+  function showSugs() {
+    var v = $("#cin").value; opts = suggest(v); sel = opts.length ? 0 : -1;
+    var ul = $("#sugs");
+    ul.innerHTML = opts.map(function (i, k) { return '<li role="option" id="opt' + k + '" aria-selected="' + (k === sel) + '"><button type="button" class="sug' + (k === sel ? " on" : "") + '" data-i="' + i + '" tabindex="-1">' + nameOf(i) + "</button></li>"; }).join("");
+    $("#cin").setAttribute("aria-expanded", opts.length ? "true" : "false");
+    if (sel >= 0) $("#cin").setAttribute("aria-activedescendant", "opt" + sel); else $("#cin").removeAttribute("aria-activedescendant");
+    $("#cgo").disabled = !v.trim();
+  }
+  function mark() {
+    Array.prototype.forEach.call($("#sugs").children, function (li, k) { li.setAttribute("aria-selected", k === sel); li.firstChild.classList.toggle("on", k === sel); });
+    if (sel >= 0) $("#cin").setAttribute("aria-activedescendant", "opt" + sel);
+  }
+  function submit() {
+    var v = $("#cin").value, i = exact(v);
+    if (i < 0 && sel >= 0) i = opts[sel];
+    if (i < 0) { say(v.trim() ? "“" + v.trim() + "” isn't a country on the list. Try another spelling." : "Type a country."); return; }
+    $("#cin").value = ""; showSugs(); guess(i); if (!G.over) $("#cin").focus();
+  }
+
+  function countdown() {
+    var el = $("#countdown"); if (!el) return;
+    var n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1), s = Math.max(0, Math.floor((m - n) / 1000));
+    el.textContent = String(Math.floor(s / 3600)).padStart(2, "0") + ":" + String(Math.floor(s / 60) % 60).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    if (window.MXS && MXS.today() !== today && !practice) $("#fresh").hidden = false;
+  }
+
+  function init() {
+    $("#logoMascot").innerHTML = window.MX_TURTLE;
+    drawMute();
+    $("#soundBtn").onclick = function () { muted = !muted; try { localStorage.setItem("dailycity:sound", muted ? "off" : "on"); } catch (e) {} drawMute(); if (!muted) SFX.on(); };
+    $("#cin").addEventListener("input", showSugs);
+    $("#cin").addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown" && opts.length) { sel = (sel + 1) % opts.length; mark(); e.preventDefault(); }
+      else if (e.key === "ArrowUp" && opts.length) { sel = (sel - 1 + opts.length) % opts.length; mark(); e.preventDefault(); }
+      else if (e.key === "Enter") { e.preventDefault(); submit(); }
+      else if (e.key === "Escape") { $("#cin").value = ""; showSugs(); }
+    });
+    $("#sugs").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; $("#cin").value = ""; showSugs(); guess(Number(b.dataset.i)); if (!G.over) $("#cin").focus(); });
+    $("#cgo").onclick = submit;
+    $("#hintBtn").onclick = hint;
+    $("#shareBtn").onclick = async function () {
+      var t = shareText(), b = this;
+      try { if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) { await navigator.share({ text: t }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); }
+    };
+    Array.prototype.forEach.call(document.querySelectorAll(".practiceBtn"), function (btn) {
+      btn.onclick = function () {
+        practice = true; drawn = false; useGraph(FULL_G); $("#done").hidden = true; say("");
+        start(practicePair(), null);
+        $("#cin").focus(); window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+      };
+    });
+    $("#dailyBtn").onclick = function () { location.hash = ""; location.reload(); };
+    start(daily(dayNo), save.games[dayNo]);
+    if (!window.__WORLD) {
+      var s = document.createElement("script"); s.src = "world.js?v=0.15.0"; s.async = true;
+      s.onload = function () { drawMap(); }; document.head.appendChild(s);
+    }
+    countdown(); setInterval(countdown, 1000);
+    if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+      window.__cross = { P: function () { return P; }, G: function () { return G; }, daily: daily, name: nameOf, at: at, dist: dist, lists: lists, guess: guess, hint: hint, heat: heat, C: C };
+    }
+  }
+  init();
+})();
+</script>
+<script src="analytics.js?v=0.15.0" defer></script>
+</body>
+</html>

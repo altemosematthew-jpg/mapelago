@@ -44,8 +44,14 @@
 </svg><span class="word">Mapelago</span></a>
   <main>
 <h1>Privacy</h1>
+<div data-analytics="off">
 <p class="lede">Mapelago has no accounts, no ads, no cookies and no tracking scripts. This page describes everything the site does with data.</p>
-<p class="small">Last updated November 22, 2026.</p>
+<p class="small">Last updated November 25, 2026.</p>
+</div>
+<div data-analytics="on" hidden>
+<p class="lede">Mapelago has no accounts, no ads and no cookies. It counts visits with Cloudflare Web Analytics, which stores nothing on your device. This page describes everything the site does with data.</p>
+<p class="small">Last updated <span id="analyticsSince"></span>.</p>
+</div>
 
 <h2>What is saved, and where</h2>
 <p>Your game in progress, your past results, your streak, the look you picked and whether you've seen the help screen are saved in your browser's local storage, on your own device. That information is never sent anywhere. Clearing this site's data in your browser erases it.</p>
@@ -53,8 +59,21 @@
 <p>After your first visit, your browser also keeps a copy of the game's own files, so it opens quickly and works without a connection.</p>
 
 <h2>What leaves your device</h2>
-<p>Nothing, unless you choose to share. When you tap a share button, your device's own share sheet or clipboard gets a short text or an image. A challenge link holds three numbers: the puzzle number, your score and how many pins you used.</p>
-<p>The game makes no requests to other companies. The map is built into the page, and the fonts come from this site itself.</p>
+<p>Nothing, unless you choose to share. When you tap a share button, your device's own share sheet or clipboard gets a short text or an image. A challenge link holds a short game code and three numbers: the puzzle number, the mode you played and your score. It never holds the answer or anything about you.</p>
+<p data-analytics="off">The game makes no requests to other companies. The map is built into the page, and the fonts come from this site itself.</p>
+<div data-analytics="on" hidden>
+<p>Apart from the visit counting below, the game makes no requests to other companies. The map is built into the page, and the fonts come from this site itself.</p>
+<h2>Visit counting</h2>
+<p>To see whether people are playing and which games they open, Mapelago uses Cloudflare Web Analytics. When a page loads on mapelago.com, a small script from Cloudflare counts:</p>
+<ul>
+<li>the page viewed,</li>
+<li>the site you came from, if any,</li>
+<li>your country, worked out from your connection,</li>
+<li>your type of device and browser.</li>
+</ul>
+<p>It sets no cookies, stores nothing on your device, doesn't fingerprint your browser and doesn't follow you to other sites. Mapelago sees only totals, not individual visitors. If your browser sends Global Privacy Control or Do Not Track, the script isn't loaded at all.</p>
+<p>Cloudflare, Inc. processes this data for Mapelago. <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a> explains how it handles it.</p>
+</div>
 
 <h2>The web host</h2>
 <p>The site's files are served by GitHub Pages. Like any web host, GitHub may log technical details, such as your IP address, when your browser loads a page. <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a> explains what it does with them.</p>
@@ -63,7 +82,8 @@
 <p>Mapelago is made for a general audience. It doesn't ask anyone for personal information.</p>
 
 <h2>Changes</h2>
-<p>If the game ever adds accounts, leaderboards or visit counting, this page will say so before the change goes live, and the date above will change.</p>
+<p data-analytics="off">If the game ever adds accounts, leaderboards or visit counting, this page will say so before the change goes live, and the date above will change.</p>
+<p data-analytics="on" hidden>If the game ever adds accounts or leaderboards, this page will say so before the change goes live, and the date above will change.</p>
 
 <a class="play" href="../">Play today's city</a>
   </main>
@@ -82,5 +102,6 @@
     <a href="../privacy/">Privacy</a>
   </nav>
 </div>
+<script src="../analytics.js?v=0.15.0"></script>
 </body>
 </html>
