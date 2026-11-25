@@ -414,7 +414,7 @@ a.act{text-decoration:none}
 @keyframes bcpop{45%{scale:1.04}}
 .bcreveal{padding:12px 12px 14px}
 .bcverdict{margin:0 0 8px;font-size:22px;font-weight:800;line-height:1.15;animation:bcpop .4s}
-.bcverdict.ok{color:var(--accent-ink)}
+.bcverdict.bc-ok{color:var(--accent-ink)}
 .bcstage{position:relative;border:1.5px solid var(--rule);border-radius:calc(var(--r) * .7);background:var(--sea);overflow:hidden}
 .bcs{display:block;width:100%;height:auto}
 .bcsame{position:absolute;right:8px;top:6px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
@@ -461,6 +461,7 @@ a.act{text-decoration:none}
 .bctile[aria-expanded="true"]{outline:3px solid var(--accent);outline-offset:1px}
 .bcdetail{margin-top:10px;padding:10px 0 0;border-top:1.5px dashed var(--muted)}
 .bcdetail .bcratio{margin-bottom:0}
+.bcdetail .bcverdict{font-size:18px}
 [data-look="island"] .bcrun{border:0;box-shadow:inset 0 -3px 0 var(--tint-2)}
 [data-look="island"] .bcstage,[data-look="island"] .bctile{border-radius:16px}
 [data-look="metro"] .bcheat,[data-look="metro"] .bcrun{border-radius:0}
@@ -806,7 +807,7 @@ a.act{text-decoration:none}
       var labs = p.map(function (c, o) {
         return '<div class="bclab' + (c === r.big ? " big" : "") + '"><b>' + (o === chose ? G.icon(right ? "landed" : "far", 15) : "") + G.esc(c.name) + "</b><span>" + km2(c.pop) + "</span></div>";
       }).join("");
-      return '<p class="bcverdict' + (right ? " ok" : " no") + '">' + G.esc(verdict) + "</p>"
+      return '<p class="bcverdict' + (right ? " bc-ok" : " bc-no") + '">' + (withNext ? "" : "Pair " + (i + 1) + ": ") + G.esc(verdict) + "</p>"
         + '<div class="bcstage"><span class="bcsame" aria-hidden="true">Same scale</span><svg class="bcs" viewBox="0 0 340 176" role="img" aria-label="' + G.esc(p[0].name + " and " + p[1].name + ", drawn at the same scale") + '" data-i="' + i + '"></svg></div>'
         + '<div class="bclabs">' + labs + "</div>"
         + '<p class="bcratio">' + G.esc(r.big.name) + ' is <b class="bcx">' + G.esc(r.n) + "</b>" + r.mid + G.esc(r.small.name) + "</p>"
@@ -864,14 +865,14 @@ a.act{text-decoration:none}
       var invite = (window.MXCOPY && MXCOPY.invite && MXCOPY.invite.bigcountry) || "Can you beat " + sc + "?";
       return G.brand + " " + G.title + " No. " + k + " \u{1F422} " + sc + "/" + N + "\n"
         + h.map(function (_, i) { return G.ok(i) ? "✅" : "❌"; }).join("") + "\n"
-        + "Best run " + st.best + (close.length ? " · close calls " + got + "/" + close.length : "") + "\n"
+        + "Best run: " + st.best + (close.length ? " \u00b7 Close calls: " + got + " of " + close.length : "") + "\n"
         + invite + " " + G.site + "/" + G.path + "#c-" + k + "-" + sc;
     }
     function strip() {
       var ol = $("#bcStrip ol");
       ol.innerHTML = R.map(function (_, i) {
         var p = pair(i), r = rat[i], ok = G.ok(i);
-        return '<li style="--i:' + i + '"><button type="button" class="bctile' + (ok ? " ok" : " no") + (heat(i) ? " close" : "") + '" aria-expanded="false" aria-controls="bcDetail" data-i="' + i + '" aria-label="'
+        return '<li style="--i:' + i + '"><button type="button" class="bctile' + (ok ? " bc-ok" : " bc-no") + (heat(i) ? " close" : "") + '" aria-expanded="false" aria-controls="bcDetail" data-i="' + i + '" aria-label="'
           + G.esc("Pair " + (i + 1) + ", " + (ok ? "right" : "wrong") + ": " + r.say) + '"><svg viewBox="0 0 120 64" aria-hidden="true" data-i="' + i + '"></svg><span class="bctx">' + G.icon(ok ? "landed" : "far", 12) + G.esc(r.n) + "</span></button></li>";
       }).join("");
       var paint = function () {
