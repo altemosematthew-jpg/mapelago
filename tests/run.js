@@ -143,7 +143,7 @@ async function page(b, url, opts = {}) {
         const { ctx, p } = await page(b, U + "country.html#day-" + day, { storage: fresh });
         await p.waitForFunction(() => window.__WORLD);
         const s = await read(p);
-        check(s.S.r === r && s.S.moveCost === cost && s.cost.startsWith(`Each move costs ${cost} points`), `country: a new No. ${day} round starts on rules ${r} (moves cost ${cost})`, JSON.stringify([s.S.r, s.S.moveCost, s.cost]));
+        check(s.S.r === r && s.S.moveCost === cost && s.cost.startsWith(r === 1 ? `Today: ${cost} points a move; a miss costs 150 and opens no clue.` : `Each move costs ${cost} points`), `country: a new No. ${day} round starts on rules ${r} (moves cost ${cost})`, JSON.stringify([s.S.r, s.S.moveCost, s.cost]));
         await ctx.close();
       }
       // the rules: one clue to start, moves cost 6, a miss costs 150 and opens the next clue, and the label matches the slot after it
@@ -154,10 +154,10 @@ async function page(b, url, opts = {}) {
         check(s0.clues === 1 && s0.S.tiles.every((t) => t.v === 2), "country: a new round starts with two 2-tiles and one clue", JSON.stringify([s0.clues, s0.S.tiles.map((t) => t.v)]));
         for (const k of ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"]) await p.keyboard.press(k);
         const s1 = await read(p), m = s1.S.swipes;
-        check(m > 0 && s1.pts === String(1000 - 6 * m), "country: each move costs 6", JSON.stringify([m, s1.pts]));
+        check(m > 0 && s1.pts === String(1000 - 6 * m + (s1.S.maxTile >= 4 ? Math.min(s1.S.maxTile, 64) - 2 : 0)), "country: each move costs 6 (plus the tile bonus from No. 14)", JSON.stringify([m, s1.pts]));
         await p.evaluate(far); await p.waitForTimeout(1500);
         const s2 = await read(p);
-        check(s2.pts === String(1000 - 6 * m - 150), "country: a missed pin costs 150", s2.pts);
+        check(s2.pts === String(+s1.pts - 150), "country: a far missed pin costs 150", s2.pts);
         check(s2.clues === s1.clues + 1 && /Free clue: /.test(s2.live), "country: a missed pin opens the next clue", JSON.stringify([s1.clues, s2.clues, s2.live]));
         check(s2.label && s2.label === s2.slot, "country: next-clue label matches the highlighted slot after a free clue", JSON.stringify([s2.label, s2.slot]));
         check(/^(\S+ )?\S+( and (warmer|colder))?: Missed by [\d,]+ km\. The country is to the (north|south|east|west|northeast|northwest|southeast|southwest)\./u.test(s2.live), "country: the miss line gives heat, distance and direction", s2.live);
@@ -174,7 +174,7 @@ async function page(b, url, opts = {}) {
         check(Math.abs(r.sq[0] - 111.19) < 0.05 && r.sq[1][0] === 5 && r.sq[1][1] === 0, "country: distance to the middle of a long edge, not its corners", JSON.stringify(r.sq));
         check(r.name === "Mexico" && r.az.d > 125 && r.az.d < 136 && Math.abs(r.az.b - 180) < 10, "country: a pin in Arizona is about 130 km north of Mexico's nearest border", JSON.stringify(r));
         for (let i = 0; i < 3; i++) { await p.evaluate(() => __lf.confirmAt([-110, 32.5])); await p.waitForTimeout(1900); }
-        const s = await p.evaluate(() => __lf.S()), want = Math.round(700 * (1 - Math.sqrt((r => r - 50)(s.pins[0].d) / 2450)));
+        const s = await p.evaluate(() => __lf.S()), want = Math.round((1000 - 2 * 50) * (1 - Math.sqrt((r => r - 50)(s.pins[0].d) / 2450)));
         check(s.done && !s.won && s.score === want, `country: three near misses score on the softer last-pin curve (${want})`, JSON.stringify([s.score, s.pins.map((x) => x.d)]));
         await ctx.close();
       }
@@ -224,6 +224,219 @@ async function page(b, url, opts = {}) {
     }
     // ---- end mx-country-rules ----
 
+    // ---- mx-scoring: the new scoring for both mystery games from No. 14 (review/scoring.md, review/scoring-patch.py) ----
+    {
+      const G = [["", "dailycity:v2", "city"], ["country.html", "dailycity:country:v1", "country"]];
+      const fresh = (k, extra) => Object.assign({ [k]: '{"games":{},"results":{},"seenHelp":true}' }, extra || {});
+      const sm = (d) => (d <= 250 ? 50 : d >= 2000 ? 150 : Math.round((50 + (d - 250) / 17.5) / 10) * 10), sb = (m) => (m >= 4 ? Math.min(m, 64) - 2 : 0);
+      for (const [f, key, g] of G) {
+        // the start number, and the parts of the score
+        for (const [day, want] of [[13, 0], [14, 1]]) {
+          const { ctx, p } = await page(b, U + f + "#day-" + day, { storage: fresh(key) });
+          const s = await p.evaluate(() => __lf.sc.s());
+          check((s || 0) === want, `${g} scoring: a new No. ${day} round ${want ? "scores the new way" : "keeps the old scoring"}`, String(s));
+          if (day === 14) {
+            const r = await p.evaluate(() => [[100, 250, 1000, 1999, 2000, 9000].map(__lf.sc.sm), [2, 4, 16, 64, 128].map(__lf.sc.sb), [1000, 850, 849, 650, 649, 400, 399].map(__lf.sc.stars)]);
+            check(JSON.stringify(r) === JSON.stringify([[50, 50, 90, 150, 150, 150], [0, 2, 14, 62, 62], [3, 3, 2, 2, 1, 1, 0]]), `${g} scoring: miss cost by distance, tile bonus, stars`, JSON.stringify(r));
+          }
+          await ctx.close();
+        }
+        // a round: moves, a tile bonus, a near miss, then a find; the end card's sum adds up and the share has the stars
+        {
+          const { ctx, p } = await page(b, U + f + "#day-14", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          const notes = [];
+          for (const d of ["up", "left", "down", "right", "up", "left", "down", "right"]) { await p.evaluate((d) => __lf.move(d), d); notes.push(await p.textContent("#live")); }
+          const a = await p.evaluate(() => ({ m: __lf.S().swipes, mt: __lf.S().maxTile, pts: +document.querySelector("#score").textContent }));
+          check(a.pts === 1000 - 6 * a.m + sb(a.mt), `${g} scoring: points = 1000 - 6 x moves + tile bonus`, JSON.stringify(a));
+          check(notes.some((t) => /New clue: .*\. \+8 points for making a 16\./.test(t)) && notes.some((t) => /\+4 points for making an 8\./.test(t)), `${g} scoring: the new-clue note says what the tile earned`, notes.join(" / "));
+          const far = await p.evaluate(() => { const h = __lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat]; return [h[0] + 6, h[1] + 3]; });
+          await p.evaluate((x) => __lf.confirmAt(x), far); await p.waitForTimeout(1500);
+          const miss = await p.evaluate(() => ({ d: __lf.S().pins[0].d, live: document.querySelector("#live").textContent, pts: +document.querySelector("#score").textContent }));
+          check(miss.d > 50 && miss.pts === a.pts - sm(miss.d) && miss.live.includes(`−${sm(miss.d)} points.`), `${g} scoring: a miss ${Math.round(miss.d)} km off costs ${sm(miss.d)} and says so`, JSON.stringify(miss));
+          await p.evaluate(() => __lf.confirmAt(__lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+          const e = await p.evaluate(() => ({ score: __lf.S().score, sum: (document.querySelector(".mx-sum") || {}).textContent, grade: (document.querySelector(".mx-grade [aria-hidden]") || {}).textContent, share: document.querySelector("#endBody .share").textContent, link: MXS.beat.upgrade(document.querySelector("#endBody .share").textContent) }));
+          const want = a.pts - sm(miss.d), stars = want >= 850 ? 3 : want >= 650 ? 2 : want >= 400 ? 1 : 0;
+          check(e.score === want && e.sum && e.sum.endsWith(`= ${want}`) && e.sum.includes(`${a.m} moves × 6`) && e.sum.includes(`+ ${sb(a.mt)} tile bonus`) && e.sum.includes(`1 missed pin (${sm(miss.d)})`), `${g} scoring: the end card's sum adds up (${e.sum})`, JSON.stringify(e));
+          const st = "★".repeat(stars) + "☆".repeat(3 - stars);
+          check(e.grade === st && e.share.includes(st + " " + want + " points"), `${g} scoring: stars on the end card and in the copied result`, JSON.stringify([e.grade, e.share.split("\n")[1]]));
+          check(new RegExp(`#b-m${g === "city" ? "c" : "n"}-14-0-${want}`).test(e.link), `${g} scoring: beat-my-score link still carries the score`, e.link.split("\n").pop());
+          check(!p.errs.length, `${g} scoring: no errors`, p.errs.join("; "));
+          await ctx.close();
+        }
+        // a perfect round still scores the most; a lost round's sum adds up too
+        {
+          const { ctx, p } = await page(b, U + f + "#day-15", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          await p.evaluate(() => __lf.confirmAt(__lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+          const r = await p.evaluate(() => [__lf.S().score, (document.querySelector(".mx-grade [aria-hidden]") || {}).textContent]);
+          check(r[0] === 1000 && r[1] === "★★★", `${g} scoring: a find with no moves scores 1000 and three stars`, JSON.stringify(r));
+          await ctx.close();
+        }
+        {
+          const { ctx, p } = await page(b, U + f + "#day-16", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          for (const d of ["up", "left", "down"]) await p.evaluate((d) => __lf.move(d), d);
+          for (const k of [1, 2, 3]) { await p.evaluate((k) => __lf.confirmAt([((__lf.P.lon + 180 - 25 * k) % 360) - 180, -__lf.P.lat]), k); await p.waitForTimeout(1900); }
+          const r = await p.evaluate(() => ({ S: __lf.S(), sum: (document.querySelector(".mx-sum") || {}).textContent }));
+          check(r.S.done && !r.S.won && r.sum && /Not found, so × \d+% for your closest pin/.test(r.sum) && r.sum.endsWith(`= ${r.S.score}`), `${g} scoring: a lost round's sum adds up (${r.sum})`, JSON.stringify(r.sum));
+          await ctx.close();
+        }
+      }
+      // a move never pays for itself: over 40 days of play the score stays under 1000 after every move
+      {
+        const ctx = await b.newContext(PHONE), p = await ctx.newPage(); let bad = [], n = 0;
+        for (let day = 14; day < 54; day++) {
+          await p.goto(`${U}?s=${day}#day-${day}`, { waitUntil: "domcontentloaded" });
+          await p.evaluate(() => localStorage.setItem("dailycity:v2", '{"games":{},"results":{},"seenHelp":true}'));
+          await p.reload({ waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__lf);
+          const r = await p.evaluate(() => { const bad = []; for (let i = 0; i < 90; i++) { if (__lf.S().storm) break; let moved = false; for (const d of ["down", "left", "right", "up"]) { const b0 = __lf.S().swipes; __lf.move(d); if (__lf.S().swipes > b0) { moved = true; break; } } if (!moved) break; const pts = +document.querySelector("#score").textContent; if (pts >= 1000) bad.push(pts); } return [bad, __lf.S().swipes]; });
+          bad = bad.concat(r[0]); n += r[1];
+        }
+        check(!bad.length && n > 1000, `scoring: no move ever brings the score back to 1000 (${n} moves over 40 days)`, bad.join());
+        await ctx.close();
+      }
+      // Quick mode keeps its own scoring, with stars and a sum
+      {
+        const { ctx, p } = await page(b, U + "#day-14", { storage: fresh("dailycity:v2", { "dailycity:mode": "quick" }) });
+        await p.waitForFunction(() => window.__WORLD);
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const live = await p.textContent("#live");
+        await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+        const r = await p.evaluate(() => ({ score: __lf.S().score, sum: (document.querySelector(".mx-sum") || {}).textContent, share: document.querySelector("#endBody .share").textContent }));
+        check(r.score === 800 && !/points\./.test(live.replace(/\d+ km/, "")) && r.sum === "1,000 − 1 missed pin × 200 = 800" && r.share.includes("★★☆ Found in 2/5 pins"), "scoring: Quick mode still scores 1000/800/..., with stars and a sum", JSON.stringify([r, live]));
+        await ctx.close();
+      }
+      // the rules page and each game's own explainer describe the new scoring
+      {
+        const htp = fs.readFileSync(path.join(__dirname, "../how-to-play/index.html"), "utf8"), cj = JSON.parse(fs.readFileSync(path.join(__dirname, "../copy/copy.json"), "utf8"));
+        check(/From No\. 14 \(27 November 2026\)/.test(htp) && /adds half its value/.test(htp) && /50 points if it lands within 250 km/.test(htp), "scoring: how-to-play explains the new scoring and when it starts");
+        check(["city", "country"].every((g) => /50 to 150 points/.test(cj.games[g].explainer) && cj.games[g].howto.some((x) => /adds half its value/.test(x))), "scoring: both games' copy explains it");
+      }
+    }
+    // ---- end mx-scoring ----
+
+    // ---- mx-country-quick: Quick mode for Mystery country from No. 14 (review/country-quick-patch.py) ----
+    {
+      const fresh = { "dailycity:country:v1": '{"games":{},"results":{},"seenHelp":true}' };
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-13", { storage: fresh });
+        check(!(await p.isVisible("#mxMode")), "country quick: no Tiles/Quick choice before No. 14");
+        await ctx.close();
+      }
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-14", { storage: fresh, ctx: { viewport: { width: 375, height: 667 } } });
+        await p.waitForFunction(() => window.__WORLD);
+        check(await p.isVisible("#mxMode"), "country quick: the Tiles/Quick choice shows on a fresh No. 14");
+        await p.focus("#mxMode [data-m=quick]"); await p.keyboard.press("Enter"); await p.waitForTimeout(200);
+        const s0 = await p.evaluate(() => ({ pins: document.querySelector("#pinsText").textContent, board: getComputedStyle(document.querySelector("#board")).display, label: document.querySelector("#nextClue").textContent, clues: document.querySelectorAll("#clues li").length, mode: localStorage.getItem("dailycity:country:mode"), city: localStorage.getItem("dailycity:mode") }));
+        check(s0.pins === "5 pins left" && s0.board === "none" && s0.label === "Next clue: after a missed pin" && s0.clues === 1 && s0.mode === "quick" && s0.city === null, "country quick: picked by keyboard; no tiles, one clue, five pins; the city's choice untouched", JSON.stringify(s0));
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const s1 = await p.evaluate(() => ({ pts: document.querySelector("#score").textContent, clues: document.querySelectorAll("#clues li").length, live: document.querySelector("#live").textContent }));
+        check(s1.pts === "800" && s1.clues === 2 && /Free clue:/.test(s1.live), "country quick: a miss opens the next clue; 800 left", JSON.stringify(s1));
+        await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
+        const e = await p.evaluate(() => ({ S: __lf.S(), res: JSON.parse(localStorage.getItem("dailycity:country:v1")).results[14], share: document.querySelector("#endBody .share").textContent, big: document.querySelector("#endBody .score b").textContent }));
+        check(e.S.score === 800 && e.res.q === 1 && e.big === "2/5" && e.share.includes("quick mode") && e.share.includes("★★☆ Found in 2/5 pins") && /#b-mn-14-1-800/.test(await p.evaluate((t) => MXS.beat.upgrade(t), e.share)), "country quick: found on pin 2 scores 800, saved as Quick, shared as Quick", JSON.stringify(e));
+        check(!p.errs.length, "country quick: no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-15", { storage: fresh });
+        await p.waitForFunction(() => window.__WORLD);
+        await p.keyboard.press("ArrowUp"); await p.keyboard.press("ArrowLeft"); await p.waitForTimeout(200);
+        check(!(await p.isVisible("#mxMode")) && (await p.evaluate(() => !__lf.S().r || __lf.S().swipes > 0)), "country quick: once a round has started it can't switch mode");
+        await ctx.close();
+      }
+    }
+    // ---- end mx-country-quick ----
+
+    // ---- mx-review: fixes from the review of 0.15.2 (review/review-fixes-patch.py) ----
+    {
+      const fresh = (k) => ({ [k]: '{"games":{},"results":{},"seenHelp":true}' });
+      const today12 = { clock: new Date("2026-11-25T12:00:00") };
+      // the rules shown match the round: before No. 14 the round's own rules, from No. 14 the new ones
+      for (const [f, key, g] of [["country.html", "dailycity:country:v1", "country"], ["", "dailycity:v2", "city"]]) {
+        for (const day of [12, 14]) {
+          const { ctx, p } = await page(b, U + f + "#day-" + day, { storage: fresh(key) });
+          const r = await p.evaluate(() => ({ note: document.querySelector("#todayRules").hidden ? "" : document.querySelector("#todayRules").textContent, cost: document.querySelector("#costNote").textContent }));
+          const ok = day === 14 ? !r.note && !/^Today:/.test(r.cost) : g === "country" ? r.note.startsWith("Today's round, No. 12, plays by the earlier rules: 8 points a move, and a missed pin costs 150 and opens no clue.") && r.cost === "Today: 8 points a move; a miss costs 150 and opens no clue." : r.note.startsWith("Today's round, No. 12, uses the earlier scoring: no tile bonus, and every missed pin costs 150.");
+          check(ok, `review: ${g} No. ${day} shows the rules of its own round`, JSON.stringify(r));
+          await ctx.close();
+        }
+      }
+      // No. 12 keeps its answer and its rules: a miss costs 150 and opens no clue
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-12", { storage: fresh("dailycity:country:v1") });
+        await p.waitForFunction(() => window.__WORLD);
+        const c0 = await p.evaluate(() => document.querySelectorAll("#clues li").length);
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const r = await p.evaluate(() => ({ name: __lf.P.city, clues: document.querySelectorAll("#clues li").length, pts: document.querySelector("#score").textContent }));
+        check(r.name === "Israel" && r.clues === c0 && r.pts === "850", "review: country No. 12 keeps its answer and old rules (a miss: -150, no clue)", JSON.stringify([c0, r]));
+        // the languages clue says its label once, for eyes and for screen readers
+        for (let k = 1; k < 3; k++) { await p.evaluate((k) => __lf.confirmAt([((__lf.P.lon + 180 - 25 * k) % 360) - 180, -__lf.P.lat]), k); await p.waitForTimeout(1900); }
+        const lang = await p.evaluate(() => [...document.querySelectorAll("#clues .tx")].map((x) => x.textContent).find((t) => /Hebrew/.test(t)));
+        check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
+        // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
+        const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
+        check(sh.share.startsWith("Mystery country No. 12, ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        await ctx.close();
+      }
+      for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
+        const { ctx, p } = await page(b, U + "country.html" + link, { storage: fresh("dailycity:country:v1"), ...today12, wait: 900 });
+        const t = await p.evaluate(() => document.body.innerText);
+        check(/A friend scored 640/.test(t), `review: an old share link still works (${link})`);
+        await ctx.close();
+      }
+      // the next-clue wording is the city's
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-14", { storage: fresh("dailycity:country:v1") });
+        const lines = [await p.textContent("#nextClue")];
+        await p.keyboard.press("ArrowUp"); await p.keyboard.press("ArrowLeft"); await p.keyboard.press("ArrowDown");
+        lines.push(await p.textContent("#nextClue"), await p.textContent("#coachText"));
+        const body = await p.evaluate(() => document.documentElement.innerHTML);
+        check(/^Next clue: make an? \d+$/.test(lines[0]) && lines.some((l) => /make an 8/.test(l)) && /Next clue: make an? \d+\./.test(lines[2]) && !/Next clue at|comes at/.test(body), "review: country says 'Next clue: make an 8', like the city", JSON.stringify(lines));
+        await ctx.close();
+      }
+      // Past countries: today's player can play any earlier number, in its own save
+      {
+        const { ctx, p } = await page(b, U + "country.html", { storage: fresh("dailycity:country:v1"), ...today12, wait: 900 });
+        await p.click("#pastCountries"); await p.waitForTimeout(200);
+        const list = await p.evaluate(() => [...document.querySelectorAll("#mxPastList a")].map((a) => a.getAttribute("href")));
+        check(list.length === 11 && list[0] === "#past-11" && list[10] === "#past-1" && (await p.isVisible("#mxPast")), "review: Past countries lists No. 11 to No. 1", list.join());
+        await p.keyboard.press("Escape"); await p.waitForTimeout(100);
+        check(!(await p.isVisible("#mxPast")), "review: the Past countries list closes with Escape");
+        await p.evaluate(() => (location.hash = "#past-5")); await p.waitForTimeout(1200); await p.waitForFunction(() => window.__WORLD);
+        const p5 = await ctx.newPage(); await p5.goto(U + "country.html#day-5", { waitUntil: "domcontentloaded" }); await p5.waitForFunction(() => window.__lf);
+        const g5 = await p5.evaluate(() => __lf.P.city); await p5.close();
+        const a = await p.evaluate(() => ({ num: document.querySelector("#num").textContent, ban: !document.querySelector("#arcBan").hidden, name: __lf.P.city }));
+        check(a.num === "No. 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
+        await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
+        const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
+        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mystery country No. 5 (archive)"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
+        check(!p.errs.length, "review: Past countries, no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+    }
+    // ---- end mx-review ----
+
+    // ---- mx-teachers: the For teachers page (teachers/index.html, review/teachers-menu-patch.py) ----
+    {
+      for (const width of [375, 1440]) {
+        const { ctx, p } = await page(b, U + "teachers/", { ctx: { viewport: { width, height: 900 }, isMobile: width < 500, hasTouch: width < 500 }, wait: 800 });
+        const r = await p.evaluate(() => ({ h1: document.querySelector("h1").textContent, over: document.documentElement.scrollWidth > innerWidth + 1, links: [...document.querySelectorAll("main a")].map((a) => a.getAttribute("href")) }));
+        check(!p.errs.length && r.h1 === "Mapelago for teachers" && !r.over, `teachers page loads cleanly at ${width} px, no sideways scroll`, p.errs.join("; ") + JSON.stringify(r.over));
+        check(["../how-to-play/", "../privacy/"].every((h) => r.links.includes(h)), `teachers page links to How to play and Privacy (${width} px)`);
+        await ctx.close();
+      }
+      const t = fs.readFileSync(path.join(__dirname, "../teachers/index.html"), "utf8").replace(/<[^>]+>/g, " ");
+      check(["no accounts", "no ads", "no cookies", "Nothing to install", "same puzzles", "projector", "student devices", "offline", "Bigger country?", "Crossings", "Logbook", "Scale", "Borders", "Capitals", "History", "Place"].every((w) => t.includes(w)), "teachers page says what it promised");
+      const pages = ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "offline.html", "about/index.html", "privacy/index.html", "how-to-play/index.html", "games/index.html", "teachers/index.html"];
+      const missing = pages.filter((f) => { const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8"); return (s.match(/href="(?:\.\.?\/)?teachers\/"[^>]*>For teachers<\/a>/g) || []).length !== 1; });
+      check(!missing.length, "every page's menu has For teachers, once", missing.join());
+      check(/<loc>https:\/\/mapelago\.com\/teachers\/<\/loc>/.test(fs.readFileSync(path.join(__dirname, "../sitemap.xml"), "utf8")), "sitemap lists the teachers page");
+    }
+    // ---- end mx-teachers ----
+
     // 8. a game in progress survives midnight
     {
       const { ctx, p } = await page(b, U, { clock: new Date("2026-11-25T23:59:30"), ctx: { timezoneId: "Europe/London" } });
@@ -243,6 +456,9 @@ async function page(b, url, opts = {}) {
       const after = await read();
       check(after.open === before.open + 1, "missed pin opens the next clue", JSON.stringify([before, after]));
       check(after.label && after.label === after.slot, "next-clue label matches the highlighted slot after a missed pin", JSON.stringify(after));
+      const ladder = await p.evaluate(() => [...document.querySelectorAll("#track li")].map((l) => l.textContent));
+      const nums = ladder.filter((x) => /^\d+$/.test(x));
+      check(new Set(nums).size === nums.length && ladder.includes("\u{1F4CD}"), "the clue ladder never repeats a number; a pin marks the clue a miss opened", ladder.join(","));
       await ctx.close();
     }
 
@@ -514,6 +730,182 @@ async function page(b, url, opts = {}) {
       check(/on a shortest route/i.test(await k.p.textContent("#say")) && !k.p.errs.length, "crossings: keyboard guess", await k.p.textContent("#say"));
       await k.ctx.close();
     }
+    // ---- vx: Voyage and Stamps, new question families from the country pack and "Play more" practice (voyage-stamps session) ----
+    {
+      const pack = require("../review/vx-pack.js"), P = {};
+      for (const c of pack.parse()) if (!pack.NOT_IN_GAMES.has(c.raw)) P[c.name] = c;
+      const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+      const code = (c) => c.call.split("/")[0];
+      // every answer in the new families matches data/countries.txt, and no flagged or unverified fact is asked
+      const checkQ = (q, kind, where) => {
+        const right = q.options[q.answer], wrong = q.options.filter((o, i) => i !== q.answer), A = P[right], W = wrong.map((o) => P[o]);
+        let ok = !!A && W.every(Boolean);
+        if (ok && kind === "money") { const m = /^The (.+) is the currency of which country\?$/.exec(q.ask), n = m && norm(m[1]); ok = !!m && norm(A.money).includes(n) && W.every((w) => !norm(w.money).includes(n)) && !pack.NO_MONEY.has(right); }
+        if (ok && kind === "drive") ok = A.drive === "left" && W.every((w) => w.drive === "right") && /drives on the left\?$/.test(q.ask);
+        if (ok && kind === "peak") ok = q.ask === `${A.peak} is the highest point of which country?` && W.every((w) => w.peak !== A.peak) && !pack.NO_PEAK.has(right) && !/unnamed/i.test(A.peak);
+        if (ok && kind === "call") { const c = code(A); ok = q.ask === `Phone numbers in which country start with ${c}?` && Object.values(P).filter((x) => code(x) === c).length === 1; }
+        if (ok && kind === "web") ok = q.ask === `Which country's web addresses end in ${A.web}?` && !pack.NO_WEB.has(A.web);
+        if (ok && kind === "inland") ok = A.coast === "landlocked" && W.every((w) => w.coast !== "landlocked");
+        if (!ok) check(false, `vx: ${where} ${kind} question matches the pack`, JSON.stringify(q));
+        return ok;
+      };
+      const NEWK = ["money", "drive", "peak", "call", "web", "inland"];
+      const { ctx, p } = await page(b, U + "voyage.html#day-14", { wait: 600 });
+      const vq = await p.evaluate(() => { const H = VXH, out = []; for (let d = 14; d <= 120; d++) VXV.deal(H.xa, H.dt, d, H.yn).forEach((q) => out.push([d, q.kind, { ask: q.ask, options: q.options, answer: q.answer }])); return out; });
+      let bad = 0, seen = {};
+      for (const [d, k, q] of vq) if (NEWK.includes(k)) { seen[k] = (seen[k] || 0) + 1; if (!checkQ(q, k, `voyage No. ${d}`)) bad++; }
+      check(!bad && NEWK.every((k) => seen[k] > 10), "vx: Voyage asks every new family, and every answer matches the pack (No. 14 to 120)", JSON.stringify(seen));
+      const first = await p.evaluate(() => { const H = VXH, s = new Set(); for (let d = 14; d <= 400; d++) for (const q of VXV.deal(H.xa, H.dt, d, H.yn)) { const k = q.kind + "|" + q.about; if (s.has(k)) return d; s.add(k); } return 0; });
+      check(first >= 110, `vx: Voyage runs ${first - 14} days from No. 14 before any question repeats`, String(first));
+      await p.goto(U + "stamps.html#day-14"); await p.waitForFunction(() => window.__stamp);
+      const sq = await p.evaluate(() => { const out = [], prev = []; let same = 0, cats = {}; for (let d = 14; d <= 120; d++) { const A = SX.deal(d, () => {}), ks = Object.keys(A); if (ks.join() === prev.join()) same++; prev.splice(0, 9, ...ks); ks.forEach((k) => { cats[k] = (cats[k] || 0) + 1; A[k].forEach((q) => out.push([d, k, q])); }); } return { out, same, cats }; });
+      bad = 0; seen = {};
+      for (const [d, k, q] of sq.out) if (NEWK.includes(k)) { seen[k] = (seen[k] || 0) + 1; if (!checkQ(q, k, `stamps No. ${d}`)) bad++; }
+      check(!bad && ["money", "drive", "peak", "call", "web"].every((k) => seen[k] > 10) && sq.same === 0, "vx: Stamps' wheel changes every day, asks every new family, and every answer matches the pack (No. 14 to 120)", JSON.stringify([seen, sq.same]));
+      const sfirst = await p.evaluate(() => { const s = new Set(); for (let d = 14; d <= 400; d++) { const A = SX.deal(d, () => {}); for (const [k, qs] of Object.entries(A)) for (const q of qs) { const id = k + "|" + q.ask + "|" + q.options[q.answer]; if (s.has(id)) return d; s.add(id); } } return 0; });
+      check(sfirst >= 110, `vx: Stamps runs ${sfirst - 14} days from No. 14 before any question repeats`, String(sfirst));
+      // the start number: No. 13 is dealt exactly as before (golden.json), No. 14 by the new mix
+      const k13 = await p.evaluate(() => { location.hash = "#day-13"; return 1; }).then(() => p.waitForTimeout(800)).then(() => p.evaluate(() => Object.keys(__stamp.S().q).join()));
+      check(k13 === "capital,border,tongue,size,continent,coast", "vx: Stamps No. 13 keeps the original six categories", k13);
+      check(!p.errs.length, "vx: pack checks, no errors", p.errs.join("; "));
+      await ctx.close();
+    }
+    // saves from 0.14.0 and 0.15.2 (recorded on those versions): Voyage and Stamps results, streaks and rounds in progress load unchanged
+    for (const v of ["0.14", "0.15"]) {
+      const save = JSON.parse(fs.readFileSync(path.join(__dirname, `fixtures/voyage-stamps-save-from-v${v}.json`), "utf8"));
+      const { ctx, p } = await page(b, U + "voyage.html#day-11", { storage: save, clock: new Date("2026-11-25T12:00:00"), wait: 800 });
+      const rd = () => p.evaluate(() => ({ pts: document.querySelector("#bigScore").textContent, title: document.querySelector("#doneTitle").textContent, done: !document.querySelector("#done").hidden }));
+      const v11 = await rd();
+      await p.goto(U + "voyage.html?n=12#day-12"); await p.waitForTimeout(600); const v12 = await rd();
+      await p.goto(U + "voyage.html?n=13#day-13"); await p.waitForTimeout(600);
+      const v13 = await p.evaluate(() => ({ choice: !document.querySelector("#choice").hidden, pts: document.querySelector("#vPoints").textContent, streak: MXS.info().find((s) => s.game.id === "voyage").cur }));
+      check(v11.done && v11.pts === "150" && v11.title === "Anchored after island 3." && v12.pts === "150" && v12.title === "Wrecked at island 5." && v13.choice && v13.pts === "100" && v13.streak === 2,
+        `vx: ${v} save: Voyage results, streak and the round in progress load unchanged`, JSON.stringify([v11, v12, v13]));
+      await p.goto(U + "stamps.html?n=11#day-11"); await p.waitForTimeout(600);
+      const s11 = await p.evaluate(() => [document.querySelector("#bigScore").textContent, document.querySelector("#bigSub").textContent]);
+      await p.goto(U + "stamps.html?n=12#day-12"); await p.waitForTimeout(600);
+      const s12 = await p.evaluate(() => [document.querySelector("#bigScore").textContent, document.querySelector("#bigSub").textContent, MXS.info().find((s) => s.game.id === "stamps").cur]);
+      await p.goto(U + "stamps.html?n=13#day-13"); await p.waitForTimeout(600);
+      const s13 = await p.evaluate(() => [__stamp.S().log.length, document.querySelector("#passTitle").textContent]);
+      check(s11.join() === "6 of 6,stamps in 6 spins" && s12.join() === "5 of 6,stamps in 8 spins,2" && s13.join() === "3,1 of 6 stamps",
+        `vx: ${v} save: Stamps results, streak and the round in progress load unchanged`, JSON.stringify([s11, s12, s13]));
+      check(!p.errs.length, `vx: ${v} save: no errors`, p.errs.join("; "));
+      await ctx.close();
+    }
+    // "Play more": endless practice after the daily round, by keyboard, never touching the daily save, streaks, stats or share text
+    for (const [f, key, more, panel, opts, next, back] of [["voyage.html", "dailycity:voyage:v1", "#vxMore", "#vxp", "#vxpOpts", "#vxpNext", "#vxpBack"], ["stamps.html", "dailycity:stamps:v1", "#sxMore", "#sxp", "#sxpOpts", "#sxpNext", "#sxpBack"]]) {
+      const save = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/voyage-stamps-save-from-v0.15.json"), "utf8"));
+      const { ctx, p } = await page(b, U + f + "#day-12", { storage: save, clock: new Date("2026-11-25T12:00:00"), wait: 1200, desktop: true });
+      const snap = () => p.evaluate((k) => ({ save: localStorage.getItem(k), share: document.querySelector("#shareText").textContent, info: JSON.stringify(MXS.info().map((s) => [s.game.id, s.cur, s.best, s.played])) }), key);
+      const before = await snap();
+      check(await p.isVisible(more), `vx: ${f} "Play more" shows under the result`);
+      await p.focus(more); await p.keyboard.press("Enter"); await p.waitForTimeout(200);
+      const st = await p.evaluate(([panel, opts]) => ({ open: !document.querySelector(panel).hidden, doneHidden: document.querySelector("#done").hidden, focus: document.activeElement && document.activeElement.closest(opts) !== null, tag: document.querySelector(panel + " .vxp-tag").textContent }), [panel, opts]);
+      check(st.open && st.doneHidden && st.focus && /Practice/.test(st.tag), `vx: ${f} practice opens, labelled as practice, focus on the first answer`, JSON.stringify(st));
+      const game = f === "voyage.html" ? "VXV" : "SX";
+      let streak = 0;
+      for (let i = 0; i < 7; i++) {
+        const a = await p.evaluate((g) => window[g].practice.state().q.answer, game), pickRight = i !== 4;
+        const target = pickRight ? a : (a + 1) % 4;
+        // keyboard only: Tab from the first option to the chosen one, then Enter
+        await p.focus(`${opts} .opt`); for (let t = 0; t < target; t++) await p.keyboard.press("Tab");
+        await p.keyboard.press("Enter"); await p.waitForTimeout(100);
+        streak = pickRight ? streak + 1 : 0;
+        const r = await p.evaluate(([g, next]) => ({ streak: window[g].practice.state().streak, nextFocused: document.activeElement === document.querySelector(next) }), [game, next]);
+        check(r.streak === streak && r.nextFocused, `vx: ${f} practice question ${i + 1}: streak ${streak}, focus on Next`, JSON.stringify(r));
+        await p.keyboard.press("Enter"); await p.waitForTimeout(100);
+      }
+      const best = await p.evaluate((g) => JSON.parse(localStorage.getItem("dailycity:practice:v1"))[g].best, f === "voyage.html" ? "voyage" : "stamps");
+      check(best === 4, `vx: ${f} best practice streak kept in its own save (4)`, String(best));
+      await p.click(back); await p.waitForTimeout(100);
+      const after = await snap();
+      check(after.save === before.save && after.share === before.share && after.info === before.info && !(await p.isVisible(panel)) && (await p.isVisible("#done")),
+        `vx: ${f} practice never touches the daily save, streaks, stats or share text`, JSON.stringify([before, after]));
+      check(!p.errs.length, `vx: ${f} practice: no errors`, p.errs.join("; "));
+      await ctx.close();
+    }
+    // ---- vx review fixes (hands-on review of live 0.15.2). No. 12 and 13 keep their answers and scoring (golden.json). ----
+    {
+      const pack = require("../review/vx-pack.js"), P = {};
+      for (const c of pack.parse()) if (!pack.NOT_IN_GAMES.has(c.raw)) P[c.name] = c;
+      const fresh375 = { ctx: { viewport: { width: 375, height: 667 } }, wait: 1200 };
+      // Voyage: harbors on the route, the ladder once, the harbor note, the spyglass stays visible as used
+      {
+        const { ctx, p } = await page(b, U + "voyage.html#day-14", fresh375);
+        await p.waitForFunction(() => window.__WORLD);
+        const r = await p.evaluate(() => ({ harbors: [...document.querySelectorAll("#dots li")].map((l, i) => l.classList.contains("harbor") ? i + 1 : 0).filter(Boolean),
+          ladder: [...document.querySelectorAll(".vx-ladder li")].map((l) => l.textContent), note: !document.querySelector("#vxHarborNote").hidden,
+          key: getComputedStyle(document.querySelector(".vx-key")).display !== "none", caption: !!document.querySelector(".vx-topics") }));
+        check(JSON.stringify(r.harbors) === "[3,6]" && r.ladder.join("|") === "50|100|150, harbor|250|350|500, harbor|650|800|900|1,000" && r.note && r.key && r.caption,
+          "vx review: Voyage marks the harbors, shows the points ladder once, explains safe in harbor and the topic chips", JSON.stringify(r));
+        // alt text for the globe (island 1 on No. 14 is a globe question), and for an outline
+        const alt = await p.evaluate(() => { const c = document.querySelector("#show"), q = __voy.S().qs[0]; const H = VXH; let shape = null;
+          for (let d = 14; d < 40 && !shape; d++) shape = VXV.deal(H.xa, H.dt, d, H.yn).find((x) => x.kind === "shape") || null;
+          const cv = document.createElement("canvas"); VXV.alt(shape, cv, H.xa);
+          return { kind: q.kind, role: c.getAttribute("role"), label: c.getAttribute("aria-label"), shape: cv.getAttribute("aria-label"), answer: shape.options[shape.answer] }; });
+        check(alt.kind === "mark" && alt.role === "img" && /^A globe with a mark at about \d+° (north|south), \d+° (east|west)\.$/.test(alt.label) && /^The outline of a country in [A-Za-z ]+, .+ square kilometres\.$/.test(alt.shape) && !alt.shape.includes(alt.answer),
+          "vx review: the globe and outline pictures have a text alternative that doesn't give the answer away", JSON.stringify(alt));
+        const a0 = await p.evaluate(() => __voy.S().qs[0].answer);
+        await p.click("#spy"); await p.waitForTimeout(200);
+        const s1 = await p.evaluate(() => [document.querySelector("#spy").hidden, document.querySelector("#spy").disabled, document.querySelector("#spy").textContent, document.querySelectorAll("#opts .opt:not([hidden])").length]);
+        await p.click(`#opts .opt[data-k="${a0}"]`); await p.waitForTimeout(1500); await p.click("#sail"); await p.waitForTimeout(300);
+        const s2 = await p.evaluate(() => [document.querySelector("#spy").hidden, document.querySelector("#spy").disabled, document.querySelector("#spy").textContent, document.querySelector("#say").textContent]);
+        check(JSON.stringify(s1) === '[false,true,"Spyglass used on this island",2]' && JSON.stringify(s2) === '[false,true,"Spyglass used (one a day)","Worth 100 points."]', "vx review: a used spyglass stays visible as used", JSON.stringify([s1, s2]));
+        check(!p.errs.length, "vx review: Voyage, no errors", p.errs.join("; "));
+        // all ten islands: the share line fits, and 1,000 has its comma
+        const all = await p.evaluate(() => { const s = __voy.S(); return JSON.stringify({ results: { 14: { n: 14, at: 9, picks: s.qs.map((q) => q.answer), spy: -1, end: "home" } }, game: null }); });
+        await p.evaluate((v) => localStorage.setItem("dailycity:voyage:v1", v), all); await p.reload(); await p.waitForTimeout(800);
+        const h = await p.evaluate(() => [document.querySelector("#bigScore").textContent, document.querySelector("#shareText").textContent]);
+        check(h[0] === "1,000" && /🐢 1,000 points/u.test(h[1]) && /I made it home: all ten islands/.test(h[1]) && !/drop anchor too soon/.test(h[1]), "vx review: sailing all ten islands shares a fitting line, with 1,000 written with a comma", JSON.stringify(h));
+        await ctx.close();
+      }
+      // Voyage from No. 14: islands get harder as they're worth more, and city names read as in English
+      {
+        const { ctx, p } = await page(b, U + "voyage.html#day-14", { wait: 600 });
+        const r = await p.evaluate(() => { const H = VXH, bad = [], odd = []; for (let d = 14; d <= 200; d++) { const qs = VXV.deal(H.xa, H.dt, d, H.yn);
+          qs.forEach((q, i) => { if (i && q.ease < qs[i - 1].ease) bad.push(d); q.options.forEach((o) => { if (/[āīūēō’]|Nizhniy|Ürümqi|İzmir/.test(o)) odd.push(o); }); }); } return { bad, odd }; });
+        check(!r.bad.length && !r.odd.length, "vx review: Voyage islands never get easier as their value rises, and city names read as in English (No. 14 to 200)", JSON.stringify(r).slice(0, 300));
+        await ctx.close();
+      }
+      // Stamps: size questions say "by area"; explanations add a checked fact; one answer message; labelled share grid; the wheel explains itself
+      {
+        const { ctx, p } = await page(b, U + "stamps.html#day-14", { ...fresh375, ctx: { viewport: { width: 375, height: 667 }, reducedMotion: "reduce" } });
+        const r = await p.evaluate(() => { const out = []; for (let d = 14; d <= 80; d++) { const A = SX.explainAll(SX.deal(d, () => {}), d); for (const [k, qs] of Object.entries(A)) qs.forEach((q) => out.push([d, k, q])); } return out; });
+        let bad = [];
+        for (const [d, k, q] of r) {
+          const right = q.options[q.answer];
+          if (k === "size" && q.ask !== "Which of these countries is the largest by area?") bad.push([d, k, q.ask]);
+          if (k === "border" || k === "continent") continue;
+          if (k === "size") { if (!/^(The )?.+ is the largest by area: about [\d.]+ times the size of .+, the next largest of the four\.$/.test(q.about)) bad.push([d, k, q.about]); continue; }
+          const facts = q.about.split(/(?<=\.) /).slice(1).join(" ");
+          if (!facts) { bad.push([d, k, q.about]); continue; }
+          let m, ok = true;
+          if ((m = /^The currency of (?:the )?(.+) is the (.+)\.$/.exec(facts))) ok = P[m[1]] && pack.parse && P[m[1]].money.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").includes(m[2].normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase());
+          else if ((m = /^The highest point of (?:the )?(.+) is (.+), ([\d,]+) m\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].peak === m[2] && P[m[1]].height === +m[3].replace(/,/g, "");
+          else if ((m = /^Phone numbers in (?:the )?(.+) start with (.+)\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].call.split("/")[0] === m[2];
+          else if ((m = /^Web addresses in (?:the )?(.+) end in (.+)\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].web === m[2];
+          else if ((m = /^(?:The )?(.+) drives on the left\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].drive === "left";
+          else if ((m = /^(?:The )?(.+) has no sea coast\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].coast === "landlocked";
+          else if (!/^The capital of (?:the )?.+ is .+\.$/.test(facts)) ok = false;
+          if (!ok) bad.push([d, k, q.about]);
+        }
+        check(!bad.length, "vx review: Stamps size questions say by area, and every explanation adds a fact that matches the pack (No. 14 to 80)", JSON.stringify(bad.slice(0, 4)));
+        check(await p.isVisible("#vxWheelNote") && /stop it early.*skips categories.*picks that one for you/.test(await p.textContent("#vxWheelNote")), "vx review: the wheel says it can be tapped to stop, skips stamped categories and picks the last one");
+        await p.click("#spin"); await p.waitForTimeout(300);
+        const a = await p.evaluate(() => __stamp.S().cur.answer); await p.click(`#qopts .opt[data-i="${a}"]`); await p.waitForTimeout(200);
+        const m = await p.evaluate(() => ({ shown: [...document.querySelectorAll("p")].filter((x) => x.offsetParent && /is stamped/.test(x.textContent)).length, before: getComputedStyle(document.querySelector("#qsay"), "::before").content, note: !!document.querySelector("#vxWheelNote").offsetParent }));
+        check(m.shown === 1 && m.before === "none" && !m.note, "vx review: Stamps shows the answer message once, without stray marks", JSON.stringify(m));
+        // finish the page and check the share grid names each category
+        for (let i = 0; i < 14; i++) { if (await p.isVisible("#qnext")) { await p.click("#qnext"); await p.waitForTimeout(300); } if (!(await p.isVisible("#qopts .opt:not([disabled])"))) break; const x = await p.evaluate(() => __stamp.S().cur.answer); await p.click(`#qopts .opt[data-i="${x}"]`); await p.waitForTimeout(200); }
+        if (await p.isVisible("#qnext")) { await p.click("#qnext"); await p.waitForTimeout(300); }
+        const sh = await p.evaluate(() => ({ text: document.querySelector("#shareText").textContent, cats: Object.keys(__stamp.S().q).map((k) => SX.labels[k]) }));
+        check(sh.cats.length === 6 && sh.cats.every((c) => new RegExp("(✅|🟨|❌) " + c + "(  |\\n)").test(sh.text + "  ")), "vx review: the Stamps share grid labels each square", JSON.stringify(sh));
+        check(!p.errs.length, "vx review: Stamps, no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+    }
+
+    // ---- vx end ----
   } finally { await b.close(); srv.close(); }
   console.log(`\n${passed} passed, ${failed.length} failed`);
   failed.forEach((f) => console.log("  FAIL " + f));
