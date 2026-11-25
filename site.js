@@ -2,7 +2,7 @@
 // 1. A damaged save never stops a game from starting.
 // 2. Dialogs behave like dialogs: focus moves in and stays in, Escape closes only the top one
 //    (through its own close button, so the game saves what it needs), and focus goes back after.
-// 3. Streaks across all seven games: freezes, a note when a streak is waiting, one stats panel, a save code.
+// 3. Streaks across all the games: freezes, a note when a streak is waiting, one stats panel, a save code.
 (function () {
   "use strict";
 
@@ -93,7 +93,7 @@
     }
   }, true);
 
-  // ---------- 3. streaks across all seven games (5.1, 5.2, 5.3, 5.4) ----------
+  // ---------- 3. streaks across all the games (5.1, 5.2, 5.3, 5.4) ----------
   var GAMES = [
     { id: "city", name: "Mystery city", key: "dailycity:v2", url: "./", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
     { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "The same, with a country to find." },
@@ -101,7 +101,8 @@
     { id: "bigcountry", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
     { id: "voyage", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
     { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html", icon: "\u{1F30A}", about: "Name the least obvious right answer." },
-    { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." }
+    { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." },
+    { id: "crossings", name: "Crossings", key: "dailycity:crossings:v1", url: "crossings.html", icon: "\u{1F9ED}", about: "Name the countries between two others, border by border." }
   ];
   var FREEZE_EVERY = 7, FREEZE_MAX = 2;
   function today() {
@@ -162,7 +163,6 @@
     + '.mx-card .ic{grid-row:span 3;font-size:26px;line-height:1.1}.mx-card b{font-size:16px;line-height:1.2}.mx-card .ab{font-size:13px;line-height:1.3;color:var(--ink-2,#3d4a52)}'
     + '.mx-card .st{font-size:12.5px;font-weight:800;color:var(--accent-ink,#b4237d)}.mx-card.done a{background:var(--tint,#dcedf5)}.mx-card.here a{outline:3px solid var(--accent,#b4237d);outline-offset:-3px}'
     + '.mx-next{margin:10px 0 0;font-size:15px;font-weight:600}.mx-next a{font-weight:800;color:inherit}'
-    + '@media (min-width:700px){.mx-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}'
     + '.mx-passport{margin:18px 0 0}.mx-passport h3{margin:0 0 4px;font-size:17px}.mx-passport p{margin:0 0 8px;font-size:14px}.mx-passport ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.mx-passport li{display:grid;justify-items:center;gap:2px;padding:6px 2px;border:1.5px dashed var(--line,#000);border-radius:8px;font-size:12px}.mx-passport b{font-size:11px;letter-spacing:-1px;color:var(--accent-ink,#b4237d);word-break:break-all;text-align:center;line-height:1.1}'
     + '.mx-past{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}.mx-past li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1.5px solid var(--rule,#c9e1ec);border-radius:8px}.mx-past a{font-weight:800;color:inherit}';
 
@@ -298,7 +298,7 @@
     marks.forEach(function (m, i) {
       var px = 110 + i * (size + 12), py = 680;
       x.lineWidth = 5; x.strokeStyle = "#000"; x.setLineDash([]);
-      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8" }[m];
+      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8", "\u{1F4A1}": "#f3d98a" }[m];
       if (m === "❌") { x.setLineDash([12, 8]); x.strokeRect(px, py, size, size); x.setLineDash([]); x.beginPath(); x.moveTo(px + size * .28, py + size * .28); x.lineTo(px + size * .72, py + size * .72); x.moveTo(px + size * .72, py + size * .28); x.lineTo(px + size * .28, py + size * .72); x.stroke(); return; }
       x.fillStyle = fill || "#ffffff"; x.fillRect(px, py, size, size); x.strokeRect(px, py, size, size);
       if (m === "✅") { x.strokeStyle = "#fff"; x.lineWidth = 8; x.beginPath(); x.moveTo(px + size * .25, py + size * .52); x.lineTo(px + size * .43, py + size * .7); x.lineTo(px + size * .76, py + size * .3); x.stroke(); }
@@ -351,7 +351,8 @@
         id === "city" || id === "country" ? (r.score != null ? r.score : "✓") :
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
         id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
-        id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") : "✓";
+        id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") :
+        id === "crossings" ? (r.score != null ? r.score : "✓") : "✓";
       parts.push(s.game.icon + " " + v);
     });
     return { n: parts.length, text: "Mapelago today, No. " + t + " \u{1F422}\n" + parts.join(" · ") + "\nmapelago.com/games/" };
@@ -366,6 +367,7 @@
     if (me.id === "bigger" || me.id === "bigcountry") return /\b10\/10\b/.test(line);
     if (me.id === "stamps") return /\b6 of 6\b/.test(line);
     if (me.id === "fathoms") return /7,000 of 7,000/.test(line);
+    if (me.id === "crossings") return /\u{1F422} 1000 points/u.test(line);
     return false;
   }
   function confetti(box) {
@@ -426,7 +428,7 @@
       var g = s.game, isMe = me && g.id === me.id;
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
       return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
-    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">All seven done today. See you tomorrow.</p>');
+    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">Every game done today. See you tomorrow.</p>');
     var tt = todayText();
     if (tt.n >= 2) {
       var share = document.createElement("p"); share.className = "mx-next";
@@ -444,7 +446,7 @@
 
   // 18.5 a friend's challenge link (#c-<number>-<score>) on the games that had none
   var UNIT = { bigger: function (n) { return n + " of 10"; }, bigcountry: function (n) { return n + " of 10"; }, voyage: function (n) { return n + " points"; },
-    fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; } };
+    fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; }, crossings: function (n) { return n + " points"; } };
   function challenge(app) {
     var me = here(), m = /^#c-(\d+)-(\d+)$/.exec(location.hash);
     if (!me || !m || !UNIT[me.id]) return;

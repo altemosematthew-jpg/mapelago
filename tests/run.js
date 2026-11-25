@@ -5,7 +5,7 @@ const fs = require("fs"), path = require("path");
 const start = require("./server.js");
 const UPDATE = process.argv.includes("--update-golden");
 const GOLDEN = path.join(__dirname, "golden.json");
-const GAMES = { city: "", country: "country.html", bigger: "bigger.html", biggercountry: "bigger-country.html", voyage: "voyage.html", fathoms: "fathoms.html", stamps: "stamps.html" };
+const GAMES = { city: "", country: "country.html", bigger: "bigger.html", biggercountry: "bigger-country.html", voyage: "voyage.html", fathoms: "fathoms.html", stamps: "stamps.html", crossings: "crossings.html" };
 const DAYS = [...Array(30).keys()].map((i) => i + 1).concat([60, 100, 200, 365]);
 const PHONE = { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true };
 const DESKTOP = { viewport: { width: 1280, height: 800 } };
@@ -21,6 +21,7 @@ const PUZZLE = {
   voyage: () => __voy.S().qs.map((q) => q.ask + " = " + q.options[q.answer]),
   fathoms: () => __fath.S().prompts.map((p) => p.ask + " = " + p.answers.join(",")),
   stamps: () => Object.entries(__stamp.S().q).map(([k, qs]) => k + ": " + qs.map((q) => q.ask + " = " + q.options[q.answer]).join(" / ")),
+  crossings: () => { const P = __cross.P(); return __cross.name(P.from) + " > " + __cross.name(P.to) + " par " + P.par; },
 };
 
 async function page(b, url, opts = {}) {
@@ -40,7 +41,7 @@ async function page(b, url, opts = {}) {
   const b = await chromium.launch();
   try {
     // 1. every page loads cleanly at phone and desktop size
-    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
+    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
       for (const desktop of [false, true]) {
         const { ctx, p } = await page(b, U + f, { desktop, wait: 800 });
         check(!p.errs.length, `loads cleanly: /${f} ${desktop ? "desktop" : "phone"}`, p.errs.join("; "));
@@ -50,7 +51,7 @@ async function page(b, url, opts = {}) {
     // 1b. a release bumps the cache and every script address together, so returning players get it on their next visit
     {
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8"), v = /const C = "mapelago-([^"]+)"/.exec(sw)[1];
-      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "shapes.js", "sw.js"]) {
+      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "shapes.js", "sw.js"]) {
         const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
         const tags = [...s.matchAll(/["'](?:site|extras|shapes|world|copy)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
         check(tags.length > 0 && tags.every((t) => t === "?v=" + v), `script addresses carry the cache version ${v}: ${f}`, tags.join(" "));
@@ -65,7 +66,7 @@ async function page(b, url, opts = {}) {
       now[g] = {};
       for (const d of DAYS) {
         await p.goto(`${U}${file}?t=${d}#day-${d}`, { waitUntil: "domcontentloaded" });
-        await p.waitForFunction((g) => (g === "city" || g === "country" ? window.__lf : g.startsWith("bigger") ? window.__big : window[{ voyage: "__voy", fathoms: "__fath", stamps: "__stamp" }[g]]), g);
+        await p.waitForFunction((g) => (g === "city" || g === "country" ? window.__lf : g.startsWith("bigger") ? window.__big : window[{ voyage: "__voy", fathoms: "__fath", stamps: "__stamp", crossings: "__cross" }[g]]), g);
         now[g][d] = await p.evaluate(PUZZLE[g]);
       }
     }
@@ -111,7 +112,7 @@ async function page(b, url, opts = {}) {
     }
 
     // 6. a damaged save never stops a game
-    for (const [f, k] of [["fathoms.html", "dailycity:fathoms:v1"], ["stamps.html", "dailycity:stamps:v1"], ["", "dailycity:v2"]]) {
+    for (const [f, k] of [["fathoms.html", "dailycity:fathoms:v1"], ["stamps.html", "dailycity:stamps:v1"], ["crossings.html", "dailycity:crossings:v1"], ["", "dailycity:v2"]]) {
       const { ctx, p } = await page(b, U + f, { storage: { [k]: '{"results":null}' }, wait: 800 });
       check(!p.errs.length, `damaged save repaired: /${f}`, p.errs.join("; "));
       await ctx.close();
@@ -135,6 +136,31 @@ async function page(b, url, opts = {}) {
       await p.clock.runFor(60000); await p.waitForTimeout(300);
       check(before === (await p.textContent("#num")) && (await p.locator("#newDay").isVisible()), "city: an unfinished round survives midnight with a banner");
       await ctx.close();
+    }
+    // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
+    {
+      const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
+      const r = await p.evaluate(() => {
+        const X = __cross, P = X.P(), sizes = X.lists.map((l) => l.length);
+        // walk a shortest route
+        let x = P.from; const route = [];
+        while (X.dist[x][P.to] > 1) { x = X.C.map((_, i) => i).find((n) => X.dist[x][n] === 1 && X.dist[n][P.to] === X.dist[x][P.to] - 1); route.push(x); }
+        route.forEach((i) => X.guess(i));
+        const save = JSON.parse(localStorage.getItem("dailycity:crossings:v1"));
+        // no pair repeats within two years of daily puzzles
+        const seen = new Set(); let dup = 0;
+        for (let d = 1; d <= 730; d++) { const q = X.daily(d), k = Math.min(q.from, q.to) + "-" + Math.max(q.from, q.to); if (seen.has(k)) dup++; seen.add(k); }
+        return { sizes, score: save.results[20] && save.results[20].score, done: !document.querySelector("#done").hidden, dup, share: document.querySelector("#shareText").textContent };
+      });
+      check(r.score === 1000 && r.done, "crossings: a shortest route scores 1000", JSON.stringify(r));
+      check(Math.min(...r.sizes) >= 105 && r.dup === 0, "crossings: every weekday has two years of pairs, none repeat", JSON.stringify([r.sizes, r.dup]));
+      check(/Crossings No\. 20 \u{1F422} 1000 points/u.test(r.share), "crossings: share text");
+      await ctx.close();
+      const k = await page(b, U + "crossings.html#day-21", { desktop: true, wait: 800 });
+      const target = await k.p.evaluate(() => { const X = __cross, P = X.P(); return X.C.map((_, i) => i).filter((i) => i !== P.from && i !== P.to && X.heat(i) === 0).map((i) => X.name(i))[0]; });
+      await k.p.focus("#cin"); await k.p.keyboard.type(target); await k.p.keyboard.press("Enter"); await k.p.waitForTimeout(200);
+      check(/on a shortest route/i.test(await k.p.textContent("#say")) && !k.p.errs.length, "crossings: keyboard guess", await k.p.textContent("#say"));
+      await k.ctx.close();
     }
   } finally { await b.close(); srv.close(); }
   console.log(`\n${passed} passed, ${failed.length} failed`);
