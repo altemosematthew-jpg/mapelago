@@ -96,8 +96,8 @@ async function open(b, url, opts = {}) {
 const setSlider = (p, v) => p.evaluate((v) => { const s = document.querySelector("#slider"); s.value = v; s.dispatchEvent(new Event("input")); }, v);
 
 // A round by touch. `wrong` lists the questions to miss; sliders miss on the first try then land 3 years off.
-async function playTouch(p, wrong) {
-  for (let i = 0; i < 8; i++) {
+async function playTouch(p, wrong, from = 0) {
+  for (let i = from; i < 8; i++) {
     const q = await p.evaluate((i) => ({ k: __hist.QS[i].k, r: __hist.right(i), lo: __hist.QS[i].lo, hi: __hist.QS[i].hi, n: __hist.QS[i].opts && __hist.QS[i].opts.length }), i);
     if (q.k === "t" || q.k === "g") {
       const ans = q.r.g[0];
@@ -197,7 +197,7 @@ function spoilerFree(share, day) {
     // 8. a round left halfway picks up where it was; a damaged save never stops the game
     {
       const { ctx, p } = await open(b, `${U}history.html#day-30`);
-      await playTouch(p, []).catch(() => {});   // plays all 8; then check a fresh half-played save below
+      await playTouch(p, []);
       await ctx.close();
       const ansFor = (it) => it[0] === "o" ? { p: [0, 1, 2] } : it[0] === "t" ? { g: [F[it[1]][0]] } : it[0] === "g" ? { g: [Math.abs(F[it[1]][0] - F[it[2]][0])] } : { p: 0 };
       const half = JSON.stringify({ v: 1, results: {}, games: { 30: { a: D.D[29].slice(0, 2).map(ansFor) } } });
@@ -208,6 +208,23 @@ function spoilerFree(share, day) {
       const d = await open(b, U + "history.html", { storage: { "dailycity:history:v1": '{"results":null,"games":7}' }, wait: 700 });
       check(!d.p.errs.length && (await d.p.textContent("#qask")).length > 5, "history: damaged save repaired", d.p.errs.join("; "));
       await d.ctx.close();
+    }
+    // 8b. a round in progress survives midnight: same number, same answers; the end card then says a new one is ready
+    {
+      const ctx = await b.newContext({ ...PHONE, timezoneId: "Europe/London" }); const p = await ctx.newPage(); const errs = [];
+      p.on("pageerror", (e) => errs.push(e.message));
+      await p.clock.install({ time: new Date("2026-11-25T23:59:30") });
+      await p.goto(U + "history.html"); await p.waitForTimeout(400);
+      const before = await p.evaluate(() => ({ num: document.querySelector("#num").textContent, day: __hist.day }));
+      const r0 = await p.evaluate(() => __hist.right(0));
+      await p.tap(`#qbody .opt[data-k="${r0.p}"]`);
+      await p.clock.runFor(60000); await p.waitForTimeout(200);
+      const after = await p.evaluate(() => ({ num: document.querySelector("#num").textContent, day: __hist.day, done0: __hist.judge(0).done, saved: !!JSON.parse(localStorage.getItem("dailycity:history:v1")).games[__hist.day] }));
+      await p.tap("#qnext");
+      await playTouch(p, [], 1);
+      const fresh = await p.evaluate(() => !document.querySelector("#done").hidden && !document.querySelector("#fresh").hidden);
+      check(before.num === after.num && before.day === after.day && after.done0 && after.saved && fresh && !errs.length, "history: a round in progress survives midnight, then says a new one is ready", JSON.stringify({ before, after, fresh, errs }));
+      await ctx.close();
     }
     // 9. other pages link to Logbook
     {

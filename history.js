@@ -124,7 +124,7 @@
     $("#dots").innerHTML = QS.map(function (q, i) {
       var j = judge(i);
       var label = "Question " + (i + 1) + ": " + (j.done ? (j.right ? "right" : "not right") + ", " + j.pts + " points" : i === c ? "now" : "to come");
-      return '<li class="' + (j.done ? "done" : i === c ? "now" : "") + '" aria-label="' + label + '"><span aria-hidden="true">' + (j.done ? j.mark : "") + "</span></li>";
+      return '<li class="' + (j.done ? "done" : i === c ? "now" : "") + '"><span aria-hidden="true">' + (j.done ? j.mark : "") + '</span><span class="sr">' + label + "</span></li>";
     }).join("");
     var on = shown >= 0 ? shown : c;
     $("#qn").textContent = c < QS.length || shown < QS.length - 1 ? "Question " + (on + 1) + " of " + QS.length : "All " + QS.length + " answered";
