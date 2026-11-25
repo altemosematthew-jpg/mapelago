@@ -307,6 +307,12 @@ async function page(b, url, opts = {}) {
         check(r.score === 800 && !/points\./.test(live.replace(/\d+ km/, "")) && r.sum === "1,000 − 1 missed pin × 200 = 800" && r.share.includes("★★☆ Found in 2/5 pins"), "scoring: Quick mode still scores 1000/800/..., with stars and a sum", JSON.stringify([r, live]));
         await ctx.close();
       }
+      // the rules page and each game's own explainer describe the new scoring
+      {
+        const htp = fs.readFileSync(path.join(__dirname, "../how-to-play/index.html"), "utf8"), cj = JSON.parse(fs.readFileSync(path.join(__dirname, "../copy/copy.json"), "utf8"));
+        check(/From No\. 14 \(27 November 2026\)/.test(htp) && /adds half its value/.test(htp) && /50 points if it lands within 250 km/.test(htp), "scoring: how-to-play explains the new scoring and when it starts");
+        check(["city", "country"].every((g) => /50 to 150 points/.test(cj.games[g].explainer) && cj.games[g].howto.some((x) => /adds half its value/.test(x))), "scoring: both games' copy explains it");
+      }
     }
     // ---- end mx-scoring ----
 

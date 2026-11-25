@@ -118,3 +118,9 @@ Changes to shared files, all marked `mx-scoring`:
   checks in the mx-country-rules block now expect the new scoring on No. 14.
 - Also in this round: `hints.html` ("Each move costs 6 points") and `about/index.html` (the lede names
   the eight games), each a one-line change.
+- `copy/copy.json` (city and country explainer and steps: the tile bonus, misses at 50 to 150, the
+  stars), made by `review/scoring-copy-patch.py`, which also runs `copy/apply.py` (index.html,
+  country.html and games/index.html foot copy). If copy.json conflicts, take your side and run
+  `python3 review/country-copy-patch.py` then `python3 review/scoring-copy-patch.py`.
+- `how-to-play/index.html`: a block `<!-- mx-scoring ... -->` after the first Scoring paragraph, and
+  one sentence in the Mystery country block (misses at 50 to 150, the tile bonus).
