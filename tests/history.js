@@ -310,6 +310,29 @@ function spoilerFree(share, day) {
       check(/640|points/.test(await p.textContent('#pastList li:last-child')) || /points/.test(await p.evaluate(() => [...document.querySelectorAll("#pastList li")].find((li) => /No\. 3 /.test(li.textContent)).textContent)), "history: the archive list shows the score of a played day");
       await ctx.close();
     }
+    // 14. two slider tries close together: their labels don't overlap; the archive links line up
+    {
+      let found = false;
+      for (let day = 1; day <= 40 && !found; day++) {
+        const { ctx, p } = await open(b, `${U}history.html#day-${day}`, { wait: 300 });
+        const i = await p.evaluate(() => __hist.QS.findIndex((q) => q.k === "t" && q.ans + 25 <= q.hi));
+        if (i >= 0) {
+          found = true;
+          await p.evaluate((i) => __hist.show(i), i);
+          const ans = await p.evaluate((i) => __hist.QS[i].ans, i);
+          await setSlider(p, ans + 24); await p.tap("#qnext"); await p.waitForTimeout(60);
+          await setSlider(p, ans + 22); await p.tap("#qnext"); await p.waitForTimeout(120);
+          const o = await p.evaluate(() => { const r = [...document.querySelectorAll(".tlpin:not(.ans)")].map((e) => e.getBoundingClientRect()); return r.length === 2 ? Math.min(r[0].right, r[1].right) - Math.max(r[0].left, r[1].left) : 99; });
+          check(o <= 0, "history: two close slider tries keep their labels apart", `overlap ${o}px on No. ${day}`);
+        }
+        await ctx.close();
+      }
+      check(found, "history: found a slider question to test close tries on");
+      const { ctx, p } = await open(b, `${U}history.html#past-1`);
+      const dy = await p.evaluate(() => { const a = document.querySelector("#pastBtn").getBoundingClientRect(), c = document.querySelector("#todayLink").getBoundingClientRect(); return Math.abs((a.top + a.bottom) / 2 - (c.top + c.bottom) / 2); });
+      check(dy < 3, "history: on a past logbook, the archive links line up", `${dy}px`);
+      await ctx.close();
+    }
     // 9. other pages link to Logbook
     {
       const { ctx, p } = await open(b, U + "stamps.html");

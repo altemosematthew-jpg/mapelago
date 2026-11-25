@@ -439,6 +439,8 @@ a.act{text-decoration:none}
 .tlpin{position:absolute;top:0;transform:translateX(-50%);display:grid;justify-items:center;font-size:12px;font-weight:800;line-height:1.1;white-space:nowrap;color:var(--ink)}
 .tlpin::before{content:"";width:3px;height:10px;background:currentColor;border-radius:2px;margin-bottom:2px}
 .tlpin.ans{top:20px;color:var(--accent-ink)}
+.tlpin.l{transform:translateX(calc(-100% + 1.5px));justify-items:end}
+.tlpin.r{transform:translateX(-1.5px);justify-items:start}
 .tlpin.ans::before{height:6px}
 .ends{display:flex;justify-content:space-between;margin:0 2px;font-size:13px;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums}
 .nudge{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 0}
@@ -457,7 +459,8 @@ a.act{text-decoration:none}
 #recap .f{display:block}
 #recap .f b{font-variant-numeric:tabular-nums}
 #recap .src{display:block;margin-top:3px;font-size:13px;color:var(--ink-2)}
-.morebar{display:flex;flex-wrap:wrap;gap:4px 16px;margin:12px 0 0}
+.morebar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin:12px 0 0}
+a.linkbtn{display:inline-flex;align-items:center;font-weight:800;text-decoration:underline;text-underline-offset:3px}
 .morebar .act{margin:0}
 .linkbtn{min-height:44px;color:var(--ground-ink)}
 .panel .linkbtn{color:var(--ink)}

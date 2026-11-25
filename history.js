@@ -231,7 +231,12 @@
     var q = QS[i], el = $("#tlpins"); if (!el) return;
     var g = (mine.a[i] && mine.a[i].g) || [], j = judge(i), out = "";
     var at = function (v) { return Math.max(4, Math.min(96, (v - q.lo) / (q.hi - q.lo) * 100)).toFixed(2) + "%"; };
-    g.forEach(function (v, k) { out += '<span class="tlpin" style="left:' + at(v) + '">' + (k ? "2nd" : "1st") + "</span>"; });
+    // Two tries close together: their labels lean apart (the earlier to the left), so "1st" and "2nd" never overlap.
+    var close = g.length === 2 && Math.abs(parseFloat(at(g[0])) - parseFloat(at(g[1]))) < 12;
+    g.forEach(function (v, k) {
+      var side = close ? (g[k] < g[1 - k] || (g[k] === g[1 - k] && k === 0) ? " l" : " r") : "";
+      out += '<span class="tlpin' + side + '" style="left:' + at(v) + '">' + (k ? "2nd" : "1st") + "</span>";
+    });
     if (j.done) out += '<span class="tlpin ans" style="left:' + at(q.ans) + '">' + (q.k === "g" ? yrs(q.ans) : q.ans) + "</span>";
     el.innerHTML = out;
   }
