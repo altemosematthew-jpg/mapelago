@@ -33,7 +33,7 @@ else:
 for need in ["function ma(a)", "var M=", "R=q(M,k)", "v=a=>X(M,R[a],h[a])", "O=()=>", "function wa()", "function ha()", "function la(a)", "var E=a=>", "function P(a,n=16)", "Ma=[[10,"]:
     if need not in s:
         sys.exit("the game script no longer has " + need + ": check the hook by hand before committing")
-for block in ["/* bigcountry: the round bar", "/* bigcountry: the round, the true-scale reveal", 'id="bcReveal"', 'id="bcStrip"', "extras.js?v="]:
+for block in ["/* bigcountry: the round bar", "/* bigcountry: the round, the true-scale reveal", 'id="bcReveal"', 'id="bcStrip"', "function extras()"]:
     if block not in s:
         sys.exit("missing this branch's block: " + block)
 path.write_text(s, encoding="utf-8")

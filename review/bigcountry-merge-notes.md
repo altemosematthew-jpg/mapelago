@@ -24,10 +24,10 @@ Nothing here changes the daily pairs, the scoring or the save. No release versio
   release 0.14.0 (commit 78bf19c) and 0.15.0 (commit 70be1eb) in a browser.
 
 ### Not changed
-site.js, site.css, sw.js, copy/copy.json, copy.js, shapes.js, world.js. `extras.js?v=0.15.0` is
-already in the service worker's list, so Bigger country? still works offline with no change there.
-When you bump the release, the new `<script src="extras.js?v=...">` line in bigger-country.html needs
-the new version like every other `?v=` (the existing version test catches it if missed).
+site.js, site.css, sw.js, copy/copy.json, copy.js, shapes.js, world.js. Bigger country? loads
+extras.js from its own script with the same `?v=` as the page's site.js tag, so a release bump needs no
+change for it, and the copy the service worker already saves (`extras.js?v=...` is in its list) is the
+one used offline.
 
 ## bigger-country.html
 
@@ -35,7 +35,7 @@ Everything this branch adds sits on its own lines between `bigcountry` markers:
 - a style block (`/* bigcountry: the round bar ... */` to `/* /bigcountry */`) at the end of the `<style>`,
 - an empty `<nav class="tools">` in the header (extras.js puts the sound button there),
 - the round bar and reveal panel inside `#play`, the stats and strip inside `#done`,
-- `<script src="extras.js?v=0.15.0">` and one readable `<script>` (`MxBC`) before the game script.
+- one readable `<script>` (`MxBC`) right after `</footer>`, away from the `?v=` lines.
 
 The game script line itself changes in one spot only: its last statements, which started the round,
 now hand the round to `MxBC()` (and keep the old start as the fallback). If your branch also changes
