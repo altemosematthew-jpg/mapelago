@@ -154,10 +154,10 @@ async function page(b, url, opts = {}) {
         check(s0.clues === 1 && s0.S.tiles.every((t) => t.v === 2), "country: a new round starts with two 2-tiles and one clue", JSON.stringify([s0.clues, s0.S.tiles.map((t) => t.v)]));
         for (const k of ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"]) await p.keyboard.press(k);
         const s1 = await read(p), m = s1.S.swipes;
-        check(m > 0 && s1.pts === String(1000 - 6 * m), "country: each move costs 6", JSON.stringify([m, s1.pts]));
+        check(m > 0 && s1.pts === String(1000 - 6 * m + (s1.S.maxTile >= 4 ? Math.min(s1.S.maxTile, 64) - 2 : 0)), "country: each move costs 6 (plus the tile bonus from No. 14)", JSON.stringify([m, s1.pts]));
         await p.evaluate(far); await p.waitForTimeout(1500);
         const s2 = await read(p);
-        check(s2.pts === String(1000 - 6 * m - 150), "country: a missed pin costs 150", s2.pts);
+        check(s2.pts === String(+s1.pts - 150), "country: a far missed pin costs 150", s2.pts);
         check(s2.clues === s1.clues + 1 && /Free clue: /.test(s2.live), "country: a missed pin opens the next clue", JSON.stringify([s1.clues, s2.clues, s2.live]));
         check(s2.label && s2.label === s2.slot, "country: next-clue label matches the highlighted slot after a free clue", JSON.stringify([s2.label, s2.slot]));
         check(/^(\S+ )?\S+( and (warmer|colder))?: Missed by [\d,]+ km\. The country is to the (north|south|east|west|northeast|northwest|southeast|southwest)\./u.test(s2.live), "country: the miss line gives heat, distance and direction", s2.live);
@@ -174,7 +174,7 @@ async function page(b, url, opts = {}) {
         check(Math.abs(r.sq[0] - 111.19) < 0.05 && r.sq[1][0] === 5 && r.sq[1][1] === 0, "country: distance to the middle of a long edge, not its corners", JSON.stringify(r.sq));
         check(r.name === "Mexico" && r.az.d > 125 && r.az.d < 136 && Math.abs(r.az.b - 180) < 10, "country: a pin in Arizona is about 130 km north of Mexico's nearest border", JSON.stringify(r));
         for (let i = 0; i < 3; i++) { await p.evaluate(() => __lf.confirmAt([-110, 32.5])); await p.waitForTimeout(1900); }
-        const s = await p.evaluate(() => __lf.S()), want = Math.round(700 * (1 - Math.sqrt((r => r - 50)(s.pins[0].d) / 2450)));
+        const s = await p.evaluate(() => __lf.S()), want = Math.round((1000 - 2 * 50) * (1 - Math.sqrt((r => r - 50)(s.pins[0].d) / 2450)));
         check(s.done && !s.won && s.score === want, `country: three near misses score on the softer last-pin curve (${want})`, JSON.stringify([s.score, s.pins.map((x) => x.d)]));
         await ctx.close();
       }
@@ -223,6 +223,92 @@ async function page(b, url, opts = {}) {
       check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Eight games a day/.test(ab), "about page: names all eight daily games");
     }
     // ---- end mx-country-rules ----
+
+    // ---- mx-scoring: the new scoring for both mystery games from No. 14 (review/scoring.md, review/scoring-patch.py) ----
+    {
+      const G = [["", "dailycity:v2", "city"], ["country.html", "dailycity:country:v1", "country"]];
+      const fresh = (k, extra) => Object.assign({ [k]: '{"games":{},"results":{},"seenHelp":true}' }, extra || {});
+      const sm = (d) => (d <= 250 ? 50 : d >= 2000 ? 150 : Math.round((50 + (d - 250) / 17.5) / 10) * 10), sb = (m) => (m >= 4 ? Math.min(m, 64) - 2 : 0);
+      for (const [f, key, g] of G) {
+        // the start number, and the parts of the score
+        for (const [day, want] of [[13, 0], [14, 1]]) {
+          const { ctx, p } = await page(b, U + f + "#day-" + day, { storage: fresh(key) });
+          const s = await p.evaluate(() => __lf.sc.s());
+          check((s || 0) === want, `${g} scoring: a new No. ${day} round ${want ? "scores the new way" : "keeps the old scoring"}`, String(s));
+          if (day === 14) {
+            const r = await p.evaluate(() => [[100, 250, 1000, 1999, 2000, 9000].map(__lf.sc.sm), [2, 4, 16, 64, 128].map(__lf.sc.sb), [1000, 850, 849, 650, 649, 400, 399].map(__lf.sc.stars)]);
+            check(JSON.stringify(r) === JSON.stringify([[50, 50, 90, 150, 150, 150], [0, 2, 14, 62, 62], [3, 3, 2, 2, 1, 1, 0]]), `${g} scoring: miss cost by distance, tile bonus, stars`, JSON.stringify(r));
+          }
+          await ctx.close();
+        }
+        // a round: moves, a tile bonus, a near miss, then a find; the end card's sum adds up and the share has the stars
+        {
+          const { ctx, p } = await page(b, U + f + "#day-14", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          const notes = [];
+          for (const d of ["up", "left", "down", "right", "up", "left", "down", "right"]) { await p.evaluate((d) => __lf.move(d), d); notes.push(await p.textContent("#live")); }
+          const a = await p.evaluate(() => ({ m: __lf.S().swipes, mt: __lf.S().maxTile, pts: +document.querySelector("#score").textContent }));
+          check(a.pts === 1000 - 6 * a.m + sb(a.mt), `${g} scoring: points = 1000 - 6 x moves + tile bonus`, JSON.stringify(a));
+          check(notes.some((t) => /New clue: .*\. \+8 points for making a 16\./.test(t)) && notes.some((t) => /\+4 points for making an 8\./.test(t)), `${g} scoring: the new-clue note says what the tile earned`, notes.join(" / "));
+          const far = await p.evaluate(() => { const h = __lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat]; return [h[0] + 6, h[1] + 3]; });
+          await p.evaluate((x) => __lf.confirmAt(x), far); await p.waitForTimeout(1500);
+          const miss = await p.evaluate(() => ({ d: __lf.S().pins[0].d, live: document.querySelector("#live").textContent, pts: +document.querySelector("#score").textContent }));
+          check(miss.d > 50 && miss.pts === a.pts - sm(miss.d) && miss.live.includes(`−${sm(miss.d)} points.`), `${g} scoring: a miss ${Math.round(miss.d)} km off costs ${sm(miss.d)} and says so`, JSON.stringify(miss));
+          await p.evaluate(() => __lf.confirmAt(__lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+          const e = await p.evaluate(() => ({ score: __lf.S().score, sum: (document.querySelector(".mx-sum") || {}).textContent, grade: (document.querySelector(".mx-grade [aria-hidden]") || {}).textContent, share: document.querySelector("#endBody .share").textContent, link: MXS.beat.upgrade(document.querySelector("#endBody .share").textContent) }));
+          const want = a.pts - sm(miss.d), stars = want >= 850 ? 3 : want >= 650 ? 2 : want >= 400 ? 1 : 0;
+          check(e.score === want && e.sum && e.sum.endsWith(`= ${want}`) && e.sum.includes(`${a.m} moves × 6`) && e.sum.includes(`+ ${sb(a.mt)} tile bonus`) && e.sum.includes(`1 missed pin (${sm(miss.d)})`), `${g} scoring: the end card's sum adds up (${e.sum})`, JSON.stringify(e));
+          const st = "★".repeat(stars) + "☆".repeat(3 - stars);
+          check(e.grade === st && e.share.includes(st + " " + want + " points"), `${g} scoring: stars on the end card and in the copied result`, JSON.stringify([e.grade, e.share.split("\n")[1]]));
+          check(new RegExp(`#b-m${g === "city" ? "c" : "n"}-14-0-${want}`).test(e.link), `${g} scoring: beat-my-score link still carries the score`, e.link.split("\n").pop());
+          check(!p.errs.length, `${g} scoring: no errors`, p.errs.join("; "));
+          await ctx.close();
+        }
+        // a perfect round still scores the most; a lost round's sum adds up too
+        {
+          const { ctx, p } = await page(b, U + f + "#day-15", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          await p.evaluate(() => __lf.confirmAt(__lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+          const r = await p.evaluate(() => [__lf.S().score, (document.querySelector(".mx-grade [aria-hidden]") || {}).textContent]);
+          check(r[0] === 1000 && r[1] === "★★★", `${g} scoring: a find with no moves scores 1000 and three stars`, JSON.stringify(r));
+          await ctx.close();
+        }
+        {
+          const { ctx, p } = await page(b, U + f + "#day-16", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          for (const d of ["up", "left", "down"]) await p.evaluate((d) => __lf.move(d), d);
+          for (const k of [1, 2, 3]) { await p.evaluate((k) => __lf.confirmAt([((__lf.P.lon + 180 - 25 * k) % 360) - 180, -__lf.P.lat]), k); await p.waitForTimeout(1900); }
+          const r = await p.evaluate(() => ({ S: __lf.S(), sum: (document.querySelector(".mx-sum") || {}).textContent }));
+          check(r.S.done && !r.S.won && r.sum && /Not found, so × \d+% for your closest pin/.test(r.sum) && r.sum.endsWith(`= ${r.S.score}`), `${g} scoring: a lost round's sum adds up (${r.sum})`, JSON.stringify(r.sum));
+          await ctx.close();
+        }
+      }
+      // a move never pays for itself: over 40 days of play the score stays under 1000 after every move
+      {
+        const ctx = await b.newContext(PHONE), p = await ctx.newPage(); let bad = [], n = 0;
+        for (let day = 14; day < 54; day++) {
+          await p.goto(`${U}?s=${day}#day-${day}`, { waitUntil: "domcontentloaded" });
+          await p.evaluate(() => localStorage.setItem("dailycity:v2", '{"games":{},"results":{},"seenHelp":true}'));
+          await p.reload({ waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__lf);
+          const r = await p.evaluate(() => { const bad = []; for (let i = 0; i < 90; i++) { if (__lf.S().storm) break; let moved = false; for (const d of ["down", "left", "right", "up"]) { const b0 = __lf.S().swipes; __lf.move(d); if (__lf.S().swipes > b0) { moved = true; break; } } if (!moved) break; const pts = +document.querySelector("#score").textContent; if (pts >= 1000) bad.push(pts); } return [bad, __lf.S().swipes]; });
+          bad = bad.concat(r[0]); n += r[1];
+        }
+        check(!bad.length && n > 1000, `scoring: no move ever brings the score back to 1000 (${n} moves over 40 days)`, bad.join());
+        await ctx.close();
+      }
+      // Quick mode keeps its own scoring, with stars and a sum
+      {
+        const { ctx, p } = await page(b, U + "#day-14", { storage: fresh("dailycity:v2", { "dailycity:mode": "quick" }) });
+        await p.waitForFunction(() => window.__WORLD);
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const live = await p.textContent("#live");
+        await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+        const r = await p.evaluate(() => ({ score: __lf.S().score, sum: (document.querySelector(".mx-sum") || {}).textContent, share: document.querySelector("#endBody .share").textContent }));
+        check(r.score === 800 && !/points\./.test(live.replace(/\d+ km/, "")) && r.sum === "1,000 − 1 missed pin × 200 = 800" && r.share.includes("★★☆ Found in 2/5 pins"), "scoring: Quick mode still scores 1000/800/..., with stars and a sum", JSON.stringify([r, live]));
+        await ctx.close();
+      }
+    }
+    // ---- end mx-scoring ----
 
     // 8. a game in progress survives midnight
     {

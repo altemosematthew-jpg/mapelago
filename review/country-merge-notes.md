@@ -99,3 +99,22 @@ Not touched: `sw.js`, the `?v=` strings, `golden.json` (the country schedule is 
 
 - `hints.html` (Mystery city's hints page) says "Each move costs 8 points"; Mystery city's moves cost 6
   since rules version 2. It's in the minified page text, so I left it for the city's owner.
+
+## Round 2: the new scoring (both mystery games, from No. 14)
+
+Design and sources: `review/scoring.md`. Made by `review/scoring-patch.py`, which edits index.html and
+country.html (run it after `review/country-rules-patch.py`). If either page conflicts in a merge:
+
+    python3 review/country-rules-patch.py --take-ours country.html
+    python3 review/scoring-patch.py --take-ours
+
+Changes to shared files, all marked `mx-scoring`:
+- `index.html`: a block of `MxS...` functions on their own lines just before `/* Quick mode (asked for
+  by players)`; on the game script line, the edits the script lists (the score `Jt`, the move's lock
+  check, `Rv` stamps `P.s`, the miss line, the new-clue note, the cost line, the end card, the share
+  text, the test hooks); a CSS block after `/* /mx-find */`; one hidden `<li class="mx-s2">` in the
+  rules sheet.
+- `tests/run.js`: a block `// ---- mx-scoring ... ----` after the mx-country-rules block. Three
+  checks in the mx-country-rules block now expect the new scoring on No. 14.
+- Also in this round: `hints.html` ("Each move costs 6 points") and `about/index.html` (the lede names
+  the eight games), each a one-line change.
