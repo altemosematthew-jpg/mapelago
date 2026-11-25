@@ -65,7 +65,7 @@ PAGES = {
         # the rules shown for the round
         ("function MxCost(){", "function MxCost(){MxTodayRules();"),
         ("`Each move costs ${en.moveCost} points. Each missed pin costs ${en.missCost}${en.r2?\" and opens the next clue\":\"\"}.`",
-         "(en.r2?`Each move costs ${en.moveCost} points. Each missed pin costs ${en.missCost} and opens the next clue.`:`Today: ${en.moveCost} points a move; a miss costs ${en.missCost} and opens no clue.`)"),
+         "(en.r2?`Each move costs ${en.moveCost} points. Each missed pin costs ${en.missCost} and opens the next clue.`:`${MxArc?\"This round\":\"Today\"}: ${en.moveCost} points a move; a miss costs ${en.missCost} and opens no clue.`)"),
         # the languages clue without its label
         ("case\"speak\":return`${e.length>1?\"Languages\":\"Language\"}: ${Yi(e.slice(0,4).map(z))}`;", "case\"speak\":return Yi(e.slice(0,4).map(z));"),
         # one name
@@ -84,6 +84,8 @@ PAGES = {
         ("X>=14&&C.q==null&&", "!MxArc&&X>=14&&C.q==null&&"),
         ("m.hidden=!(X>=14&&", "m.hidden=!(!MxArc&&X>=14&&"),
         ("function MxMode(q){if(C.moves||C.pins.length||C.done||X<14)return;", "function MxMode(q){if(C.moves||C.pins.length||C.done||X<14||MxArc)return;"),
+        # from the play-through: an archive round doesn't show the welcome sheet again to someone who has seen it
+        ("hn.seenHelp||(A(\"#helpModal\").hidden=!1);", "hn.seenHelp||MxArc&&(Da(an.saveKey)||{}).seenHelp||(A(\"#helpModal\").hidden=!1);"),
     ],
 }
 

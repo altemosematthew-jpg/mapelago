@@ -416,6 +416,17 @@ async function page(b, url, opts = {}) {
         check(!p.errs.length, "review: Past countries, no errors", p.errs.join("; "));
         await ctx.close();
       }
+      // from the play-through: an archive round says "This round", and a returning player doesn't get the welcome sheet again
+      {
+        const seen = { "dailycity:country:v1": '{"games":{},"results":{},"seenHelp":true}' };
+        const { ctx, p } = await page(b, U + "country.html#past-3", { storage: seen, clock: new Date("2026-11-25T12:00:00"), wait: 900 });
+        const r = await p.evaluate(() => ({ help: !document.querySelector("#helpModal").hidden, cost: document.querySelector("#costNote").textContent, num: document.querySelector("#num").textContent }));
+        check(!r.help && r.cost === "This round: 8 points a move; a miss costs 150 and opens no clue." && r.num === "No. 3 \u00b7 archive", "review: an archive round doesn't repeat the welcome sheet and says 'This round'", JSON.stringify(r));
+        await ctx.close();
+        const n = await page(b, U + "country.html#past-3", { storage: { "dailycity:country:v1": '{"games":{},"results":{},"seenHelp":false}' }, clock: new Date("2026-11-25T12:00:00"), wait: 900 });
+        check(await n.p.evaluate(() => !document.querySelector("#helpModal").hidden), "review: a brand-new player still gets the welcome sheet in the archive");
+        await n.ctx.close();
+      }
     }
     // ---- end mx-review ----
 
