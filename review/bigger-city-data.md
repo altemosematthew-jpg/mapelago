@@ -100,6 +100,7 @@ Pool from No. 14: 671 cities (730 less 59). Checked figures used: 374. A day is 
 - Basrah (Iraq) is now Basra
 - Mazār-e Sharīf (Afghanistan) is now Mazar-i-Sharif
 - Ḩamāh (Syria) is now Hama
+- Al Jubayl (Saudi Arabia) is now Jubail
 - Ar Rayyān (Qatar) is now Al Rayyan
 - Al Ḩudaydah (Yemen) is now Hodeidah
 - Ta‘izz (Yemen) is now Taiz
@@ -133,6 +134,16 @@ Pool from No. 14: 671 cities (730 less 59). Checked figures used: 374. A day is 
 - Solāpur (India) is now Solapur
 - Ta’if (Saudi Arabia) is now Taif
 - İzmir (Türkiye) is now Izmir
+- Homyel' (Belarus) is now Gomel
+- Bucheon-si (South Korea) is now Bucheon
+- Goyang-si (South Korea) is now Goyang
+- Seongnam-si (South Korea) is now Seongnam
+- Uijeongbu-si (South Korea) is now Uijeongbu
+- Ajman City (United Arab Emirates) is now Ajman
+- Changshu City (China) is now Changshu
+- Wenshan City (China) is now Wenshan
+- Nizhniy Novgorod (Russia) is now Nizhny Novgorod
+- Naberezhnyye Chelny (Russia) is now Naberezhnye Chelny
 
 ## Figures that say what they count
 

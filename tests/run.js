@@ -487,6 +487,10 @@ async function page(b, url, opts = {}) {
         await p.waitForTimeout(300); await p.tap("#pick0"); await p.waitForSelector("#bcNext", { state: "visible" });
         await p.waitForTimeout(5000);
         check(await p.isVisible("#bcNext") && (await p.evaluate(() => !document.querySelector("#bcNext i"))), "bigcountry: the reveal stays until the player taps Next");
+        // the "Same scale" label has a strip of its own: no shape reaches under it (Haiti v Gabon put Gabon there)
+        const tops = await p.evaluate(() => {
+          const s = document.querySelector("#bcReveal .bcs"); return [...s.querySelectorAll(".sh")].map((g) => g.getBBox().y); });
+        check(tops.every((y) => y >= 20), "bigcountry: shapes stay clear of the Same scale label", JSON.stringify(tops));
         await p.tap("#bcNext"); await p.waitForTimeout(200);
         check((await p.evaluate(() => document.activeElement.id)) === "pick0" && (await p.textContent("#bcRound")) === "Round 2 of 10", "bigcountry: after Next, focus is on the new pair");
         for (let i = 1; i < 10; i++) { await p.waitForTimeout(320); await p.tap("#pick1"); await p.waitForSelector("#bcNext", { state: "visible" }); await p.waitForTimeout(320); await p.tap("#bcNext"); }
@@ -520,6 +524,9 @@ async function page(b, url, opts = {}) {
         check(pool.length === 671 && gone.every((n) => !by(n)), "bigger: from No. 14, 671 cities; districts, unchecked places and old names are gone", JSON.stringify(gone.filter((n) => by(n))));
         check(JSON.stringify(by("Gothenburg")) === '["Gothenburg","Sweden",' + JSON.stringify(by("Gothenburg")[2]) + ',""]' && by("Prayagraj")[2] === 1112544 && by("Astana")[2] === 1638233 && by("Pimpri-Chinchwad") && by("Belagavi") && by("Tanta") && by("Oujda") && by("Nishinomiya"),
           "bigger: renamed cities and common English names (Gothenburg, Prayagraj, Astana, Belagavi, Pimpri-Chinchwad, Tanta...)");
+        const old = ["Homyel'", "Goyang-si", "Bucheon-si", "Seongnam-si", "Uijeongbu-si", "Ajman City", "Changshu City", "Wenshan City", "Al Jubayl", "Nizhniy Novgorod", "Naberezhnyye Chelny"];
+        check(old.every((n) => !by(n)) && ["Gomel", "Goyang", "Bucheon", "Seongnam", "Uijeongbu", "Ajman", "Changshu", "Wenshan", "Jubail", "Nizhny Novgorod", "Naberezhnye Chelny"].every((n) => by(n)) && pool.every((c) => !/'$|-si$/.test(c[0])),
+          "bigger: English names, not transliterations (Gomel, Goyang, Nizhny Novgorod...)", JSON.stringify(old.filter((n) => by(n))));
         check(by("Kathmandu")[2] === 845767 && by("Tegucigalpa")[2] === 1199136 && by("Beijing")[3] === "2020" && by("Buenos Aires")[3] === "city proper, 2022" && by("Tokyo")[3] === "23 wards, 2025",
           "bigger: checked figures with their year, and the unit where it matters", JSON.stringify([by("Kathmandu"), by("Buenos Aires"), by("Tokyo")]));
         const bad = [];

@@ -868,7 +868,7 @@ a.act{text-decoration:none}
   // cs: the two countries; W x H: the drawing; opts.bar: a scale bar; opts.pad: room around each shape
   function pairSVG(cs, W, H, opts) {
     opts = opts || {};
-    var pad = opts.pad == null ? 10 : opts.pad, half = W / 2, room = [half - 2 * pad, H - 2 * pad - (opts.bar ? 16 : 0)];
+    var pad = opts.pad == null ? 10 : opts.pad, top = opts.top || 0, half = W / 2, room = [half - 2 * pad, H - 2 * pad - top - (opts.bar ? 16 : 0)];
     var os = cs.map(function (c) { return outline(c.cid); });
     var big = cs[0].pop >= cs[1].pop ? 0 : 1, real = os[0] && os[1];
     var s, kmW, kmH;
@@ -879,7 +879,7 @@ a.act{text-decoration:none}
       var rMax = Math.sqrt(Math.max(cs[0].pop, cs[1].pop) / Math.PI);
       s = Math.min(room[0], room[1]) / 2 / rMax;
     }
-    var cyAll = pad + room[1] / 2, g = "";
+    var cyAll = pad + top + room[1] / 2, g = "";
     cs.forEach(function (c, i) {
       var o = os[i], cx = half * i + half / 2, cls = "sh" + (i === big ? " big" : ""), d = "--d:" + (i === big ? 0 : 0.18) + "s";
       var w = real ? (o.box[2] - o.box[0]) * s : 2 * Math.sqrt(c.pop / Math.PI) * s, h = real ? (o.box[3] - o.box[1]) * s : w;
@@ -1096,7 +1096,7 @@ a.act{text-decoration:none}
         + (withNext ? '<button class="act bcnext" id="bcNext" type="button"><span>' + (i === N - 1 ? "See your score" : "Next pair") + "</span></button>" : "");
     }
     function draw(svg, anim) {
-      var i = Number(svg.getAttribute("data-i")), d = pairSVG(pair(i), 340, 176, { bar: true, pad: 12 });
+      var i = Number(svg.getAttribute("data-i")), d = pairSVG(pair(i), 340, 176, { bar: true, pad: 12, top: 12 });
       svg.innerHTML = d.svg; svg.setAttribute("data-real", d.real ? "1" : "0");
       svg.classList.toggle("anim", !!anim);
       if (!d.real) world(function () { draw(svg, false); });
@@ -1202,7 +1202,7 @@ a.act{text-decoration:none}
     if (window.MxPractice) MxPractice({ id: "bigcountry", pool: clean, unit: km2, esc: G.esc, icon: G.icon,
       words: function (big, small) { var r = ratio(big, small); return { pre: " is ", n: r.n, mid: r.mid, say: r.say }; },
       stage: function (svg, two, anim) {
-        var paint = function () { var d = pairSVG(two, 340, 176, { bar: true, pad: 12 }); svg.innerHTML = d.svg; svg.classList.toggle("anim", !!anim); return d.real; };
+        var paint = function () { var d = pairSVG(two, 340, 176, { bar: true, pad: 12, top: 12 }); svg.innerHTML = d.svg; svg.classList.toggle("anim", !!anim); return d.real; };
         if (!paint()) world(function () { anim = false; paint(); });
       },
       solo: function (c) { return soloSVG(c.cid, 112, 78); } });
