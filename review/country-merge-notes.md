@@ -22,6 +22,9 @@ copy byte for byte, except the explainer at the foot, which `copy/apply.py` writ
 is safe to run twice (an edit already there is skipped) and stops without writing anything if an
 anchor has changed.
 
+Every function the script adds is named `Mx...` and sits on its own lines, after the comment
+`/* mx-country-rules ... */`.
+
 ### copy/copy.json
 
 Your branch rewrote every line of copy.json (one-space indent), so git can't line up this branch's four
@@ -40,9 +43,6 @@ Throwaway merge of this branch into yours at 2169659 ("Keep review/, tests/, cop
 the published site"): country.html and copy/copy.json were the only conflicts, the two recipes above
 resolved them (your quick-mode and Crossings text kept), and the whole test suite passed, 385 checks.
 Nothing else conflicted.
-
-Every function the script adds is named `Mx...` and sits on its own lines, after the comment
-`/* mx-country-rules ... */`.
 
 ## Rules version and start number
 
@@ -74,8 +74,7 @@ Every function the script adds is named `Mx...` and sits on its own lines, after
 
 - `copy/copy.json`: country `explainer` and `howto`, and the `city` and `country` lines under
   `home.cards` ("Guess the city: ..." / "Guess the country: ..."). Written in your branch's format
-  (`json.dumps(indent=1)`, no newline at the end) so git can merge it line by line; then
-  `python3 copy/apply.py` was run, which changed only:
+  (`json.dumps(indent=1)`, no newline at the end); then `python3 copy/apply.py` was run, which changed only:
   - `copy.js`: the `city` and `country` card lines.
   - `games/index.html`: the Mystery country section's paragraph and steps.
   - `country.html`: its explainer block at the foot (between `<!-- copy:start -->` and `<!-- copy:end -->`).
