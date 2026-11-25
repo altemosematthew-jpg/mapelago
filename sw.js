@@ -5,6 +5,7 @@
 const C = "mapelago-0.15.12";
 const PRE = [
   "./", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html",
+  "dead-reckoning.html", "dead-reckoning.js?v=0.15.12",
   "offline.html", "analytics.js?v=0.15.12", "copy.js?v=0.15.12", "history.js?v=0.15.12", "history-data.js?v=0.15.12", "site.js?v=0.15.12", "extras.js?v=0.15.12", "shapes.js?v=0.15.12", "world.js?v=0.15.12", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
   "fonts/overpass-latin-400-normal.woff2", "fonts/overpass-latin-600-normal.woff2",
   "fonts/overpass-latin-800-normal.woff2", "fonts/overpass-latin-800-italic.woff2"

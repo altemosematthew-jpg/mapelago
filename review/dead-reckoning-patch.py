@@ -105,9 +105,9 @@ def nav(s):
 
 
 for f in ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html",
-          "crossings.html", "history.html", "404.html", "offline.html", "about/index.html", "how-to-play/index.html", "games/index.html", "privacy/index.html", "hints.html"]:
+          "crossings.html", "history.html", "404.html", "offline.html", "about/index.html", "how-to-play/index.html", "games/index.html", "privacy/index.html", "teachers/index.html", "hints.html"]:
     if not os.path.exists(path(f)): continue
-    if f in ("games/index.html", "privacy/index.html", "hints.html") and not re.search(r'^[ \t]*<a href="[^"]*crossings\.html">', read(f), re.M): continue
+    if f in ("games/index.html", "privacy/index.html", "teachers/index.html", "hints.html") and not re.search(r'^[ \t]*<a href="[^"]*(crossings|history)\.html">', read(f), re.M): continue
     edit(f, 'dead-reckoning.html">Dead Reckoning</a>', nav, "Daily games menu link")
 
 # ---------- 3. service worker and sitemap ----------
@@ -215,6 +215,19 @@ def every_save(s):
 
 if re.search(r'\[(?:"dailycity:[\w:]+"(?:, )?){6,}\]', read("tests/run.js")):
     edit("tests/run.js", lambda s: every_save(s) == s, every_save, "every-game save lists include Dead Reckoning")
+
+
+# For teachers (0.15.12): a row in "Which game for which lesson", after the last game's row
+def teachers(s):
+    rows = list(re.finditer(r'\n  <tr><td><a href="\.\./(?:history|crossings)\.html">[^\n]*</tr>', s))
+    if not rows: return None
+    m = next((x for x in rows if "history.html" in x.group(0)), rows[-1])
+    row = '\n  <tr><td><a href="../dead-reckoning.html">Dead Reckoning</a></td><td>Five places, a few minutes</td><td>Place: finding cities and landmarks on a blank map, and judging distance and direction</td></tr>'
+    return s[: m.end()] + row + s[m.end():]
+
+
+if os.path.exists(path("teachers/index.html")):
+    edit("teachers/index.html", '<td><a href="../dead-reckoning.html">', teachers, "lesson table row")
 
 print("done" if not problems else "finished with problems in: " + ", ".join(sorted(set(problems))))
 sys.exit(1 if problems else 0)
