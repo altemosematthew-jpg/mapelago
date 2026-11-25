@@ -165,6 +165,7 @@
     + '.mx-next{margin:10px 0 0;font-size:15px;font-weight:600}.mx-next a{font-weight:800;color:inherit}'
     + '.mx-passport{margin:18px 0 0}.mx-passport h3{margin:0 0 4px;font-size:17px}.mx-passport p{margin:0 0 8px;font-size:14px}.mx-passport ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.mx-passport li{display:grid;justify-items:center;gap:2px;padding:6px 2px;border:1.5px dashed var(--line,#000);border-radius:8px;font-size:12px}.mx-passport b{font-size:11px;letter-spacing:-1px;color:var(--accent-ink,#b4237d);word-break:break-all;text-align:center;line-height:1.1}'
     + '.mx-vs{margin:0 0 10px;padding:10px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000)}.mx-vs-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center}.mx-vs-cols span{display:block;font-size:13px;font-weight:600}.mx-vs-cols b{font-size:34px;font-weight:800;font-style:var(--num-style,normal)}.mx-vs p{margin:6px 0 0;font-weight:700;text-align:center}.mx-vs .mx-link{display:block;margin:0 auto}'
+    + '.mx-ver{margin:14px 0 0;font-size:12px;color:var(--ink-2,#3d4a52)}'
     + '.mx-past{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}.mx-past li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1.5px solid var(--rule,#c9e1ec);border-radius:8px}.mx-past a{font-weight:800;color:inherit}';
 
   // Addresses come with or without ".html" (mapelago.com/bigger and the previews' /bigger work too), and the home
@@ -374,7 +375,7 @@
     if (me.id === "bigger" || me.id === "bigcountry") return /\b10\/10\b/.test(line);
     if (me.id === "stamps") return /\b6 of 6\b/.test(line);
     if (me.id === "fathoms") return /7,000 of 7,000/.test(line);
-    if (me.id === "crossings") return /\u{1F422} 1000 points/u.test(line);
+    if (me.id === "crossings") return /\u{1F422} 1,?000 points/u.test(line);
     return false;
   }
   function confetti(box) {
@@ -429,13 +430,13 @@
     var me = here(), all = info();
     var sec = document.createElement("section");
     sec.className = "mx-today"; sec.setAttribute("aria-labelledby", "mxTodayH");
-    var next = all.filter(function (s) { return !s.doneToday && (!me || s.game.id !== me.id); })[0];
+    var next = nextUp(all, me), meLeft = me && all.some(function (s) { return s.game.id === me.id && !s.doneToday; });
     var homeCopy = me && me.id === "city" && window.MXCOPY && MXCOPY.home;
     sec.innerHTML = (homeCopy ? '<h2 id="mxTodayH">' + esc(homeCopy.headline) + '</h2><p class="mx-next">' + esc(homeCopy.line) + "</p>" : '<h2 id="mxTodayH">Today\'s games</h2>') + '<ul class="mx-cards">' + all.map(function (s) {
       var g = s.game, isMe = me && g.id === me.id;
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
       return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
-    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">Every game done today. See you tomorrow.</p>');
+    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">' + (meLeft ? "This is the last game left today." : "Every game done today. See you tomorrow.") + '</p>');
     var tt = todayText();
     if (tt.n >= 2) {
       var share = document.createElement("p"); share.className = "mx-next";
@@ -484,6 +485,27 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", logbookLink); else logbookLink();
   // ---------- Logbook: end ----------
 
+  // The first game not yet played today, in menu order, leaving out the one you're on.
+  function nextUp(all, me) { return (all || info()).filter(function (s) { return !s.doneToday && (!me || s.game.id !== me.id); })[0]; }
+  // Every result's "play next" button goes to the first unplayed game (or to All games once everything is done).
+  function nextButtons() {
+    var me = here(); if (!me) return;
+    var n = nextUp(null, me), btns = document.querySelectorAll("#done .row2 a.act.plain, #endBody a.act.plain.also");
+    Array.prototype.forEach.call(btns, function (a) {
+      var href = n ? n.game.url : "games/", text = n ? "Play " + n.game.name + " next" : "All done today: see every game";
+      if (a.getAttribute("href") !== href) a.setAttribute("href", href);
+      if (a.textContent !== text) a.textContent = text;
+    });
+  }
+  // A small release line in each game's footer, so a bug report can say which version it was.
+  function versionLine() {
+    var f = document.querySelector(".app > footer"), sc = document.querySelector('script[src*="site.js?v="]');
+    if (!f || !sc || f.querySelector(".mx-ver")) return;
+    var v = (/[?&]v=([\w.-]+)/.exec(sc.getAttribute("src")) || [])[1]; if (!v) return;
+    var p = document.createElement("p"); p.className = "mx-ver"; p.textContent = "Mapelago release " + v;
+    f.appendChild(p);
+  }
+
   // Beat my score. A shared result carries #b-<game>-<puzzle>-<mode>-<score>: a two-letter game code and
   // whole numbers only, nothing about the person and never the answer. Everything read from the address is
   // checked against fixed lists and ranges, and only ever written into the page as text.
@@ -498,7 +520,7 @@
   function gameByPage(page) { return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(page); })[0]; }
   function said(id, mode, n) {
     if (mode === 1) return n >= 200 && n % 200 === 0 ? "found it on pin " + ((1000 - n) / 200 + 1) + " of 5 in Quick mode" : "didn't find it in 5 pins in Quick mode";
-    if (id === "city" || id === "country" || id === "crossings") return n + " points";
+    if (id === "city" || id === "country" || id === "crossings") return Number(n).toLocaleString("en-US") + " points";
     if (UNIT[id]) return UNIT[id](n);
     return String(n);
   }
@@ -584,7 +606,7 @@
     new MutationObserver(function () {
       if (pending) return; pending = true;
       setTimeout(function () {
-        pending = false; upgradeShown();
+        pending = false; upgradeShown(); nextButtons();
         var done = document.getElementById("done"), end = document.getElementById("endModal");
         if (done && !done.hidden) compareInto(done, document.getElementById("shareText"));
         if (end && !end.hidden) compareInto(document.getElementById("endBody"), document.querySelector("#endBody .share"));
@@ -604,7 +626,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown();
+    watchEnd(); upgradeShown(); nextButtons(); versionLine();
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');
