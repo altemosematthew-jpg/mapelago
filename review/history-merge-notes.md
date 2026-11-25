@@ -59,7 +59,7 @@ Not changed: `extras.js`, `site.css`, `index.html` and the other game pages, `sw
 1. **Offline cache (`sw.js`).** Add these to `PRE` in the release that ships Logbook:
    `"history.html", "history.js?v=<version>", "history-data.js?v=<version>"`.
    Until then, Logbook still works offline after a first visit to it: once the service worker is in charge, the page fetches its own three files again so the worker keeps them. `tests/history.js` checks this, and checks that it fails without that step. With `PRE` updated, a first visit to any game will be enough.
-2. **Release version.** When you bump the version, include the four `?v=` addresses in `history.html` (`copy.js`, `site.js`, `history-data.js`, `history.js`). `tests/run.js` section 1b doesn't check `history.html` yet. To make it check: add `"history.html"` to its file list and `history|history-data` to its script regex.
+2. **Release version.** Your branch is now at 0.15.2, so after the merge `history.html` still says `?v=0.14.0` while every other page says `?v=0.15.2`. It works (the server ignores the query), but change those four to the current version in the merge commit. Then, at every future release, include the four `?v=` addresses in `history.html` (`copy.js`, `site.js`, `history-data.js`, `history.js`). `tests/run.js` section 1b doesn't check `history.html` yet. To make it check: add `"history.html"` to its file list and `history|history-data` to its script regex.
 3. **Beat-my-score links.** Your `BEAT` table needs `history: { code: "lb", max: 800, modes: 1 }`. Until then Logbook's share link stays `history.html#c-<No.>-<points>`, which `challenge()` and `UNIT.history` already handle. `said()` falls back to `UNIT.history`, giving "640 points".
 4. **Copy (`copy/copy.json`).** Left alone, because your branch rewrote most of it. Add this entry under `games` and a `history` line under `home.cards`, then run `python3 copy/apply.py`:
    ```json
@@ -82,4 +82,4 @@ Not changed: `extras.js`, `site.css`, `index.html` and the other game pages, `sw
 
 ## Whole-branch check
 
-Against `claude/charming-bardeen-967w66` at commit 93dfcaa ("Crossings: map labels never overlap"), `git merge-tree --write-tree` reports no conflicts. Merged in a scratch worktree, both suites pass: `tests/run.js` 363 passed, 0 failed, and `tests/history.js` 65 passed, 0 failed. Re-run before merging, since both branches keep moving.
+Against `claude/charming-bardeen-967w66` at commit 13959f4 ("Release 0.15.2: Mystery country on Mystery city's rules"), `git merge-tree --write-tree` reports no conflicts. Merged in a scratch worktree, both suites pass: `tests/run.js` 392 passed, 0 failed, and `tests/history.js` 66 passed, 0 failed. Re-run before merging, since both branches keep moving.
