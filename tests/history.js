@@ -212,6 +212,9 @@ function spoilerFree(share, day) {
       const d = await open(b, U + "history.html", { storage: { "dailycity:history:v1": '{"results":null,"games":7}' }, wait: 700 });
       check(!d.p.errs.length && (await d.p.textContent("#qask")).length > 5, "history: damaged save repaired", d.p.errs.join("; "));
       await d.ctx.close();
+      const da = await open(b, U + "history.html#past-1", { storage: { "dailycity:history:past:v1": '{"results":null,"games":"x"}' }, wait: 700 });
+      check(!da.p.errs.length && (await da.p.textContent("#qask")).length > 5, "history: damaged archive save never stops a past logbook", da.p.errs.join("; "));
+      await da.ctx.close();
     }
     // 8b. a round in progress survives midnight: same number, same answers; the end card then says a new one is ready
     {
@@ -228,6 +231,83 @@ function spoilerFree(share, day) {
       await playTouch(p, [], 1);
       const fresh = await p.evaluate(() => !document.querySelector("#done").hidden && !document.querySelector("#fresh").hidden);
       check(before.num === after.num && before.day === after.day && after.done0 && after.saved && fresh && !errs.length, "history: a round in progress survives midnight, then says a new one is ready", JSON.stringify({ before, after, fresh, errs }));
+      await ctx.close();
+    }
+    // 11. Play more: endless practice under the daily rules, never saved, never changing the daily result, streak, stats or share text
+    {
+      const { ctx, p } = await open(b, `${U}history.html`, { desktop: false });
+      await playTouch(p, [1]);
+      const before = await p.evaluate(() => ({ save: localStorage.getItem("dailycity:history:v1"), share: document.querySelector("#shareText").textContent,
+        streak: JSON.stringify(MXS.info().filter((s) => s.game.id === "history")[0].cur), stats: JSON.stringify(__hist.stats()), keys: Object.keys(localStorage).sort().join() }));
+      await p.tap("#moreBtn"); await p.waitForTimeout(150);
+      const label = await p.evaluate(() => document.querySelector("#num").textContent + " | " + document.querySelector("#qkind").textContent + " | " + document.querySelector("#pts").textContent);
+      for (let i = 0; i < 12; i++) {
+        const q = await p.evaluate(() => { const i = __hist.QS.length - 1; return { i, k: __hist.QS[i].k, r: __hist.right(i), lo: __hist.QS[i].lo }; });
+        if (q.k === "t" || q.k === "g") { await setSlider(p, q.r.g[0]); await p.tap("#qnext"); }
+        else if (q.k === "o") { for (const j of q.r.p) await p.tap(`#qbody .opt[data-k="${j}"]`); await p.tap("#qnext"); }
+        else await p.tap(`#qbody .opt[data-k="${q.r.p}"]`);
+        await p.waitForTimeout(40); await p.tap("#qnext"); await p.waitForTimeout(40);
+      }
+      const after = await p.evaluate(() => ({ save: localStorage.getItem("dailycity:history:v1"), streak: JSON.stringify(MXS.info().filter((s) => s.game.id === "history")[0].cur),
+        stats: JSON.stringify(__hist.stats()), keys: Object.keys(localStorage).sort().join(), mode: __hist.mode(), n: __hist.QS.length, shareInside: document.querySelector("#shareText").textContent }));
+      check(after.mode === "practice" && after.n === 13 && /Practice/.test(label) && /not saved/.test(label) && !p.errs.length, "history: Play more gives endless practice questions, clearly labelled", JSON.stringify({ label, n: after.n, errs: p.errs }));
+      check(after.save === before.save && after.streak === before.streak && after.stats === before.stats && after.keys === before.keys && after.shareInside === before.share,
+        "history: practice never changes the daily result, streak, stats, share text or saves");
+      // back to today's result: the same result as before
+      await p.tap("#practiceDone"); await p.waitForTimeout(700);
+      check(await p.evaluate((s) => !document.querySelector("#done").hidden && document.querySelector("#shareText").textContent === s, before.share), "history: back from practice, today's result is as it was");
+      // the practice generator keeps the daily rules, over many questions
+      const bad = await p.evaluate(() => {
+        const D = __hist.D, F = D.F, Z = new Set(D.z), NT = new Set(D.nt), NW = new Set(D.nw), out = [], kinds = {};
+        for (let n = 0; n < 3000; n++) {
+          const it = __hist.practiceItem(); kinds[it[0]] = (kinds[it[0]] || 0) + 1;
+          const y = (f) => F[f][0];
+          if (it[0] === "w" || it[0] === "g") { const g = Math.abs(y(it[1]) - y(it[2])); if (g < (Z.has(it[1]) || Z.has(it[2]) ? 20 : 5) || D.pc[it[1]] === D.pc[it[2]] || NW.has(it[1]) || NW.has(it[2])) out.push(JSON.stringify(it)); if (it[0] === "g" && (NT.has(it[1]) || NT.has(it[2]))) out.push("g on non-slider " + it); }
+          if (it[0] === "o") { const ys = it.slice(1).map(y).sort((a, b) => a - b); if (ys[1] - ys[0] < 5 || ys[2] - ys[1] < 5 || it.slice(1).some((f) => NW.has(f))) out.push(JSON.stringify(it)); }
+          if (it[0] === "t") { if (NT.has(it[1]) || Z.has(it[1]) || y(it[1]) < it[2] || y(it[1]) > it[3] || it[2] < 1800 || it[3] > 2026) out.push(JSON.stringify(it)); }
+          if (it[0] === "m") { const o = it[2]; if (o.length !== 4 || new Set(o).size !== 4 || o[it[3]] !== D.Q[it[1]][2]) out.push(JSON.stringify(it)); }
+        }
+        return { out: out.slice(0, 5), kinds };
+      });
+      check(!bad.out.length && Object.keys(bad.kinds).length === 5, "history: practice questions keep the daily rules (gaps, defensible years, slider facts, fair options), all five kinds", JSON.stringify(bad));
+      await ctx.close();
+    }
+    // 12. stats panel: played, average, best, streak and the score spread, from daily rounds only
+    {
+      const t = await (async () => { const { ctx, p } = await open(b, U + "history.html"); const d = await p.evaluate(() => __hist.day); await ctx.close(); return d; })();
+      const results = { [t - 3]: { score: 100 }, [t - 2]: { score: 450 }, [t - 1]: { score: 800 } };
+      const seed = JSON.stringify({ v: 1, results, games: {} }), archive = JSON.stringify({ v: 1, results: { 1: { score: 640 } }, games: {} });
+      const { ctx, p } = await open(b, U + "history.html", { storage: { "dailycity:history:v1": seed, "dailycity:history:past:v1": archive } });
+      await p.tap("#statsBtn"); await p.waitForTimeout(150);
+      const r = await p.evaluate(() => ({ open: !document.querySelector("#statsSheet").hidden, nums: [...document.querySelectorAll("#statsBody .stats b")].map((x) => x.textContent),
+        bars: [...document.querySelectorAll("#statsBody .hbar")].map((x) => x.textContent), focus: document.querySelector("#statsSheet").contains(document.activeElement) }));
+      check(r.open && JSON.stringify(r.nums) === JSON.stringify(["3", "450", "800", "3"]) && JSON.stringify(r.bars) === JSON.stringify(["1", "0", "1", "0", "1"]) && r.focus && !p.errs.length,
+        "history: stats panel shows played, average, best, streak and score spread (archive rounds left out)", JSON.stringify(r));
+      await p.keyboard.press("Escape"); await p.waitForTimeout(100);
+      check(await p.evaluate(() => document.querySelector("#statsSheet").hidden), "history: stats panel closes with Escape");
+      await ctx.close();
+    }
+    // 13. past logbooks: a new player plays an earlier day; it saves apart and never touches the daily result or streak
+    {
+      const { ctx, p } = await open(b, U + "history.html");
+      const t = await p.evaluate(() => __hist.day);
+      await p.tap("#pastBtn"); await p.waitForTimeout(150);
+      const list = await p.evaluate(() => [...document.querySelectorAll("#pastList a")].map((a) => a.getAttribute("href")));
+      check(list.length === t - 1 && list[0] === `#past-${t - 1}` && list[list.length - 1] === "#past-1", "history: Past logbooks lists every earlier day", `${list.length} for No. ${t}`);
+      await p.tap('#pastList a[href="#past-3"]'); await p.waitForTimeout(900);
+      const r0 = await p.evaluate(() => ({ mode: __hist.mode(), day: __hist.day, num: document.querySelector("#num").textContent }));
+      const same = await p.evaluate(() => JSON.stringify(__hist.D.D[2].map((x) => x[0] + x[1])) === JSON.stringify(__hist.QS.map((q) => q.k + (q.f ? q.f[0] : q.q))));
+      await playTouch(p, [0]);
+      const r = await p.evaluate(() => ({ done: !document.querySelector("#done").hidden, shareHidden: document.querySelector("#shareText").hidden, note: document.querySelector("#pastNote").textContent,
+        daily: JSON.parse(localStorage.getItem("dailycity:history:v1") || "{}"), arch: JSON.parse(localStorage.getItem("dailycity:history:past:v1") || "{}"),
+        streak: MXS.info().filter((s) => s.game.id === "history")[0].played }));
+      check(r0.mode === "past" && r0.day === 3 && /archive/.test(r0.num) && same, "history: an earlier day plays its own round, labelled as the archive", JSON.stringify(r0));
+      check(r.done && r.shareHidden && /archive/i.test(r.note) && r.arch.results && r.arch.results[3] && !(r.daily.results && r.daily.results[3]) && r.streak === 0 && !p.errs.length,
+        "history: a past logbook saves apart and never touches the daily result or streak", JSON.stringify({ ...r, daily: undefined, arch: r.arch.results }));
+      await p.reload(); await p.waitForTimeout(600);
+      check(await p.evaluate(() => __hist.mode() === "past" && !document.querySelector("#done").hidden), "history: a finished past logbook is still there after a reload");
+      await p.tap("#pastLink"); await p.waitForTimeout(150);
+      check(/640|points/.test(await p.textContent('#pastList li:last-child')) || /points/.test(await p.evaluate(() => [...document.querySelectorAll("#pastList li")].find((li) => /No\. 3 /.test(li.textContent)).textContent)), "history: the archive list shows the score of a played day");
       await ctx.close();
     }
     // 9. other pages link to Logbook

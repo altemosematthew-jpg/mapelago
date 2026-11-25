@@ -95,6 +95,14 @@ get the new `history-data.js` and `history.js`).
 - Four Block D lines aren't asked (Tonga 1970, Dakar 1902, Niamey 1926, and the Kenya line), with reasons in `review/history-questions.md`.
 - The cycle is now 414 days before any question repeats (it was 371); the shipped schedule is 828 days and then starts again.
 
+## Follow-up release: Play more, stats and Past logbooks
+
+Again only Logbook's own files change (`history.html`, `history.js`, `history-data.js`, `review/history/build.py`, `tests/history.js`).
+- **Play more** (on the end card): endless practice questions from the whole bank, under the daily rules. Never saved; the daily result, streak, stats and share text don't change.
+- **Stats** (the chart button in the header, and "Your stats" on the end card): played, average, best, streak, best streak and the score spread, from daily rounds only.
+- **Past logbooks** (under the question, and on the end card): any earlier day, opened as `history.html#past-N` on the live site. Saved under a new key, `dailycity:history:past:v1`, so it never counts for streaks or stats. `site.js` already carries every `dailycity:` key in the save code; it doesn't need to repair this one, and the page copes with a damaged one.
+- `history-data.js` gains four fields for practice (`nt`, `nw`, `pc`, `qd`). The daily schedule is unchanged: `tests/history-golden.json` was not regenerated, and its checks pass.
+
 ## Whole-branch check
 
 Checked with the working copy that includes Blocks C and D. `git merge-tree --write-tree` reports no conflicts against `origin/main` (db566cc, release 0.15.5) or against `claude/charming-bardeen-967w66` (fc67a60). Merged with `main` in a scratch worktree, both suites pass: `tests/run.js` 403 passed, 0 failed, and `tests/history.js` 66 passed, 0 failed. Re-run before merging, since both branches keep moving.
