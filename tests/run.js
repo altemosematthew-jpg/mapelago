@@ -498,6 +498,273 @@ async function page(b, url, opts = {}) {
       await t.ctx.close();
     }
 
+    // ---- bigcountry: Bigger country? reveal, runs and end card (review/bigcountry-merge-notes.md) ----
+    {
+      const BC = "dailycity:bigcountry:v1", fresh = { [BC]: '{"results":{},"game":null}' };
+      // the area of an SVG path made of M/L/Z, in drawing units
+      const drawn = () => [...document.querySelectorAll("#bcReveal .bcs .sh")].map((g) => {
+        const d = (g.querySelector("path") || { getAttribute: () => "" }).getAttribute("d");
+        return d.split("Z").filter(Boolean).reduce((t, seg) => {
+          const q = seg.replace("M", "").split("L").map((s) => s.trim().split(" ").map(Number)); let a = 0;
+          for (let i = 0; i < q.length; i++) { const [x0, y0] = q[i], [x1, y1] = q[(i + 1) % q.length]; a += x0 * y1 - x1 * y0; }
+          return t + Math.abs(a) / 2;
+        }, 0);
+      });
+      // a whole day at phone size (375 px, taps) and desktop size (keyboard only)
+      for (const desktop of [false, true]) {
+        const size = desktop ? "desktop" : "phone";
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-12", { desktop, storage: fresh, clock: new Date("2026-11-25T12:00:00"), ctx: desktop ? {} : { viewport: { width: 375, height: 667 } } });
+        const outside = []; p.on("request", (r) => { if (!r.url().startsWith(U)) outside.push(r.url()); });
+        await p.waitForFunction(() => window.MX && MX.play && window.__big);
+        await p.evaluate(() => MXShapes.load()); await p.waitForFunction(() => window.__WORLD);
+        const P = await p.evaluate(() => __big.S().pairs.map((x) => x.map((c) => c.pop)));
+        const right = P.map((x) => (x[0] >= x[1] ? 0 : 1));
+        const plan = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (i === 5 ? 1 - right[i] : right[i])); // one wrong pick, at round 6
+        const seen = [];
+        if (desktop) await p.focus("#pick0");
+        for (let i = 0; i < 10; i++) {
+          await p.waitForTimeout(350);
+          if (desktop) { if (plan[i] === 1) await p.keyboard.press("Tab"); await p.keyboard.press("Enter"); }
+          else await p.tap("#pick" + plan[i]);
+          await p.waitForSelector("#bcNext", { state: "visible", timeout: 4000 });
+          seen.push(await p.evaluate(() => ({ run: document.querySelector("#bcRun b").textContent, shapes: document.querySelectorAll("#bcReveal .bcs .sh").length, real: document.querySelector("#bcReveal .bcs").getAttribute("data-real"),
+            ratio: document.querySelector("#bcReveal .bcratio").textContent, focus: document.activeElement.id, wide: document.documentElement.scrollWidth })));
+          await p.waitForTimeout(300);
+          if (desktop) await p.keyboard.press("Enter"); else await p.tap("#bcNext");
+          await p.waitForTimeout(150);
+          if (desktop && i < 9) check((await p.evaluate(() => document.activeElement.id)) === "pick0", `bigcountry ${size}: focus returns to the first card after round ${i + 1}`);
+        }
+        const runs = plan.map((_, i) => { let r = 0; for (let j = 0; j <= i; j++) r = plan[j] === right[j] ? r + 1 : 0; return String(r); });
+        check(seen.every((s) => s.shapes === 2 && s.real === "1"), `bigcountry ${size}: every reveal draws both outlines`, JSON.stringify(seen.map((s) => [s.shapes, s.real])));
+        check(JSON.stringify(seen.map((s) => s.run)) === JSON.stringify(runs), `bigcountry ${size}: the run counter counts right answers in a row`, JSON.stringify([seen.map((s) => s.run), runs]));
+        check(seen.every((s) => /^\S.* is (\d[\d,.]*× the size of|\d+% bigger than|a whisker bigger than) \S/.test(s.ratio)), `bigcountry ${size}: every reveal says how much bigger`, seen.map((s) => s.ratio).join(" | "));
+        if (desktop) check(seen.every((s) => s.focus === "bcNext"), "bigcountry desktop: keyboard play moves focus to Next and does not hurry on", JSON.stringify(seen.map((s) => s.focus)));
+        else check(seen.every((s) => s.wide <= 375), "bigcountry phone: nothing wider than a 375 px screen", JSON.stringify(seen.map((s) => s.wide)));
+        await p.waitForTimeout(400);
+        const end = await p.evaluate((BC) => ({ done: !document.querySelector("#done").hidden, score: document.querySelector("#bigScore").textContent, save: JSON.parse(localStorage.getItem(BC)),
+          tiles: [...document.querySelectorAll(".bctile")].map((t) => t.querySelectorAll("svg[data-i] .sh").length), share: document.querySelector("#shareText").textContent,
+          best: document.querySelector("#bcBest").textContent, streak: MXS.info().find((x) => x.game.id === "bigcountry").cur }), BC);
+        check(end.done && end.score === "9" && JSON.stringify(end.save) === JSON.stringify({ results: { 12: { score: 9, picks: plan } }, game: null }), `bigcountry ${size}: the day ends at 9/10 and saves exactly as before`, JSON.stringify([end.score, end.save]));
+        check(end.tiles.length === 10 && end.tiles.every((n) => n === 2), `bigcountry ${size}: the end card strip shows all ten pairs`, JSON.stringify(end.tiles));
+        const lines = end.share.split("\n");
+        check(lines.length === 4 && /^Mapelago Bigger country\? No\. 12 \u{1F422} 9\/10$/u.test(lines[0]) && lines[1] === "✅".repeat(5) + "❌" + "✅".repeat(4) && lines[2] === "Best run: 5"
+          && /^Can you beat 9\? mapelago\.com\/bigger-country\.html#b-bn-12-0-9$/.test(lines[3]) && end.best === "5" && end.streak === 1, `bigcountry ${size}: share text and beat-my-score link`, JSON.stringify([end.share, end.best, end.streak]));
+        await p.click(".bctile[data-i='8']"); await p.waitForTimeout(300);
+        check(!(await p.isHidden("#bcDetail")) && (await p.evaluate(() => document.querySelectorAll("#bcDetail .bcs .sh").length)) === 2 && (await p.getAttribute(".bctile[data-i='8']", "aria-expanded")) === "true", `bigcountry ${size}: a tile opens that pair's reveal again`);
+        check(!outside.length, `bigcountry ${size}: loads nothing from other sites`, outside.join(" "));
+        check(!p.errs.length, `bigcountry ${size}: no errors`, p.errs.join("; "));
+        await ctx.close();
+      }
+      // the true-scale ratio for a known pair: No. 12, round 4 is Finland and Belize (Finland is 14.5x Belize).
+      // Finland sits at 60-70 degrees north; a plain latitude-longitude map would draw it about twice too big.
+      {
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-12", { storage: { [BC]: '{"results":{},"game":{"n":12,"picks":[0,0,0]}}' } });
+        await p.evaluate(() => MXShapes.load()); await p.waitForFunction(() => window.__WORLD); await p.waitForTimeout(300);
+        await p.click("#pick0"); await p.waitForSelector("#bcNext", { state: "visible" }); await p.waitForTimeout(900); // the ratio counts up first
+        const r = await p.evaluate((f) => ({ names: [...document.querySelectorAll("#bcReveal .bclab b")].map((x) => x.textContent), ratio: document.querySelector("#bcReveal .bcratio").textContent,
+          areas: [...document.querySelectorAll("#bcReveal .bclab span")].map((x) => x.textContent), drawn: eval(f)() }), "(" + drawn.toString() + ")");
+        check(JSON.stringify(r.names) === '["Finland","Belize"]' && r.ratio === "Finland is 15× the size of Belize" && r.areas[0] === "330,000 km²" && r.areas[1] === "22,800 km²", "bigcountry: Finland and Belize, \"Finland is 15× the size of Belize\"", JSON.stringify(r));
+        const q = r.drawn[0] / r.drawn[1];
+        check(Math.abs(q / 14.514 - 1) < 0.03, "bigcountry: drawn at true scale, Finland's outline covers 14.5 times Belize's (equal-area)", q.toFixed(2));
+        const a = await p.evaluate(() => { const o = MxBC.outline(246), j = __big.S().pairs[3][0]; return [o.area, j.pop, MxBC.outline(36).area]; });
+        check(Math.abs(a[0] / a[1] - 1) < 0.02 && a[2] > 7e6, "bigcountry: outline areas match the official figures (Finland), and Australia is Australia", JSON.stringify(a));
+        check((await p.evaluate(() => document.querySelector("#say").textContent)) === "Right. Finland is 15 times the size of Belize: about 330,000 km² against about 22,800 km².", "bigcountry: the screen reader hears the verdict and the ratio");
+        await ctx.close();
+      }
+      // close pairs race before the verdict, and a muted player hears nothing (No. 14, eight right so far)
+      const right14 = await (async () => { const { ctx, p } = await page(b, U + "bigger-country.html#day-14", { storage: fresh }); const r = await p.evaluate(() => __big.S().pairs.map((x) => (x[0].pop > x[1].pop ? 0 : 1))); await ctx.close(); return r; })();
+      for (const muted of [true, false]) {
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-14", { storage: { [BC]: JSON.stringify({ results: {}, game: { n: 14, picks: right14.slice(0, 8) } }), "dailycity:sound": muted ? "off" : "on" } });
+        await p.evaluate(() => { window.__ac = 0; const A = window.AudioContext; window.AudioContext = function () { window.__ac++; return new A(); }; });
+        await p.waitForFunction(() => window.MX && MX.play); await p.waitForTimeout(300);
+        check(/^(Close call|Very close)$/.test(await p.textContent("#bcHeat")) && (await p.isVisible("#bcHeat")) && (await p.evaluate(() => document.querySelectorAll("#dots li.close").length)) >= 2, `bigcountry: round 9 is flagged as a close call`, await p.textContent("#bcHeat"));
+        await p.click("#pick" + right14[8]); await p.waitForTimeout(300);
+        const mid = await p.evaluate(() => ({ verdict: !!document.querySelector(".pick.right,.pick.wrong,.pick.big"), run: document.querySelector("#bcRun b").textContent }));
+        await p.waitForTimeout(1000);
+        const after = await p.evaluate(() => ({ verdict: !!document.querySelector(".pick.right"), run: document.querySelector("#bcRun b").textContent, ac: window.__ac }));
+        if (muted) check(!mid.verdict && mid.run === "8" && after.verdict && after.run === "9", "bigcountry: on a close pair the verdict waits for the race", JSON.stringify([mid, after]));
+        check(muted ? after.ac === 0 : after.ac > 0, `bigcountry: sound ${muted ? "stays off when muted" : "plays when on"}`, String(after.ac));
+        check(!!(await p.$("#soundBtn")) && !(await p.$("#pastCities")), "bigcountry: the sound button is there, Past cities is not");
+        await ctx.close();
+      }
+      // saves from releases 0.14.0 and 0.15.0 (recorded on those versions): the round in progress, finished days and the streak
+      for (const v of ["0.14", "0.15"]) {
+        const live = JSON.parse(fs.readFileSync(path.join(__dirname, `fixtures/bigcountry-save-from-v${v}.json`), "utf8"));
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-12", { storage: live, clock: new Date("2026-11-25T12:00:00"), wait: 900 });
+        const s = await p.evaluate(() => ({ round: document.querySelector("#bcRound").textContent, dots: [...document.querySelectorAll("#dots li.done")].length, picks: __big.S().picks.join(""),
+          run: document.querySelector("#bcRun b").textContent, ok: [0, 1, 2, 3].map((i) => { const x = __big.S().pairs[i]; return (x[0].pop >= x[1].pop ? 0 : 1) === __big.S().picks[i]; }), info: MXS.info().find((x) => x.game.id === "bigcountry") }));
+        let run = 0; s.ok.forEach((o) => { run = o ? run + 1 : 0; });
+        check(s.round === "Round 5 of 10" && s.dots === 4 && s.picks === "0110" && s.run === String(run), `${v}.0 bigcountry save: today's round resumes at pair 5 with its run`, JSON.stringify(s));
+        check(s.info.cur === 2 && s.info.played === 2, `${v}.0 bigcountry save: streak kept (2)`, JSON.stringify([s.info.cur, s.info.played]));
+        for (const [d, sc] of [[11, "4"], [10, "8"]]) {
+          await p.evaluate((d) => (location.hash = "#day-" + d), d); await p.waitForTimeout(1000);
+          const e = await p.evaluate(() => ({ done: !document.querySelector("#done").hidden, score: document.querySelector("#bigScore").textContent, tiles: document.querySelectorAll(".bctile").length, share: document.querySelector("#shareText").textContent }));
+          check(e.done && e.score === sc && e.tiles === 10 && e.share.includes(` ${sc}/10`), `${v}.0 bigcountry save: No. ${d} keeps its score (${sc}) and shows its strip`, JSON.stringify(e));
+        }
+        check(!p.errs.length, `${v}.0 bigcountry save: no errors`, p.errs.join("; "));
+        await ctx.close();
+      }
+      // a friend's beat-my-score link still lands, and both scores show side by side at the end
+      {
+        const { ctx, p } = await page(b, U + "bigger-country.html?b=1#b-bn-12-0-5", { storage: { [BC]: '{"results":{},"game":{"n":12,"picks":[0,0,0,0,0,1,1,1,0]}}' }, clock: new Date("2026-11-25T12:00:00"), wait: 900 });
+        check(/A friend scored 5 of 10 on today's Bigger country\?/.test(await p.textContent(".mx-beat")), "bigcountry: a beat-my-score link shows the friend's score");
+        await p.click("#pick0"); await p.waitForSelector("#bcNext", { state: "visible" }); await p.waitForTimeout(300); await p.click("#bcNext"); await p.waitForTimeout(600);
+        const vs = await p.evaluate(() => (document.querySelector(".mx-vs") || {}).innerText || "");
+        check(/5/.test(vs) && /10/.test(vs) && /You win/.test(vs), "bigcountry: both scores side by side at the end", vs);
+        check(!p.errs.length, "bigcountry beat link: no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+      // the city page keeps its Past cities button now that extras.js is shared
+      {
+        const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+        check(!!(await p.$("#pastCities")) && !!(await p.$("#soundBtn")), "city: Past cities and the sound button are still there");
+        await ctx.close();
+      }
+      const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8");
+      check(/"extras\.js\?v=/.test(sw) && /"world\.js\?v=/.test(sw) && /"shapes\.js\?v=/.test(sw), "bigcountry: everything it needs is in the offline copy");
+    }
+      // "Play more": endless practice in Bigger country? and Bigger city?, which never touches the daily
+      for (const [file, key, id] of [["bigger-country.html", "dailycity:bigcountry:v1", "bigcountry"], ["bigger.html", "dailycity:bigger:v1", "bigger"]]) {
+        const daily = JSON.stringify({ results: { 11: { score: 6, picks: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] }, 12: { score: 7, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } }, game: null });
+        // not offered before the daily round is finished
+        {
+          const { ctx, p } = await page(b, U + file + "#day-12", { storage: { [key]: '{"results":{},"game":null}' }, clock: new Date("2026-11-25T12:00:00") });
+          check(!(await p.isVisible("#mxprGo")) && !(await p.isVisible("#mxpr")), `${id} practice: not offered until today's ten are done`);
+          await ctx.close();
+        }
+        const { ctx, p } = await page(b, U + file + "#day-12", { storage: { [key]: daily }, clock: new Date("2026-11-25T12:00:00"), ctx: { viewport: { width: 375, height: 667 } }, wait: 800 });
+        const snap = () => p.evaluate((k) => ({ keys: Object.keys(localStorage).sort(), save: localStorage.getItem(k), share: document.querySelector("#shareText").textContent,
+          info: JSON.stringify(MXS.info().map((s) => [s.game.id, s.cur, s.best, s.played, s.doneToday])) }), key);
+        const before = await snap();
+        check(await p.isVisible("#mxprGo") && /Practice/.test(await p.textContent(".mxpr-cta")), `${id} practice: "Play more" on the end card, labelled as practice`);
+        await p.tap("#mxprGo"); await p.waitForTimeout(400);
+        check(await p.isVisible("#mxpr") && !(await p.isVisible("#done")) && (await p.textContent(".mxpr-tag")) === "Practice" && /Doesn't count toward today's score, your streaks or your stats/.test(await p.textContent("#mxpr")), `${id} practice: opens, clearly labelled`);
+        // play a run of 11 right, then miss: the run, the best and the closeness follow
+        const pairs = [];
+        for (let i = 0; i < 12; i++) {
+          await p.waitForTimeout(330);
+          const two = await p.evaluate(() => [...document.querySelectorAll("#mxprCards .pick")].map((c) => { const n = c.querySelector("b").textContent, w = c.querySelector(".where").textContent; return MxPractice.pool.find((x) => x.name === n && x.country === w).pop; }));
+          const big = two[0] > two[1] ? 0 : 1;
+          pairs.push(Math.max(...two) / Math.min(...two));
+          await p.tap("#mxpr" + (i < 11 ? big : 1 - big));
+          await p.waitForSelector("#mxprNext", { state: "visible", timeout: 4000 });
+          const r = await p.evaluate(() => ({ run: document.querySelector("#mxprRun b").textContent, best: document.querySelector("#mxprBest").textContent, verdict: document.querySelector("#mxprReveal .bcverdict").textContent,
+            shapes: document.querySelectorAll("#mxprReveal .bcs .sh").length, bars: document.querySelectorAll("#mxprReveal .mxpr-bars i").length, ratio: document.querySelector("#mxprReveal .bcratio").textContent }));
+          if (i === 0) check(id === "bigcountry" ? r.shapes === 2 : r.bars === 2, `${id} practice: the reveal shows ${id === "bigcountry" ? "both countries at true scale" : "both populations to scale"}`, JSON.stringify(r));
+          if (i === 0) check(/^\S.* (is|has) (\d[\d,.]*× the (size|people) of|\d+% (bigger|more people) than) \S/.test(r.ratio), `${id} practice: says how much bigger`, r.ratio);
+          if (i < 11) { if (r.run !== String(i + 1)) check(false, `${id} practice: run counts up`, JSON.stringify([i, r])); }
+          else check(r.run === "0" && r.best === "11" && r.verdict === "Not this time. Run over at 11.", `${id} practice: a miss ends the run and keeps the best (11)`, JSON.stringify(r));
+          await p.waitForTimeout(300); await p.tap("#mxprNext"); await p.waitForTimeout(80);
+        }
+        check(pairs[0] >= 4 && pairs.slice(9, 12).every((x) => x < 2) && pairs.every((x) => x >= 1.15), `${id} practice: pairs get closer as the run goes on`, pairs.map((x) => x.toFixed(2)).join(" "));
+        check((await p.textContent("#mxprN")) === "Pair 1 of this run" && (await p.textContent("#mxprRun b")) === "0", `${id} practice: a new run starts after a miss`);
+        await p.tap("#mxprBack"); await p.waitForTimeout(300);
+        const after = await snap();
+        check(after.save === before.save && after.share === before.share && after.info === before.info, `${id} practice: today's result, share text, streaks and stats are untouched`, JSON.stringify([before.info, after.info]));
+        check(JSON.stringify(after.keys) === JSON.stringify(before.keys.concat(`dailycity:${id}:practice`).sort()) && (await p.evaluate((id) => localStorage.getItem(`dailycity:${id}:practice`), id)) === "[11]", `${id} practice: only its own best run is saved`, JSON.stringify(after.keys));
+        check(await p.isVisible("#done") && (await p.textContent("#mxprGoBest")) === "Your best practice run: 11 in a row." && (await p.evaluate(() => document.activeElement.id)) === "mxprGo", `${id} practice: back to today's result`);
+        check(!p.errs.length, `${id} practice: no errors`, p.errs.join("; "));
+        await ctx.close();
+        // by keyboard at desktop size; the best run is remembered; the daily schedule never moves
+        const k = await page(b, U + file + "#day-12", { desktop: true, storage: { [key]: daily, [`dailycity:${id}:practice`]: "[11]" }, clock: new Date("2026-11-25T12:00:00") });
+        const pairs12 = await k.p.evaluate(() => JSON.stringify(__big.S().pairs.map((x) => x.map((c) => c.name))));
+        await k.p.focus("#mxprGo"); await k.p.keyboard.press("Enter"); await k.p.waitForTimeout(400);
+        check((await k.p.evaluate(() => document.activeElement.id)) === "mxpr0" && (await k.p.textContent("#mxprBest")) === "11", `${id} practice: keyboard opens it on the first card, best run remembered`);
+        await k.p.keyboard.press("Enter"); await k.p.waitForSelector("#mxprNext", { state: "visible", timeout: 4000 });
+        check((await k.p.evaluate(() => document.activeElement.id)) === "mxprNext", `${id} practice: keyboard play moves focus to Next`);
+        await k.p.waitForTimeout(300); await k.p.keyboard.press("Enter"); await k.p.waitForTimeout(200);
+        check((await k.p.evaluate(() => document.activeElement.id)) === "mxpr0" && (await k.p.evaluate(() => JSON.stringify(__big.S().pairs.map((x) => x.map((c) => c.name))))) === pairs12, `${id} practice: on to the next pair; today's pairs unchanged`);
+        check(!k.p.errs.length, `${id} practice desktop: no errors`, k.p.errs.join("; "));
+        await k.ctx.close();
+      }
+      check(fs.readFileSync(path.join(__dirname, "../bigger.html"), "utf8").match(/<script>\n\/\* bigcountry-practice:[\s\S]*?<\/script>/)[0] === fs.readFileSync(path.join(__dirname, "../bigger-country.html"), "utf8").match(/<script>\n\/\* bigcountry-practice:[\s\S]*?<\/script>/)[0], "practice: the same code in both games");
+    // ---- the review fixes: official areas, close last pairs, waiting for the tap, your pick, stats, checked city figures ----
+    {
+      const fresh = { "dailycity:bigcountry:v1": '{"results":{},"game":null}' };
+      {
+        // Bigger country?: from No. 14 every area is the Factbook's total area, Morocco is out, the last two pairs are within 20%
+        const seen = { wrong: [], wide: [], morocco: 0, n: 0 };
+        const q = await page(b, U + "bigger-country.html#day-14", { storage: fresh });
+        for (let d = 14; d <= 44; d++) {
+          await q.p.goto(U + "bigger-country.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
+          const x = await q.p.evaluate(() => { const P = __big.S().pairs, A = MxBC.areas; return { bad: P.flat().filter((c) => A[c.cid] !== c.pop).map((c) => c.name), morocco: P.flat().some((c) => c.name === "Morocco"), last: P.slice(8).map((t) => Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)) }; });
+          seen.wrong.push(...x.bad); if (x.morocco) seen.morocco++; if (x.last.some((v) => v > 1.2 || v < 1.04)) seen.wide.push(d + ":" + x.last.map((v) => v.toFixed(2))); seen.n++;
+        }
+        check(!seen.wrong.length && !seen.morocco, "bigcountry: from No. 14 every area is the official total (CIA World Factbook), Morocco left out", JSON.stringify(seen.wrong.slice(0, 5)));
+        check(!seen.wide.length && seen.n === 31, "bigcountry: from No. 14 the last two pairs are within 20% (Nos. 14 to 44)", seen.wide.join(" "));
+        await q.p.goto(U + "bigger-country.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
+        check((await q.p.evaluate(() => __big.S().pairs[0][0].pop)) === 2322794, "bigcountry: No. 12 keeps the figures it was played with");
+        check(!q.p.errs.length, "bigcountry official areas: no errors", q.p.errs.join("; "));
+        await q.ctx.close();
+      }
+      {
+        // the reveal waits for the tap, and the next pair takes the focus; the share line about close pairs is true
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-14", { storage: fresh, clock: new Date("2026-11-27T12:00:00"), ctx: { viewport: { width: 375, height: 667 } } });
+        await p.waitForTimeout(300); await p.tap("#pick0"); await p.waitForSelector("#bcNext", { state: "visible" });
+        await p.waitForTimeout(5000);
+        check(await p.isVisible("#bcNext") && (await p.evaluate(() => !document.querySelector("#bcNext i"))), "bigcountry: the reveal stays until the player taps Next");
+        await p.tap("#bcNext"); await p.waitForTimeout(200);
+        check((await p.evaluate(() => document.activeElement.id)) === "pick0" && (await p.textContent("#bcRound")) === "Round 2 of 10", "bigcountry: after Next, focus is on the new pair");
+        for (let i = 1; i < 10; i++) { await p.waitForTimeout(320); await p.tap("#pick1"); await p.waitForSelector("#bcNext", { state: "visible" }); await p.waitForTimeout(320); await p.tap("#bcNext"); }
+        await p.waitForTimeout(500);
+        const e = await p.evaluate(() => ({ last: document.querySelector("#shareText").textContent.split("\n").pop(), picks: [...document.querySelectorAll("#recap li")].map((li) => li.querySelectorAll(".mxpick").length), save: JSON.parse(localStorage.getItem("dailycity:bigcountry:v1")).results[14].picks }));
+        check(/^The last pairs are close\./.test(e.last), "bigcountry: \"The last pairs are close\" when they were", e.last);
+        check(e.picks.length === 10 && e.picks.every((n) => n === 1), "bigcountry: the result list marks your own pick in every pair", JSON.stringify(e.picks));
+        const mine = await p.evaluate(() => [...document.querySelectorAll("#recap li")].map((li) => li.querySelector(".mxpick").parentElement.querySelector("b") ? 1 : 0));
+        const names = await p.evaluate(() => [...document.querySelectorAll("#recap li")].map((li) => { const t = li.innerText; return t.split("\n").find((l) => /your pick/.test(l)).split(",")[0]; }));
+        const pairs = await p.evaluate(() => __big.S().pairs.map((x) => x.map((c) => c.name)));
+        check(names.every((n, i) => n === pairs[i][e.save[i]]), "bigcountry: the marked pick is the country you tapped", JSON.stringify(names));
+        check(!p.errs.length, "bigcountry wait for the tap: no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+      // stats panels: played, average, streak, best streak and the spread, from the save
+      for (const [file, key, id] of [["bigger-country.html", "dailycity:bigcountry:v1", "bigcountry"], ["bigger.html", "dailycity:bigger:v1", "bigger"]]) {
+        const save = { results: { 9: { score: 10, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }, 10: { score: 7, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }, 11: { score: 8, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } }, game: null };
+        const { ctx, p } = await page(b, U + file + "#day-11", { storage: { [key]: JSON.stringify(save) }, clock: new Date("2026-11-24T12:00:00"), wait: 900 });
+        const s = await p.evaluate(() => ({ nums: [...document.querySelectorAll("#mxStats .stats b")].map((x) => x.textContent), rows: [...document.querySelectorAll("#mxStats .hrow")].map((r) => r.firstChild.textContent + "=" + r.querySelector(".hbar").lastChild.textContent), title: document.querySelector("#mxStatsH").textContent }));
+        check(s.title === "Your stats" && JSON.stringify(s.nums) === '["3","8.3","3","3"]', `${id}: stats panel (played 3, average 8.3, streak 3, best 3)`, JSON.stringify(s));
+        check(s.rows.join(" ") === "10/10=1 9/10=0 8/10=1 7/10=1 6/10=0 5/10=0", `${id}: score spread`, s.rows.join(" "));
+        check(!p.errs.length, `${id} stats: no errors`, p.errs.join("; "));
+        await ctx.close();
+      }
+      {
+        // Bigger city?: checked figures, real cities with English names, no pair within 10%, from No. 14
+        const { ctx, p } = await page(b, U + "bigger.html#day-14", { storage: { "dailycity:bigger:v1": '{"results":{},"game":null}' } });
+        const pool = await p.evaluate(() => MxCity.pool.map((c) => [c.name, c.country, c.pop, c.note || ""]));
+        const by = (n, c) => pool.find((x) => x[0] === n && (!c || x[1] === c));
+        const gone = ["Göteborg", "Gustavo Adolfo Madero", "Brooklyn", "Kowloon", "Dadonghai", "Cape Town", "Durban", "Brussels", "Asmara", "Mogadishu", "Allahābād", "Nur-Sultan", "Abu Dhabi", "Çankaya", "Iztapalapa", "Soweto", "Yono"];
+        check(pool.length === 671 && gone.every((n) => !by(n)), "bigger: from No. 14, 671 cities; districts, unchecked places and old names are gone", JSON.stringify(gone.filter((n) => by(n))));
+        check(JSON.stringify(by("Gothenburg")) === '["Gothenburg","Sweden",' + JSON.stringify(by("Gothenburg")[2]) + ',""]' && by("Prayagraj")[2] === 1112544 && by("Astana")[2] === 1638233 && by("Pimpri-Chinchwad") && by("Belagavi") && by("Tanta") && by("Oujda") && by("Nishinomiya"),
+          "bigger: renamed cities and common English names (Gothenburg, Prayagraj, Astana, Belagavi, Pimpri-Chinchwad, Tanta...)");
+        check(by("Kathmandu")[2] === 845767 && by("Tegucigalpa")[2] === 1199136 && by("Beijing")[3] === "2020" && by("Buenos Aires")[3] === "city proper, 2022" && by("Tokyo")[3] === "23 wards, 2025",
+          "bigger: checked figures with their year, and the unit where it matters", JSON.stringify([by("Kathmandu"), by("Buenos Aires"), by("Tokyo")]));
+        const bad = [];
+        for (let d = 14; d <= 44; d++) {
+          await p.goto(U + "bigger.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
+          const x = await p.evaluate(() => __big.S().pairs.map((t) => [t[0].name, t[1].name, Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)]));
+          x.forEach((t) => { if (t[2] < 1.1 || !by(t[0]) || !by(t[1])) bad.push(d + ":" + t.join("/")); });
+        }
+        check(!bad.length, "bigger: Nos. 14 to 44 deal only checked cities, never two within 10%", bad.slice(0, 5).join(" "));
+        await p.goto(U + "bigger.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
+        check((await p.evaluate(() => __big.S().pairs[9].map((c) => c.name + " " + c.pop).join(" | "))) === "Kathmandu 1442271 | Tegucigalpa 850848", "bigger: No. 12 stays as played (Kathmandu v Tegucigalpa)");
+        check(!p.errs.length, "bigger data: no errors", p.errs.join("; "));
+        await ctx.close();
+        // the reveal and the list give the year; the list marks your pick
+        const k = await page(b, U + "bigger.html#day-14", { storage: { "dailycity:bigger:v1": '{"results":{},"game":null}' }, clock: new Date("2026-11-27T12:00:00") });
+        await k.p.waitForTimeout(300); await k.p.click("#pick0"); await k.p.waitForTimeout(300);
+        const shown = await k.p.evaluate(() => [...document.querySelectorAll(".pick .pop span")].map((x) => x.textContent));
+        check(shown.length === 2 && shown.every((t) => / people( \((.+, )?\d{4}\))?$/.test(t)) && shown.some((t) => /\(\d{4}\)|, \d{4}\)/.test(t)), "bigger: the reveal gives each checked figure's year", JSON.stringify(shown));
+        for (let i = 1; i < 10; i++) { await k.p.waitForTimeout(2000); await k.p.click("#pick1"); }
+        await k.p.waitForTimeout(2500);
+        const e = await k.p.evaluate(() => ({ marks: [...document.querySelectorAll("#recap li")].map((li) => li.querySelectorAll(".mxpick").length), share: document.querySelector("#shareText").textContent }));
+        check(e.marks.length === 10 && e.marks.every((n) => n === 1), "bigger: the result list marks your own pick in every pair", JSON.stringify(e.marks));
+        check(!k.p.errs.length, "bigger reveal: no errors", k.p.errs.join("; "));
+        await k.ctx.close();
+      }
+    }
+    // ---- end review fixes ----
+    // ---- end bigcountry ----
+
     // 13. beat-my-score links: checked strictly, never the answer, side by side at the end
     {
       const { ctx, p } = await page(b, U, { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
