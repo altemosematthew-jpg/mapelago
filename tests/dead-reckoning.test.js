@@ -15,12 +15,19 @@ module.exports = async function ({ b, U, page, check }) {
       days.forEach((five, i) => {
         const n = i + 1;
         if (five.length !== 5 || new Set(five).size !== 5) short++;
-        if (new Set(five.map((x) => D.P[x].country)).size !== 5) sameCountry++;
+        const cities = five.filter((x) => !D.P[x].lm);
+        if (new Set(cities.map((x) => D.P[x].country)).size !== cities.length) sameCountry++;
         five.forEach((x) => { if (last[x] !== undefined && n - last[x] <= 60) repeats++; last[x] = n; });
       });
-      const tiersOk = days.every((five) => five.every((x, i) => D.P[x].tier === i + 1));
-      const fame = [1, 2, 3, 4, 5].map((t) => { const ps = D.P.filter((x) => x.tier === t); return ps.reduce((s, x) => s + Math.log10(x.pop * (x.capital ? 5 : 1)), 0) / ps.length; });
-      return { curve, perfect, km, repeats, sameCountry, short, tiersOk, fame, day12: D.daily(12).map((x) => D.P[x].name + "|" + D.P[x].country), pools: D.POOLS.map((x) => x.length) };
+      const tiersOk = days.every((five) => five.every((x, i) => D.P[x].lm || D.P[x].tier === i + 1));
+      // landmarks: none before No. 14; from then one or two a day, easy in round 1 or 2, medium in 3 or 4, hard in 5
+      const SLOT = { 1: [0, 1], 2: [2, 3], 3: [4] }, DROP = ["Christ the Redeemer", "Hollywood Sign", "Golden Gate Bridge", "Hiroshima Peace Memorial", "Pearl Harbor", "Table Mountain", "Robben Island", "Alhambra", "Potala Palace", "Leaning Tower of Pisa"];
+      let lmEarly = 0, lmCount = 0, lmSlot = 0, lmDropped = 0; const lmSeen = new Set();
+      days.forEach((five, i) => { const lm = five.map((x, r) => [D.P[x], r]).filter((y) => y[0].lm); if (i + 1 < 14) lmEarly += lm.length; else { if (lm.length < 1 || lm.length > 2) lmCount++; lm.forEach(([q, r]) => { lmSeen.add(q.name); if (!SLOT[q.diff].includes(r)) lmSlot++; if (DROP.includes(q.name)) lmDropped++; }); } });
+      const lmTotal = D.P.filter((x) => x.lm).length;
+      const first13 = []; for (let n = 1; n <= 13; n++) first13.push(D.daily(n).map((x) => D.P[x].name + "|" + D.P[x].country));
+      const fame = [1, 2, 3, 4, 5].map((t) => { const ps = D.P.filter((x) => !x.lm && x.tier === t); return ps.reduce((s, x) => s + Math.log10(x.pop * (x.capital ? 5 : 1)), 0) / ps.length; });
+      return { curve, perfect, km, repeats, sameCountry, short, tiersOk, fame, lmEarly, lmCount, lmSlot, lmDropped, lmTotal, lmUsed: lmSeen.size, first13, day12: D.daily(12).map((x) => D.P[x].name + "|" + D.P[x].country), pools: D.POOLS.map((x) => x.length) };
     });
     check(r.curve[0] === 100 && r.curve[2] >= 75 && r.curve[2] <= 85 && r.curve[3] < r.curve[2] && r.curve[5] <= 2 && r.curve[6] === 0 && r.curve.every((v, i) => !i || v <= r.curve[i - 1]),
       "dead reckoning: scoring curve (100 at 0 km, most points at 250 km, falling smoothly to 0)", JSON.stringify(r.curve));
@@ -30,6 +37,10 @@ module.exports = async function ({ b, U, page, check }) {
     check(r.sameCountry === 0, "dead reckoning: never two places in one country on a day", String(r.sameCountry));
     check(r.tiersOk && r.fame.every((f, i) => !i || f < r.fame[i - 1]), "dead reckoning: rounds run from best known to least known", JSON.stringify(r.fame));
     check(r.pools.every((n) => n > 61), "dead reckoning: every round has more than 60 places", JSON.stringify(r.pools));
+    const fp13 = require("crypto").createHash("sha256").update(JSON.stringify(r.first13)).digest("hex").slice(0, 16);
+    check(fp13 === "4be94a0b7ccd016d" && r.lmEarly === 0, "dead reckoning: Nos. 1 to 13 unchanged by the landmarks (none before No. 14)", fp13 + " " + r.lmEarly);
+    check(r.lmTotal === 290 && r.lmCount === 0 && r.lmSlot === 0 && r.lmDropped === 0, "dead reckoning: from No. 14 one or two landmarks a day, in rounds that fit their difficulty, none of the ten overlaps", JSON.stringify([r.lmTotal, r.lmCount, r.lmSlot, r.lmDropped]));
+    check(r.lmUsed > 250, "dead reckoning: the landmarks all get used over two years", String(r.lmUsed));
     await ctx.close();
     // the same number gives the same five on a fresh load, and on a phone
     const k = await page(b, U + "dead-reckoning.html#day-12", { wait: 600 });
@@ -104,7 +115,7 @@ module.exports = async function ({ b, U, page, check }) {
   // facts read as English for every place: "the Netherlands", "the Philippines'", no doubled brackets, "the euro"
   {
     const { ctx, p } = await page(b, U + "dead-reckoning.html#day-12", { wait: 500 });
-    const bad = await p.evaluate(() => __dr.P.map((x) => __dr.fact(x).join(" ")).filter((t) =>
+    const bad = await p.evaluate(() => __dr.P.filter((x) => !x.lm).map((x) => __dr.fact(x).join(" ")).filter((t) =>
       /\b(in|of) (Netherlands|United States|United Kingdom|Philippines|United Arab Emirates|Czech Republic|Dominican Republic|Gambia|Bahamas)\b/.test(t) ||
       /s's\b/.test(t) || /\) \(/.test(t) || /the Euro\b/.test(t) || /\.\./.test(t) || !/^[A-Z].*\.$/.test(t)));
     check(!bad.length, "dead reckoning: every place's fact reads as English", bad.slice(0, 3).join(" | "));
@@ -122,6 +133,19 @@ module.exports = async function ({ b, U, page, check }) {
     await p.waitForTimeout(300);
     const nb = await p.evaluate(() => { const a = document.querySelector("#done .row2 a.act.plain"); return a && [a.getAttribute("href"), a.textContent]; });
     check(nb && /^Play .+ next$|^All done today/.test(nb[1]) && nb[0] !== "dead-reckoning.html", "dead reckoning: the result card offers the next unplayed game", JSON.stringify(nb));
+    await ctx.close();
+  }
+
+  // a landmark round: the question names the kind of place, never its country; the reveal gives the clue and where it is
+  {
+    const { ctx, p } = await page(b, U + "dead-reckoning.html#day-15", { wait: 500 });
+    const lm = await p.evaluate(() => { const x = __dr.P[__dr.daily(15)[0]]; return x.lm ? [x.name, x.kind, x.country, x.clue] : null; });
+    const ask = await p.textContent("#place");
+    await p.evaluate(() => { const x = __dr.P[__dr.daily(15)[0]]; __dr.tapAt(x.lat, x.lon + 1); });
+    await p.click("#lockBtn"); await p.waitForTimeout(200);
+    const fact = await p.textContent("#fact");
+    check(lm && ask.toLowerCase().includes(lm[1]) && !ask.includes(lm[2]) && fact.includes(lm[3]) && fact.includes(lm[2]) && !p.errs.length,
+      "dead reckoning: a landmark round shows its kind, then its clue and where it is", JSON.stringify([lm, ask, fact]));
     await ctx.close();
   }
 };

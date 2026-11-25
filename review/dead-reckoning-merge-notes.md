@@ -37,7 +37,8 @@ Checked on clean copies of 0.15.5, 0.15.7, 0.15.8 and 0.15.10: every edit applie
 | `dead-reckoning.html` | The page. Head and looks copied from `bigger.html`; the place list sits between `// places:start` and `// places:end`. |
 | `dead-reckoning.js` | The game: map, scoring, daily schedule, practice, stats. Readable source, not built. |
 | `og-dead-reckoning.png` | Share card, 1200 × 630, same layout as the others. Redraw with `node tools/dead-reckoning-og.js`. |
-| `tools/dead-reckoning-data.js` | Rebuilds the place list inside `dead-reckoning.html` from `index.html`, `bigger.html`, `country.html` and `data/countries.txt`. |
+| `tools/dead-reckoning-data.js` | Rebuilds the place list inside `dead-reckoning.html` from `index.html`, `bigger.html`, `country.html`, `data/countries.txt` and `review/dead-reckoning-places.md`. |
+| `review/dead-reckoning-places.md` | Duet's 300 source-checked places that aren't cities, both parts exactly as received, with Duet's notes. |
 | `tools/dead-reckoning-og.js` | Draws the share card. |
 | `tests/dead-reckoning.test.js` | The game's tests, called from `tests/run.js`. |
 | `review/dead-reckoning-patch.py` | The shared-file patch. |
@@ -126,3 +127,22 @@ Fixed from the play-through (with tests):
 - On a phone the distance and Next button were below the fold after locking a pin; they now scroll into view.
 - The result card had no next-game button; it now has one, which 0.15.10's `nextButtons()` turns into
   "Play <first unplayed game> next" like every other game.
+
+## Landmarks from Duet (from No. 14)
+
+Duet's 300 source-checked places that aren't cities (summits, volcanoes, lakes, straits, ancient sites…) are in
+`review/dead-reckoning-places.md` exactly as received, and `tools/dead-reckoning-data.js` builds them into the page
+as `DR_LANDMARKS`.
+- **Left out (10):** the ones Duet flagged as overlapping the city list: Christ the Redeemer, Hollywood Sign, Golden Gate
+  Bridge, Hiroshima Peace Memorial, Pearl Harbor, Table Mountain, Robben Island, Alhambra, Potala Palace and the
+  Leaning Tower of Pisa. That leaves 290: 79 easy, 109 medium, 102 hard.
+- **Kept:** the North Pole and the South Pole station. The map's top and bottom edges are the poles, a pin there
+  is scored by the same great-circle distance, and the arrow still points the right way.
+- **From No. 14 only.** Nos. 1 to 13 are exactly as before (a test fingerprints all thirteen). Each day from No. 14 has
+  one or two landmarks, never two of the same difficulty: easy in round 1 or 2, medium in round 3 or 4, hard in
+  round 5. They are picked from their own random stream, and no landmark comes back within 60 days.
+- **Country field only on the reveal**, as Duet asked: the question shows the kind of place ("Volcano", "Strait")
+  instead of a country, the country/ocean field is never used for scoring or for the one-country-a-day rule
+  (that rule now covers the city rounds only), and the reveal shows Duet's clue, then "Volcano · Italy".
+- Duet's notes on coarse points, off-centre points and Mount Sinai are kept in the data file; nothing in the game
+  depends on them (distance scoring is forgiving enough for a coarse point).

@@ -4,7 +4,11 @@
   "use strict";
   var KEY = "dailycity:reckoning:v1", GAP = 60, K = 1100, WEIGHTS = [1, 1.5, 2, 2.5, 3];
   var P = (window.DR_PLACES || []).map(function (a, i) { return { i: i, name: a[0], country: a[1], lat: a[2], lon: a[3], pop: a[4], capital: !!a[5], tier: a[6] }; });
-  var POOLS = [1, 2, 3, 4, 5].map(function (t) { return P.filter(function (p) { return p.tier === t; }).map(function (p) { return p.i; }); });
+  // Duet's source-checked places that aren't cities, from No. 14 on. "where" is shown on the reveal only.
+  (window.DR_LANDMARKS || []).forEach(function (a) { P.push({ i: P.length, lm: true, name: a[0], country: a[1], lat: a[2], lon: a[3], kind: a[4], diff: a[5], clue: a[6], tier: 0 }); });
+  var POOLS = [1, 2, 3, 4, 5].map(function (t) { return P.filter(function (p) { return !p.lm && p.tier === t; }).map(function (p) { return p.i; }); });
+  var LPOOLS = [1, 2, 3].map(function (d) { return P.filter(function (p) { return p.lm && p.diff === d; }).map(function (p) { return p.i; }); });
+  var LM_FROM = 14; // Nos. 1 to 13 stay exactly as they were
   var MYST = window.DR_MYSTERY || [];
   var $ = function (s) { return document.querySelector(s); };
 
@@ -43,7 +47,21 @@
   function daily(n) {
     while (sched.length <= n) {
       var d = sched.length, r = rng(d * 7919 + 104729), m = (MYST[d - 1] || "|").split("|"), used = {}, pick = [];
+      // from No. 14, one or two rounds a day are landmarks: an easy one in round 1 or 2, a medium one in round 3
+      // or 4, a hard one in round 5, never two of the same difficulty (its own random stream, so cities are unaffected)
+      var lmAt = {};
+      if (d >= LM_FROM && LPOOLS[0].length) {
+        var rl = rng(d * 104729 + 7919), diffs = [0, 1, 2], howMany = rl() < 0.5 ? 1 : 2;
+        for (var q = 2; q > 0; q--) { var z = Math.floor(rl() * (q + 1)), tmp = diffs[q]; diffs[q] = diffs[z]; diffs[z] = tmp; }
+        diffs.slice(0, howMany).forEach(function (df) { lmAt[df === 0 ? (rl() < 0.5 ? 0 : 1) : df === 1 ? (rl() < 0.5 ? 2 : 3) : 4] = { df: df, k: rl() }; });
+      }
       for (var t = 0; t < 5; t++) {
+        if (lmAt[t]) {
+          var lp = LPOOLS[lmAt[t].df], LL = lp.length, lk = Math.floor(lmAt[t].k * LL), lc = -1;
+          for (var jj = 0; jj < LL && lc < 0; jj++) { var c = lp[(lk + jj) % LL]; if (last[c] === undefined || d - last[c] > GAP) lc = c; }
+          if (lc < 0) lc = lp[lk];
+          last[lc] = d; pick.push(lc); continue;
+        }
         var pool = POOLS[t], L = pool.length, k = Math.floor(r() * L), chosen = -1;
         for (var pass = 0; pass < 2 && chosen < 0; pass++)
           for (var j = 0; j < L; j++) {
@@ -68,6 +86,7 @@
   function owns(c) { return the(c) + (/s$/.test(c) ? "'" : "'s"); }
   function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
   function fact(p) {
+    if (p.lm) return [p.clue, cap(p.kind) + " · " + p.country];
     var c = (window.DR_COUNTRIES || {})[p.country] || [], kind = c[0], cur = c[1], high = c[2];
     var one = p.capital ? "The capital of " + the(p.country) + ", home to about " + popText(p.pop) + " people." : "A city in " + the(p.country) + " of about " + popText(p.pop) + " people.";
     var two = [];
@@ -273,7 +292,7 @@
     $("#rnd").textContent = mode === "daily" ? "Place " + (i + 1) + " of 5" + (WEIGHTS[i] !== 1 ? " · counts ×" + WEIGHTS[i] : "") : "Practice place " + (i + 1);
     $("#place").innerHTML = "";
     $("#place").appendChild(document.createTextNode(t.name));
-    var sm = document.createElement("small"); sm.textContent = t.country; $("#place").appendChild(sm);
+    var sm = document.createElement("small"); sm.textContent = t.lm ? cap(t.kind) : t.country; $("#place").appendChild(sm);
     $("#run").textContent = mode === "daily" ? String(total(roundsOf(guesses, places).map(function (r) { return r.s; }))) : practice.n ? "avg " + Math.round(practice.sum / practice.n) : "";
     $("#lockBtn").hidden = false; $("#lockBtn").disabled = !pin; $("#reveal").hidden = true;
     drawDots();

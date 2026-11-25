@@ -65,8 +65,27 @@ const counts = [1, 2, 3, 4, 5].map((t) => list.filter((p) => p.tier === t).lengt
 console.log("places by round:", counts.join(" "), "total", list.length);
 const facts = {};
 list.forEach((p) => { const c = C[p.country]; facts[p.country] = [c.kind, c.cur, c.high]; });
+// Duet's source-checked places that aren't cities (review/dead-reckoning-places.md), used from No. 14 on.
+// The ten Duet flagged as overlapping the city list are left out. Fields kept: name, where (shown on the reveal
+// only, never used for scoring), lat, lon, kind, difficulty (1 easy, 2 medium, 3 hard), clue.
+const OVERLAP = ["Christ the Redeemer", "Hollywood Sign", "Golden Gate Bridge", "Hiroshima Peace Memorial", "Pearl Harbor", "Table Mountain", "Robben Island", "Alhambra", "Potala Palace", "Leaning Tower of Pisa"];
+const landmarks = [];
+let inPart = false;
+read("review/dead-reckoning-places.md").split("\n").forEach((l) => {
+  if (/^PLACES PART \d/.test(l)) { inPart = true; return; }
+  if (/^END PART \d/.test(l)) { inPart = false; return; }
+  if (!inPart || !l.trim()) return;
+  const f = l.split(" | ");
+  if (f.length !== 8) throw new Error("bad line: " + l);
+  if (OVERLAP.includes(f[0])) return;
+  const lat = Number(f[2]), lon = Number(f[3]), diff = { easy: 1, medium: 2, hard: 3 }[f[5]];
+  if (!isFinite(lat) || !isFinite(lon) || !diff || Math.abs(lat) > 90 || Math.abs(lon) > 180) throw new Error("bad values: " + l);
+  landmarks.push([f[0], f[1], lat, lon, f[4], diff, f[6]]);
+});
+console.log("landmarks:", landmarks.length, [1, 2, 3].map((d) => landmarks.filter((x) => x[5] === d).length).join(" "));
 const out = "var DR_PLACES=" + JSON.stringify(list.map((p) => [p.name, p.country, p.lat, p.lon, p.pop, p.capital ? 1 : 0, p.tier])) + ";\n"
   + "var DR_COUNTRIES=" + JSON.stringify(facts) + ";\n"
+  + "var DR_LANDMARKS=" + JSON.stringify(landmarks) + ";\n"
   + "var DR_MYSTERY=" + JSON.stringify(mystery.slice(1).map((m) => m.name + "|" + m.country)) + ";\n";
 const file = path.join(ROOT, "dead-reckoning.html");
 if (fs.existsSync(file)) {
