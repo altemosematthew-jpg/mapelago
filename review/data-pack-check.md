@@ -46,3 +46,15 @@ Stamps' coasts questions and Voyage use this field. I haven't changed it. Tell m
 - **Flagged for your review:** Bulgaria uses the euro from 2026; Zimbabwe's currency is Zimbabwe Gold (ZWG); the US highest peak is Denali, federally named Mount McKinley (accept both).
 - **Not fully verified:** right-hand driving (taken as "not on the left list"), flag colours, domains .ye .za .zm .zw.
 - **Time zones:** main territory only; never a clue for countries listed with a range.
+
+## 5. Used in Fathoms from No. 20
+- **Tuvalu added** to Fathoms' country table (it couldn't be given as an answer). From the pack: island, no land
+  neighbours. **Not in the pack, please have Duet check:** capital Funafuti, official languages English and Tuvaluan,
+  area 26 km². It sorts deepest (smallest largest city), like Nauru. The other games' tables still lack it (section 1).
+- **New "fact" prompts**, one a day, built only from the pack:
+  - uses the euro / the US dollar / the West African CFA franc / the East Caribbean dollar / the Central African CFA franc;
+  - drives on the left (only the left-driving list, the verified side);
+  - phone code is +1; phone code starts with +2, +3, +4, +5, +6, +8 or +9.
+  - **Flagged for review:** Bulgaria counts as using the euro (from 2026, per the pack).
+- Each day from No. 20 deals one prompt from each of seven families (borders, size, size within a continent, place,
+  language, first letter, pack facts), so no kind repeats within a day.
