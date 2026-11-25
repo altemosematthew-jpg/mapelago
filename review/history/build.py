@@ -664,6 +664,7 @@ for line in [
     "Years Duet couldn't confirm (%s) are never asked or shown." % "; ".join("%s's %s %s year" % (c, n, w2) for c, n, w2 in sorted(UNCONFIRMED)),
     "Wrong answers never come from a country that shares a Block B line with the one asked about, or from these pairs: %s." % "; ".join("%s / %s" % p for p in OVERLAP),
     "At most one 2020s event and two South American events a day.",
+    "\"Which came first?\", \"Which came later?\", \"Put in order\" and \"How many years apart?\" are made from two or three of the dated facts listed below (those marked `first`); \"How many years apart?\" uses only facts marked `slider`. A pair or order of facts is never repeated in the shipped schedule.",
     "Canada, Australia, China, Switzerland, Italy and Liechtenstein are \"formed\" or \"founded\", never \"became independent\".",
     "Burundi's move is to its political capital. Nauru stays Nauru. Myanmar's capital move is 2005.",
 ]: w("- " + line)
