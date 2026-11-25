@@ -102,8 +102,7 @@
     { id: "voyage", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
     { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html", icon: "\u{1F30A}", about: "Name the least obvious right answer." },
     { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." },
-    { id: "crossings", name: "Crossings", key: "dailycity:crossings:v1", url: "crossings.html", icon: "\u{1F9ED}", about: "Name the countries between two others, border by border." },
-    { id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: "\u{1F4CD}", about: "Tap five places on a blank map. Closer scores more." }
+    { id: "crossings", name: "Crossings", key: "dailycity:crossings:v1", url: "crossings.html", icon: "\u{1F9ED}", about: "Name the countries between two others, border by border." }
   ];
   var FREEZE_EVERY = 7, FREEZE_MAX = 2;
   function today() {
@@ -341,7 +340,7 @@
   }
   function addImageButton() {
     var me = here(), btn = document.getElementById("shareBtn");
-    if (!me || !btn || document.getElementById("imgBtn") || me.id === "city" || (me.id === "country" || me.id === "reckoning")) return;
+    if (!me || !btn || document.getElementById("imgBtn") || me.id === "city" || me.id === "country") return;
     var b = document.createElement("button");
     b.className = btn.className + " mx-img"; b.type = "button"; b.textContent = "Share image";
     b.onclick = function () { shareImageClick(me); };
@@ -358,7 +357,7 @@
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
         id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
         id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") :
-        id === "crossings" ? (r.score != null ? r.score : "✓") : id === "reckoning" ? (r.total != null ? r.total : "✓") : "✓";
+        id === "crossings" ? (r.score != null ? r.score : "✓") : "✓";
       parts.push(s.game.icon + " " + v);
     });
     return { n: parts.length, text: "Mapelago today, No. " + t + " \u{1F422}\n" + parts.join(" · ") + "\nmapelago.com/games/" };
@@ -374,7 +373,6 @@
     if (me.id === "stamps") return /\b6 of 6\b/.test(line);
     if (me.id === "fathoms") return /7,000 of 7,000/.test(line);
     if (me.id === "crossings") return /\u{1F422} 1000 points/u.test(line);
-    if (me.id === "reckoning") return /1,000 of 1,000/.test(line);
     return false;
   }
   function confetti(box) {
@@ -453,7 +451,7 @@
 
   // 18.5 a friend's challenge link (#c-<number>-<score>) on the games that had none
   var UNIT = { bigger: function (n) { return n + " of 10"; }, bigcountry: function (n) { return n + " of 10"; }, voyage: function (n) { return n + " points"; },
-    fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; }, crossings: function (n) { return n + " points"; }, reckoning: function (n) { return Number(n).toLocaleString("en-US") + " of 1,000"; } };
+    fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; }, crossings: function (n) { return n + " points"; } };
   function challenge(app) {
     var me = here(), m = /^#c-(\d+)-(\d+)$/.exec(location.hash);
     if (!me || !m || !UNIT[me.id]) return;
@@ -475,8 +473,7 @@
     city: { code: "mc", max: 1000, modes: 2 }, country: { code: "mn", max: 1000, modes: 2 },
     bigger: { code: "bc", max: 10, modes: 1 }, bigcountry: { code: "bn", max: 10, modes: 1 },
     voyage: { code: "vy", max: 1000, modes: 1 }, fathoms: { code: "fa", max: 7000, modes: 1 },
-    stamps: { code: "st", max: 6, modes: 1 }, crossings: { code: "cr", max: 1000, modes: 1 },
-    reckoning: { code: "dr", max: 1000, modes: 1 }
+    stamps: { code: "st", max: 6, modes: 1 }, crossings: { code: "cr", max: 1000, modes: 1 }
   };
   function gameByCode(c) { var id = Object.keys(BEAT).filter(function (k) { return BEAT[k].code === c; })[0]; return id ? GAMES.filter(function (g) { return g.id === id; })[0] : null; }
   function gameByPage(page) { return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(page); })[0]; }
