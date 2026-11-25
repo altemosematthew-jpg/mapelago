@@ -99,3 +99,88 @@ Not touched: `sw.js`, the `?v=` strings, `golden.json` (the country schedule is 
 
 - `hints.html` (Mystery city's hints page) says "Each move costs 8 points"; Mystery city's moves cost 6
   since rules version 2. It's in the minified page text, so I left it for the city's owner.
+
+## Round 2: the new scoring (both mystery games, from No. 14)
+
+Design and sources: `review/scoring.md`. Made by `review/scoring-patch.py`, which edits index.html and
+country.html (run it after `review/country-rules-patch.py`). If either page conflicts in a merge:
+
+    python3 review/country-rules-patch.py --take-ours country.html
+    python3 review/scoring-patch.py --take-ours
+
+Changes to shared files, all marked `mx-scoring`:
+- `index.html`: a block of `MxS...` functions on their own lines just before `/* Quick mode (asked for
+  by players)`; on the game script line, the edits the script lists (the score `Jt`, the move's lock
+  check, `Rv` stamps `P.s`, the miss line, the new-clue note, the cost line, the end card, the share
+  text, the test hooks); a CSS block after `/* /mx-find */`; one hidden `<li class="mx-s2">` in the
+  rules sheet.
+- `tests/run.js`: a block `// ---- mx-scoring ... ----` after the mx-country-rules block. Three
+  checks in the mx-country-rules block now expect the new scoring on No. 14.
+- Also in this round: `hints.html` ("Each move costs 6 points") and `about/index.html` (the lede names
+  the eight games), each a one-line change.
+- `copy/copy.json` (city and country explainer and steps: the tile bonus, misses at 50 to 150, the
+  stars), made by `review/scoring-copy-patch.py`, which also runs `copy/apply.py` (index.html,
+  country.html and games/index.html foot copy). If copy.json conflicts, take your side and run
+  `python3 review/country-copy-patch.py` then `python3 review/scoring-copy-patch.py`.
+- `how-to-play/index.html`: a block `<!-- mx-scoring ... -->` after the first Scoring paragraph, and
+  one sentence in the Mystery country block (misses at 50 to 150, the tile bonus).
+
+## Merging your releases into this branch (done twice, 0.15.2 and 0.15.3)
+
+A release bump changes the `?v=` lines right next to the game script lines, so index.html and
+country.html conflict whichever way you merge. What worked both times, with this branch checked out:
+
+    git checkout --theirs index.html country.html
+    python3 review/country-rules-patch.py country.html
+    python3 review/scoring-patch.py
+    python3 review/country-quick-patch.py
+    python3 review/review-fixes-patch.py
+    python3 review/teachers-menu-patch.py
+    python3 copy/apply.py
+    git add index.html country.html
+
+The result differed from this branch only in the version strings, and the whole suite passed.
+Merging this branch into yours: the same, with `--ours` (or `--take-ours` on the two patch scripts).
+
+## Round 2: Quick mode for Mystery country (from No. 14)
+
+Made by `review/country-quick-patch.py` (country.html only; run after the rules and scoring scripts).
+Its copy is in `review/scoring-copy-patch.py` (country explainer and a Quick step) and one paragraph
+in the `mx-country-rules` block of how-to-play. Tests: the `// ---- mx-country-quick ... ----` block.
+The country remembers its own choice in `dailycity:country:mode`, separate from the city's
+`dailycity:mode`. Checked against your branch at fc67a60 (0.15.5): all five scripts apply cleanly
+and give this branch's index.html, country.html, copy.json, copy.js and games/index.html, apart
+from your newer release content (version strings, the city facts).
+
+Noticed in Mystery city, not changed (your code): the Tiles/Quick choice stays on screen after the
+first move until the page redraws, and tapping it then does nothing. The country version hides it on
+the first move (one extra call after a move); the same fix in the city would be adding `MxModeUi()`
+to the move handler `za`.
+
+## Round 3: fixes from the review of 0.15.2
+
+Made by `review/review-fixes-patch.py` (both pages; run after the other scripts). Tests: the
+`// ---- mx-review ... ----` block (15 checks).
+- index.html (shared): a `MxTodayRules` function on its own line before the mx-scoring block, an
+  empty `<p class="note" id="todayRules" hidden>` at the top of the footer (outside the copy markers),
+  one call in the cost-line code, and "make an 8" in the next-clue label.
+- country.html: the same note and function; old-rules cost line "Today: 8 points a move; a miss costs
+  150 and opens no clue."; the languages clue without its label; `title` "Mystery country" and the
+  header "No. 12"; "make an 8" in the label and the coach line; Past countries (`#past-N`,
+  `dailycity:country:archive:v1`, the `#arcBan` banner, a `#mxPast` dialog, "Past countries" next to
+  Your streaks; Quick mode not offered in the archive).
+- Not touched: site.js and extras.js. The country archive list lives in country.html, so it doesn't
+  depend on extras.js (which the country page doesn't load).
+
+## Round 4: For teachers (/teachers/)
+
+- `teachers/index.html` (new), in the About page's look. It loads `../analytics.js?v=...` like About;
+  after a release bump, `python3 review/teachers-menu-patch.py` sets it to the version in sw.js.
+- `review/teachers-menu-patch.py` (new) adds `For teachers` just before `About` in the Site menu of
+  every page (index.html, country.html, the other games, hints.html, offline.html, about/, privacy/,
+  how-to-play/, games/) and a `teachers/` line in sitemap.xml after `about/`. It's safe to run again,
+  and a page added later gets the link the next time it runs. One line per page; in hints.html it's
+  inside the page's script text.
+- `tests/run.js`: a block `// ---- mx-teachers ... ----` (8 checks: the page at 375 and 1440 px with no
+  console errors or sideways scroll, its links and promises, the menu link on every page, the sitemap).
+- Not changed: sw.js (offline copies of the teachers page come from the normal page cache).
