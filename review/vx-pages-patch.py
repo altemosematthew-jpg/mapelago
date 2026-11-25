@@ -13,6 +13,10 @@ def patch(path, edits):
     for old, new in edits:
         if new in out or ("vx-pack:start" in new and "vx-pack:start" in out):
             continue
+        # an edit already made and changed again by a later edit: its first new line is still there
+        first = next((l for l in new.split("\n") if l.strip() and l not in old), "")
+        if first and first in out.split("\n"):
+            continue
         n = out.count(old)
         if n != 1:
             sys.exit(f"{path}: anchor found {n} times, nothing written: {old[:70]!r}")
@@ -69,6 +73,20 @@ voyage = [
      '.qsay{margin:10px 0 0;padding:9px 12px;border:var(--bw) solid var(--line);border-radius:var(--r);font-weight:800;font-size:15.5px;line-height:1.35}.qsay[hidden]{display:none}\n'
      '.qsay.ok{background:var(--tint)}.qsay.no{background:var(--paper);border-style:dashed}\n'
      '</style>'),
+    # clarity (375 px first-time play): say what a harbor is up front, and put the topic chips under the question with a caption
+    ('<p class="lede" id="lede">Ten islands, one question on each. Drop anchor to keep your points, or sail on for more.</p>',
+     '<p class="lede" id="lede">Ten islands, one question on each. Drop anchor to keep your points, or sail on for more. Islands 3 and 6 are harbors: points you reach there are safe.</p>'),
+    ('  </section>\n  <ul class="badges" id="badges" aria-label="Kinds of question you have answered"></ul>\n\n  <section id="play"',
+     '  </section>\n  <!-- vx-topics: the topic chips moved under the question -->\n\n  <section id="play"'),
+    ('  <p id="say" aria-live="polite"></p>\n\n  <section id="done" hidden>',
+     '  <p id="say" aria-live="polite"></p>\n'
+     '  <!-- vx-topics:start --><p class="note vx-topics">Today\'s topics. Each one fills in when you get it right.</p>\n'
+     '  <ul class="badges" id="badges" aria-label="Kinds of question you have answered"></ul><!-- vx-topics:end -->\n\n  <section id="done" hidden>'),
+    ('.vxmore{margin-top:10px}.vxmore-note{margin:6px 0 0}\n.vxp .act',
+     '.vxmore{margin-top:10px}.vxmore-note{margin:6px 0 0}\n.vx-topics{margin:0 0 6px}\n'
+     '.vx-practicing #dots,.vx-practicing .status,.vx-practicing #badges,.vx-practicing .vx-topics,.vx-practicing #say{display:none}\n.vxp .act'),
+    # the practice Next button stays hidden until an answer is picked (.act sets display, which beats [hidden])
+    ('.vx-topics{margin:0 0 6px}\n', '.vx-topics{margin:0 0 6px}\n#vxpNext[hidden]{display:none}\n'),
 ]
 
 stamps = [
@@ -104,6 +122,10 @@ stamps = [
      '.vxp-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}.vxp-streak{margin:0;font-size:15px;font-variant-numeric:tabular-nums}\n'
      '.vxp-cat{display:flex;align-items:center;gap:6px}.vxp-ask{margin:0 0 12px;font-size:21px;line-height:1.2}\n'
      '</style>'),
+    # clarity: the answer message shows once, inside the question panel (it has its own role="status")
+    ('.vxp{margin-top:14px}',
+     '#quiz:not([hidden]) + #say{display:none}\n.vx-practicing .passport,.vx-practicing #say{display:none}\n.vxp{margin-top:14px}'),
+    ('#quiz:not([hidden]) + #say{display:none}\n', '#quiz:not([hidden]) + #say{display:none}\n#sxpNext[hidden]{display:none}\n'),
 ]
 
 patch("voyage.html", voyage)

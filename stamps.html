@@ -414,6 +414,9 @@ a.act{text-decoration:none}
 .about-h{margin:0 0 10px;font-size:22px;line-height:1.2}.howto{margin:6px 0 14px;padding-left:22px;line-height:1.45}
 /* vx-practice: Play more */
 .vxmore{margin-top:10px}.vxmore-note{margin:6px 0 0}
+#quiz:not([hidden]) + #say{display:none}
+#sxpNext[hidden]{display:none}
+.vx-practicing .passport,.vx-practicing #say{display:none}
 .vxp{margin-top:14px}.vxp-tag{display:inline-block;margin:0 0 8px;padding:3px 10px;border:2px dashed var(--muted);border-radius:999px;font-size:13px;font-weight:700;color:var(--ink-2)}
 .vxp-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}.vxp-streak{margin:0;font-size:15px;font-variant-numeric:tabular-nums}
 .vxp-cat{display:flex;align-items:center;gap:6px}.vxp-ask{margin:0 0 12px;font-size:21px;line-height:1.2}
@@ -474,7 +477,7 @@ a.act{text-decoration:none}
   <footer class="about">
     <!-- copy:start -->
     <h1 class="about-h">Spin, answer, stamp all six</h1>
-    <p>Stamps is Mapelago&#x27;s daily trivia wheel. Spin it and it lands on one of six categories: capitals, borders, languages, size, continents or coasts. Answer the geography question it gives you, and a right answer stamps that category. Miss, and the category gets one more chance with a new question. Miss again and it stays empty. The goal is to fill all six in as few spins as you can. Everyone gets the same questions each day, and the page clears at midnight, your time.</p>
+    <p>Stamps is Mapelago&#x27;s daily trivia wheel. Spin it and it lands on one of six categories. The six change every day: capitals, borders, languages, size, continents and coasts, with money, driving, peaks, phone codes and web addresses taking turns. Answer the geography question it gives you, and a right answer stamps that category. Miss, and the category gets one more chance with a new question. Miss again and it stays empty. The goal is to fill all six in as few spins as you can. Everyone gets the same questions each day, and the page clears at midnight, your time. When your page is done, Play more gives you endless practice questions that never change your page or streak.</p>
     <h2>How to play</h2>
     <ol class="howto"><li>Spin the wheel. Tap it to stop the spin early.</li><li>Answer the question in the category it lands on.</li><li>Get it right and that category gets its stamp.</li><li>Get it wrong and you get one more try with a new question. Miss twice and it stays empty.</li><li>Fill all six in as few spins as you can.</li></ol>
     <!-- copy:end -->
@@ -729,12 +732,12 @@ window.VXPACK={"Afghanistan":{"c":"+93","w":".af","p":"Noshak","h":7492,"r":1},"
     score();
   }
   function open() {
-    $("#done").hidden = true; $("#sxp").hidden = false;
+    document.body.classList.add("vx-practicing"); $("#done").hidden = true; $("#sxp").hidden = false;
     show();
     $("#sxp").scrollIntoView({ block: "start" });
     var b = $("#sxpOpts .opt"); if (b) b.focus({ preventScroll: true });
   }
-  function close() { $("#sxp").hidden = true; $("#done").hidden = false; $("#sxMore").focus(); }
+  function close() { document.body.classList.remove("vx-practicing"); $("#sxp").hidden = true; $("#done").hidden = false; $("#sxMore").focus(); }
   function wire() {
     if (!$("#sxMore")) return;
     $("#sxMore").onclick = open;

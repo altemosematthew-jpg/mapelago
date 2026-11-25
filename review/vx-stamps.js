@@ -117,12 +117,12 @@
     score();
   }
   function open() {
-    $("#done").hidden = true; $("#sxp").hidden = false;
+    document.body.classList.add("vx-practicing"); $("#done").hidden = true; $("#sxp").hidden = false;
     show();
     $("#sxp").scrollIntoView({ block: "start" });
     var b = $("#sxpOpts .opt"); if (b) b.focus({ preventScroll: true });
   }
-  function close() { $("#sxp").hidden = true; $("#done").hidden = false; $("#sxMore").focus(); }
+  function close() { document.body.classList.remove("vx-practicing"); $("#sxp").hidden = true; $("#done").hidden = false; $("#sxMore").focus(); }
   function wire() {
     if (!$("#sxMore")) return;
     $("#sxMore").onclick = open;

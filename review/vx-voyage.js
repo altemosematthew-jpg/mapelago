@@ -182,13 +182,14 @@
   }
   function open() {
     pr.on = true;
-    $("#done").hidden = true; $("#vxp").hidden = false;
+    document.body.classList.add("vx-practicing"); $("#done").hidden = true; $("#vxp").hidden = false;
     show();
     $("#vxp").scrollIntoView({ block: "start" });
     var b = $("#vxpOpts .opt"); if (b) b.focus({ preventScroll: true });
   }
   function close() {
     pr.on = false;
+    document.body.classList.remove("vx-practicing");
     $("#vxp").hidden = true; $("#done").hidden = false;
     $("#vxMore").focus();
   }

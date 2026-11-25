@@ -62,7 +62,11 @@ Shared files:
   `// ---- vx end ----`. Nothing else in the file changed.
 - `tests/golden.json`: 42 entries, Voyage and Stamps for No. 14 to 30, 60, 100, 200 and 365. If your branch also
   changes golden.json, take either side and re-run `cd tests && npm run golden` after the merge.
-- Not touched: site.js, extras.js, site.css, sw.js, copy/copy.json, copy.js.
+- `copy/copy.json`: two strings only, the `explainer` of `voyage` and of `stamps` (they now name the new topics, say
+  Stamps' six change daily, and mention Play more). Then `python3 copy/apply.py` rewrote the foot of voyage.html and
+  stamps.html and the two matching paragraphs in `games/index.html`; nothing else in its output changed. If copy.json
+  conflicts, keep your side and re-apply those two sentences, then run `python3 copy/apply.py`.
+- Not touched: site.js, extras.js, site.css, sw.js, copy.js.
 
 ## The edits in voyage.html and stamps.html
 
@@ -76,4 +80,9 @@ writing if an anchor is missing.
   list, the picture drawer taking a canvas, and `window.VXH` / `SX.wire()` hooks.
 - `<!-- vx-practice:start/end -->` markup: the "Play more" button under the result and the practice panel.
 - `/* vx-practice */` styles at the end of each page's `<style>`.
+- Clarity (played as a first-timer at 375 px): Voyage's opening line now says islands 3 and 6 are harbors where points
+  are safe; its topic chips (up to nine now) moved under the question with a caption ("Today's topics. Each one fills
+  in when you get it right.") instead of pushing the question down; practice hides the daily score bar so it can't be
+  mistaken for the practice score. Stamps showed each answer message twice (in the panel and again below it, and
+  screen readers heard it twice); now once, in the panel.
 - The generated block sits just before `<div id="toast">`, one line away from the `?v=` script lines, so a version bump merges cleanly.
