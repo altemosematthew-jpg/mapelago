@@ -615,7 +615,10 @@ data = {
     "Q": [[q["kind"], q["ask"], L(q["ans"]), q["facts"], "|".join(q["src"]), q.get("note", "")] for q in Q],
     "T": labels,
     "D": days,
+    "z": [f["id"] for f in facts if f["fuzzy"]],   # defensible-year facts: never on the slider, 20 years apart in pairs (checked by the tests)
+    "rest": None,                                  # filled in below: the shortest gap before a fact comes back
 }
+data["rest"] = fact_gap
 js = ("// Logbook (history game) data. Written by review/history/build.py from review/history/block-a.txt and block-b.txt.\n"
       "// Do not edit by hand: change the blocks or the rules in build.py and run it again.\n"
       "window.MX_HIST=" + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n")

@@ -2,8 +2,8 @@
   "private": true,
   "description": "Browser tests for Mapelago. They protect saves, streaks and the daily schedule.",
   "scripts": {
-    "test": "node run.js",
-    "golden": "node run.js --update-golden"
+    "test": "node run.js && node history.js",
+    "golden": "node run.js --update-golden && node history.js --update-golden"
   },
   "devDependencies": {
     "playwright": "^1.48.0"

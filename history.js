@@ -347,6 +347,16 @@
     if (window.MXS && MXS.today() !== today) $("#fresh").hidden = false;
   }
 
+  // Offline after the first visit: sw.js saves every file fetched while it is in charge, but this page's own files
+  // load before it takes over on a first visit. So once it is in charge, fetch them again for it to keep.
+  // (When sw.js lists history.html, history.js and history-data.js itself, this becomes a harmless repeat.)
+  function keepOffline() {
+    var sw = navigator.serviceWorker;
+    if (!sw.controller) { sw.addEventListener("controllerchange", keepOffline, { once: true }); return; }
+    var urls = [location.pathname.split("/").pop() || PAGE].concat(Array.prototype.map.call(document.scripts, function (x) { return x.getAttribute("src"); }).filter(Boolean));
+    urls.forEach(function (u) { fetch(u).catch(function () {}); });
+  }
+
   function init() {
     $("#num").textContent = "No. " + dayNo + " · " + WEEK[weekday(dayNo)] + " · " + D.level[weekday(dayNo)];
     drawMute();
@@ -363,7 +373,10 @@
       show(c, false);
     }
     countdown(); setInterval(countdown, 1000);
-    if (!local && "serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
+    if ((!local || /[?&]sw\b/.test(location.search)) && "serviceWorker" in navigator) {   // ?sw: the offline test, on this computer
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+      navigator.serviceWorker.ready.then(function () { setTimeout(keepOffline, 1200); }).catch(function () {});
+    }
     if (local) {
       window.__hist = {
         day: dayNo, D: D, QS: QS, judge: judge, total: total, shareText: shareText, cur: cur, show: show,
