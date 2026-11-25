@@ -45,7 +45,7 @@ Find the merge commit (`git log --merges -1 --format=%h main`), then:
 
 Pages redeploys the old version within a couple of minutes. Its service worker uses a different cache name (`mapelago-0.14.0`), so it replaces the new one on each player's next visit.
 
-Saves are kept: results and streaks are stored per day, and the old version reads them. One exception: a mystery-city round started on the new rules and not finished may restart that day under the old rules. Streaks are unaffected.
+Saves are kept: results and streaks are stored per day, and the old version reads them. Exceptions, both only for a round started and not finished on the day of the rollback: a mystery-city round started on the new rules may restart under the old rules, and a Quick-mode round carries on as a tile round with three pins. Finished days and streaks are unaffected.
 
 ## Trying the branch on your phone first
 Simplest, with nothing to set up beyond a computer on the same Wi-Fi:

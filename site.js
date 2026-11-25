@@ -348,7 +348,7 @@
     info().forEach(function (s) {
       var r = s.res[t]; if (!r) return;
       var id = s.game.id, v =
-        id === "city" || id === "country" ? (r.score != null ? r.score : "✓") :
+        id === "city" || id === "country" ? (r.q ? (r.won ? r.pins + "/5 quick" : "X/5 quick") : r.score != null ? r.score : "✓") :
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
         id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
         id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") :
