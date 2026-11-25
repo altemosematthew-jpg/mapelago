@@ -229,5 +229,14 @@ def teachers(s):
 if os.path.exists(path("teachers/index.html")):
     edit("teachers/index.html", '<td><a href="../dead-reckoning.html">', teachers, "lesson table row")
 
+
+# For teachers (0.15.12) counts the games in its own words: "nine short geography games", "all nine games"
+def teacher_count(s):
+    return re.sub(r'\b(' + NUM + '|' + NUM.title() + r')( short geography games| games\b)', lambda m: (W.capitalize() if m.group(1)[0].isupper() else W) + m.group(2), s)
+
+
+if os.path.exists(path("teachers/index.html")):
+    edit("teachers/index.html", lambda s: teacher_count(s) == s, teacher_count, f"counts say {W}")
+
 print("done" if not problems else "finished with problems in: " + ", ".join(sorted(set(problems))))
 sys.exit(1 if problems else 0)
