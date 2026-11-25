@@ -257,6 +257,17 @@ async function page(b, url, opts = {}) {
       check(files.every((f) => !/(^|\/)_/.test(f) || f === "_config.yml"), "publishing: no published file starts with an underscore (Jekyll would drop it)");
     }
 
+    // 16. Crossings map labels never overlap (No. 12 put Hungary on Ukraine and the two Koreas on each other)
+    {
+      const { ctx, p } = await page(b, U + "crossings.html#day-12", { wait: 300 });
+      await p.waitForFunction(() => window.__WORLD && document.querySelector("#map svg"));
+      await p.evaluate(() => { const X = __cross, P = X.P(); X.C.map((_, i) => i).filter((i) => i !== P.from && i !== P.to && X.heat(i) <= 1).slice(0, 6).forEach((i) => X.guess(i)); });
+      await p.waitForTimeout(300);
+      const n = await p.evaluate(() => { const r = [...document.querySelectorAll("#map text")].map((t) => t.getBoundingClientRect()); let k = 0; for (let i = 0; i < r.length; i++) for (let j = i + 1; j < r.length; j++) { const a = r[i], c = r[j]; if (a.left < c.right && a.right > c.left && a.top < c.bottom && a.bottom > c.top) k++; } return [r.length, k]; });
+      check(n[0] >= 2 && n[1] === 0, "crossings: no two map labels overlap", JSON.stringify(n));
+      await ctx.close();
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });

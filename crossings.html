@@ -755,12 +755,27 @@ a.act{text-decoration:none}
       var end = i === P.from || i === P.to, f = end ? "var(--ink)" : fills[i] || (onShown[i] ? "url(#hatch)" : "var(--land)");
       land += '<path d="' + pathOf(rs) + '" fill="' + f + '"' + (end ? ' class="end"' : "") + "/>";
     }
+    // Labels never collide: each tries its own spot, then just above or below it; if all three are taken it is
+    // left off (the list under the map names every country). The two ends of the crossing go first.
+    var placed = [], fs = w / 26;
+    function textWidth(t, cls) {
+      try { var cv = textWidth.c || (textWidth.c = document.createElement("canvas").getContext("2d")); cv.font = (/end/.test(cls) ? 800 : 700) + " 100px " + getComputedStyle(document.body).fontFamily; return cv.measureText(t).width; } catch (e) { return t.length * 60; }
+    }
     function label(i, cls) {
-      var c = centre(C[i][2]), fs = (w / 26).toFixed(2);
-      labels += '<text x="' + c[0].toFixed(2) + '" y="' + c[1].toFixed(2) + '" font-size="' + fs + '" class="' + cls + '">' + C[i][1].replace(/&/g, "&amp;") + "</text>";
+      var c = centre(C[i][2]), name = C[i][1], bw = textWidth(name, cls) * fs / 100 + fs * 0.4, bh = fs * 1.25;
+      var spots = [0, -1.25, 1.25].map(function (k) { return [c[0], c[1] + k * fs]; });
+      for (var k = 0; k < spots.length; k++) {
+        var x = Math.min(w - bw / 2, Math.max(bw / 2, spots[k][0])), y = Math.min(h - bh / 2, Math.max(bh / 2, spots[k][1]));
+        var r = [x - bw / 2, y - bh / 2, x + bw / 2, y + bh / 2];
+        if (placed.some(function (q) { return r[0] < q[2] && r[2] > q[0] && r[1] < q[3] && r[3] > q[1]; })) continue;
+        placed.push(r);
+        labels += '<text x="' + x.toFixed(2) + '" y="' + y.toFixed(2) + '" font-size="' + fs.toFixed(2) + '" class="' + cls + '">' + name.replace(/&/g, "&amp;") + "</text>";
+        return;
+      }
     }
     label(P.from, "lb end"); label(P.to, "lb end");
-    G.steps.forEach(function (s) { label(s.i, "lb"); });
+    var onRoute = function (i) { return heat(i) === 0; };
+    G.steps.slice().reverse().filter(function (s) { return onRoute(s.i); }).concat(G.steps.slice().reverse().filter(function (s) { return !onRoute(s.i); })).forEach(function (s) { label(s.i, "lb"); });
     if (shown && !G.won) shown.forEach(function (i) { if (!fills[i] && i !== P.from && i !== P.to) label(i, "lb"); });
     box.innerHTML = '<svg viewBox="0 0 ' + w.toFixed(2) + " " + h.toFixed(2) + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">'
       + '<defs><pattern id="hatch" width="' + (w / 60).toFixed(2) + '" height="' + (w / 60).toFixed(2) + '" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="100%" height="100%" fill="var(--land)"/><line x1="0" y1="0" x2="0" y2="' + (w / 60).toFixed(2) + '" stroke="#7a0177" stroke-width="' + (w / 120).toFixed(2) + '"/></pattern></defs>'
