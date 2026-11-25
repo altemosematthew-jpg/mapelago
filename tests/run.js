@@ -209,6 +209,15 @@ async function page(b, url, opts = {}) {
         await ctx.close();
       }
     }
+    // text that has to match the games: the city's hints page and the About page
+    {
+      const { ctx, p } = await page(b, U + "hints.html", { wait: 600 });
+      const t = await p.textContent("body");
+      check(/Each move costs 6 points/.test(t) && !/costs 8 points/.test(t), "hints page: city moves cost 6");
+      await ctx.close();
+      const ab = fs.readFileSync(path.join(__dirname, "../about/index.html"), "utf8");
+      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Eight games a day/.test(ab), "about page: names all eight daily games");
+    }
     // ---- end mx-country-rules ----
 
     // 8. a game in progress survives midnight
