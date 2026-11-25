@@ -186,6 +186,132 @@ async function page(b, url, opts = {}) {
       await t.ctx.close();
     }
 
+    // ---- bigcountry: Bigger country? reveal, runs and end card (review/bigcountry-merge-notes.md) ----
+    {
+      const BC = "dailycity:bigcountry:v1", fresh = { [BC]: '{"results":{},"game":null}' };
+      // the area of an SVG path made of M/L/Z, in drawing units
+      const drawn = () => [...document.querySelectorAll("#bcReveal .bcs .sh")].map((g) => {
+        const d = (g.querySelector("path") || { getAttribute: () => "" }).getAttribute("d");
+        return d.split("Z").filter(Boolean).reduce((t, seg) => {
+          const q = seg.replace("M", "").split("L").map((s) => s.trim().split(" ").map(Number)); let a = 0;
+          for (let i = 0; i < q.length; i++) { const [x0, y0] = q[i], [x1, y1] = q[(i + 1) % q.length]; a += x0 * y1 - x1 * y0; }
+          return t + Math.abs(a) / 2;
+        }, 0);
+      });
+      // a whole day at phone size (375 px, taps) and desktop size (keyboard only)
+      for (const desktop of [false, true]) {
+        const size = desktop ? "desktop" : "phone";
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-12", { desktop, storage: fresh, clock: new Date("2026-11-25T12:00:00"), ctx: desktop ? {} : { viewport: { width: 375, height: 667 } } });
+        const outside = []; p.on("request", (r) => { if (!r.url().startsWith(U)) outside.push(r.url()); });
+        await p.waitForFunction(() => window.MX && MX.play && window.__big);
+        await p.evaluate(() => MXShapes.load()); await p.waitForFunction(() => window.__WORLD);
+        const P = await p.evaluate(() => __big.S().pairs.map((x) => x.map((c) => c.pop)));
+        const right = P.map((x) => (x[0] >= x[1] ? 0 : 1));
+        const plan = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (i === 5 ? 1 - right[i] : right[i])); // one wrong pick, at round 6
+        const seen = [];
+        if (desktop) await p.focus("#pick0");
+        for (let i = 0; i < 10; i++) {
+          await p.waitForTimeout(350);
+          if (desktop) { if (plan[i] === 1) await p.keyboard.press("Tab"); await p.keyboard.press("Enter"); }
+          else await p.tap("#pick" + plan[i]);
+          await p.waitForSelector("#bcNext", { state: "visible", timeout: 4000 });
+          seen.push(await p.evaluate(() => ({ run: document.querySelector("#bcRun b").textContent, shapes: document.querySelectorAll("#bcReveal .bcs .sh").length, real: document.querySelector("#bcReveal .bcs").getAttribute("data-real"),
+            ratio: document.querySelector("#bcReveal .bcratio").textContent, focus: document.activeElement.id, wide: document.documentElement.scrollWidth })));
+          await p.waitForTimeout(300);
+          if (desktop) await p.keyboard.press("Enter"); else await p.tap("#bcNext");
+          await p.waitForTimeout(150);
+          if (desktop && i < 9) check((await p.evaluate(() => document.activeElement.id)) === "pick0", `bigcountry ${size}: focus returns to the first card after round ${i + 1}`);
+        }
+        const runs = plan.map((_, i) => { let r = 0; for (let j = 0; j <= i; j++) r = plan[j] === right[j] ? r + 1 : 0; return String(r); });
+        check(seen.every((s) => s.shapes === 2 && s.real === "1"), `bigcountry ${size}: every reveal draws both outlines`, JSON.stringify(seen.map((s) => [s.shapes, s.real])));
+        check(JSON.stringify(seen.map((s) => s.run)) === JSON.stringify(runs), `bigcountry ${size}: the run counter counts right answers in a row`, JSON.stringify([seen.map((s) => s.run), runs]));
+        check(seen.every((s) => /^\S.* is (\d[\d,.]*× the size of|\d+% bigger than|a whisker bigger than) \S/.test(s.ratio)), `bigcountry ${size}: every reveal says how much bigger`, seen.map((s) => s.ratio).join(" | "));
+        if (desktop) check(seen.every((s) => s.focus === "bcNext"), "bigcountry desktop: keyboard play moves focus to Next and does not hurry on", JSON.stringify(seen.map((s) => s.focus)));
+        else check(seen.every((s) => s.wide <= 375), "bigcountry phone: nothing wider than a 375 px screen", JSON.stringify(seen.map((s) => s.wide)));
+        await p.waitForTimeout(400);
+        const end = await p.evaluate((BC) => ({ done: !document.querySelector("#done").hidden, score: document.querySelector("#bigScore").textContent, save: JSON.parse(localStorage.getItem(BC)),
+          tiles: [...document.querySelectorAll(".bctile")].map((t) => t.querySelectorAll("svg[data-i] .sh").length), share: document.querySelector("#shareText").textContent,
+          best: document.querySelector("#bcBest").textContent, streak: MXS.info().find((x) => x.game.id === "bigcountry").cur }), BC);
+        check(end.done && end.score === "9" && JSON.stringify(end.save) === JSON.stringify({ results: { 12: { score: 9, picks: plan } }, game: null }), `bigcountry ${size}: the day ends at 9/10 and saves exactly as before`, JSON.stringify([end.score, end.save]));
+        check(end.tiles.length === 10 && end.tiles.every((n) => n === 2), `bigcountry ${size}: the end card strip shows all ten pairs`, JSON.stringify(end.tiles));
+        const lines = end.share.split("\n");
+        check(lines.length === 4 && /^Mapelago Bigger country\? No\. 12 \u{1F422} 9\/10$/u.test(lines[0]) && lines[1] === "✅".repeat(5) + "❌" + "✅".repeat(4) && lines[2] === "Best run: 5 · Close calls: 2 of 2"
+          && /mapelago\.com\/bigger-country\.html#b-bn-12-0-9$/.test(lines[3]) && end.best === "5" && end.streak === 1, `bigcountry ${size}: share text and beat-my-score link`, JSON.stringify([end.share, end.best, end.streak]));
+        await p.click(".bctile[data-i='8']"); await p.waitForTimeout(300);
+        check(!(await p.isHidden("#bcDetail")) && (await p.evaluate(() => document.querySelectorAll("#bcDetail .bcs .sh").length)) === 2 && (await p.getAttribute(".bctile[data-i='8']", "aria-expanded")) === "true", `bigcountry ${size}: a tile opens that pair's reveal again`);
+        check(!outside.length, `bigcountry ${size}: loads nothing from other sites`, outside.join(" "));
+        check(!p.errs.length, `bigcountry ${size}: no errors`, p.errs.join("; "));
+        await ctx.close();
+      }
+      // the true-scale ratio for a known pair: No. 12, round 4 is Finland and Belize (Finland is 14.5x Belize).
+      // Finland sits at 60-70 degrees north; a plain latitude-longitude map would draw it about twice too big.
+      {
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-12", { storage: { [BC]: '{"results":{},"game":{"n":12,"picks":[0,0,0]}}' } });
+        await p.evaluate(() => MXShapes.load()); await p.waitForFunction(() => window.__WORLD); await p.waitForTimeout(300);
+        await p.click("#pick0"); await p.waitForSelector("#bcNext", { state: "visible" }); await p.waitForTimeout(900); // the ratio counts up first
+        const r = await p.evaluate((f) => ({ names: [...document.querySelectorAll("#bcReveal .bclab b")].map((x) => x.textContent), ratio: document.querySelector("#bcReveal .bcratio").textContent,
+          areas: [...document.querySelectorAll("#bcReveal .bclab span")].map((x) => x.textContent), drawn: eval(f)() }), "(" + drawn.toString() + ")");
+        check(JSON.stringify(r.names) === '["Finland","Belize"]' && r.ratio === "Finland is 15× the size of Belize" && r.areas[0] === "330,000 km²" && r.areas[1] === "22,800 km²", "bigcountry: Finland and Belize, \"Finland is 15× the size of Belize\"", JSON.stringify(r));
+        const q = r.drawn[0] / r.drawn[1];
+        check(Math.abs(q / 14.514 - 1) < 0.03, "bigcountry: drawn at true scale, Finland's outline covers 14.5 times Belize's (equal-area)", q.toFixed(2));
+        const a = await p.evaluate(() => { const o = MxBC.outline(246), j = __big.S().pairs[3][0]; return [o.area, j.pop, MxBC.outline(36).area]; });
+        check(Math.abs(a[0] / a[1] - 1) < 0.02 && a[2] > 7e6, "bigcountry: outline areas match the official figures (Finland), and Australia is Australia", JSON.stringify(a));
+        check((await p.evaluate(() => document.querySelector("#say").textContent)) === "Right. Finland is 15 times the size of Belize: about 330,000 km² against about 22,800 km².", "bigcountry: the screen reader hears the verdict and the ratio");
+        await ctx.close();
+      }
+      // close pairs race before the verdict, and a muted player hears nothing
+      for (const muted of [true, false]) {
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-12", { storage: { [BC]: '{"results":{},"game":{"n":12,"picks":[0,0,0,0,0,1,1,1]}}', "dailycity:sound": muted ? "off" : "on" } });
+        await p.evaluate(() => { window.__ac = 0; const A = window.AudioContext; window.AudioContext = function () { window.__ac++; return new A(); }; });
+        await p.waitForFunction(() => window.MX && MX.play); await p.waitForTimeout(300);
+        check((await p.textContent("#bcHeat")) === "Close call" && (await p.isVisible("#bcHeat")) && (await p.evaluate(() => document.querySelectorAll("#dots li.close").length)) >= 2, `bigcountry: round 9 is flagged as a close call`);
+        await p.click("#pick0"); await p.waitForTimeout(300);
+        const mid = await p.evaluate(() => ({ verdict: !!document.querySelector(".pick.right,.pick.wrong,.pick.big"), run: document.querySelector("#bcRun b").textContent }));
+        await p.waitForTimeout(1000);
+        const after = await p.evaluate(() => ({ verdict: !!document.querySelector(".pick.right"), run: document.querySelector("#bcRun b").textContent, ac: window.__ac }));
+        if (muted) check(!mid.verdict && mid.run === "8" && after.verdict && after.run === "9", "bigcountry: on a close pair the verdict waits for the race", JSON.stringify([mid, after]));
+        check(muted ? after.ac === 0 : after.ac > 0, `bigcountry: sound ${muted ? "stays off when muted" : "plays when on"}`, String(after.ac));
+        check(!!(await p.$("#soundBtn")) && !(await p.$("#pastCities")), "bigcountry: the sound button is there, Past cities is not");
+        await ctx.close();
+      }
+      // saves from releases 0.14.0 and 0.15.0 (recorded on those versions): the round in progress, finished days and the streak
+      for (const v of ["0.14", "0.15"]) {
+        const live = JSON.parse(fs.readFileSync(path.join(__dirname, `fixtures/bigcountry-save-from-v${v}.json`), "utf8"));
+        const { ctx, p } = await page(b, U + "bigger-country.html#day-12", { storage: live, clock: new Date("2026-11-25T12:00:00"), wait: 900 });
+        const s = await p.evaluate(() => ({ round: document.querySelector("#bcRound").textContent, dots: [...document.querySelectorAll("#dots li.done")].length, picks: __big.S().picks.join(""),
+          run: document.querySelector("#bcRun b").textContent, ok: [0, 1, 2, 3].map((i) => { const x = __big.S().pairs[i]; return (x[0].pop >= x[1].pop ? 0 : 1) === __big.S().picks[i]; }), info: MXS.info().find((x) => x.game.id === "bigcountry") }));
+        let run = 0; s.ok.forEach((o) => { run = o ? run + 1 : 0; });
+        check(s.round === "Round 5 of 10" && s.dots === 4 && s.picks === "0110" && s.run === String(run), `${v}.0 bigcountry save: today's round resumes at pair 5 with its run`, JSON.stringify(s));
+        check(s.info.cur === 2 && s.info.played === 2, `${v}.0 bigcountry save: streak kept (2)`, JSON.stringify([s.info.cur, s.info.played]));
+        for (const [d, sc] of [[11, "4"], [10, "8"]]) {
+          await p.evaluate((d) => (location.hash = "#day-" + d), d); await p.waitForTimeout(1000);
+          const e = await p.evaluate(() => ({ done: !document.querySelector("#done").hidden, score: document.querySelector("#bigScore").textContent, tiles: document.querySelectorAll(".bctile").length, share: document.querySelector("#shareText").textContent }));
+          check(e.done && e.score === sc && e.tiles === 10 && e.share.includes(` ${sc}/10`), `${v}.0 bigcountry save: No. ${d} keeps its score (${sc}) and shows its strip`, JSON.stringify(e));
+        }
+        check(!p.errs.length, `${v}.0 bigcountry save: no errors`, p.errs.join("; "));
+        await ctx.close();
+      }
+      // a friend's beat-my-score link still lands, and both scores show side by side at the end
+      {
+        const { ctx, p } = await page(b, U + "bigger-country.html?b=1#b-bn-12-0-5", { storage: { [BC]: '{"results":{},"game":{"n":12,"picks":[0,0,0,0,0,1,1,1,0]}}' }, clock: new Date("2026-11-25T12:00:00"), wait: 900 });
+        check(/A friend scored 5 of 10 on today's Bigger country\?/.test(await p.textContent(".mx-beat")), "bigcountry: a beat-my-score link shows the friend's score");
+        await p.click("#pick0"); await p.waitForSelector("#bcNext", { state: "visible" }); await p.waitForTimeout(300); await p.click("#bcNext"); await p.waitForTimeout(600);
+        const vs = await p.evaluate(() => (document.querySelector(".mx-vs") || {}).innerText || "");
+        check(/5/.test(vs) && /10/.test(vs) && /You win/.test(vs), "bigcountry: both scores side by side at the end", vs);
+        check(!p.errs.length, "bigcountry beat link: no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+      // the city page keeps its Past cities button now that extras.js is shared
+      {
+        const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+        check(!!(await p.$("#pastCities")) && !!(await p.$("#soundBtn")), "city: Past cities and the sound button are still there");
+        await ctx.close();
+      }
+      const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8");
+      check(/"extras\.js\?v=/.test(sw) && /"world\.js\?v=/.test(sw) && /"shapes\.js\?v=/.test(sw), "bigcountry: everything it needs is in the offline copy");
+    }
+    // ---- end bigcountry ----
+
     // 13. beat-my-score links: checked strictly, never the answer, side by side at the end
     {
       const { ctx, p } = await page(b, U, { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });

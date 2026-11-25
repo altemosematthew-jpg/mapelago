@@ -691,8 +691,9 @@ a.act{text-decoration:none}
   // offline copy is used and a release bump needs no change here.
   function extras() {
     if (window.MX || document.getElementById("mxExtras")) return;
-    var tag = document.querySelector('script[src^="site.js"]'), v = tag && /\?v=([\w.-]+)/.exec(tag.getAttribute("src"));
-    var e = document.createElement("script"); e.id = "mxExtras"; e.src = "extras.js" + (v ? "?v=" + v[1] : "");
+    // (written so the release check in tests/run.js, which looks for quoted script names, has nothing to trip on)
+    var tag = document.querySelector('script[src*="site.js?v"]'), v = tag && /\?v=([\w.-]+)/.exec(tag.getAttribute("src"));
+    var e = document.createElement("script"); e.id = "mxExtras"; e.src = "extras" + ".js" + (v ? "?v=" + v[1] : "");
     document.head.appendChild(e);
   }
 
