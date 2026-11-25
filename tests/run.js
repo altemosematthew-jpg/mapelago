@@ -41,7 +41,7 @@ async function page(b, url, opts = {}) {
   const b = await chromium.launch();
   try {
     // 1. every page loads cleanly at phone and desktop size
-    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
+    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
       for (const desktop of [false, true]) {
         const { ctx, p } = await page(b, U + f, { desktop, wait: 800 });
         check(!p.errs.length, `loads cleanly: /${f} ${desktop ? "desktop" : "phone"}`, p.errs.join("; "));
@@ -51,9 +51,9 @@ async function page(b, url, opts = {}) {
     // 1b. a release bumps the cache and every script address together, so returning players get it on their next visit
     {
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8"), v = /const C = "mapelago-([^"]+)"/.exec(sw)[1];
-      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/index.html", "shapes.js", "sw.js"]) {
+      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "privacy/index.html", "shapes.js", "sw.js"]) {
         const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
-        const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/)?(?:site|extras|shapes|world|copy|analytics)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
+        const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/)?(?:site|extras|shapes|world|copy|analytics|history|history-data)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
         check(tags.length > 0 && tags.every((t) => t === "?v=" + v), `script addresses carry the cache version ${v}: ${f}`, tags.join(" "));
       }
       check(fs.readFileSync(path.join(__dirname, "../CNAME"), "utf8").trim() === "mapelago.com", "CNAME still says mapelago.com");
@@ -220,7 +220,7 @@ async function page(b, url, opts = {}) {
       check(/Each move costs 6 points/.test(t) && !/costs 8 points/.test(t), "hints page: city moves cost 6");
       await ctx.close();
       const ab = fs.readFileSync(path.join(__dirname, "../about/index.html"), "utf8");
-      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Eight games a day/.test(ab), "about page: names all eight daily games");
+      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings", "Logbook"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Nine games a day/.test(ab), "about page: names all nine daily games");
     }
     // ---- end mx-country-rules ----
 
@@ -454,7 +454,7 @@ async function page(b, url, opts = {}) {
       const ok = (m.shortcuts || []).every((x) => fs.existsSync(path.join(__dirname, "..", x.url === "./" ? "index.html" : x.url.endsWith("/") ? x.url + "index.html" : x.url)));
       check(ok && m.shortcuts.length >= 3, "manifest: shortcuts point at real pages");
       const home = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
-      check(/Eight free daily geography games[^"]*Crossings/.test(home), "home page search data lists all eight games");
+      check(/Nine free daily geography games[^"]*Logbook/.test(home), "home page search data lists all nine games");
     }
 
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone

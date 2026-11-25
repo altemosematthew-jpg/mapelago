@@ -1,7 +1,7 @@
 {
   "name": "Mapelago",
   "short_name": "Mapelago",
-  "description": "Eight free daily geography games: find a mystery city or country, pick the bigger one, sail a trivia voyage, name a country, collect stamps and cross the map border by border.",
+  "description": "Nine free daily geography games: find a mystery city or country, pick the bigger one, sail a trivia voyage, name a country, collect stamps, cross the map border by border and test your map history.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
