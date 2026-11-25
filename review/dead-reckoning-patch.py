@@ -51,20 +51,33 @@ def add_to_list(text, item):
 
 
 # ---------- 1. site.js: the games list and everything keyed by game ----------
+DR_BLOCK = (
+    '\n  // ---------- Dead Reckoning: start ----------\n'
+    '  // Dead Reckoning joins streaks, "Today\'s games", today\'s combined message and challenge links. Its page is\n'
+    '  // dead-reckoning.html; its own code is dead-reckoning.js. Merge notes: review/dead-reckoning-merge-notes.md\n'
+    '  GAMES.push({ id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: "\\u{1F4CD}", about: "Tap five places on a blank map. Closer scores more." });\n'
+    '  UNIT.reckoning = function (n) { return Number(n).toLocaleString("en-US") + " of 1,000"; };\n'
+    '  // ---------- Dead Reckoning: end ----------')
+
+
 def games_entry(s):
-    m = re.search(r'(\n  var GAMES = \[[\s\S]*?\})(\n  \];)', s)
-    if not m: return None
-    return s[: m.end(1)] + ',\n    { id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: "\\u{1F4CD}", about: "Tap five places on a blank map. Closer scores more." }' + s[m.end(1):]
+    """a block of its own, after the last game added the same way (Logbook), else right after UNIT"""
+    m = None
+    for m in re.finditer(r'\n  // ---------- [^\n]*: end ----------', s): pass
+    if m is None:
+        m = re.search(r'\n  var UNIT = \{[\s\S]*?\};', s)
+    if m is None: return None
+    return s[: m.end()] + DR_BLOCK + s[m.end():]
 
 
-edit("site.js", 'id: "reckoning"', games_entry, "GAMES entry (front-page cards, streaks, save code)")
+edit("site.js", 'id: "reckoning"', games_entry, "GAMES and UNIT entries, in their own block after the last game (front-page cards, streaks, save code)")
 edit("site.js", 'reckoning: { code: "dr"', sub1(r'(\n  var BEAT = \{[\s\S]*?\})(\n  \};)', r'\1,\n    reckoning: { code: "dr", max: 1000, modes: 1 }\2'), "beat-my-score code dr")
-edit("site.js", 'reckoning: function (n)', sub1(r'(\n  var UNIT = \{[\s\S]*?\}) \};', r'\1, reckoning: function (n) { return Number(n).toLocaleString("en-US") + " of 1,000"; } };'), "challenge wording")
 edit("site.js", 'id === "reckoning" ? (r.total', sub1(r'( : "✓";\n      parts\.push\()', r' : id === "reckoning" ? (r.total != null ? r.total : "✓")\1'), "today's results line")
 edit("site.js", 'me.id === "reckoning") return /1,000 of 1,000/', sub1(r'(\n    return false;\n  \}\n  function confetti)', r'\n    if (me.id === "reckoning") return /1,000 of 1,000/.test(line);\1'), "perfect-day confetti")
 edit("site.js", 'me.id === "reckoning")) return;', sub1(r'(if \(!me \|\| !btn \|\| document\.getElementById\("imgBtn"\)[^\n]*?)\) return;', r'\1 || (me.id === "reckoning")) return;'), "no generic share image")
 
-N = len(re.findall(r'\{ id: "', re.search(r'var GAMES = \[([\s\S]*?)\n  \];', read("site.js")).group(1)))
+_sj = read("site.js")
+N = len(re.findall(r'\{ id: "', re.search(r'var GAMES = \[([\s\S]*?)\n  \];', _sj).group(1))) + len(re.findall(r'\n  GAMES\.push\(\{', _sj))
 W = WORDS[N]
 print(f"  site.js lists {N} games, so counts read '{W}'")
 
@@ -74,7 +87,7 @@ def count(s):
     def r(m):
         w = W.capitalize() if m.group(1)[0].isupper() else W
         return w + m.group(2)
-    return re.sub(r'\b(' + NUM + '|' + NUM.title() + r')( free daily geography games| games a day| daily games)', r, s)
+    return re.sub(r'\b(' + NUM + '|' + NUM.title() + r')( free daily geography games| daily geography games| games a day| daily games)', r, s)
 
 
 def counted(s): return count(s) == s
