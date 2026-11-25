@@ -125,3 +125,7 @@ Throwaway merges of this branch into yours, each with the whole test suite run o
 - earlier at 9c13c92 (0.15.4) and 13959f4 (0.15.2): no conflicts, all checks passed.
 bigger-country.html, bigger.html and tests/run.js merged on their own each time, and the version check
 passed (the pages pick up `extras.js?v=` from their own site.js tag). On this branch alone: 446 checks.
+
+Update, 25 Nov 03:08 CT: your branch is now merged into this one (0.15.10 at 9ac9cda, then 0.15.12 at 592097e),
+with golden.json resolved by the recipe above. Merging this branch into yours should now be a fast-forward-like
+merge with no conflicts. On the merged tree: tests/run.js 634 passed, tests/history.js (Logbook) 78 passed.
