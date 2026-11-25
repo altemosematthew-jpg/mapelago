@@ -41,7 +41,7 @@ async function page(b, url, opts = {}) {
   const b = await chromium.launch();
   try {
     // 1. every page loads cleanly at phone and desktop size
-    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
+    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
       for (const desktop of [false, true]) {
         const { ctx, p } = await page(b, U + f, { desktop, wait: 800 });
         check(!p.errs.length, `loads cleanly: /${f} ${desktop ? "desktop" : "phone"}`, p.errs.join("; "));
@@ -51,9 +51,9 @@ async function page(b, url, opts = {}) {
     // 1b. a release bumps the cache and every script address together, so returning players get it on their next visit
     {
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8"), v = /const C = "mapelago-([^"]+)"/.exec(sw)[1];
-      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/index.html", "shapes.js", "sw.js"]) {
+      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "privacy/index.html", "shapes.js", "sw.js"]) {
         const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
-        const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/)?(?:site|extras|shapes|world|copy|analytics)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
+        const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/)?(?:site|extras|shapes|world|copy|analytics|history|history-data)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
         check(tags.length > 0 && tags.every((t) => t === "?v=" + v), `script addresses carry the cache version ${v}: ${f}`, tags.join(" "));
       }
       check(fs.readFileSync(path.join(__dirname, "../CNAME"), "utf8").trim() === "mapelago.com", "CNAME still says mapelago.com");
@@ -220,7 +220,7 @@ async function page(b, url, opts = {}) {
       check(/Each move costs 6 points/.test(t) && !/costs 8 points/.test(t), "hints page: city moves cost 6");
       await ctx.close();
       const ab = fs.readFileSync(path.join(__dirname, "../about/index.html"), "utf8");
-      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Eight games a day/.test(ab), "about page: names all eight daily games");
+      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings", "Logbook"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Nine games a day/.test(ab), "about page: names all nine daily games");
     }
     // ---- end mx-country-rules ----
 
@@ -454,7 +454,39 @@ async function page(b, url, opts = {}) {
       const ok = (m.shortcuts || []).every((x) => fs.existsSync(path.join(__dirname, "..", x.url === "./" ? "index.html" : x.url.endsWith("/") ? x.url + "index.html" : x.url)));
       check(ok && m.shortcuts.length >= 3, "manifest: shortcuts point at real pages");
       const home = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
-      check(/Eight free daily geography games[^"]*Crossings/.test(home), "home page search data lists all eight games");
+      check(/Nine free daily geography games[^"]*Logbook/.test(home), "home page search data lists all nine games");
+    }
+
+    // 23. Crossings speaks in countries: par is the countries between, and the result shows one shortest route
+    {
+      const { ctx, p } = await page(b, U + "crossings.html#day-12", { wait: 400 });
+      const r0 = await p.evaluate(() => [document.querySelector("#par").textContent, __cross.P().par]);
+      check(Number(r0[0]) === r0[1] - 1, "crossings: par shows the countries between", JSON.stringify(r0));
+      await p.evaluate(() => { const X = __cross, P = X.P(); let x = P.from; while (X.dist[x][P.to] > 1) { x = X.C.map((_, i) => i).find((n) => X.dist[x][n] === 1 && X.dist[n][P.to] === X.dist[x][P.to] - 1); X.guess(x); } });
+      await p.waitForTimeout(300);
+      const r = await p.evaluate(() => [document.querySelector("#routeLine").textContent, document.querySelector("#shareText").textContent, document.querySelector("#bigScore").textContent]);
+      check(/a shortest one: .+ → .+/.test(r[0]) && /par \d+ countr(y|ies) · /.test(r[1]) && r[2] === "1,000", "crossings: result shows the route, par in countries, 1,000 with a comma", JSON.stringify(r));
+      await ctx.close();
+    }
+
+    // 24. the next-game button goes to the first unplayed game; the release line is in every game's footer
+    {
+      const pre = await page(b, U + "bigger.html"); const T = await pre.p.evaluate(() => MXS.today()); await pre.ctx.close();
+      const done = (k) => JSON.stringify({ results: { [T]: { score: 5 } }, games: {} });
+      const st = { "dailycity:v2": done(), "dailycity:country:v1": done(), "dailycity:bigger:v1": done(), "dailycity:coach": "1" };
+      const { ctx, p } = await page(b, U + "crossings.html", { storage: st, wait: 600 });
+      await p.evaluate(() => { const X = __cross, P = X.P(); let x = P.from; while (X.dist[x][P.to] > 1) { x = X.C.map((_, i) => i).find((n) => X.dist[x][n] === 1 && X.dist[n][P.to] === X.dist[x][P.to] - 1); X.guess(x); } });
+      await p.waitForTimeout(400);
+      const btn = await p.evaluate(() => { const a = document.querySelector("#done .row2 a.act.plain"); return [a.getAttribute("href"), a.textContent]; });
+      check(btn[0] === "bigger-country.html" && btn[1] === "Play Bigger country? next", "next game: skips the games already played today", JSON.stringify(btn));
+      check(/^Mapelago release \d+\.\d+\.\d+$/.test(await p.textContent(".mx-ver")), "the footer names the release");
+      await ctx.close();
+      // with every other game done and this one not, it doesn't say everything is done
+      const all = {}; for (const k of ["dailycity:v2", "dailycity:country:v1", "dailycity:bigger:v1", "dailycity:bigcountry:v1", "dailycity:voyage:v1", "dailycity:fathoms:v1", "dailycity:stamps:v1", "dailycity:history:v1"]) all[k] = done();
+      const q = await page(b, U + "crossings.html", { storage: all, wait: 600 });
+      const line = await q.p.evaluate(() => [...document.querySelectorAll(".mx-next")].map((e) => e.textContent).join(" "));
+      check(!/Every game done/.test(line) && /last game left/.test(line), "today's games: not 'every game done' while this one is unplayed", line);
+      await q.ctx.close();
     }
 
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
@@ -474,7 +506,7 @@ async function page(b, url, opts = {}) {
       });
       check(r.score === 1000 && r.done, "crossings: a shortest route scores 1000", JSON.stringify(r));
       check(Math.min(...r.sizes) >= 105 && r.dup === 0, "crossings: every weekday has two years of pairs, none repeat", JSON.stringify([r.sizes, r.dup]));
-      check(/Crossings No\. 20 \u{1F422} 1000 points/u.test(r.share), "crossings: share text");
+      check(/Crossings No\. 20 \u{1F422} 1,000 points/u.test(r.share), "crossings: share text");
       await ctx.close();
       const k = await page(b, U + "crossings.html#day-21", { desktop: true, wait: 800 });
       const target = await k.p.evaluate(() => { const X = __cross, P = X.P(); return X.C.map((_, i) => i).filter((i) => i !== P.from && i !== P.to && X.heat(i) === 0).map((i) => X.name(i))[0]; });
