@@ -409,6 +409,18 @@ a.act{text-decoration:none}
 @keyframes ringpulse{0%{transform:scale(.5);opacity:.3}60%{transform:scale(1.3);opacity:1}100%{transform:scale(1)}}
 .mascot:not(.sad) svg{animation:hop .5s ease-out 3}
 @keyframes hop{0%,100%{translate:0 0}50%{translate:0 -6px}}
+
+/* R2-6b 1.6 wide screens: board on the left, everything you read and press on the right */
+@media (min-width:900px){
+.app{max-width:980px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-flow:row dense;column-gap:36px;align-items:start}
+.app>*{grid-column:2;min-width:0}
+.app>.top,.app>.about,.app>.mx-risk,.app>#live{grid-column:1/-1}
+.app>#board{grid-column:1;grid-row:span 30;width:100%;max-width:min(520px,calc(100vh - 150px));position:sticky;top:20px;margin:0}
+.app>.pad{grid-column:1}
+.app>.actbar{margin:0;padding:10px 0;background:none;position:static}
+}
+/* 8.4 the arrow pad is for keyboards and mice; touch screens swipe */
+@media (hover:none) and (pointer:coarse){.pad{display:none}}
 </style>
 </head>
 <body>
