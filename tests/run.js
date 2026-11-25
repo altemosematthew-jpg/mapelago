@@ -403,6 +403,101 @@ async function page(b, url, opts = {}) {
       check(/on a shortest route/i.test(await k.p.textContent("#say")) && !k.p.errs.length, "crossings: keyboard guess", await k.p.textContent("#say"));
       await k.ctx.close();
     }
+    // ---- vx: Voyage and Stamps, new question families from the country pack and "Play more" practice (voyage-stamps session) ----
+    {
+      const pack = require("../review/vx-pack.js"), P = {};
+      for (const c of pack.parse()) if (!pack.NOT_IN_GAMES.has(c.raw)) P[c.name] = c;
+      const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+      const code = (c) => c.call.split("/")[0];
+      // every answer in the new families matches data/countries.txt, and no flagged or unverified fact is asked
+      const checkQ = (q, kind, where) => {
+        const right = q.options[q.answer], wrong = q.options.filter((o, i) => i !== q.answer), A = P[right], W = wrong.map((o) => P[o]);
+        let ok = !!A && W.every(Boolean);
+        if (ok && kind === "money") { const m = /^The (.+) is the currency of which country\?$/.exec(q.ask), n = m && norm(m[1]); ok = !!m && norm(A.money).includes(n) && W.every((w) => !norm(w.money).includes(n)) && !pack.NO_MONEY.has(right); }
+        if (ok && kind === "drive") ok = A.drive === "left" && W.every((w) => w.drive === "right") && /drives on the left\?$/.test(q.ask);
+        if (ok && kind === "peak") ok = q.ask === `${A.peak} is the highest point of which country?` && W.every((w) => w.peak !== A.peak) && !pack.NO_PEAK.has(right) && !/unnamed/i.test(A.peak);
+        if (ok && kind === "call") { const c = code(A); ok = q.ask === `Phone numbers in which country start with ${c}?` && Object.values(P).filter((x) => code(x) === c).length === 1; }
+        if (ok && kind === "web") ok = q.ask === `Which country's web addresses end in ${A.web}?` && !pack.NO_WEB.has(A.web);
+        if (ok && kind === "inland") ok = A.coast === "landlocked" && W.every((w) => w.coast !== "landlocked");
+        if (!ok) check(false, `vx: ${where} ${kind} question matches the pack`, JSON.stringify(q));
+        return ok;
+      };
+      const NEWK = ["money", "drive", "peak", "call", "web", "inland"];
+      const { ctx, p } = await page(b, U + "voyage.html#day-14", { wait: 600 });
+      const vq = await p.evaluate(() => { const H = VXH, out = []; for (let d = 14; d <= 120; d++) VXV.deal(H.xa, H.dt, d, H.yn).forEach((q) => out.push([d, q.kind, { ask: q.ask, options: q.options, answer: q.answer }])); return out; });
+      let bad = 0, seen = {};
+      for (const [d, k, q] of vq) if (NEWK.includes(k)) { seen[k] = (seen[k] || 0) + 1; if (!checkQ(q, k, `voyage No. ${d}`)) bad++; }
+      check(!bad && NEWK.every((k) => seen[k] > 10), "vx: Voyage asks every new family, and every answer matches the pack (No. 14 to 120)", JSON.stringify(seen));
+      const first = await p.evaluate(() => { const H = VXH, s = new Set(); for (let d = 14; d <= 400; d++) for (const q of VXV.deal(H.xa, H.dt, d, H.yn)) { const k = q.kind + "|" + q.about; if (s.has(k)) return d; s.add(k); } return 0; });
+      check(first >= 110, `vx: Voyage runs ${first - 14} days from No. 14 before any question repeats`, String(first));
+      await p.goto(U + "stamps.html#day-14"); await p.waitForFunction(() => window.__stamp);
+      const sq = await p.evaluate(() => { const out = [], prev = []; let same = 0, cats = {}; for (let d = 14; d <= 120; d++) { const A = SX.deal(d, () => {}), ks = Object.keys(A); if (ks.join() === prev.join()) same++; prev.splice(0, 9, ...ks); ks.forEach((k) => { cats[k] = (cats[k] || 0) + 1; A[k].forEach((q) => out.push([d, k, q])); }); } return { out, same, cats }; });
+      bad = 0; seen = {};
+      for (const [d, k, q] of sq.out) if (NEWK.includes(k)) { seen[k] = (seen[k] || 0) + 1; if (!checkQ(q, k, `stamps No. ${d}`)) bad++; }
+      check(!bad && ["money", "drive", "peak", "call", "web"].every((k) => seen[k] > 10) && sq.same === 0, "vx: Stamps' wheel changes every day, asks every new family, and every answer matches the pack (No. 14 to 120)", JSON.stringify([seen, sq.same]));
+      const sfirst = await p.evaluate(() => { const s = new Set(); for (let d = 14; d <= 400; d++) { const A = SX.deal(d, () => {}); for (const [k, qs] of Object.entries(A)) for (const q of qs) { const id = k + "|" + q.ask + "|" + q.options[q.answer]; if (s.has(id)) return d; s.add(id); } } return 0; });
+      check(sfirst >= 110, `vx: Stamps runs ${sfirst - 14} days from No. 14 before any question repeats`, String(sfirst));
+      // the start number: No. 13 is dealt exactly as before (golden.json), No. 14 by the new mix
+      const k13 = await p.evaluate(() => { location.hash = "#day-13"; return 1; }).then(() => p.waitForTimeout(800)).then(() => p.evaluate(() => Object.keys(__stamp.S().q).join()));
+      check(k13 === "capital,border,tongue,size,continent,coast", "vx: Stamps No. 13 keeps the original six categories", k13);
+      check(!p.errs.length, "vx: pack checks, no errors", p.errs.join("; "));
+      await ctx.close();
+    }
+    // saves from 0.14.0 and 0.15.2 (recorded on those versions): Voyage and Stamps results, streaks and rounds in progress load unchanged
+    for (const v of ["0.14", "0.15"]) {
+      const save = JSON.parse(fs.readFileSync(path.join(__dirname, `fixtures/voyage-stamps-save-from-v${v}.json`), "utf8"));
+      const { ctx, p } = await page(b, U + "voyage.html#day-11", { storage: save, clock: new Date("2026-11-25T12:00:00"), wait: 800 });
+      const rd = () => p.evaluate(() => ({ pts: document.querySelector("#bigScore").textContent, title: document.querySelector("#doneTitle").textContent, done: !document.querySelector("#done").hidden }));
+      const v11 = await rd();
+      await p.goto(U + "voyage.html?n=12#day-12"); await p.waitForTimeout(600); const v12 = await rd();
+      await p.goto(U + "voyage.html?n=13#day-13"); await p.waitForTimeout(600);
+      const v13 = await p.evaluate(() => ({ choice: !document.querySelector("#choice").hidden, pts: document.querySelector("#vPoints").textContent, streak: MXS.info().find((s) => s.game.id === "voyage").cur }));
+      check(v11.done && v11.pts === "150" && v11.title === "Anchored after island 3." && v12.pts === "150" && v12.title === "Wrecked at island 5." && v13.choice && v13.pts === "100" && v13.streak === 2,
+        `vx: ${v} save: Voyage results, streak and the round in progress load unchanged`, JSON.stringify([v11, v12, v13]));
+      await p.goto(U + "stamps.html?n=11#day-11"); await p.waitForTimeout(600);
+      const s11 = await p.evaluate(() => [document.querySelector("#bigScore").textContent, document.querySelector("#bigSub").textContent]);
+      await p.goto(U + "stamps.html?n=12#day-12"); await p.waitForTimeout(600);
+      const s12 = await p.evaluate(() => [document.querySelector("#bigScore").textContent, document.querySelector("#bigSub").textContent, MXS.info().find((s) => s.game.id === "stamps").cur]);
+      await p.goto(U + "stamps.html?n=13#day-13"); await p.waitForTimeout(600);
+      const s13 = await p.evaluate(() => [__stamp.S().log.length, document.querySelector("#passTitle").textContent]);
+      check(s11.join() === "6 of 6,stamps in 6 spins" && s12.join() === "5 of 6,stamps in 8 spins,2" && s13.join() === "3,1 of 6 stamps",
+        `vx: ${v} save: Stamps results, streak and the round in progress load unchanged`, JSON.stringify([s11, s12, s13]));
+      check(!p.errs.length, `vx: ${v} save: no errors`, p.errs.join("; "));
+      await ctx.close();
+    }
+    // "Play more": endless practice after the daily round, by keyboard, never touching the daily save, streaks, stats or share text
+    for (const [f, key, more, panel, opts, next, back] of [["voyage.html", "dailycity:voyage:v1", "#vxMore", "#vxp", "#vxpOpts", "#vxpNext", "#vxpBack"], ["stamps.html", "dailycity:stamps:v1", "#sxMore", "#sxp", "#sxpOpts", "#sxpNext", "#sxpBack"]]) {
+      const save = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/voyage-stamps-save-from-v0.15.json"), "utf8"));
+      const { ctx, p } = await page(b, U + f + "#day-12", { storage: save, clock: new Date("2026-11-25T12:00:00"), wait: 1200, desktop: true });
+      const snap = () => p.evaluate((k) => ({ save: localStorage.getItem(k), share: document.querySelector("#shareText").textContent, info: JSON.stringify(MXS.info().map((s) => [s.game.id, s.cur, s.best, s.played])) }), key);
+      const before = await snap();
+      check(await p.isVisible(more), `vx: ${f} "Play more" shows under the result`);
+      await p.focus(more); await p.keyboard.press("Enter"); await p.waitForTimeout(200);
+      const st = await p.evaluate(([panel, opts]) => ({ open: !document.querySelector(panel).hidden, doneHidden: document.querySelector("#done").hidden, focus: document.activeElement && document.activeElement.closest(opts) !== null, tag: document.querySelector(panel + " .vxp-tag").textContent }), [panel, opts]);
+      check(st.open && st.doneHidden && st.focus && /Practice/.test(st.tag), `vx: ${f} practice opens, labelled as practice, focus on the first answer`, JSON.stringify(st));
+      const game = f === "voyage.html" ? "VXV" : "SX";
+      let streak = 0;
+      for (let i = 0; i < 7; i++) {
+        const a = await p.evaluate((g) => window[g].practice.state().q.answer, game), pickRight = i !== 4;
+        const target = pickRight ? a : (a + 1) % 4;
+        // keyboard only: Tab from the first option to the chosen one, then Enter
+        await p.focus(`${opts} .opt`); for (let t = 0; t < target; t++) await p.keyboard.press("Tab");
+        await p.keyboard.press("Enter"); await p.waitForTimeout(100);
+        streak = pickRight ? streak + 1 : 0;
+        const r = await p.evaluate(([g, next]) => ({ streak: window[g].practice.state().streak, nextFocused: document.activeElement === document.querySelector(next) }), [game, next]);
+        check(r.streak === streak && r.nextFocused, `vx: ${f} practice question ${i + 1}: streak ${streak}, focus on Next`, JSON.stringify(r));
+        await p.keyboard.press("Enter"); await p.waitForTimeout(100);
+      }
+      const best = await p.evaluate((g) => JSON.parse(localStorage.getItem("dailycity:practice:v1"))[g].best, f === "voyage.html" ? "voyage" : "stamps");
+      check(best === 4, `vx: ${f} best practice streak kept in its own save (4)`, String(best));
+      await p.click(back); await p.waitForTimeout(100);
+      const after = await snap();
+      check(after.save === before.save && after.share === before.share && after.info === before.info && !(await p.isVisible(panel)) && (await p.isVisible("#done")),
+        `vx: ${f} practice never touches the daily save, streaks, stats or share text`, JSON.stringify([before, after]));
+      check(!p.errs.length, `vx: ${f} practice: no errors`, p.errs.join("; "));
+      await ctx.close();
+    }
+    // ---- vx end ----
   } finally { await b.close(); srv.close(); }
   console.log(`\n${passed} passed, ${failed.length} failed`);
   failed.forEach((f) => console.log("  FAIL " + f));
