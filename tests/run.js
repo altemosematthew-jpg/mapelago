@@ -310,6 +310,61 @@ async function page(b, url, opts = {}) {
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8");
       check(/"extras\.js\?v=/.test(sw) && /"world\.js\?v=/.test(sw) && /"shapes\.js\?v=/.test(sw), "bigcountry: everything it needs is in the offline copy");
     }
+      // "Play more": endless practice in Bigger country? and Bigger city?, which never touches the daily
+      for (const [file, key, id] of [["bigger-country.html", "dailycity:bigcountry:v1", "bigcountry"], ["bigger.html", "dailycity:bigger:v1", "bigger"]]) {
+        const daily = JSON.stringify({ results: { 11: { score: 6, picks: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] }, 12: { score: 7, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } }, game: null });
+        // not offered before the daily round is finished
+        {
+          const { ctx, p } = await page(b, U + file + "#day-12", { storage: { [key]: '{"results":{},"game":null}' }, clock: new Date("2026-11-25T12:00:00") });
+          check(!(await p.isVisible("#mxprGo")) && !(await p.isVisible("#mxpr")), `${id} practice: not offered until today's ten are done`);
+          await ctx.close();
+        }
+        const { ctx, p } = await page(b, U + file + "#day-12", { storage: { [key]: daily }, clock: new Date("2026-11-25T12:00:00"), ctx: { viewport: { width: 375, height: 667 } }, wait: 800 });
+        const snap = () => p.evaluate((k) => ({ keys: Object.keys(localStorage).sort(), save: localStorage.getItem(k), share: document.querySelector("#shareText").textContent,
+          info: JSON.stringify(MXS.info().map((s) => [s.game.id, s.cur, s.best, s.played, s.doneToday])) }), key);
+        const before = await snap();
+        check(await p.isVisible("#mxprGo") && /Practice/.test(await p.textContent(".mxpr-cta")), `${id} practice: "Play more" on the end card, labelled as practice`);
+        await p.tap("#mxprGo"); await p.waitForTimeout(400);
+        check(await p.isVisible("#mxpr") && !(await p.isVisible("#done")) && (await p.textContent(".mxpr-tag")) === "Practice" && /Doesn't count toward today's score, your streaks or your stats/.test(await p.textContent("#mxpr")), `${id} practice: opens, clearly labelled`);
+        // play a run of 11 right, then miss: the run, the best and the closeness follow
+        const pairs = [];
+        for (let i = 0; i < 12; i++) {
+          await p.waitForTimeout(330);
+          const two = await p.evaluate(() => [...document.querySelectorAll("#mxprCards .pick")].map((c) => { const n = c.querySelector("b").textContent, w = c.querySelector(".where").textContent; return MxPractice.pool.find((x) => x.name === n && x.country === w).pop; }));
+          const big = two[0] > two[1] ? 0 : 1;
+          pairs.push(Math.max(...two) / Math.min(...two));
+          await p.tap("#mxpr" + (i < 11 ? big : 1 - big));
+          await p.waitForSelector("#mxprNext", { state: "visible", timeout: 4000 });
+          const r = await p.evaluate(() => ({ run: document.querySelector("#mxprRun b").textContent, best: document.querySelector("#mxprBest").textContent, verdict: document.querySelector("#mxprReveal .bcverdict").textContent,
+            shapes: document.querySelectorAll("#mxprReveal .bcs .sh").length, bars: document.querySelectorAll("#mxprReveal .mxpr-bars i").length, ratio: document.querySelector("#mxprReveal .bcratio").textContent }));
+          if (i === 0) check(id === "bigcountry" ? r.shapes === 2 : r.bars === 2, `${id} practice: the reveal shows ${id === "bigcountry" ? "both countries at true scale" : "both populations to scale"}`, JSON.stringify(r));
+          if (i === 0) check(/^\S.* (is|has) (\d[\d,.]*× the (size|people) of|\d+% (bigger|more people) than) \S/.test(r.ratio), `${id} practice: says how much bigger`, r.ratio);
+          if (i < 11) { if (r.run !== String(i + 1)) check(false, `${id} practice: run counts up`, JSON.stringify([i, r])); }
+          else check(r.run === "0" && r.best === "11" && r.verdict === "Not this time. Run over at 11.", `${id} practice: a miss ends the run and keeps the best (11)`, JSON.stringify(r));
+          await p.waitForTimeout(300); await p.tap("#mxprNext"); await p.waitForTimeout(80);
+        }
+        check(pairs[0] >= 4 && pairs.slice(9, 12).every((x) => x < 2) && pairs.every((x) => x >= 1.15), `${id} practice: pairs get closer as the run goes on`, pairs.map((x) => x.toFixed(2)).join(" "));
+        check((await p.textContent("#mxprN")) === "Pair 1 of this run" && (await p.textContent("#mxprRun b")) === "0", `${id} practice: a new run starts after a miss`);
+        await p.tap("#mxprBack"); await p.waitForTimeout(300);
+        const after = await snap();
+        check(after.save === before.save && after.share === before.share && after.info === before.info, `${id} practice: today's result, share text, streaks and stats are untouched`, JSON.stringify([before.info, after.info]));
+        check(JSON.stringify(after.keys) === JSON.stringify(before.keys.concat(`dailycity:${id}:practice`).sort()) && (await p.evaluate((id) => localStorage.getItem(`dailycity:${id}:practice`), id)) === "[11]", `${id} practice: only its own best run is saved`, JSON.stringify(after.keys));
+        check(await p.isVisible("#done") && (await p.textContent("#mxprGoBest")) === "Your best practice run: 11 in a row." && (await p.evaluate(() => document.activeElement.id)) === "mxprGo", `${id} practice: back to today's result`);
+        check(!p.errs.length, `${id} practice: no errors`, p.errs.join("; "));
+        await ctx.close();
+        // by keyboard at desktop size; the best run is remembered; the daily schedule never moves
+        const k = await page(b, U + file + "#day-12", { desktop: true, storage: { [key]: daily, [`dailycity:${id}:practice`]: "[11]" }, clock: new Date("2026-11-25T12:00:00") });
+        const pairs12 = await k.p.evaluate(() => JSON.stringify(__big.S().pairs.map((x) => x.map((c) => c.name))));
+        await k.p.focus("#mxprGo"); await k.p.keyboard.press("Enter"); await k.p.waitForTimeout(400);
+        check((await k.p.evaluate(() => document.activeElement.id)) === "mxpr0" && (await k.p.textContent("#mxprBest")) === "11", `${id} practice: keyboard opens it on the first card, best run remembered`);
+        await k.p.keyboard.press("Enter"); await k.p.waitForSelector("#mxprNext", { state: "visible", timeout: 4000 });
+        check((await k.p.evaluate(() => document.activeElement.id)) === "mxprNext", `${id} practice: keyboard play moves focus to Next`);
+        await k.p.waitForTimeout(300); await k.p.keyboard.press("Enter"); await k.p.waitForTimeout(200);
+        check((await k.p.evaluate(() => document.activeElement.id)) === "mxpr0" && (await k.p.evaluate(() => JSON.stringify(__big.S().pairs.map((x) => x.map((c) => c.name))))) === pairs12, `${id} practice: on to the next pair; today's pairs unchanged`);
+        check(!k.p.errs.length, `${id} practice desktop: no errors`, k.p.errs.join("; "));
+        await k.ctx.close();
+      }
+      check(fs.readFileSync(path.join(__dirname, "../bigger.html"), "utf8").match(/<script>\n\/\* bigcountry-practice:[\s\S]*?<\/script>/)[0] === fs.readFileSync(path.join(__dirname, "../bigger-country.html"), "utf8").match(/<script>\n\/\* bigcountry-practice:[\s\S]*?<\/script>/)[0], "practice: the same code in both games");
     // ---- end bigcountry ----
 
     // 13. beat-my-score links: checked strictly, never the answer, side by side at the end

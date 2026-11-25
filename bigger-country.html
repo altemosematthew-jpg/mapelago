@@ -471,6 +471,25 @@ a.act{text-decoration:none}
 [data-look="night"] .bcs .sh>*,[data-look="night"] .bctile .sh>*{stroke:var(--land-line)}
 @media (max-width:360px){.bcrun span{display:none}.bcstrip ol{gap:4px}}
 /* /bigcountry */
+/* bigcountry-practice: "Play more" after the daily round (review/bigcountry-merge-notes.md) */
+.mxpr-cta{margin:14px 0 0;padding:12px;border:2px dashed var(--muted);border-radius:var(--r)}
+.mxpr-cta .act{gap:8px}
+.mxpr-cta p{margin:8px 0 0;font-size:14px;line-height:1.35;color:var(--ink-2)}
+.mxpr-cta p:empty{display:none}
+.mxpr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 6px;color:var(--ground-ink)}
+.mxpr-head h2{margin:0;display:flex;align-items:center;gap:8px;font-size:22px;font-weight:800;line-height:1.15}
+.mxpr-tag{padding:4px 9px 3px;border-radius:6px;background:var(--ground-ink);color:var(--ground);font-size:12px;letter-spacing:.08em;text-transform:uppercase;line-height:1}
+.mxpr-head .linkbtn{color:var(--ground-ink);font-size:15px;min-height:44px;white-space:nowrap}
+.mxpr>.note{margin:0 0 10px}
+.mxpr-best{margin:10px 0 0;font-size:15px;font-weight:700;color:var(--ground-ink)}
+.mxpr-best b{font-size:18px;font-style:var(--num-style)}
+.mxpr-bars{display:grid;gap:9px;padding:12px;border:1.5px solid var(--rule);border-radius:calc(var(--r) * .7);background:var(--sea)}
+.mxpr-bars div{display:grid;grid-template-columns:minmax(0,7.5em) minmax(0,1fr);align-items:center;gap:8px;font-size:14px;font-weight:700}
+.mxpr-bars span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mxpr-bars i{display:block;width:var(--w);min-width:4px;height:20px;border:1.5px solid var(--ink);border-radius:4px;background:var(--land);transform-origin:left;animation:bcgrowx .6s cubic-bezier(.2,.9,.3,1) both}
+.mxpr-bars .big i{background:var(--accent)}
+@keyframes bcgrowx{from{scale:0 1}}
+/* /bigcountry-practice */
 </style>
 </head>
 <body>
@@ -506,12 +525,26 @@ a.act{text-decoration:none}
       <!-- /bigcountry -->
       <pre class="share" id="shareText"></pre>
       <div class="row2"><button id="shareBtn" class="act">Copy result</button><a class="act plain" href="./">Mystery city</a></div>
+      <!-- bigcountry-practice -->
+      <div class="mxpr-cta"><button class="act" id="mxprGo" type="button">Play more</button><p>Practice: endless pairs that get closer as your run grows. It never changes today's result or your streaks.</p><p id="mxprGoBest"></p></div>
+      <!-- /bigcountry-practice -->
       <p class="next">New pairs in <b class="countdown"></b></p>
       <p class="note" id="fresh" hidden>New pairs are ready. <a href="bigger-country.html">Play them</a></p>
       <p class="note" id="streakNote" hidden></p>
     </div>
     <ol id="recap" aria-label="Today's pairs"></ol>
   </section>
+  <!-- bigcountry-practice: endless practice pairs, opened from the end card -->
+  <section class="mxpr" id="mxpr" aria-labelledby="mxprH" hidden>
+    <div class="mxpr-head"><h2 id="mxprH"><span class="mxpr-tag">Practice</span>Endless pairs</h2><button class="linkbtn" id="mxprBack" type="button">Today's result</button></div>
+    <p class="note">Doesn't count toward today's score, your streaks or your stats.</p>
+    <div class="bcbar"><span id="mxprN">Pair 1 of this run</span><span class="bcheat" id="mxprHeat" hidden></span><span class="bcrun zero" id="mxprRun"></span></div>
+    <div id="mxprCards"><button class="pick" id="mxpr0" type="button"></button><p class="or">or</p><button class="pick" id="mxpr1" type="button"></button></div>
+    <div class="panel bcreveal" id="mxprReveal" role="group" aria-label="The answer" hidden></div>
+    <p class="mxpr-best">Best practice run: <b id="mxprBest">0</b></p>
+    <p id="mxprSay" class="sr" aria-live="polite"></p>
+  </section>
+  <!-- /bigcountry-practice -->
 
   <footer class="about">
     <!-- copy:start -->
@@ -535,6 +568,173 @@ a.act{text-decoration:none}
       <a href="privacy/">Privacy</a>
     </nav>
   </footer>
+<script>
+/* bigcountry-practice: "Play more", endless practice pairs after the daily round. The same block is in
+   bigger.html and bigger-country.html (review/bigcountry-merge-notes.md). Practice reads the game's pool
+   of places and nothing else: it never touches the daily save, results, streaks, stats or share text.
+   Its only memory is the best run, kept under its own key. */
+(function () {
+  "use strict";
+  var $ = function (s) { return document.querySelector(s); };
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // How far apart the pair is, by how long the run is: wide to start, then closer, like the daily ten.
+  var BANDS = [[8, Infinity], [4, 40], [3, 20], [2.5, 10], [2, 6], [1.8, 4], [1.6, 3], [1.45, 2.4], [1.3, 2], [1.2, 1.7]], LATE = [1.15, 1.45];
+  var CLOSE = 2, AUTO = 3000;
+  function band(n) { return BANDS[n] || LATE; }
+  function sfx(name, arg) { try { if (window.MX && MX.play) MX.play(name, arg); } catch (e) {} }
+  function buzz(p) { if (navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
+
+  // A random pair whose ratio falls in the band for this point of the run, avoiding places seen lately.
+  function deal(pool, n, recent, rnd) {
+    rnd = rnd || Math.random;
+    var b = band(n), fresh = function (i) { return recent.indexOf(i) < 0; };
+    // if nothing fits (a small pool, or every fit seen lately), widen the band a step at a time
+    for (var widen = 0; widen < 4; widen++) {
+      var lo = b[0] - (b[0] - 1.15) * widen / 3, hi = b[1] * (1 + widen);
+      for (var t = 0; t < 60; t++) {
+        var a = Math.floor(rnd() * pool.length);
+        if (!fresh(a)) continue;
+        var c = [];
+        for (var j = 0; j < pool.length; j++) {
+          if (j === a || !fresh(j)) continue;
+          var r = Math.max(pool[a].pop, pool[j].pop) / Math.min(pool[a].pop, pool[j].pop);
+          if (r >= lo && r <= hi) c.push(j);
+        }
+        if (c.length) { var k = c[Math.floor(rnd() * c.length)]; return rnd() < 0.5 ? [a, k] : [k, a]; }
+      }
+    }
+    var x = Math.floor(rnd() * pool.length), y = (x + 1 + Math.floor(rnd() * (pool.length - 1))) % pool.length;
+    return pool[x].pop === pool[y].pop ? [x, (y + 1) % pool.length] : [x, y];
+  }
+
+  function times(r) { return r < 10 ? String(Math.round(r * 10) / 10) : Math.round(r).toLocaleString("en-US"); }
+  function people(big, small) {
+    var r = big.pop / small.pop, pct = Math.round((r - 1) * 100);
+    if (r >= 1.995) return { pre: " has ", n: times(r) + "\u00d7", mid: " the people of ", say: big.name + " has " + times(r) + " times the people of " + small.name };
+    return { pre: " has ", n: pct < 1 ? "a few" : pct + "%", mid: " more people than ", say: big.name + " has " + (pct < 1 ? "a few" : pct + " percent") + " more people than " + small.name };
+  }
+  // the site's sound helpers (extras.js), with the same release version as the page's site.js
+  function extras() {
+    if (window.MX || document.getElementById("mxExtras")) return;
+    var tag = document.querySelector('script[src*="site.js?v"]'), v = tag && /\?v=([\w.-]+)/.exec(tag.getAttribute("src"));
+    var e = document.createElement("script"); e.id = "mxExtras"; e.src = "extras" + ".js" + (v ? "?v=" + v[1] : "");
+    document.head.appendChild(e);
+  }
+
+  window.MxPractice = function (o) {
+    // o: id, pool [{name, country, pop}], unit(n), esc(s), icon(kind, size), words(big, small) -> {pre, n, mid, say},
+    //    and for countries stage(svg, pair, animate) to draw the true-scale reveal and solo(item) for a card's shape.
+    var KEY = "dailycity:" + o.id + ":practice", pool = o.pool, go = $("#mxprGo"), box = $("#mxpr"), done = $("#done");
+    if (!go || !box || !pool || pool.length < 2) return;
+    extras();
+    o.words = o.words || people;
+    window.MxPractice.pool = pool; // for the tests
+    var mem = [0]; // [best run]
+    try { var m = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(m)) mem = [Math.max(0, Math.floor(Number(m[0]) || 0))]; } catch (e) {}
+    function keep() { try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch (e) {} } // an array, so the site's save repair leaves it alone
+    var cards = [$("#mxpr0"), $("#mxpr1")], panel = $("#mxprReveal"), wrap = $("#mxprCards"), say = $("#mxprSay");
+    var run = 0, cur = null, recent = [], phase = "off", timer = 0, shownAt = 0, kb = false, settle = null, last = null;
+    function heat(p) { var r = Math.max(p[0].pop, p[1].pop) / Math.min(p[0].pop, p[1].pop); return r < 1.5 ? "Very close" : r < CLOSE ? "Close call" : ""; }
+    function bar(anim) {
+      var el = $("#mxprRun");
+      $("#mxprN").textContent = "Pair " + ((phase === "choose" || !last ? run : last.before) + 1) + " of this run";
+      el.innerHTML = '<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M8 1.2c.6 2.6 4.6 4.3 4.6 8.3A4.6 4.6 0 0 1 8 14.8a4.6 4.6 0 0 1-4.6-5.3C3.7 7.6 5 6.6 5.6 5c.9 1.1 1 2.2 1 2.9C8 6.6 8.6 4 8 1.2z" fill="currentColor"/></svg><b>' + run + "</b><span> in a row</span>";
+      el.classList.toggle("zero", !run); el.setAttribute("aria-label", run + " right in a row");
+      if (anim) { el.classList.remove("bump", "lost"); void el.offsetWidth; el.classList.add(anim); }
+      $("#mxprBest").textContent = mem[0];
+    }
+    function next() {
+      clearTimeout(timer); phase = "choose";
+      var ij = deal(pool, run, recent);
+      recent = recent.concat(ij).slice(-24);
+      cur = ij.map(function (i) { return pool[i]; });
+      var hot = heat(cur), ht = $("#mxprHeat");
+      ht.hidden = !hot; ht.textContent = hot;
+      bar();
+      cards.forEach(function (c, j) {
+        c.className = "pick" + (hot ? " tense" : "");
+        c.innerHTML = "<b>" + o.esc(cur[j].name) + '</b><span class="where">' + o.esc(cur[j].country) + '</span><span class="pop"></span>' + (o.solo ? o.solo(cur[j]) : "");
+      });
+      wrap.hidden = false; panel.hidden = true; panel.innerHTML = "";
+      say.textContent = "Practice pair " + (run + 1) + (hot ? ". " + hot + "." : ".");
+      shownAt = Date.now();
+    }
+    function pick(j, viaKey) {
+      if (phase === "cards") return reveal();
+      if (phase !== "choose" || Date.now() - shownAt < 280) return;
+      kb = !!viaKey;
+      var p = cur, big = p[0].pop > p[1].pop ? 0 : 1, right = j === big, close = !!heat(p) && !reduce, race = close ? 900 : 0, before = run;
+      phase = "cards";
+      cards.forEach(function (c, i) {
+        var w = Math.round(100 * p[i].pop / Math.max(p[0].pop, p[1].pop));
+        c.classList.add("shown");
+        c.querySelector(".pop").innerHTML = '<span class="num">' + o.unit(p[i].pop) + '</span><i class="barw"><i class="bar" style="--w:' + w + "%;animation-duration:" + (close ? Math.max(0.15, race / 1000 * w / 100) : 0.45) + 's"></i></i>';
+      });
+      run = right ? run + 1 : 0;
+      var best = run > mem[0];
+      if (best) { mem[0] = run; keep(); }
+      last = { p: p, j: j, right: right, before: before, run: run, best: best };
+      settle = function () {
+        settle = null;
+        cards.forEach(function (c, i) {
+          if (i === big) c.classList.add("big");
+          if (i === j) { c.classList.add(right ? "right" : "wrong"); c.querySelector(".pop").insertAdjacentHTML("afterbegin", o.icon(right ? "landed" : "far", 18)); }
+        });
+        bar(right ? "bump" : before ? "lost" : "");
+        if (right) { sfx("merge", Math.pow(2, Math.min(run, 12))); if (close || run % 5 === 0) sfx("clue"); buzz(close ? [12, 40, 24] : 10); }
+        else { sfx("stuck"); buzz([30, 40, 30]); }
+      };
+      if (close) setTimeout(function () { if (settle) settle(); }, race); else settle();
+      timer = setTimeout(reveal, race + 650);
+    }
+    function reveal() {
+      if (phase !== "cards") return;
+      clearTimeout(timer); if (settle) settle();
+      phase = "reveal";
+      var L = last, p = L.p, big = p[0].pop > p[1].pop ? p[0] : p[1], small = big === p[0] ? p[1] : p[0], w = o.words(big, small);
+      var verdict = L.right ? (L.run >= 3 ? L.run + " in a row!" + (L.best && L.run > 3 ? " A new best." : "") : "Right.") : L.before ? "Not this time. Run over at " + L.before + "." : "Not this time.";
+      var labs = p.map(function (c, i) {
+        return '<div class="bclab' + (c === big ? " big" : "") + '"><b>' + (i === L.j ? o.icon(L.right ? "landed" : "far", 15) : "") + o.esc(c.name) + "</b><span>" + o.unit(c.pop) + "</span></div>";
+      }).join("");
+      var stage = o.stage ? '<div class="bcstage"><span class="bcsame" aria-hidden="true">Same scale</span><svg class="bcs" viewBox="0 0 340 176" role="img" aria-label="' + o.esc(p[0].name + " and " + p[1].name + ", drawn at the same scale") + '"></svg></div>'
+        : '<div class="mxpr-bars" aria-hidden="true">' + p.map(function (c) { return '<div' + (c === big ? ' class="big"' : "") + '><span>' + o.esc(c.name) + '</span><i style="--w:' + Math.max(1, Math.round(100 * c.pop / big.pop)) + '%"></i></div>'; }).join("") + "</div>";
+      panel.innerHTML = '<p class="bcverdict' + (L.right ? " bc-ok" : " bc-no") + '">' + o.esc(verdict) + "</p>" + stage + '<div class="bclabs">' + labs + "</div>"
+        + '<p class="bcratio">' + o.esc(big.name) + o.esc(w.pre) + '<b class="bcx">' + o.esc(w.n) + "</b>" + o.esc(w.mid) + o.esc(small.name) + "</p>"
+        + '<button class="act bcnext" id="mxprNext" type="button"><span>' + (L.right ? "Next pair" : "Start a new run") + "</span>" + (kb ? "" : '<i style="animation-duration:' + AUTO + 'ms"></i>') + "</button>";
+      if (o.stage) o.stage(panel.querySelector(".bcs"), p, true);
+      wrap.hidden = true; panel.hidden = false;
+      say.textContent = (L.right ? "Right. " : "Not this time. ") + w.say + "." + (L.right ? "" : " Run over at " + L.before + ".") + " Best run " + mem[0] + ".";
+      var nx = $("#mxprNext");
+      nx.onclick = function (e) { e.stopPropagation(); advance(); };
+      if (kb) nx.focus({ preventScroll: true }); else timer = setTimeout(advance, AUTO);
+      shownAt = Date.now();
+    }
+    function advance() {
+      if (phase !== "reveal" || Date.now() - shownAt < 250) return;
+      var had = panel.contains(document.activeElement);
+      next();
+      if (had) cards[0].focus({ preventScroll: true });
+    }
+    function open(viaKey) {
+      done.hidden = true; box.hidden = false; run = 0; recent = [];
+      next();
+      if (viaKey) cards[0].focus({ preventScroll: true });
+      box.scrollIntoView ? box.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" }) : 0;
+    }
+    function close() {
+      clearTimeout(timer); phase = "off"; box.hidden = true; done.hidden = false;
+      note(); go.focus({ preventScroll: true });
+    }
+    go.onclick = function (e) { open(e.detail === 0); };
+    $("#mxprBack").onclick = close;
+    panel.addEventListener("click", function () { advance(); });
+    cards.forEach(function (c, j) { c.onclick = function (e) { pick(j, e.detail === 0); }; });
+    function note() { $("#mxprBest").textContent = mem[0]; $("#mxprGoBest").textContent = mem[0] ? "Your best practice run: " + mem[0] + " in a row." : ""; }
+    note();
+  };
+  window.MxPractice.deal = deal; window.MxPractice.band = band; // for the tests
+})();
+</script>
 <script>
 /* bigcountry: the round, the true-scale reveal, streaks and the end card for Bigger country?
    (review/bigcountry-merge-notes.md). The game script below keeps the daily pairs, the scoring and the
@@ -919,6 +1119,14 @@ a.act{text-decoration:none}
       var t = $("#shareText").textContent;
       try { await navigator.clipboard.writeText(t); G.toast("Copied. Paste it in your group chat."); } catch (e) { G.toast("Select the text above to copy it."); }
     };
+    // "Play more": endless practice pairs from the whole pool, with this same true-scale reveal
+    if (window.MxPractice) MxPractice({ id: "bigcountry", pool: M, unit: km2, esc: G.esc, icon: G.icon,
+      words: function (big, small) { var r = ratio(big, small); return { pre: " is ", n: r.n, mid: r.mid, say: r.say }; },
+      stage: function (svg, two, anim) {
+        var paint = function () { var d = pairSVG(two, 340, 176, { bar: true, pad: 12 }); svg.innerHTML = d.svg; svg.classList.toggle("anim", !!anim); return d.real; };
+        if (!paint()) world(function () { anim = false; paint(); });
+      },
+      solo: function (c) { return soloSVG(c.cid, 112, 78); } });
     round();
   };
   // for the tests: the projected outline of a country and the words for a pair

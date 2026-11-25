@@ -5,6 +5,8 @@ counter and close-call moments, and an end card with the day's ten pairs at true
 every change to a shared file, so the branch can be merged into `claude/charming-bardeen-967w66`
 without guesswork.
 
+It also adds "Play more", an endless practice mode, to Bigger country? and Bigger city? (bigger.html).
+
 Nothing here changes the daily pairs, the scoring or the save. No release version or `?v=` was changed.
 
 ## Shared files changed
@@ -15,7 +17,7 @@ Nothing here changes the daily pairs, the scoring or the save. No release versio
 - `window.MX` gains `play: play`, so other games can play the site's existing sounds. `play()` already
   does nothing when the player has muted sound (`dailycity:sound` = `off`).
 
-### tests/run.js (one block)
+### tests/run.js (one block, also covering practice in bigger.html)
 - One block between `// ---- bigcountry ...` and `// ---- end bigcountry ----`, placed just before
   `// 8. a game in progress survives midnight`. Nothing else in the file is touched.
 
@@ -47,6 +49,26 @@ that one line, leave git's merge of the rest of the file as it is, then run:
 
 The script re-adds the hook to the game line and checks that this branch's other blocks are present.
 It is safe to run twice and stops without writing if an anchor has changed.
+
+## Play more (practice), in both bigger-country.html and bigger.html
+
+- The same readable `<script>` block (`/* bigcountry-practice: ... */`, defines `MxPractice`) sits right
+  after `</footer>` in both pages; a test checks the two copies are identical. Keep them in step.
+- Both pages get the same markup between `<!-- bigcountry-practice -->` markers: a "Play more" box inside
+  the end card (under the Copy result row), and a `#mxpr` section after `#done`.
+- Styles: a `/* bigcountry-practice ... */` block at the end of each page's `<style>`. bigger.html also gets
+  a copy of the round bar and reveal styles from bigger-country.html, under the same marker.
+- bigger.html gets an empty `<nav class="tools">` in the header (the sound button, from extras.js, which
+  the practice block loads with the page's own `?v=`), and one call at the end of its game script line,
+  after `O();`: `MxPractice({id:"bigger",pool:x,unit:v.unit,esc:$,icon:L})`. `review/bigcountry-patch.py`
+  re-adds it if a merge conflicts on that line. In bigger-country.html, MxBC() starts the practice mode.
+- Practice deals random pairs (Math.random, not the daily seed) from the whole pool the daily uses, in
+  bands that close up as the run grows: at least 8x apart for the first pair of a run, down to 1.15-1.45x
+  from the eleventh. A miss ends the run and the next pair starts wide again.
+- Storage: only `dailycity:bigcountry:practice` / `dailycity:bigger:practice`, holding `[best run]` as a
+  JSON array. An array, not an object, so site.js's save repair (which adds `results` to any `{...}` save
+  under `dailycity:`) leaves it alone. Practice never writes the daily save, so results, streaks, stats,
+  the share text and "today's games" are unchanged (a test compares them before and after).
 
 ## What it relies on in the game script
 `MxBC()` is handed the game's own values: the countries (`M`), the day's pairs (`R`), the puzzle number,
