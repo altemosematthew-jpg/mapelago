@@ -101,3 +101,46 @@ Typing any of these finds the country (or capital). Exact names and exact altern
 - **Voyage grammar:** "capital of Philippines" should read "capital of the Philippines" (and similar "the" countries).
 - **Fathoms depth data:** 40 countries have no largest-city figure, so Vatican City is the deepest answer to about 13% of prompts. Needs data, not a guess.
 - **Mystery city clues** list "main languages" (spoken), for example Uzbek and Russian for Tashkent. That is about speech, not official status, so it was left as is.
+
+---
+
+# Data stage 2: your fact-checked corrections (applied from No. 14, like the rest)
+
+Every line of the research was checked against what the game's own data says. "Game already agreed" means nothing was changed.
+**FLAGGED** marks the very recent changes you asked me to treat as "also accepted" and review.
+
+| # | Research line | Game said | What changed | Source |
+|---|---|---|---|---|
+| 1 | Uzbekistan: Uzbek only | Uzbek, Russian (fixed in stage 2) | Already removed in stage 2 | constituteproject.org Uzbekistan_2023 |
+| 2 | Turkmenistan: Turkmen only | Turkmen, Russian | Already removed in stage 2 | constituteproject.org Turkmenistan_2016 |
+| 3 | Tajikistan: Tajik only | Tajik, Russian | Already removed in stage 2 | constituteproject.org Tajikistan_2016 |
+| 4 | Armenia: Armenian only | Armenian, Russian | Already removed in stage 2 | constituteproject.org Armenia_2020 |
+| 5 | Lebanon: Arabic only | Arabic, French | Already removed in stage 2 | constituteproject.org Lebanon_2004 |
+| 6 | Belize: English de facto | English, Spanish | Already removed in stage 2 | axl.cefan.ulaval.ca Belize |
+| 7 | Argentina: Spanish | Spanish, Guarani | Already removed in stage 2 | Wikipedia, Languages of Argentina |
+| 8 | Mali: French no longer official | French | **FLAGGED.** French kept as an accepted answer (Fathoms); Mali is no longer the subject of official-language questions in Stamps or Voyage | axl.cefan.ulaval.ca mali-const-2023 |
+| 9 | Burkina Faso: French a working language | French, Fula | **FLAGGED.** Same as Mali | Wikipedia, Constitution of Burkina Faso |
+| 10 | Niger: Hausa national, French working | French | **FLAGGED.** Same as Mali. Hausa not added yet (your call) | Wikipedia, Languages of Niger |
+| 11 | New Zealand: English official too | English, Maori | Game already agreed | cp24.com 2026/08/03 |
+| 12 | Israel: Hebrew only | Hebrew, Arabic | Already removed in stage 2 | Basic Law: Nation-State |
+| 13 | Eritrea: no official language, don't ask | Tigrinya, Arabic, English | Never asked about in official-language questions (Stamps, Voyage). Its list stays for the country game's clue | Wikipedia, Languages of Eritrea |
+| 14 | Russian official in Belarus, Kyrgyzstan; used officially in Kazakhstan | Russian listed for all three | Game already agreed | constituteproject.org Belarus; tass.com |
+| 15 | Sudan: accept Arabic | Arabic, English | Now Arabic only | Wikipedia, official languages by country |
+| 16 | De facto languages (USA, UK, Australia, Japan…) | English / Japanese / Spanish / Danish as listed | Game already agreed | govinfo.gov EO 14224 |
+| 17 | Morocco 446,550 | 582,379 | Already 446,550 since stage 2 | UNSD via Wikipedia, area list |
+| 18 | China 9,596,960; never ask USA vs China | China 9,371,251; USA 9,439,451 | China 9,596,960, USA 9,525,067. The USA is marked definition-dependent (9.53 to 9.83 M), so the pair is never asked | same |
+| 19 | Sudan 1,878,000 | 1,863,032 | Game agreed within 1%; left as is | same |
+| 20 | Yemen, Norway, Serbia, Pakistan, Denmark, France, Comoros depend on what's counted | various | Each gets its range; none of them appears in bigger or smaller questions from No. 14 | same |
+| 21 | Canada 9,984,670 | 9,872,129 | Now 9,984,670 | same |
+| 22 | Drop pairs within 5% | n/a | Bigger country? pairs already differ by 15% or more; Stamps and Voyage size questions by 25% or more. Fathoms now skips "more/less land than X" when any country is within 5% of X or X falls inside a definition-dependent range | computed |
+| 23-26, list | Largest city by urban area | old "fame" figures, 40 missing | **All 192 countries now use your urban-area figures** (Delhi, Shanghai, Guayaquil, Doha, Belize City, Bata, Schaan, Serravalle, Weno, Koror, Serekunda…). Nauru has none (no cities). These only decide Fathoms' depth; no game asks "largest city of X" | Wikipedia, largest urban areas by country |
+| 27 | Nauru = Naoero (July 2026) | Nauru | **FLAGGED.** Naoero accepted in Fathoms; the name shown stays Nauru. Nauru is never asked about for its capital | aljazeera.com 2026/7/31 |
+| 28 | Equatorial Guinea capital Ciudad de la Paz (Jan 2026) | Malabo | **FLAGGED.** Fathoms accepts Ciudad de la Paz, Malabo, Oyala and Djibloho; the shown capital stays Malabo, and Equatorial Guinea is never the subject of a capital question | africanews.com 2026/01/05 |
+| 29 | Jakarta; Astana (Nur-Sultan); Gitega (Bujumbura); Sanaa | Jakarta, Astana, Gitega, Sana'a | Game already agreed; Nur-Sultan, Bujumbura and Sanaa accepted in Fathoms | Wikipedia, national capitals |
+| 30 | Split capitals | one listed each | Every listed capital accepted in Fathoms | same |
+| names | Your accepted-names table | | All "also accept" names added to Fathoms; historic names (Persia, Zaire, Siam…) are not accepted. Matching ignores accents, apostrophes, hyphens, "the" and St/Saint | your lists |
+| capitals | Israel, Palestine: don't ask | Jerusalem | Israel is never the subject of a capital question (Palestine isn't in the table) | your list |
+
+Also noticed, not changed: **Montenegro**'s languages are listed as Serbian, Bosnian, Albanian and Croatian; the official language is Montenegrin. Please check.
+
+The daily schedule test (tests/golden.json) was re-recorded after this stage: days 1-13 are identical; from No. 14, Bigger country?, Voyage, Fathoms and Stamps deal different puzzles because the corrected data changes what can be asked.
