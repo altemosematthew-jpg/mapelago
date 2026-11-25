@@ -21,7 +21,7 @@
     "Find today's mystery city. Swipe the board, or use the arrow keys: two matching tiles join into one.",
     "Each new tile size opens a clue about the city. Every move costs a few points, so stop when you think you know.",
     "Think you know where the city is? Tap Drop a pin, then tap the map.",
-    "Follow the arrow to your next pin."
+    "Follow the arrow to your next pin. A miss also opens the next clue for free."
   ];
   var coachStep = null; // null = the coach is off
 
@@ -55,7 +55,7 @@
     } else if (event === "openmap" && coachStep < 2) {
       showTip(2);
     } else if (event === "pin" && !data.done) {
-      showTip(3, data.rc ? "Right country! Now find the city. Follow the arrow." : TIPS[3]);
+      showTip(3, data.rc ? "Right country! Now find the city. Follow the arrow, and use the free clue your miss just opened." : TIPS[3]);
     } else if (event === "end") {
       endCoach();
     }
