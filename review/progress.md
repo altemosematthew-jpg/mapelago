@@ -2,6 +2,8 @@
 
 Head: release 0.15.14. Every release below was pushed with its own version, with every suite passing.
 
+**Live:** main and mapelago.com are at release 0.15.14 (0.15.11 and 0.15.12 via PR #8, 0.15.13 and 0.15.14 via PR #9), each checked on its Cloudflare preview first. Paused at 4:00 AM CT.
+
 ## Released or ready to release (newest first)
 | Release | Commit | What players get |
 |---|---|---|
