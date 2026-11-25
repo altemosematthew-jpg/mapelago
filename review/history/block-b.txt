@@ -1,0 +1,308 @@
+Source-checked history data, part 2 of 2: Block B, 303 dated events that changed the world map since 1800, in date order. Built by Duet (a research assistant that opens web sources), which opened a source for every line. Pasted unchanged.
+Fields: year | event | countries involved (present-day names).
+
+BLOCK B
+1800 | US federal government moves its capital to Washington | United States
+1801 | Great Britain and Ireland unite as the United Kingdom | United Kingdom, Ireland
+1803 | United States buys Louisiana from France | United States, France
+1804 | Haiti declares independence from France | Haiti, France
+1804 | Country renamed Viet Nam under Emperor Gia Long | Viet Nam
+1806 | Holy Roman Empire dissolved | Germany, Austria
+1808 | Sierra Leone becomes a British crown colony | Sierra Leone, United Kingdom
+1808 | Portuguese royal court moves to Brazil | Brazil, Portugal
+1809 | Sweden cedes Finland to Russia | Finland, Sweden, Russia
+1810 | Kamehameha I unifies the Hawaiian Islands | United States
+1814 | Denmark cedes Norway to Sweden | Norway, Denmark, Sweden
+1814 | Netherlands cedes the Cape Colony to Britain | South Africa, Netherlands, United Kingdom
+1815 | United Kingdom of the Netherlands created | Netherlands, Belgium
+1815 | Kingdom of Kandy ceded to British rule | Sri Lanka, United Kingdom
+1816 | Argentina declares independence from Spain | Argentina, Spain
+1818 | Chile declares independence from Spain | Chile, Spain
+1819 | Spain cedes Florida to the United States | United States, Spain
+1819 | British trading post founded at Singapore | Singapore, United Kingdom
+1821 | Treaty of Cordoba establishes Mexican independence from Spain | Mexico, Spain
+1821 | Central America declares independence from Spain | Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Spain
+1821 | Peru declares independence from Spain | Peru, Spain
+1822 | Brazil declares independence from Portugal | Brazil, Portugal
+1824 | Anglo-Dutch Treaty divides Malaya and Sumatra spheres | Malaysia, Indonesia, United Kingdom, Netherlands
+1825 | Bolivia declares independence | Bolivia, Spain
+1825 | Erie Canal opens | United States
+1825 | Van Diemen's Land becomes a colony separate from New South Wales | Australia, United Kingdom
+1826 | Burma cedes Assam, Arakan and Tenasserim to the British | Myanmar, India, United Kingdom
+1828 | Persia cedes Erivan and Nakhchivan khanates to Russia | Iran, Russia, Armenia, Azerbaijan
+1828 | Uruguay becomes independent between Brazil and Argentina | Uruguay, Brazil, Argentina
+1829 | Swan River Colony founded in Western Australia | Australia, United Kingdom
+1830 | Belgium declares independence from the Netherlands | Belgium, Netherlands
+1830 | London Protocol recognises Greece as independent | Greece, Turkiye
+1830 | France captures Algiers | Algeria, France
+1830 | Ecuador separates from Gran Colombia | Ecuador, Colombia
+1832 | Rideau Canal opens | Canada
+1834 | Capital of Greece moves from Nafplio to Athens | Greece
+1836 | Texas declares independence from Mexico | United States, Mexico
+1836 | Province of South Australia proclaimed | Australia, United Kingdom
+1839 | British East India Company captures Aden | Yemen, United Kingdom
+1839 | Treaty of London recognises Belgium and partitions Luxembourg | Belgium, Luxembourg, Netherlands
+1840 | Treaty of Waitangi signed; British sovereignty over New Zealand | New Zealand, United Kingdom
+1842 | China cedes Hong Kong Island to Britain | China, United Kingdom
+1843 | Natal proclaimed a British colony | South Africa, United Kingdom
+1844 | Dominican Republic declares independence from Haiti | Dominican Republic, Haiti
+1846 | Oregon Treaty sets US-British border at the 49th parallel | United States, Canada, United Kingdom
+1847 | Liberia declares independence | Liberia
+1848 | Mexico cedes California and the Southwest to the United States | Mexico, United States
+1848 | Bern becomes the Swiss federal city | Switzerland
+1849 | Britain annexes the Punjab | India, Pakistan, United Kingdom
+1851 | Victoria separates from New South Wales | Australia
+1852 | Britain recognises Boer independence north of the Vaal | South Africa, United Kingdom
+1852 | Haarlemmermeer lake drained into dry land | Netherlands
+1853 | United States buys southern Arizona strip from Mexico | United States, Mexico
+1854 | Orange Free State becomes independent | South Africa, United Kingdom
+1856 | Russia returns southern Bessarabia to Moldavia | Russia, Romania, Moldova, Ukraine
+1856 | Van Diemen's Land renamed Tasmania | Australia
+1857 | Ottawa chosen as capital of the Province of Canada | Canada
+1858 | Treaty of Aigun moves Amur lands from China to Russia | Russia, China
+1858 | British Crown takes over rule of India from the Company | India, United Kingdom
+1860 | Sardinia cedes Savoy and Nice to France | France, Italy
+1860 | China cedes Kowloon to Britain | China, United Kingdom
+1861 | Kingdom of Italy proclaimed | Italy
+1861 | Britain annexes Lagos | Nigeria, United Kingdom
+1862 | Viet Nam cedes three southern provinces to France | Viet Nam, France
+1865 | Capital of New Zealand moves to Wellington | New Zealand
+1867 | United States buys Alaska from Russia | United States, Russia
+1867 | Dominion of Canada created by Confederation | Canada, United Kingdom
+1867 | Dual monarchy of Austria-Hungary established | Austria, Hungary
+1868 | Edo renamed Tokyo | Japan
+1869 | Suez Canal opens | Egypt
+1870 | Rupert's Land transferred to Canada | Canada
+1871 | German Empire proclaimed | Germany
+1871 | France cedes Alsace and part of Lorraine to Germany | France, Germany
+1871 | Rome becomes capital of Italy | Italy
+1871 | British Columbia joins Canada | Canada
+1874 | Fiji ceded to Britain | Fiji, United Kingdom
+1874 | Gold Coast becomes a British crown colony | Ghana, United Kingdom
+1877 | Britain annexes the Transvaal | South Africa, United Kingdom
+1878 | Treaty of Berlin recognises Romania, Serbia and Montenegro | Romania, Serbia, Montenegro, Turkiye
+1879 | Japan annexes the Ryukyu Kingdom | Japan
+1881 | Tunisia becomes a French protectorate | Tunisia, France
+1881 | Argentina and Chile sign a boundary treaty | Argentina, Chile
+1882 | Britain occupies Egypt | Egypt, United Kingdom
+1883 | Peru cedes Tarapaca to Chile | Peru, Chile
+1884 | German South West Africa established | Namibia, Germany
+1884 | Germany claims north-eastern New Guinea | Papua New Guinea, Germany
+1884 | Britain proclaims protectorate over south-eastern New Guinea | Papua New Guinea, United Kingdom
+1885 | Congo Free State established under Leopold II | Democratic Republic of the Congo, Belgium
+1885 | Eastern Rumelia unites with Bulgaria | Bulgaria, Turkiye
+1886 | Britain annexes Burma | Myanmar, United Kingdom
+1888 | Chile annexes Easter Island | Chile
+1889 | Brazil becomes a republic | Brazil
+1890 | Britain gives Heligoland to Germany | Germany, United Kingdom, Tanzania
+1890 | Luxembourg ends personal union with the Netherlands | Luxembourg, Netherlands
+1893 | Corinth Canal opens | Greece
+1894 | Uganda Protectorate established | Uganda, United Kingdom
+1895 | Kiel Canal opens | Germany
+1896 | Italy recognises Ethiopia's independence | Ethiopia, Italy
+1897 | Korean Empire proclaimed | South Korea, North Korea
+1898 | United States annexes Hawaii | United States
+1898 | Britain leases the New Territories of Hong Kong | China, United Kingdom
+1898 | Spain cedes the Philippines, Guam and Puerto Rico to US | Philippines, Spain, United States, Cuba
+1899 | Anglo-Egyptian condominium over Sudan established | Sudan, South Sudan, Egypt, United Kingdom
+1899 | Samoa partitioned between Germany and the United States | Samoa, Germany, United States
+1901 | Six Australian colonies federate as Commonwealth of Australia | Australia, United Kingdom
+1902 | Treaty of Vereeniging: Boer republics become British colonies | South Africa, United Kingdom
+1902 | Cuba becomes independent as the Republic of Cuba | Cuba, United States
+1903 | Panama separates from Colombia | Panama, Colombia
+1903 | Treaty of Petropolis: Bolivia cedes Acre to Brazil | Bolivia, Brazil
+1904 | Bolivia recognizes Chilean sovereignty over its former coast | Bolivia, Chile
+1905 | Norway dissolves its union with Sweden | Norway, Sweden
+1905 | Treaty of Portsmouth: Japan gains southern Sakhalin from Russia | Japan, Russia
+1905 | Alberta and Saskatchewan become Canadian provinces | Canada
+1905 | British India partitions Bengal into two provinces | India, Bangladesh
+1906 | Britain and France agree joint condominium over New Hebrides | Vanuatu, United Kingdom, France
+1906 | Simplon railway tunnel opens under the Alps | Switzerland, Italy
+1907 | New Zealand becomes a dominion | New Zealand, United Kingdom
+1907 | Oklahoma becomes the 46th US state | United States
+1908 | Belgium annexes the Congo Free State as Belgian Congo | Democratic Republic of the Congo, Belgium
+1908 | Bulgaria declares independence from the Ottoman Empire | Bulgaria, Turkiye
+1908 | Austria-Hungary annexes Bosnia and Herzegovina | Bosnia and Herzegovina, Austria, Hungary, Turkiye
+1909 | Anglo-Siamese Treaty: Siam cedes four Malay states to Britain | Thailand, Malaysia, United Kingdom
+1910 | Union of South Africa formed from four British colonies | South Africa, United Kingdom
+1910 | Japan annexes Korea | Japan, South Korea, North Korea
+1911 | New South Wales transfers Federal Capital Territory to Australia | Australia
+1912 | Treaty of Ouchy: Ottoman Empire cedes Libya to Italy | Libya, Italy, Turkiye
+1912 | Albania declares independence from the Ottoman Empire | Albania, Turkiye
+1912 | Treaty of Fez makes Morocco a French protectorate | Morocco, France
+1912 | Republic of China proclaimed, ending Qing imperial rule | China
+1912 | Arizona becomes 48th and last contiguous US state | United States
+1913 | Treaty of Bucharest: Bulgaria cedes Southern Dobruja to Romania | Bulgaria, Romania
+1913 | Crete formally united with Greece | Greece
+1914 | Panama Canal opens | Panama, United States
+1914 | Northern and Southern Nigeria merged into one colony | Nigeria, United Kingdom
+1914 | Saint Petersburg renamed Petrograd | Russia
+1914 | New Zealand forces capture German Samoa | Samoa, New Zealand, Germany
+1917 | Denmark sells Danish West Indies to the United States | United States, Denmark
+1917 | Finland declares independence from Russia | Finland, Russia
+1918 | Czechoslovakia declares independence from Austria-Hungary | Czechia, Slovakia, Austria, Hungary
+1918 | Kingdom of Serbs, Croats and Slovenes is proclaimed | Serbia, Croatia, Slovenia, Bosnia and Herzegovina, Montenegro, North Macedonia
+1918 | Iceland becomes a sovereign kingdom in union with Denmark | Iceland, Denmark
+1918 | Soviet Russia moves its capital from Petrograd to Moscow | Russia
+1919 | Treaty of Versailles signed; Alsace-Lorraine restored to France | Germany, France
+1919 | Treaty of Rawalpindi: Britain recognizes Afghan independence | Afghanistan, United Kingdom
+1919 | Treaty of Saint-Germain: South Tyrol passes from Austria to Italy | Austria, Italy
+1920 | Treaty of Trianon fixes Hungary's reduced borders | Hungary, Romania, Slovakia, Serbia, Croatia, Austria
+1920 | North Schleswig votes to join Denmark and is transferred | Denmark, Germany
+1920 | British East Africa Protectorate becomes Kenya Colony | Kenya, United Kingdom
+1920 | League of Nations gives New Zealand mandate over Western Samoa | Samoa, New Zealand
+1920 | Australia takes League mandate over former German New Guinea | Papua New Guinea, Australia
+1922 | Irish Free State established | Ireland, United Kingdom
+1922 | Britain declares Egypt independent, ending its protectorate | Egypt, United Kingdom
+1922 | Soviet Union formed by four founding republics | Russia, Ukraine, Belarus, Georgia, Armenia, Azerbaijan
+1923 | Turkiye moves its capital from Istanbul to Ankara | Turkiye
+1923 | Treaty of Lausanne sets the borders of modern Turkiye | Turkiye, Greece, United Kingdom, France, Italy
+1923 | Britain annexes Southern Rhodesia as a self-governing colony | Zimbabwe, United Kingdom
+1924 | Petrograd renamed Leningrad | Russia
+1925 | Svalbard Treaty takes effect under Norwegian sovereignty | Norway
+1925 | Norway's capital Kristiania renamed Oslo | Norway
+1927 | Australian Parliament moves from Melbourne to Canberra | Australia
+1929 | Kingdom of Serbs, Croats and Slovenes renamed Yugoslavia | Serbia, Croatia, Slovenia, Bosnia and Herzegovina, Montenegro, North Macedonia
+1929 | Treaty of Lima: Tacna returns to Peru, Chile keeps Arica | Peru, Chile
+1929 | Lateran Treaty creates Vatican City as an independent state | Vatican City, Italy
+1930 | Britain returns Weihaiwei to China | China, United Kingdom
+1932 | Afsluitdijk closes off the Zuiderzee, creating the IJsselmeer | Netherlands
+1932 | Ibn Saud proclaims the Kingdom of Saudi Arabia | Saudi Arabia
+1932 | Iraq becomes independent as British mandate ends | Iraq, United Kingdom
+1934 | Italy unifies Tripolitania and Cyrenaica as the colony of Libya | Libya, Italy
+1935 | Persia asks foreign states to call it Iran | Iran
+1935 | Saar returns to Germany after a referendum | Germany
+1935 | Hoover Dam dedicated, impounding Lake Mead | United States
+1936 | Italy merges Ethiopia, Eritrea and Somalia into Italian East Africa | Ethiopia, Eritrea, Somalia, Italy
+1936 | Dominican capital Santo Domingo renamed Ciudad Trujillo | Dominican Republic
+1936 | Kazakh SSR becomes a full Soviet union republic | Kazakhstan, Russia
+1937 | Burma separated from British India as its own colony | Myanmar, India, United Kingdom
+1937 | New Irish constitution names the state Eire (Ireland) | Ireland
+1938 | Nazi Germany annexes Austria (Anschluss) | Austria, Germany
+1938 | Munich Agreement lets Germany annex the Sudetenland | Czechia, Germany
+1938 | Chaco peace treaty gives Paraguay most of the Gran Chaco | Paraguay, Bolivia
+1939 | Siam officially renamed Thailand | Thailand
+1939 | US and UK agree joint rule of Canton and Enderbury Islands | Kiribati, United States, United Kingdom
+1942 | Rio Protocol signed on the Peru-Ecuador border | Peru, Ecuador
+1943 | France accepts Lebanon's independence | Lebanon, France
+1944 | Iceland dissolves union with Denmark and becomes a republic | Iceland, Denmark
+1944 | Tuva is annexed into the Soviet Union | Russia
+1945 | Korea divided at the 38th parallel into US and Soviet zones | South Korea, North Korea, United States, Russia
+1946 | Philippines becomes independent from the United States | Philippines, United States
+1946 | Transjordan becomes an independent kingdom | Jordan, United Kingdom
+1947 | British India partitioned into India and Pakistan | India, Pakistan, Bangladesh, United Kingdom
+1947 | Peace treaty transfers Italy's Dodecanese islands to Greece | Greece, Italy
+1948 | Burma becomes independent outside the Commonwealth | Myanmar, United Kingdom
+1948 | Ceylon becomes independent from Britain | Sri Lanka, United Kingdom
+1948 | Israel's declaration of independence proclaimed in Tel Aviv | Israel
+1949 | Newfoundland joins Canada as its tenth province | Canada
+1949 | Federal Republic of Germany founded, capital Bonn | Germany
+1949 | People's Republic of China proclaimed in Beijing | China
+1951 | Libya becomes independent as a united kingdom | Libya, United Kingdom, France
+1953 | Federation of Rhodesia and Nyasaland created | Zimbabwe, Zambia, Malawi, United Kingdom
+1953 | Korean armistice creates the Demilitarized Zone | South Korea, North Korea
+1954 | Geneva Accords divide Viet Nam at the 17th parallel | Viet Nam, France
+1955 | Austrian State Treaty restores Austria's independence | Austria
+1956 | Sudan becomes independent | Sudan, United Kingdom, Egypt
+1956 | French protectorate in Morocco ends | Morocco, France
+1956 | Tunisia becomes independent from France | Tunisia, France
+1957 | Saar joins West Germany as Saarland | Germany, France
+1957 | Gold Coast becomes independent as Ghana | Ghana, United Kingdom
+1957 | Federation of Malaya becomes independent | Malaysia, United Kingdom
+1958 | West Indies Federation formed | Jamaica, Trinidad and Tobago, Barbados, United Kingdom
+1958 | Egypt and Syria unite as the United Arab Republic | Egypt, Syria
+1958 | Guinea becomes independent from France | Guinea, France
+1959 | Alaska becomes the 49th US state | United States
+1959 | Saint Lawrence Seaway opens to ocean ships | Canada, United States
+1959 | Hawaii becomes the 50th US state | United States
+1959 | Antarctic Treaty signed in Washington | Argentina, Chile, United States, Russia, United Kingdom
+1960 | Brasilia replaces Rio de Janeiro as capital of Brazil | Brazil
+1960 | Nigeria becomes independent from the United Kingdom | Nigeria, United Kingdom
+1961 | Construction of the Berlin Wall begins | Germany
+1962 | Western Samoa becomes independent from New Zealand | Samoa, New Zealand
+1962 | Algeria becomes independent from France | Algeria, France
+1962 | Jamaica becomes independent from the United Kingdom | Jamaica, United Kingdom
+1963 | Malaya, Sabah, Sarawak and Singapore federate as Malaysia | Malaysia, Singapore
+1964 | Tanganyika and Zanzibar unite; renamed Tanzania same year | Tanzania
+1964 | Malta becomes independent from the United Kingdom | Malta, United Kingdom
+1965 | Singapore separates from Malaysia as a sovereign state | Singapore, Malaysia
+1966 | British Guiana becomes independent as Guyana | Guyana, United Kingdom
+1966 | Barbados becomes independent from the United Kingdom | Barbados, United Kingdom
+1968 | Nauru becomes independent from Australian-run UN trusteeship | Nauru, Australia
+1970 | Aswan High Dam completed on the Nile, forming Lake Nasser | Egypt, Sudan
+1970 | Fiji becomes independent from the United Kingdom | Fiji, United Kingdom
+1970 | Government of British Honduras moves capital to new Belmopan | Belize
+1971 | Bangladesh declares independence from Pakistan, wins war that year | Bangladesh, Pakistan
+1971 | Democratic Republic of the Congo renamed Zaire | Democratic Republic of the Congo
+1971 | Six Trucial States form the United Arab Emirates | United Arab Emirates
+1972 | United States returns Okinawa to Japan | Japan, United States
+1972 | Ceylon becomes a republic renamed Sri Lanka | Sri Lanka
+1973 | British Honduras officially renamed Belize | Belize
+1975 | Mozambique becomes independent from Portugal | Mozambique, Portugal
+1975 | Papua New Guinea becomes independent from Australia | Papua New Guinea, Australia
+1975 | Italy and Yugoslavia sign Treaty of Osimo settling Trieste border | Italy, Slovenia, Croatia
+1975 | Suriname becomes independent from the Netherlands | Suriname, Netherlands
+1975 | Dahomey renamed People's Republic of Benin | Benin
+1976 | North and South Vietnam formally reunified | Viet Nam
+1978 | Ellice Islands become independent as Tuvalu | Tuvalu, United Kingdom
+1979 | Gilbert Islands become independent as Kiribati | Kiribati, United Kingdom
+1979 | Panama Canal Zone abolished under Torrijos-Carter Treaties | Panama, United States
+1980 | Southern Rhodesia becomes independent Zimbabwe | Zimbabwe, United Kingdom
+1980 | New Hebrides becomes independent as Vanuatu | Vanuatu, United Kingdom, France
+1981 | Belize becomes independent from the United Kingdom | Belize, United Kingdom
+1982 | Salisbury, capital of Zimbabwe, renamed Harare | Zimbabwe
+1982 | Itaipu Dam reservoir forms, drowning the Guaira Falls | Brazil, Paraguay
+1983 | Yamoussoukro made capital of Cote d'Ivoire instead of Abidjan | Cote d'Ivoire
+1984 | Brunei becomes fully independent from the United Kingdom | Brunei, United Kingdom
+1984 | Upper Volta renamed Burkina Faso | Burkina Faso
+1984 | Chile and Argentina sign treaty ending Beagle Channel boundary dispute | Chile, Argentina
+1986 | Flevoland, built on reclaimed polders, becomes 12th Dutch province | Netherlands
+1986 | Compact of Free Association ends US trusteeship of Marshall Islands, Micronesia | Marshall Islands, Micronesia, United States
+1988 | Seikan Tunnel opens linking Honshu and Hokkaido | Japan
+1989 | Burma's English name changed to Myanmar, Rangoon to Yangon | Myanmar
+1989 | Berlin Wall opened, border crossings freed | Germany
+1990 | Namibia becomes independent from South Africa | Namibia, South Africa
+1990 | North and South Yemen unify as Republic of Yemen | Yemen
+1990 | East and West Germany reunify | Germany
+1991 | Abuja replaces Lagos as capital of Nigeria | Nigeria
+1991 | Soviet Union formally dissolved into 15 states | Russia, Ukraine, Belarus, Kazakhstan
+1993 | Czechoslovakia splits into the Czech Republic and Slovakia | Czechia, Slovakia
+1993 | Eritrea becomes formally independent from Ethiopia | Eritrea, Ethiopia
+1994 | South Africa transfers Walvis Bay enclave to Namibia | Namibia, South Africa
+1994 | Channel Tunnel opens between England and France | United Kingdom, France
+1994 | Palau becomes independent in free association with United States | Palau, United States
+1995 | Kiribati moves International Date Line east around Line Islands | Kiribati
+1997 | Zaire renamed back to Democratic Republic of the Congo | Democratic Republic of the Congo
+1997 | United Kingdom transfers Hong Kong to China | China, United Kingdom
+1997 | Kazakhstan moves capital from Almaty to Akmola (later Astana) | Kazakhstan
+1998 | Peru and Ecuador sign Brasilia Presidential Act ending border dispute | Peru, Ecuador
+1999 | Nunavut split from Northwest Territories as new Canadian territory | Canada
+1999 | New constitution renames Venezuela the Bolivarian Republic of Venezuela | Venezuela
+1999 | Portugal transfers Macau to China | China, Portugal
+1999 | United States hands full control of Panama Canal to Panama | Panama, United States
+2000 | Oresund Bridge opens linking Copenhagen and Malmo | Denmark, Sweden
+2002 | Timor-Leste becomes independent after UN administration | Timor-Leste, Indonesia
+2003 | Federal Republic of Yugoslavia renamed Serbia and Montenegro | Serbia, Montenegro
+2005 | Myanmar's government moves capital from Yangon to Naypyidaw | Myanmar
+2006 | Main wall of Three Gorges Dam on the Yangtze completed | China
+2006 | Montenegro declares independence, ending Serbia and Montenegro union | Montenegro, Serbia
+2006 | Palau moves capital from Koror to Ngerulmud | Palau
+2008 | Nigeria completes handover of Bakassi peninsula to Cameroon | Cameroon, Nigeria
+2008 | Russia transfers part of Bolshoy Ussuriysky Island to China | China, Russia
+2009 | New constitution renames Bolivia the Plurinational State of Bolivia | Bolivia
+2010 | Netherlands Antilles dissolved; Curacao and Sint Maarten become countries | Netherlands
+2011 | South Sudan becomes independent from Sudan | South Sudan, Sudan
+2011 | Samoa crosses International Date Line, skipping 30 December | Samoa
+2015 | India and Bangladesh exchange their border enclaves | India, Bangladesh
+2016 | Czech government adopts Czechia as official English short name | Czechia
+2016 | Expanded Panama Canal with new larger locks opens | Panama
+2018 | Kingdom of Swaziland renamed Kingdom of Eswatini | Eswatini
+2019 | Burundi makes Gitega its political capital instead of Bujumbura | Burundi
+2019 | Prespa Agreement in force; Macedonia renamed North Macedonia | North Macedonia, Greece
+2019 | Kazakhstan renames its capital Astana to Nur-Sultan | Kazakhstan
+2022 | United Nations adopts Turkiye as the country's name | Turkiye
+2022 | Canada and Denmark agree to split Hans Island between them | Canada, Denmark
+2022 | Peljesac Bridge opens, linking Dubrovnik area to rest of Croatia | Croatia
+2022 | Kazakhstan's capital Nur-Sultan renamed back to Astana | Kazakhstan
+2026 | Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo | Equatorial Guinea
+END BLOCK B

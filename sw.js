@@ -2,10 +2,10 @@
 // Everything else (map data, fonts, icons) is answered from the saved copy at once and refreshed behind the scenes.
 // On install every game is saved, so every game works offline after the first visit to any of them.
 // Release checklist: change this version here AND in every ?v= in the pages (tests/run.js checks they match).
-const C = "mapelago-0.15.7";
+const C = "mapelago-0.15.8";
 const PRE = [
-  "./", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html",
-  "offline.html", "analytics.js?v=0.15.7", "copy.js?v=0.15.7", "site.js?v=0.15.7", "extras.js?v=0.15.7", "shapes.js?v=0.15.7", "world.js?v=0.15.7", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
+  "./", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html",
+  "offline.html", "analytics.js?v=0.15.8", "copy.js?v=0.15.8", "history.js?v=0.15.8", "history-data.js?v=0.15.8", "site.js?v=0.15.8", "extras.js?v=0.15.8", "shapes.js?v=0.15.8", "world.js?v=0.15.8", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
   "fonts/overpass-latin-400-normal.woff2", "fonts/overpass-latin-600-normal.woff2",
   "fonts/overpass-latin-800-normal.woff2", "fonts/overpass-latin-800-italic.woff2"
 ];
