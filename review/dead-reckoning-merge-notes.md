@@ -1,22 +1,32 @@
 # Dead Reckoning: merge notes
 
-Dead Reckoning is the ninth daily game: five places a day, tapped on a blank world map, scored by great-circle
-distance. Built on branch `claude/zealous-allen-u0n2ro` from main at `db566cc` (release 0.15.5).
+Dead Reckoning is a new daily game: five places a day, tapped on a blank world map, scored by great-circle
+distance. It becomes the tenth game once Logbook (0.15.8, `history.html`) is out, the ninth before that.
+Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at 0.15.7 is already merged into it,
+with the patch re-applied on top, so merging the branch into 0.15.7 brings no conflicts.
 
 ## How to merge
 
-1. Merge the branch. The game's own files can't clash with anything (they are new).
-2. Run the patch for the shared files. It is idempotent: it checks each edit first and skips any already in place,
-   so it is safe to run after a merge that already brought some of them in, or twice.
+1. Merge the branch. If main has moved on (0.15.8 and Logbook), the shared files may conflict: take **main's**
+   version of every shared file listed below (`git checkout --theirs` / `--ours` as appropriate, i.e. the side
+   that is main), then run step 2, which puts Dead Reckoning back in.
+2. Run the patch for the shared files from anywhere:
 
        python3 review/dead-reckoning-patch.py
 
-   It prints `added`, `already there` or `NOT FOUND` for each edit and exits 1 if anything was not found
-   (an anchor moved in another release; make that edit by hand from the list below).
-3. Run the tests: `cd tests && npm test`. Dead Reckoning's checks are section 10 and the clean-load list.
-4. At release, the usual version bump (`sw.js` `C` and every `?v=`) must include `dead-reckoning.html`, which loads
-   `copy.js`, `site.js`, `world.js`, `dead-reckoning.js` and `analytics.js` with `?v=0.15.5`, and the
-   `dead-reckoning.js?v=` entry in the `sw.js` PRE list. A global replace of `?v=0.15.5` catches all of them.
+   It is idempotent: each edit is checked first and skipped when already in place, so running it twice, or after a
+   merge that kept some of the edits, is safe. Nothing in it assumes which game came last: links and entries go
+   after the last game already listed (Logbook if `history.html` is in the menu, otherwise Crossings), and the
+   "nine / ten games" wording is worked out from the number of entries in `site.js`'s `GAMES` after the edit.
+   It prints `added`, `already there` or `NOT FOUND` for each edit and exits 1 if anything was not found.
+3. Run the tests: `cd tests && npm test`. Dead Reckoning's checks run just before the end of `run.js`.
+4. At release, bump the version as usual. The patch already set `dead-reckoning.html`'s `?v=` to the `sw.js`
+   version at the time it ran, and `tests/run.js` section 1b now checks that page too. A global replace of the old
+   `?v=` value covers it, along with `dead-reckoning.js?v=` in the `sw.js` PRE list.
+
+Checked: on a clean 0.15.7, and on a 0.15.7 with Logbook added by hand the way 0.15.8 will add it (menu link after
+Crossings, a `GAMES` entry, "Nine games…", tests naming Logbook): every edit applies once and a second run adds
+nothing. With Logbook present, Dead Reckoning goes after Logbook everywhere and every count reads "ten".
 
 ## New files (no conflicts possible)
 
@@ -33,24 +43,30 @@ distance. Built on branch `claude/zealous-allen-u0n2ro` from main at `db566cc` (
 
 ## Every shared-file change (all made by the patch script)
 
+"After the last game" means after Logbook when it is there, otherwise after Crossings. "N" is the number of games
+in `site.js` once Dead Reckoning is added (ten with Logbook).
+
 | File | Change |
 |---|---|
-| `site.js` | `GAMES`: new entry `{ id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: 📍 }` after Crossings. This is what puts it in the front page's "Today's games" cards, every game page's cards, the "Your streaks" sheet, the streak-at-risk note and the save code. |
+| `site.js` | `GAMES`: new last entry `{ id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: 📍 }`. This puts it in the front page's "Today's games" cards, every game page's cards, the "Your streaks" sheet, the streak-at-risk note and the save code. |
 | `site.js` | `BEAT`: `reckoning: { code: "dr", max: 1000, modes: 1 }`, the new beat-my-score game code (`#b-dr-<No.>-0-<score>`). |
 | `site.js` | `UNIT`: `reckoning` reads "828 of 1,000" in a friend's challenge note. |
 | `site.js` | `todayText`: Dead Reckoning's total in "Copy today's results". |
 | `site.js` | `perfect`: confetti on 1,000 of 1,000. |
 | `site.js` | `addImageButton`: not added for Dead Reckoning (its share line doesn't use the 🐢 layout the generic image expects). |
-| `index.html`, `country.html`, `bigger.html`, `bigger-country.html`, `voyage.html`, `fathoms.html`, `stamps.html`, `crossings.html`, `404.html`, `offline.html`, `about/index.html`, `how-to-play/index.html` | One line: `<a href="…dead-reckoning.html">Dead Reckoning</a>` after Crossings in the "Daily games" menu. Inside the built pages it sits in the footer HTML, outside the game script. |
-| `games/index.html` | A Dead Reckoning section before "Streaks"; title and descriptions say nine games instead of eight. |
-| `how-to-play/index.html` | A "Dead Reckoning, the blank map" paragraph after Crossings. |
-| `about/index.html` | "Nine games a day … Crossings and Dead Reckoning." |
-| `sw.js` | PRE list: `"dead-reckoning.html"` and `"dead-reckoning.js?v=<version>"` after `crossings.html`. |
+| `index.html`, `country.html`, `bigger.html`, `bigger-country.html`, `voyage.html`, `fathoms.html`, `stamps.html`, `crossings.html`, `history.html` (when present), `404.html`, `offline.html`, `about/index.html`, `how-to-play/index.html` | One line, `<a href="…dead-reckoning.html">Dead Reckoning</a>`, after the last game in the "Daily games" menu. In the built pages it sits in the footer HTML, outside the game script. |
+| `index.html` | Search data (JSON-LD, from 0.15.7): "N free daily geography games: …, Dead Reckoning." |
+| `manifest.webmanifest` | Description: "N free daily geography games: … and tap places on a blank map." The shortcuts are left as they are. |
+| `games/index.html` | A Dead Reckoning section before "Streaks"; title and descriptions say N games and add "blank-map pins" to the list. |
+| `how-to-play/index.html` | A "Dead Reckoning, the blank map" section just before "The quick games". |
+| `about/index.html` | Lede: "N games a day … and Dead Reckoning." |
+| `dead-reckoning.html` | Script addresses take the `sw.js` version. |
+| `sw.js` | PRE list: `"dead-reckoning.html"` and `"dead-reckoning.js?v=<version>"` on the line before `offline.html`. |
 | `sitemap.xml` | `https://mapelago.com/dead-reckoning.html`. |
-| `tests/run.js` | `dead-reckoning.html` in the clean-load list (section 1); section 10 calls `tests/dead-reckoning.test.js`; the About-page check now expects nine games including Dead Reckoning ("Nine games a day"). |
+| `tests/run.js` | `dead-reckoning.html` added after the last game in every page list that names the games (clean load, the cache-version check 1b, the landmarks check 21); a call to `tests/dead-reckoning.test.js` before the end; the About-page check and the home search-data check (22) also name Dead Reckoning; their counts and test names say N. |
 
 Not changed: `copy.js` / `copy/copy.json` (the card text falls back to `GAMES.about`; add a `cards.reckoning`
-line there if you want house copy), `manifest.webmanifest`, `hints.html`, `privacy/`. No other game's script or
+line there if you want house copy), the manifest's shortcuts, `hints.html`, `privacy/`. No other game's script or
 data was touched, so no other game's puzzles change (the golden check in `tests/run.js` confirms it).
 
 ## The game, for review
