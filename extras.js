@@ -205,6 +205,7 @@
   // Walking forward day by day: every 7th day played earns a freeze (hold up to 2). A missed day while
   // a streak is running spends a freeze instead of ending the streak. Today doesn't count as missed until it is over.
   function streak(results, today) {
+    if (window.MXS) return window.MXS.streak(results, today); // one copy of the rules, in site.js
     var days = Object.keys(results || {}).map(Number).filter(function (n) { return n > 0; }).sort(function (a, b) { return a - b; });
     var out = { cur: 0, best: 0, freezes: 0, frozen: [] };
     if (!days.length) return out;
