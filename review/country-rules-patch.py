@@ -3,14 +3,14 @@
 
 Applies the change to country.html: the minified game script, plus the cost line, the rules
 sheet and one style rule. It is safe to run twice:
-a page that already has it is left alone. Every anchor must match exactly once, or nothing
+an edit that is already there is skipped. Every anchor must match exactly once, or nothing
 is written and the script says which anchor is missing.
 
 Why a script: the whole game is one very long line of country.html, so any other change to
-that line conflicts with this one in git. To resolve such a conflict, take the other branch's
-country.html (git checkout --ours country.html, when merging this branch into it) and run:
+that line conflicts with this one in git. To resolve such a conflict, keep the checked-out branch's side of
+each conflict in country.html and run this script over it. One command does both:
 
-    python3 review/country-rules-patch.py country.html
+    python3 review/country-rules-patch.py --take-ours country.html
 
 What it does, for rounds of No. 14 or later that start on this version (older rounds and
 rounds already started keep the rules they began with; the round stores r: 2):
@@ -27,8 +27,6 @@ For every round:
 - the cost line and the rules sheet show the costs of the round in play
 """
 import sys
-
-MARK = "/* mx-country-rules"
 
 HELPERS = r'''</svg>`}
 /* mx-country-rules: Mystery country plays by Mystery city's rules (rules version 2) from No. 14. Added by review/country-rules-patch.py; see review/country-merge-notes.md. */
@@ -97,26 +95,60 @@ PATCHES = [
      '<p id="storm" class="banner" role="status" hidden>No moves left. Drop a pin.</p>'),
     ('@media (prefers-reduced-motion:reduce){#toast{transition:none}}',
      '@media (prefers-reduced-motion:reduce){#toast{transition:none}}\n/* mx-country-rules: the "New clue" note moves to the top when it would cover the new clue */\n#toast.mxtop{top:calc(10px + env(safe-area-inset-top));bottom:auto}'),
+    # Mystery city and Mystery country side by side at the top (the same strip is in index.html)
+    ("#toast.mxtop{top:calc(10px + env(safe-area-inset-top));bottom:auto}\n",
+     "#toast.mxtop{top:calc(10px + env(safe-area-inset-top));bottom:auto}\n" + """/* mx-find: Mystery city and Mystery country side by side at the top of both games (review/country-merge-notes.md) */
+.mx-find{display:grid;grid-template-columns:1fr 1fr;margin:0 0 10px;border-bottom:var(--bw) solid var(--line)}
+.mx-find a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:6px 4px;margin-bottom:calc(-1 * var(--bw));border-bottom:5px solid transparent;color:var(--ink-2);font-weight:800;font-size:16px;text-decoration:none;text-align:center;line-height:1.15}
+.mx-find a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+.mx-find a:not([aria-current]):hover{color:var(--ink);border-bottom-color:var(--line)}
+.mx-find a:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+#endBody .also{text-align:center}
+/* /mx-find */
+"""),
+    ("  </header>\n", "  </header>\n" + """  <!-- mx-find: Mystery city and Mystery country side by side at the top -->
+  <nav class="mx-find" aria-label="Find a city or a country"><a href="./"><span aria-hidden="true">🏙️</span>Mystery city</a><a href="country.html" aria-current="page"><span aria-hidden="true">🌍</span>Mystery country</a></nav>
+"""),
 ]
 
 
-def main(path):
+def take_ours(s):
+    """Keep the checked-out side of every git conflict block (<<<<<<< ours ======= theirs >>>>>>>)."""
+    out, mode = [], None
+    for line in s.splitlines(keepends=True):
+        if line.startswith("<<<<<<< "):
+            mode = "ours"
+        elif mode and (line.startswith("||||||| ") or line.rstrip("\r\n") == "======="):
+            mode = "skip"
+        elif mode and line.startswith(">>>>>>> "):
+            mode = None
+        elif mode != "skip":
+            out.append(line)
+    return "".join(out)
+
+
+def main(args):
+    resolve = "--take-ours" in args
+    path = ([a for a in args if not a.startswith("--")] or ["country.html"])[0]
     s = open(path, encoding="utf-8").read()
-    if MARK in s:
-        print(f"{path}: already has the Mystery country rules, nothing to do")
-        return 0
-    missing = [a for a, _ in PATCHES if s.count(a) != 1]
+    if resolve:
+        s = take_ours(s)
+    todo = [(a, b) for a, b in PATCHES if (b.split("\n")[1] if a == PATCHES[0][0] else b) not in s]
+    missing = []
+    for a, b in todo:  # in order: a later anchor can be text an earlier edit wrote
+        if s.count(a) != 1:
+            missing.append((a, s.count(a)))
+        else:
+            s = s.replace(a, b, 1)
     if missing:
-        for a in missing:
-            print(f"anchor found {s.count(a)} times (need 1): {a[:120]}")
+        for a, n in missing:
+            print(f"anchor found {n} times (need 1): {a[:120]}")
         print("Nothing written. The page changed under these anchors; update them in this script.")
         return 1
-    for a, b in PATCHES:
-        s = s.replace(a, b, 1)
     open(path, "w", encoding="utf-8").write(s)
-    print(f"{path}: Mystery country rules applied ({len(PATCHES)} edits)")
+    print(f"{path}: {len(todo)} of {len(PATCHES)} Mystery country edits applied ({len(PATCHES) - len(todo)} were already there)")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else "country.html"))
+    sys.exit(main(sys.argv[1:]))

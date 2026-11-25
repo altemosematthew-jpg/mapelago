@@ -371,6 +371,14 @@ a.act{text-decoration:none}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 /* mx-country-rules: the "New clue" note moves to the top when it would cover the new clue */
 #toast.mxtop{top:calc(10px + env(safe-area-inset-top));bottom:auto}
+/* mx-find: Mystery city and Mystery country side by side at the top of both games (review/country-merge-notes.md) */
+.mx-find{display:grid;grid-template-columns:1fr 1fr;margin:0 0 10px;border-bottom:var(--bw) solid var(--line)}
+.mx-find a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:6px 4px;margin-bottom:calc(-1 * var(--bw));border-bottom:5px solid transparent;color:var(--ink-2);font-weight:800;font-size:16px;text-decoration:none;text-align:center;line-height:1.15}
+.mx-find a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+.mx-find a:not([aria-current]):hover{color:var(--ink);border-bottom-color:var(--line)}
+.mx-find a:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+#endBody .also{text-align:center}
+/* /mx-find */
 
 /* R2-6a clues inside the pin map, a win moment */
 .mapclues{margin:0 0 8px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-size:14px}
@@ -407,6 +415,8 @@ a.act{text-decoration:none}
       <button class="tool" id="statsBtn" aria-label="Your stats"></button>
     </nav>
   </header>
+  <!-- mx-find: Mystery city and Mystery country side by side at the top -->
+  <nav class="mx-find" aria-label="Find a city or a country"><a href="./"><span aria-hidden="true">🏙️</span>Mystery city</a><a href="country.html" aria-current="page"><span aria-hidden="true">🌍</span>Mystery country</a></nav>
 
   <section class="status" aria-label="Your game">
     <div class="stat"><b id="score">1000</b><span>points left</span></div>
