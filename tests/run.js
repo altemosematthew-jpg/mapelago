@@ -143,7 +143,7 @@ async function page(b, url, opts = {}) {
         const { ctx, p } = await page(b, U + "country.html#day-" + day, { storage: fresh });
         await p.waitForFunction(() => window.__WORLD);
         const s = await read(p);
-        check(s.S.r === r && s.S.moveCost === cost && s.cost.startsWith(`Each move costs ${cost} points`), `country: a new No. ${day} round starts on rules ${r} (moves cost ${cost})`, JSON.stringify([s.S.r, s.S.moveCost, s.cost]));
+        check(s.S.r === r && s.S.moveCost === cost && s.cost.startsWith(r === 1 ? `Today: ${cost} points a move; a miss costs 150 and opens no clue.` : `Each move costs ${cost} points`), `country: a new No. ${day} round starts on rules ${r} (moves cost ${cost})`, JSON.stringify([s.S.r, s.S.moveCost, s.cost]));
         await ctx.close();
       }
       // the rules: one clue to start, moves cost 6, a miss costs 150 and opens the next clue, and the label matches the slot after it
@@ -154,10 +154,10 @@ async function page(b, url, opts = {}) {
         check(s0.clues === 1 && s0.S.tiles.every((t) => t.v === 2), "country: a new round starts with two 2-tiles and one clue", JSON.stringify([s0.clues, s0.S.tiles.map((t) => t.v)]));
         for (const k of ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"]) await p.keyboard.press(k);
         const s1 = await read(p), m = s1.S.swipes;
-        check(m > 0 && s1.pts === String(1000 - 6 * m), "country: each move costs 6", JSON.stringify([m, s1.pts]));
+        check(m > 0 && s1.pts === String(1000 - 6 * m + (s1.S.maxTile >= 4 ? Math.min(s1.S.maxTile, 64) - 2 : 0)), "country: each move costs 6 (plus the tile bonus from No. 14)", JSON.stringify([m, s1.pts]));
         await p.evaluate(far); await p.waitForTimeout(1500);
         const s2 = await read(p);
-        check(s2.pts === String(1000 - 6 * m - 150), "country: a missed pin costs 150", s2.pts);
+        check(s2.pts === String(+s1.pts - 150), "country: a far missed pin costs 150", s2.pts);
         check(s2.clues === s1.clues + 1 && /Free clue: /.test(s2.live), "country: a missed pin opens the next clue", JSON.stringify([s1.clues, s2.clues, s2.live]));
         check(s2.label && s2.label === s2.slot, "country: next-clue label matches the highlighted slot after a free clue", JSON.stringify([s2.label, s2.slot]));
         check(/^(\S+ )?\S+( and (warmer|colder))?: Missed by [\d,]+ km\. The country is to the (north|south|east|west|northeast|northwest|southeast|southwest)\./u.test(s2.live), "country: the miss line gives heat, distance and direction", s2.live);
@@ -174,7 +174,7 @@ async function page(b, url, opts = {}) {
         check(Math.abs(r.sq[0] - 111.19) < 0.05 && r.sq[1][0] === 5 && r.sq[1][1] === 0, "country: distance to the middle of a long edge, not its corners", JSON.stringify(r.sq));
         check(r.name === "Mexico" && r.az.d > 125 && r.az.d < 136 && Math.abs(r.az.b - 180) < 10, "country: a pin in Arizona is about 130 km north of Mexico's nearest border", JSON.stringify(r));
         for (let i = 0; i < 3; i++) { await p.evaluate(() => __lf.confirmAt([-110, 32.5])); await p.waitForTimeout(1900); }
-        const s = await p.evaluate(() => __lf.S()), want = Math.round(700 * (1 - Math.sqrt((r => r - 50)(s.pins[0].d) / 2450)));
+        const s = await p.evaluate(() => __lf.S()), want = Math.round((1000 - 2 * 50) * (1 - Math.sqrt((r => r - 50)(s.pins[0].d) / 2450)));
         check(s.done && !s.won && s.score === want, `country: three near misses score on the softer last-pin curve (${want})`, JSON.stringify([s.score, s.pins.map((x) => x.d)]));
         await ctx.close();
       }
@@ -223,6 +223,219 @@ async function page(b, url, opts = {}) {
       check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings", "Logbook"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Nine games a day/.test(ab), "about page: names all nine daily games");
     }
     // ---- end mx-country-rules ----
+
+    // ---- mx-scoring: the new scoring for both mystery games from No. 14 (review/scoring.md, review/scoring-patch.py) ----
+    {
+      const G = [["", "dailycity:v2", "city"], ["country.html", "dailycity:country:v1", "country"]];
+      const fresh = (k, extra) => Object.assign({ [k]: '{"games":{},"results":{},"seenHelp":true}' }, extra || {});
+      const sm = (d) => (d <= 250 ? 50 : d >= 2000 ? 150 : Math.round((50 + (d - 250) / 17.5) / 10) * 10), sb = (m) => (m >= 4 ? Math.min(m, 64) - 2 : 0);
+      for (const [f, key, g] of G) {
+        // the start number, and the parts of the score
+        for (const [day, want] of [[13, 0], [14, 1]]) {
+          const { ctx, p } = await page(b, U + f + "#day-" + day, { storage: fresh(key) });
+          const s = await p.evaluate(() => __lf.sc.s());
+          check((s || 0) === want, `${g} scoring: a new No. ${day} round ${want ? "scores the new way" : "keeps the old scoring"}`, String(s));
+          if (day === 14) {
+            const r = await p.evaluate(() => [[100, 250, 1000, 1999, 2000, 9000].map(__lf.sc.sm), [2, 4, 16, 64, 128].map(__lf.sc.sb), [1000, 850, 849, 650, 649, 400, 399].map(__lf.sc.stars)]);
+            check(JSON.stringify(r) === JSON.stringify([[50, 50, 90, 150, 150, 150], [0, 2, 14, 62, 62], [3, 3, 2, 2, 1, 1, 0]]), `${g} scoring: miss cost by distance, tile bonus, stars`, JSON.stringify(r));
+          }
+          await ctx.close();
+        }
+        // a round: moves, a tile bonus, a near miss, then a find; the end card's sum adds up and the share has the stars
+        {
+          const { ctx, p } = await page(b, U + f + "#day-14", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          const notes = [];
+          for (const d of ["up", "left", "down", "right", "up", "left", "down", "right"]) { await p.evaluate((d) => __lf.move(d), d); notes.push(await p.textContent("#live")); }
+          const a = await p.evaluate(() => ({ m: __lf.S().swipes, mt: __lf.S().maxTile, pts: +document.querySelector("#score").textContent }));
+          check(a.pts === 1000 - 6 * a.m + sb(a.mt), `${g} scoring: points = 1000 - 6 x moves + tile bonus`, JSON.stringify(a));
+          check(notes.some((t) => /New clue: .*\. \+8 points for making a 16\./.test(t)) && notes.some((t) => /\+4 points for making an 8\./.test(t)), `${g} scoring: the new-clue note says what the tile earned`, notes.join(" / "));
+          const far = await p.evaluate(() => { const h = __lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat]; return [h[0] + 6, h[1] + 3]; });
+          await p.evaluate((x) => __lf.confirmAt(x), far); await p.waitForTimeout(1500);
+          const miss = await p.evaluate(() => ({ d: __lf.S().pins[0].d, live: document.querySelector("#live").textContent, pts: +document.querySelector("#score").textContent }));
+          check(miss.d > 50 && miss.pts === a.pts - sm(miss.d) && miss.live.includes(`−${sm(miss.d)} points.`), `${g} scoring: a miss ${Math.round(miss.d)} km off costs ${sm(miss.d)} and says so`, JSON.stringify(miss));
+          await p.evaluate(() => __lf.confirmAt(__lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+          const e = await p.evaluate(() => ({ score: __lf.S().score, sum: (document.querySelector(".mx-sum") || {}).textContent, grade: (document.querySelector(".mx-grade [aria-hidden]") || {}).textContent, share: document.querySelector("#endBody .share").textContent, link: MXS.beat.upgrade(document.querySelector("#endBody .share").textContent) }));
+          const want = a.pts - sm(miss.d), stars = want >= 850 ? 3 : want >= 650 ? 2 : want >= 400 ? 1 : 0;
+          check(e.score === want && e.sum && e.sum.endsWith(`= ${want}`) && e.sum.includes(`${a.m} moves × 6`) && e.sum.includes(`+ ${sb(a.mt)} tile bonus`) && e.sum.includes(`1 missed pin (${sm(miss.d)})`), `${g} scoring: the end card's sum adds up (${e.sum})`, JSON.stringify(e));
+          const st = "★".repeat(stars) + "☆".repeat(3 - stars);
+          check(e.grade === st && e.share.includes(st + " " + want + " points"), `${g} scoring: stars on the end card and in the copied result`, JSON.stringify([e.grade, e.share.split("\n")[1]]));
+          check(new RegExp(`#b-m${g === "city" ? "c" : "n"}-14-0-${want}`).test(e.link), `${g} scoring: beat-my-score link still carries the score`, e.link.split("\n").pop());
+          check(!p.errs.length, `${g} scoring: no errors`, p.errs.join("; "));
+          await ctx.close();
+        }
+        // a perfect round still scores the most; a lost round's sum adds up too
+        {
+          const { ctx, p } = await page(b, U + f + "#day-15", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          await p.evaluate(() => __lf.confirmAt(__lf.home ? __lf.home() : [__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+          const r = await p.evaluate(() => [__lf.S().score, (document.querySelector(".mx-grade [aria-hidden]") || {}).textContent]);
+          check(r[0] === 1000 && r[1] === "★★★", `${g} scoring: a find with no moves scores 1000 and three stars`, JSON.stringify(r));
+          await ctx.close();
+        }
+        {
+          const { ctx, p } = await page(b, U + f + "#day-16", { storage: fresh(key) });
+          await p.waitForFunction(() => window.__WORLD);
+          for (const d of ["up", "left", "down"]) await p.evaluate((d) => __lf.move(d), d);
+          for (const k of [1, 2, 3]) { await p.evaluate((k) => __lf.confirmAt([((__lf.P.lon + 180 - 25 * k) % 360) - 180, -__lf.P.lat]), k); await p.waitForTimeout(1900); }
+          const r = await p.evaluate(() => ({ S: __lf.S(), sum: (document.querySelector(".mx-sum") || {}).textContent }));
+          check(r.S.done && !r.S.won && r.sum && /Not found, so × \d+% for your closest pin/.test(r.sum) && r.sum.endsWith(`= ${r.S.score}`), `${g} scoring: a lost round's sum adds up (${r.sum})`, JSON.stringify(r.sum));
+          await ctx.close();
+        }
+      }
+      // a move never pays for itself: over 40 days of play the score stays under 1000 after every move
+      {
+        const ctx = await b.newContext(PHONE), p = await ctx.newPage(); let bad = [], n = 0;
+        for (let day = 14; day < 54; day++) {
+          await p.goto(`${U}?s=${day}#day-${day}`, { waitUntil: "domcontentloaded" });
+          await p.evaluate(() => localStorage.setItem("dailycity:v2", '{"games":{},"results":{},"seenHelp":true}'));
+          await p.reload({ waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__lf);
+          const r = await p.evaluate(() => { const bad = []; for (let i = 0; i < 90; i++) { if (__lf.S().storm) break; let moved = false; for (const d of ["down", "left", "right", "up"]) { const b0 = __lf.S().swipes; __lf.move(d); if (__lf.S().swipes > b0) { moved = true; break; } } if (!moved) break; const pts = +document.querySelector("#score").textContent; if (pts >= 1000) bad.push(pts); } return [bad, __lf.S().swipes]; });
+          bad = bad.concat(r[0]); n += r[1];
+        }
+        check(!bad.length && n > 1000, `scoring: no move ever brings the score back to 1000 (${n} moves over 40 days)`, bad.join());
+        await ctx.close();
+      }
+      // Quick mode keeps its own scoring, with stars and a sum
+      {
+        const { ctx, p } = await page(b, U + "#day-14", { storage: fresh("dailycity:v2", { "dailycity:mode": "quick" }) });
+        await p.waitForFunction(() => window.__WORLD);
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const live = await p.textContent("#live");
+        await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
+        const r = await p.evaluate(() => ({ score: __lf.S().score, sum: (document.querySelector(".mx-sum") || {}).textContent, share: document.querySelector("#endBody .share").textContent }));
+        check(r.score === 800 && !/points\./.test(live.replace(/\d+ km/, "")) && r.sum === "1,000 − 1 missed pin × 200 = 800" && r.share.includes("★★☆ Found in 2/5 pins"), "scoring: Quick mode still scores 1000/800/..., with stars and a sum", JSON.stringify([r, live]));
+        await ctx.close();
+      }
+      // the rules page and each game's own explainer describe the new scoring
+      {
+        const htp = fs.readFileSync(path.join(__dirname, "../how-to-play/index.html"), "utf8"), cj = JSON.parse(fs.readFileSync(path.join(__dirname, "../copy/copy.json"), "utf8"));
+        check(/From No\. 14 \(27 November 2026\)/.test(htp) && /adds half its value/.test(htp) && /50 points if it lands within 250 km/.test(htp), "scoring: how-to-play explains the new scoring and when it starts");
+        check(["city", "country"].every((g) => /50 to 150 points/.test(cj.games[g].explainer) && cj.games[g].howto.some((x) => /adds half its value/.test(x))), "scoring: both games' copy explains it");
+      }
+    }
+    // ---- end mx-scoring ----
+
+    // ---- mx-country-quick: Quick mode for Mystery country from No. 14 (review/country-quick-patch.py) ----
+    {
+      const fresh = { "dailycity:country:v1": '{"games":{},"results":{},"seenHelp":true}' };
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-13", { storage: fresh });
+        check(!(await p.isVisible("#mxMode")), "country quick: no Tiles/Quick choice before No. 14");
+        await ctx.close();
+      }
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-14", { storage: fresh, ctx: { viewport: { width: 375, height: 667 } } });
+        await p.waitForFunction(() => window.__WORLD);
+        check(await p.isVisible("#mxMode"), "country quick: the Tiles/Quick choice shows on a fresh No. 14");
+        await p.focus("#mxMode [data-m=quick]"); await p.keyboard.press("Enter"); await p.waitForTimeout(200);
+        const s0 = await p.evaluate(() => ({ pins: document.querySelector("#pinsText").textContent, board: getComputedStyle(document.querySelector("#board")).display, label: document.querySelector("#nextClue").textContent, clues: document.querySelectorAll("#clues li").length, mode: localStorage.getItem("dailycity:country:mode"), city: localStorage.getItem("dailycity:mode") }));
+        check(s0.pins === "5 pins left" && s0.board === "none" && s0.label === "Next clue: after a missed pin" && s0.clues === 1 && s0.mode === "quick" && s0.city === null, "country quick: picked by keyboard; no tiles, one clue, five pins; the city's choice untouched", JSON.stringify(s0));
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const s1 = await p.evaluate(() => ({ pts: document.querySelector("#score").textContent, clues: document.querySelectorAll("#clues li").length, live: document.querySelector("#live").textContent }));
+        check(s1.pts === "800" && s1.clues === 2 && /Free clue:/.test(s1.live), "country quick: a miss opens the next clue; 800 left", JSON.stringify(s1));
+        await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
+        const e = await p.evaluate(() => ({ S: __lf.S(), res: JSON.parse(localStorage.getItem("dailycity:country:v1")).results[14], share: document.querySelector("#endBody .share").textContent, big: document.querySelector("#endBody .score b").textContent }));
+        check(e.S.score === 800 && e.res.q === 1 && e.big === "2/5" && e.share.includes("quick mode") && e.share.includes("★★☆ Found in 2/5 pins") && /#b-mn-14-1-800/.test(await p.evaluate((t) => MXS.beat.upgrade(t), e.share)), "country quick: found on pin 2 scores 800, saved as Quick, shared as Quick", JSON.stringify(e));
+        check(!p.errs.length, "country quick: no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-15", { storage: fresh });
+        await p.waitForFunction(() => window.__WORLD);
+        await p.keyboard.press("ArrowUp"); await p.keyboard.press("ArrowLeft"); await p.waitForTimeout(200);
+        check(!(await p.isVisible("#mxMode")) && (await p.evaluate(() => !__lf.S().r || __lf.S().swipes > 0)), "country quick: once a round has started it can't switch mode");
+        await ctx.close();
+      }
+    }
+    // ---- end mx-country-quick ----
+
+    // ---- mx-review: fixes from the review of 0.15.2 (review/review-fixes-patch.py) ----
+    {
+      const fresh = (k) => ({ [k]: '{"games":{},"results":{},"seenHelp":true}' });
+      const today12 = { clock: new Date("2026-11-25T12:00:00") };
+      // the rules shown match the round: before No. 14 the round's own rules, from No. 14 the new ones
+      for (const [f, key, g] of [["country.html", "dailycity:country:v1", "country"], ["", "dailycity:v2", "city"]]) {
+        for (const day of [12, 14]) {
+          const { ctx, p } = await page(b, U + f + "#day-" + day, { storage: fresh(key) });
+          const r = await p.evaluate(() => ({ note: document.querySelector("#todayRules").hidden ? "" : document.querySelector("#todayRules").textContent, cost: document.querySelector("#costNote").textContent }));
+          const ok = day === 14 ? !r.note && !/^Today:/.test(r.cost) : g === "country" ? r.note.startsWith("Today's round, No. 12, plays by the earlier rules: 8 points a move, and a missed pin costs 150 and opens no clue.") && r.cost === "Today: 8 points a move; a miss costs 150 and opens no clue." : r.note.startsWith("Today's round, No. 12, uses the earlier scoring: no tile bonus, and every missed pin costs 150.");
+          check(ok, `review: ${g} No. ${day} shows the rules of its own round`, JSON.stringify(r));
+          await ctx.close();
+        }
+      }
+      // No. 12 keeps its answer and its rules: a miss costs 150 and opens no clue
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-12", { storage: fresh("dailycity:country:v1") });
+        await p.waitForFunction(() => window.__WORLD);
+        const c0 = await p.evaluate(() => document.querySelectorAll("#clues li").length);
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const r = await p.evaluate(() => ({ name: __lf.P.city, clues: document.querySelectorAll("#clues li").length, pts: document.querySelector("#score").textContent }));
+        check(r.name === "Israel" && r.clues === c0 && r.pts === "850", "review: country No. 12 keeps its answer and old rules (a miss: -150, no clue)", JSON.stringify([c0, r]));
+        // the languages clue says its label once, for eyes and for screen readers
+        for (let k = 1; k < 3; k++) { await p.evaluate((k) => __lf.confirmAt([((__lf.P.lon + 180 - 25 * k) % 360) - 180, -__lf.P.lat]), k); await p.waitForTimeout(1900); }
+        const lang = await p.evaluate(() => [...document.querySelectorAll("#clues .tx")].map((x) => x.textContent).find((t) => /Hebrew/.test(t)));
+        check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
+        // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
+        const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
+        check(sh.share.startsWith("Mystery country No. 12, ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        await ctx.close();
+      }
+      for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
+        const { ctx, p } = await page(b, U + "country.html" + link, { storage: fresh("dailycity:country:v1"), ...today12, wait: 900 });
+        const t = await p.evaluate(() => document.body.innerText);
+        check(/A friend scored 640/.test(t), `review: an old share link still works (${link})`);
+        await ctx.close();
+      }
+      // the next-clue wording is the city's
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-14", { storage: fresh("dailycity:country:v1") });
+        const lines = [await p.textContent("#nextClue")];
+        await p.keyboard.press("ArrowUp"); await p.keyboard.press("ArrowLeft"); await p.keyboard.press("ArrowDown");
+        lines.push(await p.textContent("#nextClue"), await p.textContent("#coachText"));
+        const body = await p.evaluate(() => document.documentElement.innerHTML);
+        check(/^Next clue: make an? \d+$/.test(lines[0]) && lines.some((l) => /make an 8/.test(l)) && /Next clue: make an? \d+\./.test(lines[2]) && !/Next clue at|comes at/.test(body), "review: country says 'Next clue: make an 8', like the city", JSON.stringify(lines));
+        await ctx.close();
+      }
+      // Past countries: today's player can play any earlier number, in its own save
+      {
+        const { ctx, p } = await page(b, U + "country.html", { storage: fresh("dailycity:country:v1"), ...today12, wait: 900 });
+        await p.click("#pastCountries"); await p.waitForTimeout(200);
+        const list = await p.evaluate(() => [...document.querySelectorAll("#mxPastList a")].map((a) => a.getAttribute("href")));
+        check(list.length === 11 && list[0] === "#past-11" && list[10] === "#past-1" && (await p.isVisible("#mxPast")), "review: Past countries lists No. 11 to No. 1", list.join());
+        await p.keyboard.press("Escape"); await p.waitForTimeout(100);
+        check(!(await p.isVisible("#mxPast")), "review: the Past countries list closes with Escape");
+        await p.evaluate(() => (location.hash = "#past-5")); await p.waitForTimeout(1200); await p.waitForFunction(() => window.__WORLD);
+        const p5 = await ctx.newPage(); await p5.goto(U + "country.html#day-5", { waitUntil: "domcontentloaded" }); await p5.waitForFunction(() => window.__lf);
+        const g5 = await p5.evaluate(() => __lf.P.city); await p5.close();
+        const a = await p.evaluate(() => ({ num: document.querySelector("#num").textContent, ban: !document.querySelector("#arcBan").hidden, name: __lf.P.city }));
+        check(a.num === "No. 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
+        await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
+        const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
+        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mystery country No. 5 (archive)"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
+        check(!p.errs.length, "review: Past countries, no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+    }
+    // ---- end mx-review ----
+
+    // ---- mx-teachers: the For teachers page (teachers/index.html, review/teachers-menu-patch.py) ----
+    {
+      for (const width of [375, 1440]) {
+        const { ctx, p } = await page(b, U + "teachers/", { ctx: { viewport: { width, height: 900 }, isMobile: width < 500, hasTouch: width < 500 }, wait: 800 });
+        const r = await p.evaluate(() => ({ h1: document.querySelector("h1").textContent, over: document.documentElement.scrollWidth > innerWidth + 1, links: [...document.querySelectorAll("main a")].map((a) => a.getAttribute("href")) }));
+        check(!p.errs.length && r.h1 === "Mapelago for teachers" && !r.over, `teachers page loads cleanly at ${width} px, no sideways scroll`, p.errs.join("; ") + JSON.stringify(r.over));
+        check(["../how-to-play/", "../privacy/"].every((h) => r.links.includes(h)), `teachers page links to How to play and Privacy (${width} px)`);
+        await ctx.close();
+      }
+      const t = fs.readFileSync(path.join(__dirname, "../teachers/index.html"), "utf8").replace(/<[^>]+>/g, " ");
+      check(["no accounts", "no ads", "no cookies", "Nothing to install", "same puzzles", "projector", "student devices", "offline", "Bigger country?", "Crossings", "Logbook", "Scale", "Borders", "Capitals", "History", "Place"].every((w) => t.includes(w)), "teachers page says what it promised");
+      const pages = ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "offline.html", "about/index.html", "privacy/index.html", "how-to-play/index.html", "games/index.html", "teachers/index.html"];
+      const missing = pages.filter((f) => { const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8"); return (s.match(/href="(?:\.\.?\/)?teachers\/"[^>]*>For teachers<\/a>/g) || []).length !== 1; });
+      check(!missing.length, "every page's menu has For teachers, once", missing.join());
+      check(/<loc>https:\/\/mapelago\.com\/teachers\/<\/loc>/.test(fs.readFileSync(path.join(__dirname, "../sitemap.xml"), "utf8")), "sitemap lists the teachers page");
+    }
+    // ---- end mx-teachers ----
 
     // 8. a game in progress survives midnight
     {
