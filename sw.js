@@ -1,7 +1,7 @@
 // Pages come fresh from the network when there is one, and from the saved copy when there isn't.
 // Everything else (map data, fonts, icons) is answered from the saved copy at once and refreshed behind the scenes.
 // On install every game is saved, so all seven work offline after the first visit to any of them.
-const C = "mapelago-0.13.0";
+const C = "mapelago-0.14.0";
 const PRE = [
   "./", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html",
   "offline.html", "site.js", "extras.js", "shapes.js", "world.js", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
