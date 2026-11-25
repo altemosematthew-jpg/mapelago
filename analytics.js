@@ -1,11 +1,11 @@
 // Visitor counting with Cloudflare Web Analytics: cookie-free, nothing stored on the device, no fingerprinting.
-// OFF while token is empty: nothing loads, and the privacy page shows its "no visit counting" wording.
+// ON since 25 November 2026 (Matthew's request). With an empty token nothing loads and the privacy page shows its "no visit counting" wording.
 // To switch on: paste the site token from Cloudflare below, set `since` to the date it goes live
 // (shown as "Last updated" on the privacy page), and bump the release version as for any release.
 // The same switch picks the privacy page's wording, so the page can't say one thing while the site does another.
 (function () {
   "use strict";
-  var ANALYTICS = { token: "", since: "" };
+  var ANALYTICS = { token: "aece45ce02f24174b0d65a7150edaf74", since: "2026-11-25" };
 
   var on = typeof ANALYTICS.token === "string" && /^[0-9a-f]{32}$/i.test(ANALYTICS.token);
   // Only the real site is counted: never localhost, the *.pages.dev previews or anything else,
@@ -32,7 +32,10 @@
     var blocks = document.querySelectorAll("[data-analytics]");
     Array.prototype.forEach.call(blocks, function (el) { el.hidden = el.getAttribute("data-analytics") !== (on ? "on" : "off"); });
     var d = document.getElementById("analyticsSince");
-    if (d) d.textContent = ANALYTICS.since || "the day visit counting was switched on";
+    if (d) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ANALYTICS.since || "");
+      d.textContent = m ? ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+m[2] - 1] + " " + +m[3] + ", " + m[1] : ANALYTICS.since || "the day visit counting was switched on";
+    }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", wording); else wording();
 })();
