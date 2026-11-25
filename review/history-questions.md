@@ -1,32 +1,32 @@
 # Logbook: every question the game can ask
 
-Written by `review/history/build.py` from `review/history/block-a.txt`, `block-b.txt` and `block-c.txt` (the source-checked blocks, unchanged). Each entry quotes the Block line it came from. Regenerate this file by running the script; don't edit it by hand.
+Written by `review/history/build.py` from `review/history/block-a.txt`, `block-b.txt`, `block-c.txt` and `block-d.txt` (the source-checked blocks, unchanged). Each entry quotes the Block line it came from. Regenerate this file by running the script; don't edit it by hand.
 
 ## The numbers
 
 | | |
 |---|---|
-| Dated facts (Block B events, Block A years, Block C city renames) | 644 |
-| ...usable in "Which came first?" and "Put in order" | 638 |
-| ...usable in "When was it?" (the timeline slider) | 611 |
+| Dated facts (Block B and D events, Block A years, Block C city renames) | 833 |
+| ...usable in "Which came first?" and "Put in order" | 826 |
+| ...usable in "When was it?" (the timeline slider) | 797 |
 | "What was it called?" questions | 144 |
 | "Independent from whom?" questions | 146 |
 | "Capital on the move" questions | 177 |
 | "What was this city called?" questions | 350 |
-| Days before any question repeats | 371 (the slider, name, from-whom and capital questions each run through their whole bank once in 371 days; a pair or order of events is never repeated in the 742-day schedule) |
-| Shipped schedule | No. 1 to No. 742, then it starts again from No. 1 |
+| Days before any question repeats | 414 (the slider, name, from-whom and capital questions each run through their whole bank once in 414 days; a pair or order of events is never repeated in the 828-day schedule) |
+| Shipped schedule | No. 1 to No. 828, then it starts again from No. 1 |
 | Shortest gap before the same fact appears again, in a different question | 21 days |
-| Average gap before a fact appears again | 47 days |
-| Facts used at least once | 644 of 644 |
+| Average gap before a fact appears again | 61 days |
+| Facts used at least once | 833 of 833 |
 
-Kinds per day on average over a cycle: how many years apart 0.60, multiple choice 2.20, put in order 1.57, when was it 1.65, which came first or later 1.98.
+Kinds per day on average over a cycle: how many years apart 0.60, multiple choice 1.97, put in order 1.59, when was it 1.93, which came first or later 1.91.
 
 ## Rules applied
 
 - Wording of Block B events is used exactly as written.
 - "Which came first?" and "Put in order": events at least 5 years apart; 20 years when either is a defensible-year country's independence (Austria, Egypt, Eritrea, Estonia, Guinea-Bissau, Iceland, Indonesia, Latvia, Libya, Lithuania, Malaysia, Marshall Islands, Micronesia, North Korea, Philippines, Romania, South Africa, South Korea, Timor-Leste, Viet Nam, Zimbabwe).
 - The same fact comes back no sooner than 21 days later, in any kind of question.
-- "When was it?": never asked for those countries' independence, for unconfirmed years, or for the capital moves of Germany, Japan, Kazakhstan, Solomon Islands, Tanzania.
+- "When was it?": never asked for those countries' independence, for unconfirmed years, or for the capital moves of Germany, Japan, Kazakhstan, Kenya, Solomon Islands, Tanzania.
 - Land within 5 years and it counts as right (a decade's window); the exact year scores a bonus.
 - Predecessor states (Czechoslovakia, Gran Colombia, Ottoman Empire, Soviet Union, Yugoslavia) are never offered or accepted as former names; Yemen's "North Yemen and South Yemen" is left out for the same reason.
 - Years Duet couldn't confirm (Argentina's United Provinces of the Rio de la Plata end year; Central African Republic's Ubangi-Shari end year; Nauru's Pleasant Island end year; Tuvalu's Ellice Islands end year; Uruguay's Cisplatina start year) are never asked or shown.
@@ -38,11 +38,12 @@ Kinds per day on average over a cycle: how many years apart 0.60, multiple choic
 
 ## Where Block A and Block B describe the same thing
 
-These Block A years were joined to the Block B event with the same year, so the game asks it once. No clashes were found.
+These Block A years and Block C renames were joined to the Block B or Block D event with the same year, so the game asks it once. One clash was found and nothing was chosen: Kenya's capital move is 1907 in Block A and 1905 in Block D, so neither year is asked (the move is still asked as "which city?", without a year).
 
 - Afghanistan, independence 1919: "Treaty of Rawalpindi: Britain recognizes Afghan independence"
 - Albania, independence 1912: "Albania declares independence from the Ottoman Empire"
 - Algeria, independence 1962: "Algeria becomes independent from France"
+- Angola, independence 1975: "Angola becomes independent from Portugal"
 - Argentina, independence 1816: "Argentina declares independence from Spain"
 - Armenia, independence 1991: "Soviet Union formally dissolved into 15 states"
 - Australia, independence 1901: "Six Australian colonies federate as Commonwealth of Australia"
@@ -53,22 +54,36 @@ These Block A years were joined to the Block B event with the same year, so the 
 - Belgium, independence 1830: "Belgium declares independence from the Netherlands"
 - Belize, independence 1981: "Belize becomes independent from the United Kingdom"
 - Bolivia, independence 1825: "Bolivia declares independence"
+- Botswana, independence 1966: "Bechuanaland becomes independent as Botswana"
 - Brazil, independence 1822: "Brazil declares independence from Portugal"
 - Brunei, independence 1984: "Brunei becomes fully independent from the United Kingdom"
 - Bulgaria, independence 1908: "Bulgaria declares independence from the Ottoman Empire"
+- Burkina Faso, independence 1960: "Upper Volta becomes independent from France"
+- Burundi, independence 1962: "Ruanda-Urundi splits into independent Rwanda and Burundi"
+- Cabo Verde, independence 1975: "Cabo Verde becomes independent from Portugal"
+- Cameroon, independence 1960: "French Cameroun becomes independent as Cameroon"
 - Canada, independence 1867: "Dominion of Canada created by Confederation"
+- Chad, independence 1960: "Chad becomes independent from France"
 - Chile, independence 1818: "Chile declares independence from Spain"
 - China, independence 1949: "People's Republic of China proclaimed in Beijing"
+- Colombia, independence 1819: "Congress of Angostura proclaims the Republic of Colombia (Gran Colombia)"
 - Costa Rica, independence 1821: "Central America declares independence from Spain"
+- Cote d'Ivoire, independence 1960: "Cote d'Ivoire becomes independent from France"
 - Cuba, independence 1902: "Cuba becomes independent as the Republic of Cuba"
 - Czechia, independence 1993: "Czechoslovakia splits into the Czech Republic and Slovakia"
+- Democratic Republic of the Congo, independence 1960: "Belgian Congo becomes independent"
+- Djibouti, independence 1977: "Djibouti becomes independent from France"
 - Dominican Republic, independence 1844: "Dominican Republic declares independence from Haiti"
 - Ecuador, independence 1830: "Ecuador separates from Gran Colombia"
 - Egypt, independence 1922: "Britain declares Egypt independent, ending its protectorate"
 - El Salvador, independence 1821: "Central America declares independence from Spain"
+- Equatorial Guinea, independence 1968: "Equatorial Guinea becomes independent from Spain"
 - Eritrea, independence 1993: "Eritrea becomes formally independent from Ethiopia"
+- Eswatini, independence 1968: "Swaziland becomes independent from the United Kingdom"
 - Fiji, independence 1970: "Fiji becomes independent from the United Kingdom"
 - Finland, independence 1917: "Finland declares independence from Russia"
+- Gabon, independence 1960: "Gabon becomes independent from France"
+- Gambia, independence 1965: "Gambia becomes independent from the United Kingdom"
 - Georgia, independence 1991: "Soviet Union formally dissolved into 15 states"
 - Ghana, independence 1957: "Gold Coast becomes independent as Ghana"
 - Greece, independence 1830: "London Protocol recognises Greece as independent"
@@ -86,13 +101,18 @@ These Block A years were joined to the Block B event with the same year, so the 
 - Jamaica, independence 1962: "Jamaica becomes independent from the United Kingdom"
 - Jordan, independence 1946: "Transjordan becomes an independent kingdom"
 - Kazakhstan, independence 1991: "Soviet Union formally dissolved into 15 states"
+- Kenya, independence 1963: "Kenya becomes independent from the United Kingdom"
 - Kiribati, independence 1979: "Gilbert Islands become independent as Kiribati"
 - Kyrgyzstan, independence 1991: "Soviet Union formally dissolved into 15 states"
 - Lebanon, independence 1943: "France accepts Lebanon's independence"
+- Lesotho, independence 1966: "Basutoland becomes independent as Lesotho"
 - Liberia, independence 1847: "Liberia declares independence"
 - Libya, independence 1951: "Libya becomes independent as a united kingdom"
+- Madagascar, independence 1960: "Madagascar becomes independent from France"
+- Malawi, independence 1964: "Nyasaland becomes independent as Malawi"
 - Malaysia, independence 1957: "Federation of Malaya becomes independent"
 - Malta, independence 1964: "Malta becomes independent from the United Kingdom"
+- Mauritania, independence 1960: "Mauritania becomes independent from France"
 - Mexico, independence 1821: "Treaty of Cordoba establishes Mexican independence from Spain"
 - Moldova, independence 1991: "Soviet Union formally dissolved into 15 states"
 - Montenegro, independence 2006: "Montenegro declares independence, ending Serbia and Montenegro union"
@@ -110,11 +130,17 @@ These Block A years were joined to the Block B event with the same year, so the 
 - Papua New Guinea, independence 1975: "Papua New Guinea becomes independent from Australia"
 - Peru, independence 1821: "Peru declares independence from Spain"
 - Philippines, independence 1946: "Philippines becomes independent from the United States"
+- Rwanda, independence 1962: "Ruanda-Urundi splits into independent Rwanda and Burundi"
 - Samoa, independence 1962: "Western Samoa becomes independent from New Zealand"
+- Sao Tome and Principe, independence 1975: "Sao Tome and Principe becomes independent from Portugal"
 - Saudi Arabia, independence 1932: "Ibn Saud proclaims the Kingdom of Saudi Arabia"
 - Serbia, independence 1878: "Treaty of Berlin recognises Romania, Serbia and Montenegro"
+- Seychelles, independence 1976: "Seychelles becomes independent from the United Kingdom"
+- Sierra Leone, independence 1961: "Sierra Leone becomes independent from the United Kingdom"
 - Singapore, independence 1965: "Singapore separates from Malaysia as a sovereign state"
 - Slovakia, independence 1993: "Czechoslovakia splits into the Czech Republic and Slovakia"
+- Solomon Islands, independence 1978: "Solomon Islands becomes independent"
+- Somalia, independence 1960: "British and Italian Somaliland unite as the Somali Republic"
 - South Africa, independence 1910: "Union of South Africa formed from four British colonies"
 - South Sudan, independence 2011: "South Sudan becomes independent from Sudan"
 - Sri Lanka, independence 1948: "Ceylon becomes independent from Britain"
@@ -123,38 +149,56 @@ These Block A years were joined to the Block B event with the same year, so the 
 - Tajikistan, independence 1991: "Soviet Union formally dissolved into 15 states"
 - Tanzania, independence 1964: "Tanganyika and Zanzibar unite; renamed Tanzania same year"
 - Timor-Leste, independence 2002: "Timor-Leste becomes independent after UN administration"
+- Togo, independence 1960: "Togo becomes independent from France"
 - Tunisia, independence 1956: "Tunisia becomes independent from France"
 - Turkmenistan, independence 1991: "Soviet Union formally dissolved into 15 states"
 - Tuvalu, independence 1978: "Ellice Islands become independent as Tuvalu"
+- Uganda, independence 1962: "Uganda becomes independent with Kampala as its capital"
 - Ukraine, independence 1991: "Soviet Union formally dissolved into 15 states"
 - United Arab Emirates, independence 1971: "Six Trucial States form the United Arab Emirates"
 - Uruguay, independence 1828: "Uruguay becomes independent between Brazil and Argentina"
 - Uzbekistan, independence 1991: "Soviet Union formally dissolved into 15 states"
 - Vanuatu, independence 1980: "New Hebrides becomes independent as Vanuatu"
+- Venezuela, independence 1830: "Venezuela separates from Gran Colombia"
 - Viet Nam, independence 1976: "North and South Vietnam formally reunified"
 - Yemen, independence 1990: "North and South Yemen unify as Republic of Yemen"
+- Zambia, independence 1964: "Northern Rhodesia becomes independent as Zambia"
 - Zimbabwe, independence 1980: "Southern Rhodesia becomes independent Zimbabwe"
 - Australia, capital 1927: "Australian Parliament moves from Melbourne to Canberra"
 - Belize, capital 1970: "Government of British Honduras moves capital to new Belmopan"
+- Botswana, capital 1965: "Gaborone replaces Mafikeng as capital of Bechuanaland"
 - Brazil, capital 1960: "Brasilia replaces Rio de Janeiro as capital of Brazil"
 - Burundi, capital 2019: "Burundi makes Gitega its political capital instead of Bujumbura"
 - Cote d'Ivoire, capital 1983: "Yamoussoukro made capital of Cote d'Ivoire instead of Abidjan"
 - Equatorial Guinea, capital 2026: "Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo"
 - Greece, capital 1834: "Capital of Greece moves from Nafplio to Athens"
+- Guinea-Bissau, capital 1941: "Bissau replaces Bolama as capital of Portuguese Guinea"
 - Italy, capital 1871: "Rome becomes capital of Italy"
 - Kazakhstan, capital 1997: "Kazakhstan moves capital from Almaty to Akmola (later Astana)"
+- Malawi, capital 1975: "Lilongwe replaces Zomba as capital of Malawi"
+- Micronesia, capital 1989: "Palikir replaces Kolonia as capital of Micronesia"
 - Myanmar, capital 2005: "Myanmar's government moves capital from Yangon to Naypyidaw"
+- New Zealand, capital 1841: "Auckland becomes the capital of New Zealand"
 - New Zealand, capital 1865: "Capital of New Zealand moves to Wellington"
 - Nigeria, capital 1991: "Abuja replaces Lagos as capital of Nigeria"
 - Palau, capital 2006: "Palau moves capital from Koror to Ngerulmud"
 - Russia, capital 1918: "Soviet Russia moves its capital from Petrograd to Moscow"
+- Solomon Islands, capital 1952: "Honiara replaces Tulagi as capital of the Solomon Islands"
 - Turkiye, capital 1923: "Turkiye moves its capital from Istanbul to Ankara"
+- Uganda, capital 1962: "Uganda becomes independent with Kampala as its capital"
 - United States, capital 1800: "US federal government moves its capital to Washington"
+- Uzbekistan, capital 1930: "Uzbek SSR capital moves from Samarkand to Tashkent"
+- Zambia, capital 1935: "Lusaka replaces Livingstone as capital of Northern Rhodesia"
 - Belize, name end 1973: "British Honduras officially renamed Belize"
 - Benin, name end 1975: "Dahomey renamed People's Republic of Benin"
+- Botswana, name start 1885: "Britain establishes the Bechuanaland Protectorate"
 - Brazil, name end 1889: "Brazil becomes a republic"
 - Burkina Faso, name end 1984: "Upper Volta renamed Burkina Faso"
 - China, name end 1912: "Republic of China proclaimed, ending Qing imperial rule"
+- Colombia, name start 1831: "Gran Colombia legally ends; State of New Granada is created"
+- Colombia, name end 1858: "Granadine Confederation replaces the Republic of New Granada"
+- Colombia, name start 1863: "Granadine Confederation becomes the United States of Colombia"
+- Colombia, name end 1886: "United States of Colombia becomes the Republic of Colombia"
 - Democratic Republic of the Congo, name start 1885: "Congo Free State established under Leopold II"
 - Democratic Republic of the Congo, name end 1908: "Belgium annexes the Congo Free State as Belgian Congo"
 - Democratic Republic of the Congo, name start 1908: "Belgium annexes the Congo Free State as Belgian Congo"
@@ -165,11 +209,14 @@ These Block A years were joined to the Block B event with the same year, so the 
 - Germany, name end 1990: "East and West Germany reunify"
 - Iran, name end 1935: "Persia asks foreign states to call it Iran"
 - Ireland, name end 1937: "New Irish constitution names the state Eire (Ireland)"
+- Kenya, name start 1895: "Britain proclaims the East Africa Protectorate"
 - Kenya, name end 1920: "British East Africa Protectorate becomes Kenya Colony"
 - Myanmar, name end 1989: "Burma's English name changed to Myanmar, Rangoon to Yangon"
 - Namibia, name start 1884: "German South West Africa established"
 - North Macedonia, name end 2019: "Prespa Agreement in force; Macedonia renamed North Macedonia"
+- Papua New Guinea, name start 1949: "Papua and New Guinea merged under one administration"
 - Samoa, name end 1914: "New Zealand forces capture German Samoa"
+- Samoa, name end 1997: "Western Samoa renamed Samoa"
 - Sri Lanka, name end 1972: "Ceylon becomes a republic renamed Sri Lanka"
 - Sudan, name start 1899: "Anglo-Egyptian condominium over Sudan established"
 - Thailand, name end 1939: "Siam officially renamed Thailand"
@@ -989,688 +1036,1120 @@ These Block A years were joined to the Block B event with the same year, so the 
 303. **2026** Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo  [first, slider]
    - Block B line 303: 2026 | Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo | Equatorial Guinea
    - Block A: Equatorial Guinea | 1968 | Spain | Spanish Guinea (to 1968) | Malabo to Ciudad de la Paz (2026)
-304. **1975** Angola becomes independent from Portugal  [first, slider]
-   - Block A: Angola | 1975 | Portugal | none | none
-305. **1981** Antigua and Barbuda becomes independent from the United Kingdom  [first, slider]
-   - Block A: Antigua and Barbuda | 1981 | United Kingdom | none | none
-306. **1918** Austria becomes independent on the dissolution of Austria-Hungary  [first (20-year gap)]
-   - Block A: Austria | 1918 | Austria-Hungary (dissolution) | German-Austria (1918-1919) | none
-307. **1973** The Bahamas becomes independent from the United Kingdom  [first, slider]
-   - Block A: Bahamas | 1973 | United Kingdom | none | none
-308. **1971** Bahrain becomes independent from the United Kingdom  [first, slider]
-   - Block A: Bahrain | 1971 | United Kingdom (protectorate) | none | none
-309. **1960** Benin becomes independent from France  [first, slider]
-   - Block A: Benin | 1960 | France | Dahomey (to 1975) | none
-310. **1992** Bosnia and Herzegovina becomes independent from Yugoslavia  [first, slider]
-   - Block A: Bosnia and Herzegovina | 1992 | Yugoslavia | none | none
-311. **1966** Botswana becomes independent from the United Kingdom  [first, slider]
-   - Block A: Botswana | 1966 | United Kingdom | Bechuanaland (1885-1966) | Mafeking to Gaborone (1965)
-312. **1960** Burkina Faso becomes independent from France  [first, slider]
-   - Block A: Burkina Faso | 1960 | France | Upper Volta (to 1984) | none
-313. **1962** Burundi becomes independent from Belgium  [first, slider]
-   - Block A: Burundi | 1962 | Belgium (UN trust territory) | none | Bujumbura to Gitega (2019)
-314. **1975** Cabo Verde becomes independent from Portugal  [first, slider]
-   - Block A: Cabo Verde | 1975 | Portugal | none | none
-315. **1953** Cambodia becomes independent from France  [first, slider]
-   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
-316. **1960** Cameroon becomes independent from France  [first, slider]
-   - Block A: Cameroon | 1960 | France (British Southern Cameroons joined 1961) | none | none
-317. **1960** The Central African Republic becomes independent from France  [first, slider]
-   - Block A: Central African Republic | 1960 | France | Ubangi-Shari (to 1958); Central African Empire (1976-1979) | none
-318. **1960** Chad becomes independent from France  [first, slider]
-   - Block A: Chad | 1960 | France | none | none
-319. **1819** Colombia becomes independent from Spain  [first, slider]
+304. **1804** Hobart founded as a British settlement in Van Diemen's Land  [first, slider]
+   - Block D line 1: 1804 | Hobart founded as a British settlement in Van Diemen's Land | Australia, United Kingdom
+305. **1811** Venezuela declares independence from Spain  [first, slider]
+   - Block D line 2: 1811 | Venezuela declares independence from Spain | Venezuela, Spain
+306. **1813** Paraguay proclaims itself a republic  [first (20-year gap)]
+   - Block D line 3: 1813 | Paraguay proclaims itself a republic | Paraguay
+307. **1819** Congress of Angostura proclaims the Republic of Colombia (Gran Colombia)  [first, slider]
+   - Block D line 4: 1819 | Congress of Angostura proclaims the Republic of Colombia (Gran Colombia) | Colombia, Venezuela, Ecuador, Panama
    - Block A: Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
-320. **1975** The Comoros becomes independent from France  [first, slider]
-   - Block A: Comoros | 1975 | France | none | Dzaoudzi to Moroni (1958)
-321. **1960** Cote d'Ivoire becomes independent from France  [first, slider]
-   - Block A: Cote d'Ivoire | 1960 | France | none | Abidjan to Yamoussoukro (1983)
-322. **1991** Croatia becomes independent from Yugoslavia  [first, slider]
-   - Block A: Croatia | 1991 | Yugoslavia | none | none
-323. **1960** Cyprus becomes independent from the United Kingdom  [first, slider]
-   - Block A: Cyprus | 1960 | United Kingdom | none | none
-324. **1960** The Democratic Republic of the Congo becomes independent from Belgium  [first, slider]
-   - Block A: Democratic Republic of the Congo | 1960 | Belgium | Congo Free State (1885-1908); Belgian Congo (1908-1960); Zaire (1971-1997) | none
-325. **1977** Djibouti becomes independent from France  [first, slider]
-   - Block A: Djibouti | 1977 | France | French Somaliland (to 1967); Afars and Issas (1967-1977) | Obock to Djibouti (1894)
-326. **1978** Dominica becomes independent from the United Kingdom  [first, slider]
-   - Block A: Dominica | 1978 | United Kingdom | none | none
-327. **1968** Equatorial Guinea becomes independent from Spain  [first, slider]
-   - Block A: Equatorial Guinea | 1968 | Spain | Spanish Guinea (to 1968) | Malabo to Ciudad de la Paz (2026)
-328. **1918** Estonia becomes independent from the Russian Empire  [first (20-year gap)]
-   - Block A: Estonia | 1918 | Russian Empire (restored 1991 from Soviet Union) | none | none
-329. **1968** Eswatini becomes independent from the United Kingdom  [first, slider]
-   - Block A: Eswatini | 1968 | United Kingdom | Swaziland (to 2018) | Bremersdorp to Mbabane (1902)
-330. **1960** Gabon becomes independent from France  [first, slider]
-   - Block A: Gabon | 1960 | France | none | none
-331. **1965** The Gambia becomes independent from the United Kingdom  [first, slider]
-   - Block A: Gambia | 1965 | United Kingdom | none | none
-332. **1974** Grenada becomes independent from the United Kingdom  [first, slider]
-   - Block A: Grenada | 1974 | United Kingdom | none | none
-333. **1973** Guinea-Bissau becomes independent from Portugal  [first (20-year gap)]
-   - Block A: Guinea-Bissau | 1973 | Portugal | Portuguese Guinea (to 1974) | Bolama to Bissau (1941)
-334. **1945** Indonesia becomes independent from the Netherlands  [first (20-year gap)]
-   - Block A: Indonesia | 1945 | Netherlands | Dutch East Indies (to 1949) | none
-335. **1963** Kenya becomes independent from the United Kingdom  [first, slider]
-   - Block A: Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
-336. **1961** Kuwait becomes independent from the United Kingdom  [first, slider]
-   - Block A: Kuwait | 1961 | United Kingdom (protectorate) | none | none
-337. **1953** Laos becomes independent from France  [first, slider]
-   - Block A: Laos | 1953 | France | none | none
-338. **1918** Latvia becomes independent from the Russian Empire  [first (20-year gap)]
-   - Block A: Latvia | 1918 | Russian Empire (restored 1991 from Soviet Union) | none | none
-339. **1966** Lesotho becomes independent from the United Kingdom  [first, slider]
-   - Block A: Lesotho | 1966 | United Kingdom | Basutoland (to 1966) | none
-340. **1806** Liechtenstein is formed as a sovereign state  [first, slider]
-   - Block A: Liechtenstein | 1806 | Holy Roman Empire (dissolution) | none | none
-341. **1918** Lithuania becomes independent from the Russian Empire  [first (20-year gap)]
-   - Block A: Lithuania | 1918 | Russian Empire (restored 1990 from Soviet Union) | none | don't ask
-342. **1960** Madagascar becomes independent from France  [first, slider]
-   - Block A: Madagascar | 1960 | France | none | none
-343. **1964** Malawi becomes independent from the United Kingdom  [first, slider]
-   - Block A: Malawi | 1964 | United Kingdom | Nyasaland (1907-1964) | Zomba to Lilongwe (1975)
-344. **1965** The Maldives becomes independent from the United Kingdom  [first, slider]
-   - Block A: Maldives | 1965 | United Kingdom (protectorate) | none | none
-345. **1960** Mali becomes independent from France  [first, slider]
-   - Block A: Mali | 1960 | France (via the Mali Federation) | French Sudan (to 1958) | none
-346. **1986** The Marshall Islands becomes independent from the United States  [first (20-year gap)]
-   - Block A: Marshall Islands | 1986 | US-administered UN trust territory | none | none
-347. **1960** Mauritania becomes independent from France  [first, slider]
-   - Block A: Mauritania | 1960 | France | none | none
-348. **1968** Mauritius becomes independent from the United Kingdom  [first, slider]
-   - Block A: Mauritius | 1968 | United Kingdom | Isle de France (to 1810) | none
-349. **1986** Micronesia becomes independent from the United States  [first (20-year gap)]
-   - Block A: Micronesia | 1986 | US-administered UN trust territory | none | Kolonia to Palikir (1989)
-350. **1960** Niger becomes independent from France  [first, slider]
-   - Block A: Niger | 1960 | France | none | don't ask
-351. **1948** The state of North Korea is founded  [first (20-year gap)]
-   - Block A: North Korea | 1948 | Japanese rule ended 1945, state founded 1948 | none | none
-352. **1991** North Macedonia becomes independent from Yugoslavia  [first, slider]
-   - Block A: North Macedonia | 1991 | Yugoslavia | Macedonia (1991-2019) | none
-353. **1811** Paraguay becomes independent from Spain  [first, slider]
-   - Block A: Paraguay | 1811 | Spain | none | none
-354. **1918** Poland becomes independent from the partitioning powers (Russia, Prussia, Austria)  [first, slider]
-   - Block A: Poland | 1918 | partitioning powers (Russia, Prussia, Austria) | none | none
-355. **1971** Qatar becomes independent from the United Kingdom  [first, slider]
-   - Block A: Qatar | 1971 | United Kingdom (protectorate) | none | none
-356. **1960** The Republic of the Congo becomes independent from France  [first, slider]
-   - Block A: Republic of the Congo | 1960 | France | Middle Congo (to 1958) | none
-357. **1877** Romania becomes independent from the Ottoman Empire  [first (20-year gap)]
-   - Block A: Romania | 1877 | Ottoman Empire | none | none
-358. **1962** Rwanda becomes independent from Belgium  [first, slider]
-   - Block A: Rwanda | 1962 | Belgium (UN trust territory) | none | none
-359. **1983** Saint Kitts and Nevis becomes independent from the United Kingdom  [first, slider]
-   - Block A: Saint Kitts and Nevis | 1983 | United Kingdom | none | none
-360. **1979** Saint Lucia becomes independent from the United Kingdom  [first, slider]
-   - Block A: Saint Lucia | 1979 | United Kingdom | none | none
-361. **1979** Saint Vincent and the Grenadines becomes independent from the United Kingdom  [first, slider]
-   - Block A: Saint Vincent and the Grenadines | 1979 | United Kingdom | none | none
-362. **1975** Sao Tome and Principe becomes independent from Portugal  [first, slider]
-   - Block A: Sao Tome and Principe | 1975 | Portugal | none | none
-363. **1960** Senegal becomes independent from France  [first, slider]
-   - Block A: Senegal | 1960 | France (via the Mali Federation) | none | don't ask
-364. **1976** Seychelles becomes independent from the United Kingdom  [first, slider]
-   - Block A: Seychelles | 1976 | United Kingdom | none | none
-365. **1961** Sierra Leone becomes independent from the United Kingdom  [first, slider]
-   - Block A: Sierra Leone | 1961 | United Kingdom | none | none
-366. **1991** Slovenia becomes independent from Yugoslavia  [first, slider]
-   - Block A: Slovenia | 1991 | Yugoslavia | none | none
-367. **1978** The Solomon Islands becomes independent from the United Kingdom  [first, slider]
-   - Block A: Solomon Islands | 1978 | United Kingdom | British Solomon Islands (to 1975) | Tulagi to Honiara (1952)
-368. **1960** Somalia is formed from British and Italian Somaliland  [first, slider]
-   - Block A: Somalia | 1960 | union of British and Italian Somaliland | none | none
-369. **1948** The state of South Korea is founded  [first (20-year gap)]
-   - Block A: South Korea | 1948 | Japanese rule ended 1945, state founded 1948 | none | none
-370. **1848** The Swiss federal state is formed  [first, slider]
-   - Block A: Switzerland | 1848 | federal state formed | none | don't ask
-371. **1946** Syria becomes independent from France  [first, slider]
-   - Block A: Syria | 1946 | France (mandate) | none | none
-372. **1960** Togo becomes independent from France  [first, slider]
-   - Block A: Togo | 1960 | France | French Togoland (1916-1960) | none
-373. **1962** Trinidad and Tobago becomes independent from the United Kingdom  [first, slider]
-   - Block A: Trinidad and Tobago | 1962 | United Kingdom | none | none
-374. **1923** The Republic of Turkiye is founded as successor to the Ottoman Empire  [first, slider]
-   - Block A: Turkiye | 1923 | Ottoman Empire (successor republic) | none | Istanbul to Ankara (1923)
-375. **1962** Uganda becomes independent from the United Kingdom  [first, slider]
-   - Block A: Uganda | 1962 | United Kingdom | none | Entebbe to Kampala (1962)
-376. **1776** The United States becomes independent from Great Britain  [not asked]
-   - Block A: United States | 1776 | Great Britain | none | Philadelphia to Washington (1800)
-377. **1830** Venezuela becomes independent from Gran Colombia  [first, slider]
+308. **1830** Venezuela separates from Gran Colombia  [first, slider]
+   - Block D line 5: 1830 | Venezuela separates from Gran Colombia | Venezuela, Colombia
    - Block A: Venezuela | 1830 | Gran Colombia | none | none
-378. **1964** Zambia becomes independent from the United Kingdom  [first, slider]
-   - Block A: Zambia | 1964 | United Kingdom | Northern Rhodesia (1911-1964) | Livingstone to Lusaka (1935)
-379. **1920** The capital of Albania moves from Durres to Tirana  [first, slider]
-   - Block A: Albania | 1912 | Ottoman Empire | none | Durres to Tirana (1920)
-380. **1961** The capital of Bhutan moves from Punakha to Thimphu  [first, slider]
-   - Block A: Bhutan | don't ask | never colonised | none | Punakha to Thimphu (1961)
-381. **1965** The capital of Botswana moves from Mafeking to Gaborone  [first, slider]
-   - Block A: Botswana | 1966 | United Kingdom | Bechuanaland (1885-1966) | Mafeking to Gaborone (1965)
-382. **1879** The capital of Bulgaria moves from Tarnovo to Sofia  [first, slider]
-   - Block A: Bulgaria | 1908 | Ottoman Empire | none | Tarnovo to Sofia (1879)
-383. **1928** The capital of China moves from Beijing to Nanjing  [first, slider]
-   - Block A: China | 1949 | People's Republic proclaimed (not independence) | Qing Empire (to 1912) | Beijing to Nanjing (1928); Nanjing to Beijing (1949)
-384. **1949** The capital of China moves from Nanjing to Beijing  [first, slider]
-   - Block A: China | 1949 | People's Republic proclaimed (not independence) | Qing Empire (to 1912) | Beijing to Nanjing (1928); Nanjing to Beijing (1949)
-385. **1958** The capital of the Comoros moves from Dzaoudzi to Moroni  [first, slider]
-   - Block A: Comoros | 1975 | France | none | Dzaoudzi to Moroni (1958)
-386. **1823** The capital of Costa Rica moves from Cartago to San Jose  [first, slider]
-   - Block A: Costa Rica | 1821 | Spain | none | Cartago to San Jose (1823)
-387. **1894** The capital of Djibouti moves from Obock to Djibouti  [first, slider]
-   - Block A: Djibouti | 1977 | France | French Somaliland (to 1967); Afars and Issas (1967-1977) | Obock to Djibouti (1894)
-388. **1897** The capital of Eritrea moves from Massawa to Asmara  [first, slider]
-   - Block A: Eritrea | 1993 | Ethiopia | none | Massawa to Asmara (1897)
-389. **1902** The capital of Eswatini moves from Bremersdorp to Mbabane  [first, slider]
-   - Block A: Eswatini | 1968 | United Kingdom | Swaziland (to 2018) | Bremersdorp to Mbabane (1902)
-390. **1882** The capital of Fiji moves from Levuka to Suva  [first, slider]
-   - Block A: Fiji | 1970 | United Kingdom | none | Levuka to Suva (1882)
-391. **1812** The capital of Finland moves from Turku to Helsinki  [first, slider]
-   - Block A: Finland | 1917 | Russia | none | Turku to Helsinki (1812)
-392. **1990** The capital of Germany moves from Bonn to Berlin  [not asked]
-   - Block A: Germany | don't ask | unification 1871, refounded 1949, reunified 1990 | West Germany (1949-1990) | Bonn to Berlin (1990)
-393. **1877** The capital of Ghana moves from Cape Coast to Accra  [first, slider]
-   - Block A: Ghana | 1957 | United Kingdom | Gold Coast (to 1957) | Cape Coast to Accra (1877)
-394. **1941** The capital of Guinea-Bissau moves from Bolama to Bissau  [first, slider]
-   - Block A: Guinea-Bissau | 1973 | Portugal | Portuguese Guinea (to 1974) | Bolama to Bissau (1941)
-395. **1880** The capital of Honduras moves from Comayagua to Tegucigalpa  [first, slider]
-   - Block A: Honduras | 1821 | Spain | none | Comayagua to Tegucigalpa (1880)
-396. **1911** The capital of India moves from Calcutta to Delhi  [first, slider]
-   - Block A: India | 1947 | United Kingdom | none | Calcutta to Delhi (1911); Delhi to New Delhi (1931)
-397. **1931** The capital of India moves from Delhi to New Delhi  [first, slider]
-   - Block A: India | 1947 | United Kingdom | none | Calcutta to Delhi (1911); Delhi to New Delhi (1931)
-398. **1865** The capital of Italy moves from Turin to Florence  [first, slider]
-   - Block A: Italy | 1861 | unification of Italian states | none | Turin to Florence (1865); Florence to Rome (1871)
-399. **1872** The capital of Jamaica moves from Spanish Town to Kingston  [first, slider]
-   - Block A: Jamaica | 1962 | United Kingdom | none | Spanish Town to Kingston (1872)
-400. **(no year)** The capital of Japan moves from Kyoto to Tokyo  [not asked]
-   - Block A: Japan | don't ask | never colonised | none | Kyoto to Tokyo (1868-1869)
-401. **1907** The capital of Kenya moves from Mombasa to Nairobi  [first, slider]
-   - Block A: Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
-402. **1975** The capital of Malawi moves from Zomba to Lilongwe  [first, slider]
-   - Block A: Malawi | 1964 | United Kingdom | Nyasaland (1907-1964) | Zomba to Lilongwe (1975)
-403. **1989** The capital of Micronesia moves from Kolonia to Palikir  [first, slider]
-   - Block A: Micronesia | 1986 | US-administered UN trust territory | none | Kolonia to Palikir (1989)
-404. **1946** The capital of Montenegro moves from Cetinje to Podgorica  [first, slider]
-   - Block A: Montenegro | 2006 | Serbia and Montenegro | none | Cetinje to Podgorica (1946)
-405. **1912** The capital of Morocco moves from Fez to Rabat  [first, slider]
-   - Block A: Morocco | 1956 | France and Spain (protectorates) | none | Fez to Rabat (1912)
-406. **1898** The capital of Mozambique moves from Island of Mozambique to Lourenco Marques  [first, slider]
-   - Block A: Mozambique | 1975 | Portugal | none | Island of Mozambique to Lourenco Marques (1898)
-407. **1841** The capital of New Zealand moves from Okiato to Auckland  [first, slider]
+309. **1831** Gran Colombia legally ends; State of New Granada is created  [first, slider]
+   - Block D line 6: 1831 | Gran Colombia legally ends; State of New Granada is created | Colombia, Panama
+   - Block A: Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
+310. **1832** Ecuador annexes the Galapagos Islands  [first, slider]
+   - Block D line 7: 1832 | Ecuador annexes the Galapagos Islands | Ecuador
+311. **1839** Peru-Bolivian Confederation is dissolved  [first, slider]
+   - Block D line 8: 1839 | Peru-Bolivian Confederation is dissolved | Peru, Bolivia
+312. **1841** Auckland becomes the capital of New Zealand  [first, slider]
+   - Block D line 9: 1841 | Auckland becomes the capital of New Zealand | New Zealand
    - Block A: New Zealand | don't ask | United Kingdom (no single date) | none | Okiato to Auckland (1841); Auckland to Wellington (1865)
-408. **1959** The capital of Pakistan moves from Karachi to Rawalpindi  [first, slider]
-   - Block A: Pakistan | 1947 | United Kingdom | none | Karachi to Rawalpindi (1959); Rawalpindi to Islamabad (1967)
-409. **1967** The capital of Pakistan moves from Rawalpindi to Islamabad  [first, slider]
-   - Block A: Pakistan | 1947 | United Kingdom | none | Karachi to Rawalpindi (1959); Rawalpindi to Islamabad (1967)
-410. **1948** The capital of the Philippines moves from Manila to Quezon City  [first, slider]
-   - Block A: Philippines | 1946 | United States | none | Manila to Quezon City (1948); Quezon City to Manila (1976)
-411. **1976** The capital of the Philippines moves from Quezon City to Manila  [first, slider]
-   - Block A: Philippines | 1946 | United States | none | Manila to Quezon City (1948); Quezon City to Manila (1976)
-412. **1808** The capital of Portugal moves from Lisbon to Rio de Janeiro  [first, slider]
-   - Block A: Portugal | don't ask | ancient kingdom | none | Lisbon to Rio de Janeiro (1808)
-413. **1841** The capital of Serbia moves from Kragujevac to Belgrade  [first, slider]
-   - Block A: Serbia | 1878 | Ottoman Empire | none | Kragujevac to Belgrade (1841)
-414. **1952** The capital of the Solomon Islands moves from Tulagi to Honiara  [not asked]
-   - Block A: Solomon Islands | 1978 | United Kingdom | British Solomon Islands (to 1975) | Tulagi to Honiara (1952)
-415. **1982** The capital of Sri Lanka moves from Colombo to Sri Jayawardenepura Kotte  [first, slider]
-   - Block A: Sri Lanka | 1948 | United Kingdom | Ceylon (to 1972) | Colombo to Sri Jayawardenepura Kotte (1982)
-416. **1996** The capital of Tanzania moves from Dar es Salaam to Dodoma  [not asked]
-   - Block A: Tanzania | 1964 | union of Tanganyika and Zanzibar | Tanganyika (to 1964) | Dar es Salaam to Dodoma (1996)
-417. **1962** The capital of Uganda moves from Entebbe to Kampala  [first, slider]
-   - Block A: Uganda | 1962 | United Kingdom | none | Entebbe to Kampala (1962)
-418. **1934** The capital of Ukraine moves from Kharkiv to Kyiv  [first, slider]
-   - Block A: Ukraine | 1991 | Soviet Union (dissolution) | Ukrainian SSR (1919-1991) | Kharkiv to Kyiv (1934)
-419. **1930** The capital of Uzbekistan moves from Samarkand to Tashkent  [first, slider]
-   - Block A: Uzbekistan | 1991 | Soviet Union (dissolution) | none | Samarkand to Tashkent (1930)
-420. **1945** The capital of Viet Nam moves from Hue to Hanoi  [first, slider]
-   - Block A: Viet Nam | 1976 | reunification of North and South | Dai Nam (1839-1945) | Hue to Hanoi (1945)
-421. **1935** The capital of Zambia moves from Livingstone to Lusaka  [first, slider]
-   - Block A: Zambia | 1964 | United Kingdom | Northern Rhodesia (1911-1964) | Livingstone to Lusaka (1935)
-422. **1920** The name Byelorussia comes into use for today's Belarus  [first, slider]
-   - Block A: Belarus | 1991 | Soviet Union (dissolution) | Byelorussia (1920-1991) | none
-423. **1885** The name Bechuanaland comes into use for today's Botswana  [first, slider]
+313. **1841** New Zealand becomes a colony separate from New South Wales  [first, slider]
+   - Block D line 10: 1841 | New Zealand becomes a colony separate from New South Wales | New Zealand, Australia, United Kingdom
+314. **1842** France makes Tahiti a protectorate  [first, slider]
+   - Block D line 11: 1842 | France makes Tahiti a protectorate | France
+315. **1853** France takes possession of New Caledonia  [first, slider]
+   - Block D line 12: 1853 | France takes possession of New Caledonia | France
+316. **1856** Norfolk Island separated from Tasmania  [first, slider]
+   - Block D line 13: 1856 | Norfolk Island separated from Tasmania | Australia
+317. **1858** Granadine Confederation replaces the Republic of New Granada  [first, slider]
+   - Block D line 14: 1858 | Granadine Confederation replaces the Republic of New Granada | Colombia, Panama
+   - Block A: Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
+318. **1859** Queensland separates from New South Wales  [first, slider]
+   - Block D line 15: 1859 | Queensland separates from New South Wales | Australia
+319. **1863** Granadine Confederation becomes the United States of Colombia  [first, slider]
+   - Block D line 16: 1863 | Granadine Confederation becomes the United States of Colombia | Colombia, Panama
+   - Block A: Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
+320. **1863** Northern Territory becomes part of South Australia  [first, slider]
+   - Block D line 17: 1863 | Northern Territory becomes part of South Australia | Australia
+321. **1866** Bolivia and Chile set their border at the 24th parallel  [first, slider]
+   - Block D line 18: 1866 | Bolivia and Chile set their border at the 24th parallel | Bolivia, Chile
+322. **1867** Russia creates Turkestan Governor-Generalship with capital Tashkent  [first, slider]
+   - Block D line 19: 1867 | Russia creates Turkestan Governor-Generalship with capital Tashkent | Uzbekistan, Kazakhstan, Kyrgyzstan, Tajikistan, Russia
+323. **1867** Treaty of Ayacucho sets the Bolivia-Brazil border  [first, slider]
+   - Block D line 20: 1867 | Treaty of Ayacucho sets the Bolivia-Brazil border | Bolivia, Brazil
+324. **1867** United States takes formal possession of Midway Atoll  [first, slider]
+   - Block D line 21: 1867 | United States takes formal possession of Midway Atoll | United States
+325. **1868** Basutoland becomes a British protectorate  [first, slider]
+   - Block D line 22: 1868 | Basutoland becomes a British protectorate | Lesotho, United Kingdom
+326. **1868** Russia annexes Samarkand from the Emirate of Bukhara  [first, slider]
+   - Block D line 23: 1868 | Russia annexes Samarkand from the Emirate of Bukhara | Uzbekistan, Russia
+327. **1872** Paraguay cedes land north of the Apa River to Brazil  [first, slider]
+   - Block D line 24: 1872 | Paraguay cedes land north of the Apa River to Brazil | Paraguay, Brazil
+328. **1873** Khanate of Khiva becomes a Russian protectorate  [first, slider]
+   - Block D line 25: 1873 | Khanate of Khiva becomes a Russian protectorate | Uzbekistan, Turkmenistan, Russia
+329. **1874** New Bolivia-Chile treaty confirms the 24th parallel border  [first, slider]
+   - Block D line 26: 1874 | New Bolivia-Chile treaty confirms the 24th parallel border | Bolivia, Chile
+330. **1876** Russia annexes the Kokand Khanate as Fergana Oblast  [first, slider]
+   - Block D line 27: 1876 | Russia annexes the Kokand Khanate as Fergana Oblast | Uzbekistan, Kyrgyzstan, Tajikistan, Russia
+331. **1876** Treaty gives Argentina Misiones and land south of the Pilcomayo  [first, slider]
+   - Block D line 28: 1876 | Treaty gives Argentina Misiones and land south of the Pilcomayo | Argentina, Paraguay
+332. **1878** Hayes arbitral award gives the disputed Chaco to Paraguay  [first, slider]
+   - Block D line 29: 1878 | Hayes arbitral award gives the disputed Chaco to Paraguay | Paraguay, Argentina
+333. **1879** Queensland annexes the remaining Torres Strait Islands  [first, slider]
+   - Block D line 30: 1879 | Queensland annexes the remaining Torres Strait Islands | Australia
+334. **1880** Buenos Aires city is federalized as Argentina's capital  [first, slider]
+   - Block D line 31: 1880 | Buenos Aires city is federalized as Argentina's capital | Argentina
+335. **1880** France annexes Tahiti as a colony  [first, slider]
+   - Block D line 32: 1880 | France annexes Tahiti as a colony | France
+336. **1881** Treaty of Saint Petersburg returns eastern Ili to China  [first, slider]
+   - Block D line 33: 1881 | Treaty of Saint Petersburg returns eastern Ili to China | China, Kazakhstan, Russia
+337. **1882** La Plata is founded as the new capital of Buenos Aires province  [first, slider]
+   - Block D line 34: 1882 | La Plata is founded as the new capital of Buenos Aires province | Argentina
+338. **1884** Germany declares a protectorate over Togoland  [first, slider]
+   - Block D line 35: 1884 | Germany declares a protectorate over Togoland | Togo, Ghana, Germany
+339. **1884** Germany establishes the protectorate of Kamerun  [first, slider]
+   - Block D line 36: 1884 | Germany establishes the protectorate of Kamerun | Cameroon, Germany
+340. **1884** Merv Turkmen tribes come under Russian rule  [first, slider]
+   - Block D line 37: 1884 | Merv Turkmen tribes come under Russian rule | Turkmenistan, Russia
+341. **1885** Britain establishes the Bechuanaland Protectorate  [first, slider]
+   - Block D line 38: 1885 | Britain establishes the Bechuanaland Protectorate | Botswana, United Kingdom
    - Block A: Botswana | 1966 | United Kingdom | Bechuanaland (1885-1966) | Mafeking to Gaborone (1965)
-424. **1970** The name Khmer Republic comes into use for today's Cambodia  [first, slider]
-   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
-425. **1975** The name Khmer Republic stops being used for today's Cambodia  [first, slider]
-   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
-426. **1976** The name Kampuchea comes into use for today's Cambodia  [first, slider]
-   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
-427. **1989** The name Kampuchea stops being used for today's Cambodia  [first, slider]
-   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
-428. **1841** The name Province of Canada comes into use for today's Canada  [first, slider]
-   - Block A: Canada | 1867 | United Kingdom (confederation, not independence) | Province of Canada (1841-1867) | none
-429. **1976** The name Central African Empire comes into use for today's Central African Republic  [first, slider]
-   - Block A: Central African Republic | 1960 | France | Ubangi-Shari (to 1958); Central African Empire (1976-1979) | none
-430. **1979** The name Central African Empire stops being used for today's Central African Republic  [first, slider]
-   - Block A: Central African Republic | 1960 | France | Ubangi-Shari (to 1958); Central African Empire (1976-1979) | none
-431. **1831** The name New Granada comes into use for today's Colombia  [first, slider]
+342. **1885** Germany declares a protectorate over the Marshall Islands  [first, slider]
+   - Block D line 39: 1885 | Germany declares a protectorate over the Marshall Islands | Marshall Islands, Germany
+343. **1886** United States of Colombia becomes the Republic of Colombia  [first, slider]
+   - Block D line 40: 1886 | United States of Colombia becomes the Republic of Colombia | Colombia, Panama
    - Block A: Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
-432. **1858** The name New Granada stops being used for today's Colombia  [first, slider]
-   - Block A: Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
-433. **1863** The name United States of Colombia comes into use for today's Colombia  [first, slider]
-   - Block A: Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
-434. **1886** The name United States of Colombia stops being used for today's Colombia  [first, slider]
-   - Block A: Colombia | 1819 | Spain | Gran Colombia (1819-1831); New Granada (1831-1858); United States of Colombia (1863-1886) | none
-435. **1967** The name Afars and Issas comes into use for today's Djibouti  [first, slider]
-   - Block A: Djibouti | 1977 | France | French Somaliland (to 1967); Afars and Issas (1967-1977) | Obock to Djibouti (1894)
-436. **1821** The name Santo Domingo stops being used for today's Dominican Republic  [first, slider]
-   - Block A: Dominican Republic | 1844 | Haiti | Santo Domingo (to 1821) | none
-437. **1831** The name British Guiana comes into use for today's Guyana  [first, slider]
-   - Block A: Guyana | 1966 | United Kingdom | British Guiana (1831-1966) | none
-438. **1921** The name Mesopotamia stops being used for today's Iraq  [first, slider]
-   - Block A: Iraq | 1932 | United Kingdom (mandate) | Mesopotamia (to 1921) | none
-439. **1921** The name Transjordan comes into use for today's Jordan  [first, slider]
-   - Block A: Jordan | 1946 | United Kingdom (mandate) | Transjordan (1921-1949) | none
-440. **1949** The name Transjordan stops being used for today's Jordan  [first, slider]
-   - Block A: Jordan | 1946 | United Kingdom (mandate) | Transjordan (1921-1949) | none
-441. **1895** The name British East Africa comes into use for today's Kenya  [first, slider]
+344. **1887** Kermadec Islands assigned to the colony of New Zealand  [first, slider]
+   - Block D line 41: 1887 | Kermadec Islands assigned to the colony of New Zealand | New Zealand, United Kingdom
+345. **1888** Cook Islands become a British protectorate  [first, slider]
+   - Block D line 42: 1888 | Cook Islands become a British protectorate | New Zealand, United Kingdom
+346. **1888** Germany annexes Nauru  [first, slider]
+   - Block D line 43: 1888 | Germany annexes Nauru | Nauru, Germany
+347. **1890** Italy proclaims the colony of Eritrea  [first, slider]
+   - Block D line 44: 1890 | Italy proclaims the colony of Eritrea | Eritrea, Italy
+348. **1892** Gilbert and Ellice Islands become British protectorates  [first, slider]
+   - Block D line 45: 1892 | Gilbert and Ellice Islands become British protectorates | Kiribati, Tuvalu, United Kingdom
+349. **1893** Britain proclaims a protectorate over the Solomon Islands  [first, slider]
+   - Block D line 46: 1893 | Britain proclaims a protectorate over the Solomon Islands | Solomon Islands, United Kingdom
+350. **1895** Britain proclaims the East Africa Protectorate  [first, slider]
+   - Block D line 47: 1895 | Britain proclaims the East Africa Protectorate | Kenya, United Kingdom
    - Block A: Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
-442. **1920** The name Greater Lebanon comes into use for today's Lebanon  [first, slider]
-   - Block A: Lebanon | 1943 | France (mandate) | Greater Lebanon (1920-1926) | none
-443. **1926** The name Greater Lebanon stops being used for today's Lebanon  [first, slider]
-   - Block A: Lebanon | 1943 | France (mandate) | Greater Lebanon (1920-1926) | none
-444. **1907** The name Nyasaland comes into use for today's Malawi  [first, slider]
-   - Block A: Malawi | 1964 | United Kingdom | Nyasaland (1907-1964) | Zomba to Lilongwe (1975)
-445. **1958** The name French Sudan stops being used for today's Mali  [first, slider]
-   - Block A: Mali | 1960 | France (via the Mali Federation) | French Sudan (to 1958) | none
-446. **1810** The name Isle de France stops being used for today's Mauritius  [first, slider]
-   - Block A: Mauritius | 1968 | United Kingdom | Isle de France (to 1810) | none
-447. **1940** The name Moldavia comes into use for today's Moldova  [first, slider]
-   - Block A: Moldova | 1991 | Soviet Union (dissolution) | Moldavia (1940-1991) | none
-448. **1911** The name Outer Mongolia stops being used for today's Mongolia  [first, slider]
-   - Block A: Mongolia | don't ask | Qing China, then Republic of China | Outer Mongolia (to 1911) | none
-449. **1915** The name German South West Africa stops being used for today's Namibia  [first, slider]
-   - Block A: Namibia | 1990 | South Africa | German South West Africa (1884-1915); South West Africa (to 1990) | none
-450. **1856** The name Muscat and Oman comes into use for today's Oman  [first, slider]
-   - Block A: Oman | don't ask | never colonised | Muscat and Oman (1856-1970) | don't ask
-451. **1970** The name Muscat and Oman stops being used for today's Oman  [first, slider]
-   - Block A: Oman | don't ask | never colonised | Muscat and Oman (1856-1970) | don't ask
-452. **1949** The name Papua and New Guinea comes into use for today's Papua New Guinea  [first, slider]
-   - Block A: Papua New Guinea | 1975 | Australia | Papua and New Guinea (1949-1971) | none
-453. **1971** The name Papua and New Guinea stops being used for today's Papua New Guinea  [first, slider]
-   - Block A: Papua New Guinea | 1975 | Australia | Papua and New Guinea (1949-1971) | none
-454. **1958** The name Middle Congo stops being used for today's Republic of the Congo  [first, slider]
-   - Block A: Republic of the Congo | 1960 | France | Middle Congo (to 1958) | none
-455. **1917** The name Russian SFSR comes into use for today's Russia  [first, slider]
-   - Block A: Russia | don't ask | ancient state; continues the Soviet Union | Russian SFSR (1917-1991) | Petrograd to Moscow (1918)
-456. **1991** The name Russian SFSR stops being used for today's Russia  [first, slider]
-   - Block A: Russia | don't ask | ancient state; continues the Soviet Union | Russian SFSR (1917-1991) | Petrograd to Moscow (1918)
-457. **1900** The name German Samoa comes into use for today's Samoa  [first, slider]
-   - Block A: Samoa | 1962 | New Zealand (UN trust territory) | German Samoa (1900-1914); Western Samoa (to 1997) | none
-458. **1997** The name Western Samoa stops being used for today's Samoa  [first, slider]
-   - Block A: Samoa | 1962 | New Zealand (UN trust territory) | German Samoa (1900-1914); Western Samoa (to 1997) | none
-459. **1942** The name Syonan-to comes into use for today's Singapore  [first, slider]
-   - Block A: Singapore | 1965 | Malaysia | Syonan-to (1942-1945) | none
-460. **1945** The name Syonan-to stops being used for today's Singapore  [first, slider]
-   - Block A: Singapore | 1965 | Malaysia | Syonan-to (1942-1945) | none
-461. **1975** The name British Solomon Islands stops being used for today's Solomon Islands  [first, slider]
-   - Block A: Solomon Islands | 1978 | United Kingdom | British Solomon Islands (to 1975) | Tulagi to Honiara (1952)
-462. **1954** The name Dutch Guiana stops being used for today's Suriname  [first, slider]
-   - Block A: Suriname | 1975 | Netherlands | Dutch Guiana (to 1954) | none
-463. **1945** The name Siam comes back into use for today's Thailand  [first, slider]
-   - Block A: Thailand | don't ask | never colonised | Siam (to 1939; 1945-1949) | none
-464. **1949** The name Siam stops being used for today's Thailand  [first, slider]
-   - Block A: Thailand | don't ask | never colonised | Siam (to 1939; 1945-1949) | none
-465. **1916** The name French Togoland comes into use for today's Togo  [first, slider]
-   - Block A: Togo | 1960 | France | French Togoland (1916-1960) | none
-466. **1919** The name Ukrainian SSR comes into use for today's Ukraine  [first, slider]
-   - Block A: Ukraine | 1991 | Soviet Union (dissolution) | Ukrainian SSR (1919-1991) | Kharkiv to Kyiv (1934)
-467. **1911** The name Northern Rhodesia comes into use for today's Zambia  [first, slider]
+351. **1895** Cleveland award gives the Palmas region to Brazil over Argentina  [first, slider]
+   - Block D line 48: 1895 | Cleveland award gives the Palmas region to Brazil over Argentina | Brazil, Argentina
+352. **1895** France creates the federation of French West Africa  [first, slider]
+   - Block D line 49: 1895 | France creates the federation of French West Africa | Senegal, Mali, Guinea, Cote d'Ivoire, France
+353. **1895** Pamir boundary protocols create Afghanistan's Wakhan Corridor  [first, slider]
+   - Block D line 50: 1895 | Pamir boundary protocols create Afghanistan's Wakhan Corridor | Afghanistan, Tajikistan, Pakistan, Russia, United Kingdom
+354. **1897** Belo Horizonte replaces Ouro Preto as capital of Minas Gerais  [first, slider]
+   - Block D line 51: 1897 | Belo Horizonte replaces Ouro Preto as capital of Minas Gerais | Brazil
+355. **1899** Germany buys the Carolines, Palau and Northern Marianas from Spain  [first, slider]
+   - Block D line 52: 1899 | Germany buys the Carolines, Palau and Northern Marianas from Spain | Micronesia, Palau, United States, Germany, Spain
+356. **1899** Puna de Atacama arbitration gives most of the area to Argentina  [first, slider]
+   - Block D line 53: 1899 | Puna de Atacama arbitration gives most of the area to Argentina | Argentina, Chile
+357. **1899** United States claims Wake Island  [first, slider]
+   - Block D line 54: 1899 | United States claims Wake Island | United States
+358. **1900** Congress organizes the Territory of Hawaii  [first, slider]
+   - Block D line 55: 1900 | Congress organizes the Territory of Hawaii | United States
+359. **1900** Ocean Island (Banaba) added to the Gilbert and Ellice protectorate  [first, slider]
+   - Block D line 56: 1900 | Ocean Island (Banaba) added to the Gilbert and Ellice protectorate | Kiribati, United Kingdom
+360. **1900** Swiss arbitration gives Amapa to Brazil over French Guiana  [first, slider]
+   - Block D line 57: 1900 | Swiss arbitration gives Amapa to Brazil over French Guiana | Brazil, France
+361. **1900** Tonga becomes a British protected state  [first, slider]
+   - Block D line 58: 1900 | Tonga becomes a British protected state | Tonga, United Kingdom
+362. **1900** Tutuila ceded to the United States  [first, slider]
+   - Block D line 59: 1900 | Tutuila ceded to the United States | United States
+363. **1901** Cook Islands and Niue brought within New Zealand's boundaries  [first, slider]
+   - Block D line 60: 1901 | Cook Islands and Niue brought within New Zealand's boundaries | New Zealand
+364. **1902** British arbitral award fixes much of the Argentina-Chile Andes border  [first, slider]
+   - Block D line 61: 1902 | British arbitral award fixes much of the Argentina-Chile Andes border | Argentina, Chile
+365. **1904** Italian king's award fixes the British Guiana-Brazil border  [first, slider]
+   - Block D line 63: 1904 | Italian king's award fixes the British Guiana-Brazil border | Guyana, Brazil, United Kingdom
+366. **1904** Manu'a Islands ceded to the United States  [first, slider]
+   - Block D line 64: 1904 | Manu'a Islands ceded to the United States | United States
+367. **1906** British New Guinea becomes Australia's Territory of Papua  [first, slider]
+   - Block D line 66: 1906 | British New Guinea becomes Australia's Territory of Papua | Papua New Guinea, Australia
+368. **1906** Marshall Islands annexed to German New Guinea  [first, slider]
+   - Block D line 67: 1906 | Marshall Islands annexed to German New Guinea | Marshall Islands, Papua New Guinea, Germany
+369. **1909** Brazil and Peru sign a treaty completing their border  [first, slider]
+   - Block D line 68: 1909 | Brazil and Peru sign a treaty completing their border | Brazil, Peru
+370. **1909** Brazil-Uruguay treaty redraws the border on Lagoa Mirim  [first, slider]
+   - Block D line 69: 1909 | Brazil-Uruguay treaty redraws the border on Lagoa Mirim | Brazil, Uruguay
+371. **1910** France forms French Equatorial Africa, run from Brazzaville  [first, slider]
+   - Block D line 70: 1910 | France forms French Equatorial Africa, run from Brazzaville | Gabon, Republic of the Congo, Central African Republic, Chad, France
+372. **1911** Northern Territory transferred from South Australia to Commonwealth  [first, slider]
+   - Block D line 71: 1911 | Northern Territory transferred from South Australia to Commonwealth | Australia
+373. **1911** US Samoan islands officially renamed American Samoa  [first, slider]
+   - Block D line 72: 1911 | US Samoan islands officially renamed American Samoa | United States
+374. **1914** Japan seizes German Micronesia  [first, slider]
+   - Block D line 73: 1914 | Japan seizes German Micronesia | Japan, Micronesia, Palau, Marshall Islands, United States, Germany
+375. **1914** Norfolk Island transferred from Britain to Australia  [first, slider]
+   - Block D line 74: 1914 | Norfolk Island transferred from Britain to Australia | Australia, United Kingdom
+376. **1916** Colombia and Ecuador sign their land border treaty  [first, slider]
+   - Block D line 75: 1916 | Colombia and Ecuador sign their land border treaty | Colombia, Ecuador
+377. **1916** Gilbert and Ellice Islands become a British Crown colony  [first, slider]
+   - Block D line 76: 1916 | Gilbert and Ellice Islands become a British Crown colony | Kiribati, Tuvalu, United Kingdom
+378. **1916** Tokelau annexed to the Gilbert and Ellice Islands Colony  [first, slider]
+   - Block D line 77: 1916 | Tokelau annexed to the Gilbert and Ellice Islands Colony | New Zealand, United Kingdom
+379. **1920** Bukharan People's Soviet Republic replaces the Emirate of Bukhara  [first, slider]
+   - Block D line 78: 1920 | Bukharan People's Soviet Republic replaces the Emirate of Bukhara | Uzbekistan, Tajikistan, Turkmenistan
+380. **1920** Khorezm People's Soviet Republic replaces the Khanate of Khiva  [first, slider]
+   - Block D line 79: 1920 | Khorezm People's Soviet Republic replaces the Khanate of Khiva | Uzbekistan, Turkmenistan
+381. **1922** Salomon-Lozano Treaty signed: Leticia corridor to Colombia  [first, slider]
+   - Block D line 80: 1922 | Salomon-Lozano Treaty signed: Leticia corridor to Colombia | Colombia, Peru
+382. **1924** Northern Rhodesia passes from company rule to a British protectorate  [first, slider]
+   - Block D line 81: 1924 | Northern Rhodesia passes from company rule to a British protectorate | Zambia, United Kingdom
+383. **1924** Soviet national delimitation creates Uzbek and Turkmen SSRs  [first, slider]
+   - Block D line 82: 1924 | Soviet national delimitation creates Uzbek and Turkmen SSRs | Uzbekistan, Turkmenistan
+384. **1925** Kazakh capital moves from Orenburg to Kzyl-Orda  [first, slider]
+   - Block D line 83: 1925 | Kazakh capital moves from Orenburg to Kzyl-Orda | Kazakhstan, Russia
+385. **1925** Kirghiz ASSR renamed Kazakh ASSR  [first, slider]
+   - Block D line 84: 1925 | Kirghiz ASSR renamed Kazakh ASSR | Kazakhstan
+386. **1925** Swains Island annexed to American Samoa  [first, slider]
+   - Block D line 85: 1925 | Swains Island annexed to American Samoa | United States
+387. **1927** Northern Territory split into North and Central Australia  [first, slider]
+   - Block D line 87: 1927 | Northern Territory split into North and Central Australia | Australia
+388. **1929** Tajik SSR becomes a union republic, gaining the Khujand area  [first, slider]
+   - Block D line 88: 1929 | Tajik SSR becomes a union republic, gaining the Khujand area | Tajikistan, Uzbekistan
+389. **1930** Uzbek SSR capital moves from Samarkand to Tashkent  [first, slider]
+   - Block D line 89: 1930 | Uzbek SSR capital moves from Samarkand to Tashkent | Uzbekistan
+   - Block A: Uzbekistan | 1991 | Soviet Union (dissolution) | none | Samarkand to Tashkent (1930)
+390. **1931** Arbitration awards Clipperton Island to France  [first, slider]
+   - Block D line 90: 1931 | Arbitration awards Clipperton Island to France | France, Mexico
+391. **1931** North and Central Australia reunited as the Northern Territory  [first, slider]
+   - Block D line 91: 1931 | North and Central Australia reunited as the Northern Territory | Australia
+392. **1932** Sydney Harbour Bridge opens  [first, slider]
+   - Block D line 92: 1932 | Sydney Harbour Bridge opens | Australia
+393. **1934** Rio Protocol ends the Colombia-Peru War  [first, slider]
+   - Block D line 93: 1934 | Rio Protocol ends the Colombia-Peru War | Colombia, Peru
+394. **1935** Lusaka replaces Livingstone as capital of Northern Rhodesia  [first, slider]
+   - Block D line 94: 1935 | Lusaka replaces Livingstone as capital of Northern Rhodesia | Zambia, United Kingdom
    - Block A: Zambia | 1964 | United Kingdom | Northern Rhodesia (1911-1964) | Livingstone to Lusaka (1935)
-468. **1970** Brunei Town, Brunei, is renamed Bandar Seri Begawan  [first, slider]
+395. **1936** Karakalpak ASSR moves from Russian SFSR to Uzbek SSR  [first, slider]
+   - Block D line 95: 1936 | Karakalpak ASSR moves from Russian SFSR to Uzbek SSR | Uzbekistan, Russia
+396. **1936** Kirghiz SSR becomes a full Soviet union republic  [first, slider]
+   - Block D line 96: 1936 | Kirghiz SSR becomes a full Soviet union republic | Kyrgyzstan, Russia
+397. **1941** Bissau replaces Bolama as capital of Portuguese Guinea  [first, slider]
+   - Block D line 97: 1941 | Bissau replaces Bolama as capital of Portuguese Guinea | Guinea-Bissau, Portugal
+   - Block A: Guinea-Bissau | 1973 | Portugal | Portuguese Guinea (to 1974) | Bolama to Bissau (1941)
+398. **1941** Colombia and Venezuela sign their land border treaty  [first, slider]
+   - Block D line 98: 1941 | Colombia and Venezuela sign their land border treaty | Colombia, Venezuela
+399. **1943** Brazil creates five federal territories, including Amapa  [first, slider]
+   - Block D line 99: 1943 | Brazil creates five federal territories, including Amapa | Brazil
+400. **1946** Tarawa made capital of the Gilbert and Ellice Islands  [first, slider]
+   - Block D line 100: 1946 | Tarawa made capital of the Gilbert and Ellice Islands | Kiribati, Tuvalu, United Kingdom
+401. **1947** UN Trust Territory of the Pacific Islands created under the US  [first, slider]
+   - Block D line 101: 1947 | UN Trust Territory of the Pacific Islands created under the US | Micronesia, Palau, Marshall Islands, United States
+402. **1949** Papua and New Guinea merged under one administration  [first, slider]
+   - Block D line 102: 1949 | Papua and New Guinea merged under one administration | Papua New Guinea, Australia
+   - Block A: Papua New Guinea | 1975 | Australia | Papua and New Guinea (1949-1971) | none
+403. **1949** Tokelau formally becomes part of New Zealand  [first, slider]
+   - Block D line 103: 1949 | Tokelau formally becomes part of New Zealand | New Zealand
+404. **1950** Guam Organic Act makes Guam an unincorporated US territory  [first, slider]
+   - Block D line 104: 1950 | Guam Organic Act makes Guam an unincorporated US territory | United States
+405. **1952** Eritrea is federated with Ethiopia under a UN resolution  [first, slider]
+   - Block D line 105: 1952 | Eritrea is federated with Ethiopia under a UN resolution | Eritrea, Ethiopia
+406. **1952** Honiara replaces Tulagi as capital of the Solomon Islands  [not asked]
+   - Block D line 106: 1952 | Honiara replaces Tulagi as capital of the Solomon Islands | Solomon Islands
+   - Block A: Solomon Islands | 1978 | United Kingdom | British Solomon Islands (to 1975) | Tulagi to Honiara (1952)
+407. **1956** Tangier international zone returns to Moroccan sovereignty  [first, slider]
+   - Block D line 107: 1956 | Tangier international zone returns to Moroccan sovereignty | Morocco
+408. **1958** Spain hands the Tarfaya Strip to Morocco  [first, slider]
+   - Block D line 108: 1958 | Spain hands the Tarfaya Strip to Morocco | Morocco, Spain
+409. **1959** Auckland Harbour Bridge opens  [first, slider]
+   - Block D line 109: 1959 | Auckland Harbour Bridge opens | New Zealand
+410. **1959** Kariba Dam on the Zambezi completed, forming Lake Kariba  [first, slider]
+   - Block D line 110: 1959 | Kariba Dam on the Zambezi completed, forming Lake Kariba | Zambia, Zimbabwe
+411. **1960** Belgian Congo becomes independent  [first, slider]
+   - Block D line 111: 1960 | Belgian Congo becomes independent | Democratic Republic of the Congo, Belgium
+   - Block A: Democratic Republic of the Congo | 1960 | Belgium | Congo Free State (1885-1908); Belgian Congo (1908-1960); Zaire (1971-1997) | none
+412. **1960** British and Italian Somaliland unite as the Somali Republic  [first, slider]
+   - Block D line 112: 1960 | British and Italian Somaliland unite as the Somali Republic | Somalia, United Kingdom, Italy
+   - Block A: Somalia | 1960 | union of British and Italian Somaliland | none | none
+413. **1960** Chad becomes independent from France  [first, slider]
+   - Block D line 113: 1960 | Chad becomes independent from France | Chad, France
+   - Block A: Chad | 1960 | France | none | none
+414. **1960** Cote d'Ivoire becomes independent from France  [first, slider]
+   - Block D line 114: 1960 | Cote d'Ivoire becomes independent from France | Cote d'Ivoire, France
+   - Block A: Cote d'Ivoire | 1960 | France | none | Abidjan to Yamoussoukro (1983)
+415. **1960** French Cameroun becomes independent as Cameroon  [first, slider]
+   - Block D line 115: 1960 | French Cameroun becomes independent as Cameroon | Cameroon, France
+   - Block A: Cameroon | 1960 | France (British Southern Cameroons joined 1961) | none | none
+416. **1960** Gabon becomes independent from France  [first, slider]
+   - Block D line 116: 1960 | Gabon becomes independent from France | Gabon, France
+   - Block A: Gabon | 1960 | France | none | none
+417. **1960** Madagascar becomes independent from France  [first, slider]
+   - Block D line 117: 1960 | Madagascar becomes independent from France | Madagascar, France
+   - Block A: Madagascar | 1960 | France | none | none
+418. **1960** Mali Federation breaks up as Senegal secedes  [first, slider]
+   - Block D line 118: 1960 | Mali Federation breaks up as Senegal secedes | Senegal, Mali
+419. **1960** Mauritania becomes independent from France  [first, slider]
+   - Block D line 119: 1960 | Mauritania becomes independent from France | Mauritania, France
+   - Block A: Mauritania | 1960 | France | none | none
+420. **1960** Togo becomes independent from France  [first, slider]
+   - Block D line 120: 1960 | Togo becomes independent from France | Togo, France
+   - Block A: Togo | 1960 | France | French Togoland (1916-1960) | none
+421. **1960** Upper Volta becomes independent from France  [first, slider]
+   - Block D line 121: 1960 | Upper Volta becomes independent from France | Burkina Faso, France
+   - Block A: Burkina Faso | 1960 | France | Upper Volta (to 1984) | none
+422. **1961** Northern Cameroons joins Nigeria, Southern Cameroons joins Cameroon  [first, slider]
+   - Block D line 122: 1961 | Northern Cameroons joins Nigeria, Southern Cameroons joins Cameroon | Cameroon, Nigeria, United Kingdom
+423. **1961** Sierra Leone becomes independent from the United Kingdom  [first, slider]
+   - Block D line 123: 1961 | Sierra Leone becomes independent from the United Kingdom | Sierra Leone, United Kingdom
+   - Block A: Sierra Leone | 1961 | United Kingdom | none | none
+424. **1961** Tanganyika becomes independent from the United Kingdom  [first, slider]
+   - Block D line 124: 1961 | Tanganyika becomes independent from the United Kingdom | Tanzania, United Kingdom
+425. **1962** Acre becomes a state of Brazil  [first, slider]
+   - Block D line 125: 1962 | Acre becomes a state of Brazil | Brazil
+426. **1962** Eritrea's federation with Ethiopia ends; Eritrea annexed  [first, slider]
+   - Block D line 126: 1962 | Eritrea's federation with Ethiopia ends; Eritrea annexed | Eritrea, Ethiopia
+427. **1962** Ruanda-Urundi splits into independent Rwanda and Burundi  [first, slider]
+   - Block D line 127: 1962 | Ruanda-Urundi splits into independent Rwanda and Burundi | Rwanda, Burundi, Belgium
+   - Block A: Burundi | 1962 | Belgium (UN trust territory) | none | Bujumbura to Gitega (2019)
+   - Block A: Rwanda | 1962 | Belgium (UN trust territory) | none | none
+428. **1962** Uganda becomes independent with Kampala as its capital  [first, slider]
+   - Block D line 128: 1962 | Uganda becomes independent with Kampala as its capital | Uganda, United Kingdom
+   - Block A: Uganda | 1962 | United Kingdom | none | Entebbe to Kampala (1962)
+   - Block A: Uganda | 1962 | United Kingdom | none | Entebbe to Kampala (1962)
+429. **1963** Federation of Rhodesia and Nyasaland is dissolved  [first, slider]
+   - Block D line 129: 1963 | Federation of Rhodesia and Nyasaland is dissolved | Zimbabwe, Zambia, Malawi, United Kingdom
+430. **1963** Kenya becomes independent from the United Kingdom  [first, slider]
+   - Block D line 130: 1963 | Kenya becomes independent from the United Kingdom | Kenya, United Kingdom
+   - Block A: Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
+431. **1964** Northern Rhodesia becomes independent as Zambia  [first, slider]
+   - Block D line 131: 1964 | Northern Rhodesia becomes independent as Zambia | Zambia, United Kingdom
+   - Block A: Zambia | 1964 | United Kingdom | Northern Rhodesia (1911-1964) | Livingstone to Lusaka (1935)
+432. **1964** Nyasaland becomes independent as Malawi  [first, slider]
+   - Block D line 132: 1964 | Nyasaland becomes independent as Malawi | Malawi, United Kingdom
+   - Block A: Malawi | 1964 | United Kingdom | Nyasaland (1907-1964) | Zomba to Lilongwe (1975)
+433. **1965** Akosombo Dam completed on the Volta, forming Lake Volta  [first, slider]
+   - Block D line 133: 1965 | Akosombo Dam completed on the Volta, forming Lake Volta | Ghana
+434. **1965** Cook Islands become self-governing under a new constitution  [first, slider]
+   - Block D line 134: 1965 | Cook Islands become self-governing under a new constitution | New Zealand
+435. **1965** Friendship Bridge links Brazil and Paraguay over the Parana  [first, slider]
+   - Block D line 135: 1965 | Friendship Bridge links Brazil and Paraguay over the Parana | Brazil, Paraguay
+436. **1965** Gaborone replaces Mafikeng as capital of Bechuanaland  [first, slider]
+   - Block D line 136: 1965 | Gaborone replaces Mafikeng as capital of Bechuanaland | Botswana, United Kingdom
+   - Block A: Botswana | 1966 | United Kingdom | Bechuanaland (1885-1966) | Mafeking to Gaborone (1965)
+437. **1965** Gambia becomes independent from the United Kingdom  [first, slider]
+   - Block D line 137: 1965 | Gambia becomes independent from the United Kingdom | Gambia, United Kingdom
+   - Block A: Gambia | 1965 | United Kingdom | none | none
+438. **1966** Basutoland becomes independent as Lesotho  [first, slider]
+   - Block D line 138: 1966 | Basutoland becomes independent as Lesotho | Lesotho, United Kingdom
+   - Block A: Lesotho | 1966 | United Kingdom | Basutoland (to 1966) | none
+439. **1966** Bechuanaland becomes independent as Botswana  [first, slider]
+   - Block D line 139: 1966 | Bechuanaland becomes independent as Botswana | Botswana, United Kingdom
+   - Block A: Botswana | 1966 | United Kingdom | Bechuanaland (1885-1966) | Mafeking to Gaborone (1965)
+440. **1968** Equatorial Guinea becomes independent from Spain  [first, slider]
+   - Block D line 140: 1968 | Equatorial Guinea becomes independent from Spain | Equatorial Guinea, Spain
+   - Block A: Equatorial Guinea | 1968 | Spain | Spanish Guinea (to 1968) | Malabo to Ciudad de la Paz (2026)
+441. **1968** Swaziland becomes independent from the United Kingdom  [first, slider]
+   - Block D line 141: 1968 | Swaziland becomes independent from the United Kingdom | Eswatini, United Kingdom
+   - Block A: Eswatini | 1968 | United Kingdom | Swaziland (to 2018) | Bremersdorp to Mbabane (1902)
+442. **1969** Spain cedes the Ifni enclave to Morocco  [first, slider]
+   - Block D line 142: 1969 | Spain cedes the Ifni enclave to Morocco | Morocco, Spain
+443. **1974** Niue becomes self-governing in free association with New Zealand  [first, slider]
+   - Block D line 144: 1974 | Niue becomes self-governing in free association with New Zealand | New Zealand
+444. **1974** Portugal recognises Guinea-Bissau's independence  [first (20-year gap)]
+   - Block D line 145: 1974 | Portugal recognises Guinea-Bissau's independence | Guinea-Bissau, Portugal
+445. **1975** Angola becomes independent from Portugal  [first, slider]
+   - Block D line 146: 1975 | Angola becomes independent from Portugal | Angola, Portugal
+   - Block A: Angola | 1975 | Portugal | none | none
+446. **1975** Cabo Verde becomes independent from Portugal  [first, slider]
+   - Block D line 147: 1975 | Cabo Verde becomes independent from Portugal | Cabo Verde, Portugal
+   - Block A: Cabo Verde | 1975 | Portugal | none | none
+447. **1975** General Artigas Bridge links Paysandu and Colon  [first, slider]
+   - Block D line 148: 1975 | General Artigas Bridge links Paysandu and Colon | Uruguay, Argentina
+448. **1975** Guanabara state merges into Rio de Janeiro state  [first, slider]
+   - Block D line 149: 1975 | Guanabara state merges into Rio de Janeiro state | Brazil
+449. **1975** Lilongwe replaces Zomba as capital of Malawi  [first, slider]
+   - Block D line 150: 1975 | Lilongwe replaces Zomba as capital of Malawi | Malawi
+   - Block A: Malawi | 1964 | United Kingdom | Nyasaland (1907-1964) | Zomba to Lilongwe (1975)
+450. **1975** Sao Tome and Principe becomes independent from Portugal  [first, slider]
+   - Block D line 151: 1975 | Sao Tome and Principe becomes independent from Portugal | Sao Tome and Principe, Portugal
+   - Block A: Sao Tome and Principe | 1975 | Portugal | none | none
+451. **1976** Libertador General San Martin Bridge links Uruguay and Argentina  [first, slider]
+   - Block D line 152: 1976 | Libertador General San Martin Bridge links Uruguay and Argentina | Uruguay, Argentina
+452. **1976** Seychelles becomes independent from the United Kingdom  [first, slider]
+   - Block D line 153: 1976 | Seychelles becomes independent from the United Kingdom | Seychelles, United Kingdom
+   - Block A: Seychelles | 1976 | United Kingdom | none | none
+453. **1976** Toktogul Dam floods the Ketmen-Tobo valley  [first, slider]
+   - Block D line 154: 1976 | Toktogul Dam floods the Ketmen-Tobo valley | Kyrgyzstan
+454. **1977** Djibouti becomes independent from France  [first, slider]
+   - Block D line 155: 1977 | Djibouti becomes independent from France | Djibouti, France
+   - Block A: Djibouti | 1977 | France | French Somaliland (to 1967); Afars and Issas (1967-1977) | Obock to Djibouti (1894)
+455. **1978** Australia and Papua New Guinea sign the Torres Strait Treaty  [first, slider]
+   - Block D line 156: 1978 | Australia and Papua New Guinea sign the Torres Strait Treaty | Australia, Papua New Guinea
+456. **1978** Northern Territory becomes self-governing  [first, slider]
+   - Block D line 157: 1978 | Northern Territory becomes self-governing | Australia
+457. **1978** Solomon Islands becomes independent  [first, slider]
+   - Block D line 158: 1978 | Solomon Islands becomes independent | Solomon Islands, United Kingdom
+   - Block A: Solomon Islands | 1978 | United Kingdom | British Solomon Islands (to 1975) | Tulagi to Honiara (1952)
+458. **1980** Nurek Dam completed, then the world's tallest dam  [first, slider]
+   - Block D line 159: 1980 | Nurek Dam completed, then the world's tallest dam | Tajikistan
+459. **1985** Tancredo Neves Bridge links Foz do Iguacu and Puerto Iguazu  [first, slider]
+   - Block D line 160: 1985 | Tancredo Neves Bridge links Foz do Iguacu and Puerto Iguazu | Brazil, Argentina
+460. **1986** ICJ fixes the disputed Burkina Faso-Mali frontier  [first, slider]
+   - Block D line 161: 1986 | ICJ fixes the disputed Burkina Faso-Mali frontier | Burkina Faso, Mali
+461. **1987** Fiji declared a republic  [first, slider]
+   - Block D line 162: 1987 | Fiji declared a republic | Fiji
+462. **1988** Brazil's new constitution creates the state of Tocantins  [first, slider]
+   - Block D line 163: 1988 | Brazil's new constitution creates the state of Tocantins | Brazil
+463. **1989** Palikir replaces Kolonia as capital of Micronesia  [first, slider]
+   - Block D line 164: 1989 | Palikir replaces Kolonia as capital of Micronesia | Micronesia
+   - Block A: Micronesia | 1986 | US-administered UN trust territory | none | Kolonia to Palikir (1989)
+464. **1994** Arbitral award gives Laguna del Desierto to Argentina  [first, slider]
+   - Block D line 165: 1994 | Arbitral award gives Laguna del Desierto to Argentina | Argentina, Chile
+465. **1994** ICJ awards the Aouzou Strip to Chad; Libya withdraws  [first, slider]
+   - Block D line 166: 1994 | ICJ awards the Aouzou Strip to Chad; Libya withdraws | Chad, Libya
+466. **1994** Kazakhstan and China sign their border agreement  [first, slider]
+   - Block D line 167: 1994 | Kazakhstan and China sign their border agreement | Kazakhstan, China
+467. **1994** South Africa replaces its four provinces with nine  [first, slider]
+   - Block D line 168: 1994 | South Africa replaces its four provinces with nine | South Africa
+468. **1997** Western Samoa renamed Samoa  [first, slider]
+   - Block D line 169: 1997 | Western Samoa renamed Samoa | Samoa
+   - Block A: Samoa | 1962 | New Zealand (UN trust territory) | German Samoa (1900-1914); Western Samoa (to 1997) | none
+469. **1999** ICJ rules Kasikili/Sedudu island belongs to Botswana  [first, slider]
+   - Block D line 170: 1999 | ICJ rules Kasikili/Sedudu island belongs to Botswana | Botswana, Namibia
+470. **2000** India creates Chhattisgarh, Uttaranchal and Jharkhand states  [first, slider]
+   - Block D line 171: 2000 | India creates Chhattisgarh, Uttaranchal and Jharkhand states | India
+471. **2000** Treaty of Jeddah fixes the Saudi Arabia-Yemen border  [first, slider]
+   - Block D line 172: 2000 | Treaty of Jeddah fixes the Saudi Arabia-Yemen border | Saudi Arabia, Yemen
+472. **2001** ICJ gives Hawar Islands to Bahrain and Zubarah to Qatar  [first, slider]
+   - Block D line 173: 2001 | ICJ gives Hawar Islands to Bahrain and Zubarah to Qatar | Bahrain, Qatar
+473. **2001** Kazakhstan and Kyrgyzstan sign their border treaty  [first, slider]
+   - Block D line 174: 2001 | Kazakhstan and Kyrgyzstan sign their border treaty | Kazakhstan, Kyrgyzstan
+474. **2001** Kazakhstan and Turkmenistan sign their border treaty  [first, slider]
+   - Block D line 175: 2001 | Kazakhstan and Turkmenistan sign their border treaty | Kazakhstan, Turkmenistan
+475. **2001** Newfoundland renamed Newfoundland and Labrador  [first, slider]
+   - Block D line 176: 2001 | Newfoundland renamed Newfoundland and Labrador | Canada
+476. **2002** ICJ awards Ligitan and Sipadan islands to Malaysia  [first, slider]
+   - Block D line 177: 2002 | ICJ awards Ligitan and Sipadan islands to Malaysia | Malaysia, Indonesia
+477. **2002** Japan-Palau Friendship Bridge links Koror and Babeldaob  [first, slider]
+   - Block D line 178: 2002 | Japan-Palau Friendship Bridge links Koror and Babeldaob | Palau
+478. **2002** Kazakhstan and China complete border demarcation  [first, slider]
+   - Block D line 179: 2002 | Kazakhstan and China complete border demarcation | Kazakhstan, China
+479. **2003** Kazakhstan-Uzbekistan border treaties enter into force  [first, slider]
+   - Block D line 180: 2003 | Kazakhstan-Uzbekistan border treaties enter into force | Kazakhstan, Uzbekistan
+480. **2003** South Africa's Northern Province is renamed Limpopo  [first, slider]
+   - Block D line 181: 2003 | South Africa's Northern Province is renamed Limpopo | South Africa
+481. **2004** Australia and New Zealand sign a maritime boundary treaty  [first, slider]
+   - Block D line 182: 2004 | Australia and New Zealand sign a maritime boundary treaty | Australia, New Zealand
+482. **2004** Iran splits Khorasan into three provinces  [first, slider]
+   - Block D line 183: 2004 | Iran splits Khorasan into three provinces | Iran
+483. **2004** Rio-Antirrio Bridge opens across the Gulf of Corinth  [first, slider]
+   - Block D line 184: 2004 | Rio-Antirrio Bridge opens across the Gulf of Corinth | Greece
+484. **2005** ICJ splits Niger River islands, giving Lete to Niger  [first, slider]
+   - Block D line 185: 2005 | ICJ splits Niger River islands, giving Lete to Niger | Benin, Niger
+485. **2005** Kazakhstan and Russia sign their border treaty  [first, slider]
+   - Block D line 186: 2005 | Kazakhstan and Russia sign their border treaty | Kazakhstan, Russia
+486. **2005** Kokaral Dike completed, separating the North Aral Sea  [first, slider]
+   - Block D line 187: 2005 | Kokaral Dike completed, separating the North Aral Sea | Kazakhstan
+487. **2005** Perm Oblast and Komi-Permyak merge into Perm Krai  [first, slider]
+   - Block D line 188: 2005 | Perm Oblast and Komi-Permyak merge into Perm Krai | Russia
+488. **2006** Micronesia and Marshall Islands sign a maritime boundary treaty  [first, slider]
+   - Block D line 189: 2006 | Micronesia and Marshall Islands sign a maritime boundary treaty | Micronesia, Marshall Islands
+489. **2007** Chile creates Arica y Parinacota and Los Rios regions  [first, slider]
+   - Block D line 190: 2007 | Chile creates Arica y Parinacota and Los Rios regions | Chile
+490. **2007** Denmark replaces its 13 counties with five regions  [first, slider]
+   - Block D line 191: 2007 | Denmark replaces its 13 counties with five regions | Denmark
+491. **2007** Lotschberg Base Tunnel opens under the Bernese Alps  [first, slider]
+   - Block D line 192: 2007 | Lotschberg Base Tunnel opens under the Bernese Alps | Switzerland
+492. **2007** Saint Barthelemy and Saint Martin separate from Guadeloupe  [first, slider]
+   - Block D line 193: 2007 | Saint Barthelemy and Saint Martin separate from Guadeloupe | France
+493. **2008** Ha Tay province is merged into Hanoi  [first, slider]
+   - Block D line 194: 2008 | Ha Tay province is merged into Hanoi | Viet Nam
+494. **2008** ICJ awards Pedra Branca to Singapore  [first, slider]
+   - Block D line 195: 2008 | ICJ awards Pedra Branca to Singapore | Singapore, Malaysia
+495. **2008** Nepal abolishes its monarchy and becomes a republic  [first, slider]
+   - Block D line 196: 2008 | Nepal abolishes its monarchy and becomes a republic | Nepal
+496. **2009** ICJ sets the Romania-Ukraine boundary in the Black Sea  [first, slider]
+   - Block D line 197: 2009 | ICJ sets the Romania-Ukraine boundary in the Black Sea | Romania, Ukraine
+497. **2009** Merowe Dam on the Nile is inaugurated  [first, slider]
+   - Block D line 198: 2009 | Merowe Dam on the Nile is inaugurated | Sudan
+498. **2009** Takutu River Bridge opens between Guyana and Brazil  [first, slider]
+   - Block D line 199: 2009 | Takutu River Bridge opens between Guyana and Brazil | Guyana, Brazil
+499. **2010** North-West Frontier Province renamed Khyber Pakhtunkhwa  [first, slider]
+   - Block D line 200: 2010 | North-West Frontier Province renamed Khyber Pakhtunkhwa | Pakistan
+500. **2010** Norway and Russia sign Barents Sea boundary treaty  [first, slider]
+   - Block D line 201: 2010 | Norway and Russia sign Barents Sea boundary treaty | Norway, Russia
+501. **2011** Bueng Kan province split from Nong Khai  [first, slider]
+   - Block D line 202: 2011 | Bueng Kan province split from Nong Khai | Thailand
+502. **2011** Indian state of Orissa renamed Odisha  [first, slider]
+   - Block D line 203: 2011 | Indian state of Orissa renamed Odisha | India
+503. **2011** Interoceanic Highway between Brazil and Peru is inaugurated  [first, slider]
+   - Block D line 204: 2011 | Interoceanic Highway between Brazil and Peru is inaugurated | Brazil, Peru
+504. **2011** Tajikistan ratifies ceding about 1,000 sq km of Pamirs to China  [first, slider]
+   - Block D line 205: 2011 | Tajikistan ratifies ceding about 1,000 sq km of Pamirs to China | Tajikistan, China
+505. **2012** Sejong becomes a special self-governing city  [first, slider]
+   - Block D line 206: 2012 | Sejong becomes a special self-governing city | South Korea
+506. **2012** Seven Pacific states sign maritime boundary treaties at Rarotonga  [first, slider]
+   - Block D line 207: 2012 | Seven Pacific states sign maritime boundary treaties at Rarotonga | Kiribati, Tuvalu, Nauru, Marshall Islands, New Zealand
+507. **2013** Cape Verde asks to be known officially as Cabo Verde  [first, slider]
+   - Block D line 208: 2013 | Cape Verde asks to be known officially as Cabo Verde | Cabo Verde
+508. **2013** ICJ fixes the Burkina Faso-Niger frontier  [first, slider]
+   - Block D line 209: 2013 | ICJ fixes the Burkina Faso-Niger frontier | Burkina Faso, Niger
+509. **2013** Marmaray rail tunnel under the Bosphorus opens  [first, slider]
+   - Block D line 210: 2013 | Marmaray rail tunnel under the Bosphorus opens | Turkiye
+510. **2013** Namibia renames the Caprivi Region the Zambezi Region  [first, slider]
+   - Block D line 211: 2013 | Namibia renames the Caprivi Region the Zambezi Region | Namibia
+511. **2014** ICJ sets the Peru-Chile maritime boundary  [first, slider]
+   - Block D line 212: 2014 | ICJ sets the Peru-Chile maritime boundary | Peru, Chile
+512. **2014** Telangana becomes a state, split from Andhra Pradesh  [first, slider]
+   - Block D line 213: 2014 | Telangana becomes a state, split from Andhra Pradesh | India
+513. **2015** Egypt opens the New Suez Canal parallel channel  [first, slider]
+   - Block D line 214: 2015 | Egypt opens the New Suez Canal parallel channel | Egypt
+514. **2016** Federal District renamed Mexico City (CDMX)  [first, slider]
+   - Block D line 215: 2016 | Federal District renamed Mexico City (CDMX) | Mexico
+515. **2016** France's 13 merged metropolitan regions take effect  [first, slider]
+   - Block D line 216: 2016 | France's 13 merged metropolitan regions take effect | France
+516. **2016** Gotthard Base Tunnel opens under the Alps  [first, slider]
+   - Block D line 217: 2016 | Gotthard Base Tunnel opens under the Alps | Switzerland
+517. **2017** Oyapock River Bridge opens between Brazil and French Guiana  [first, slider]
+   - Block D line 218: 2017 | Oyapock River Bridge opens between Brazil and French Guiana | Brazil, France
+518. **2018** Australia and Timor-Leste sign first Timor Sea maritime boundary  [first, slider]
+   - Block D line 219: 2018 | Australia and Timor-Leste sign first Timor Sea maritime boundary | Australia, Timor-Leste
+519. **2018** Chile's Nuble Region takes effect, split from Biobio  [first, slider]
+   - Block D line 220: 2018 | Chile's Nuble Region takes effect, split from Biobio | Chile
+520. **2018** Hong Kong-Zhuhai-Macau Bridge opens  [first, slider]
+   - Block D line 221: 2018 | Hong Kong-Zhuhai-Macau Bridge opens | China
+521. **2018** Maputo-Katembe bridge opens across Maputo Bay  [first, slider]
+   - Block D line 222: 2018 | Maputo-Katembe bridge opens across Maputo Bay | Mozambique
+522. **2018** Shymkent split off; South Kazakhstan renamed Turkistan Region  [first, slider]
+   - Block D line 223: 2018 | Shymkent split off; South Kazakhstan renamed Turkistan Region | Kazakhstan
+523. **2018** Tribal areas (FATA) merged into Khyber Pakhtunkhwa  [first, slider]
+   - Block D line 224: 2018 | Tribal areas (FATA) merged into Khyber Pakhtunkhwa | Pakistan
+524. **2019** Atlantic Bridge opens over the Panama Canal  [first, slider]
+   - Block D line 225: 2019 | Atlantic Bridge opens over the Panama Canal | Panama
+525. **2019** Bangsamoro autonomous region replaces the ARMM  [first, slider]
+   - Block D line 226: 2019 | Bangsamoro autonomous region replaces the ARMM | Philippines
+526. **2019** Senegambia Bridge opens over the River Gambia  [first, slider]
+   - Block D line 227: 2019 | Senegambia Bridge opens over the River Gambia | Gambia, Senegal
+527. **2020** Dadra and Nagar Haveli and Daman and Diu merge  [first, slider]
+   - Block D line 228: 2020 | Dadra and Nagar Haveli and Daman and Diu merge | India
+528. **2020** Norway merges its 19 counties into 11  [first, slider]
+   - Block D line 229: 2020 | Norway merges its 19 counties into 11 | Norway
+529. **2021** Barbados becomes a republic  [first, slider]
+   - Block D line 230: 2021 | Barbados becomes a republic | Barbados
+530. **2021** Kazungula Bridge opens over the Zambezi  [first, slider]
+   - Block D line 231: 2021 | Kazungula Bridge opens over the Zambezi | Zambia, Botswana
+531. **2022** 1915 Canakkale Bridge opens over the Dardanelles  [first, slider]
+   - Block D line 232: 2022 | 1915 Canakkale Bridge opens over the Dardanelles | Turkiye
+532. **2022** Fiji and Solomon Islands sign maritime boundary agreement  [first, slider]
+   - Block D line 233: 2022 | Fiji and Solomon Islands sign maritime boundary agreement | Fiji, Solomon Islands
+533. **2022** Kazakhstan creates Abai, Jetisu and Ulytau regions  [first, slider]
+   - Block D line 234: 2022 | Kazakhstan creates Abai, Jetisu and Ulytau regions | Kazakhstan
+534. **2022** Padma Bridge opens over the Padma River  [first, slider]
+   - Block D line 235: 2022 | Padma Bridge opens over the Padma River | Bangladesh
+535. **2023** Kyrgyzstan-Uzbekistan border treaty ratifications exchanged  [first, slider]
+   - Block D line 236: 2023 | Kyrgyzstan-Uzbekistan border treaty ratifications exchanged | Kyrgyzstan, Uzbekistan
+536. **2025** Grand Ethiopian Renaissance Dam on the Blue Nile is inaugurated  [first, slider]
+   - Block D line 237: 2025 | Grand Ethiopian Renaissance Dam on the Blue Nile is inaugurated | Ethiopia
+537. **2025** Kyrgyzstan and Tajikistan sign their border treaty  [first, slider]
+   - Block D line 238: 2025 | Kyrgyzstan and Tajikistan sign their border treaty | Kyrgyzstan, Tajikistan
+538. **2025** Treaty fixes the Kyrgyzstan-Tajikistan-Uzbekistan border tripoint  [first, slider]
+   - Block D line 239: 2025 | Treaty fixes the Kyrgyzstan-Tajikistan-Uzbekistan border tripoint | Kyrgyzstan, Tajikistan, Uzbekistan
+539. **2025** Viet Nam merges its 63 provinces and cities into 34  [first, slider]
+   - Block D line 240: 2025 | Viet Nam merges its 63 provinces and cities into 34 | Viet Nam
+540. **1981** Antigua and Barbuda becomes independent from the United Kingdom  [first, slider]
+   - Block A: Antigua and Barbuda | 1981 | United Kingdom | none | none
+541. **1918** Austria becomes independent on the dissolution of Austria-Hungary  [first (20-year gap)]
+   - Block A: Austria | 1918 | Austria-Hungary (dissolution) | German-Austria (1918-1919) | none
+542. **1973** The Bahamas becomes independent from the United Kingdom  [first, slider]
+   - Block A: Bahamas | 1973 | United Kingdom | none | none
+543. **1971** Bahrain becomes independent from the United Kingdom  [first, slider]
+   - Block A: Bahrain | 1971 | United Kingdom (protectorate) | none | none
+544. **1960** Benin becomes independent from France  [first, slider]
+   - Block A: Benin | 1960 | France | Dahomey (to 1975) | none
+545. **1992** Bosnia and Herzegovina becomes independent from Yugoslavia  [first, slider]
+   - Block A: Bosnia and Herzegovina | 1992 | Yugoslavia | none | none
+546. **1953** Cambodia becomes independent from France  [first, slider]
+   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
+547. **1960** The Central African Republic becomes independent from France  [first, slider]
+   - Block A: Central African Republic | 1960 | France | Ubangi-Shari (to 1958); Central African Empire (1976-1979) | none
+548. **1975** The Comoros becomes independent from France  [first, slider]
+   - Block A: Comoros | 1975 | France | none | Dzaoudzi to Moroni (1958)
+549. **1991** Croatia becomes independent from Yugoslavia  [first, slider]
+   - Block A: Croatia | 1991 | Yugoslavia | none | none
+550. **1960** Cyprus becomes independent from the United Kingdom  [first, slider]
+   - Block A: Cyprus | 1960 | United Kingdom | none | none
+551. **1978** Dominica becomes independent from the United Kingdom  [first, slider]
+   - Block A: Dominica | 1978 | United Kingdom | none | none
+552. **1918** Estonia becomes independent from the Russian Empire  [first (20-year gap)]
+   - Block A: Estonia | 1918 | Russian Empire (restored 1991 from Soviet Union) | none | none
+553. **1974** Grenada becomes independent from the United Kingdom  [first, slider]
+   - Block A: Grenada | 1974 | United Kingdom | none | none
+554. **1973** Guinea-Bissau becomes independent from Portugal  [first (20-year gap)]
+   - Block A: Guinea-Bissau | 1973 | Portugal | Portuguese Guinea (to 1974) | Bolama to Bissau (1941)
+555. **1945** Indonesia becomes independent from the Netherlands  [first (20-year gap)]
+   - Block A: Indonesia | 1945 | Netherlands | Dutch East Indies (to 1949) | none
+556. **1961** Kuwait becomes independent from the United Kingdom  [first, slider]
+   - Block A: Kuwait | 1961 | United Kingdom (protectorate) | none | none
+557. **1953** Laos becomes independent from France  [first, slider]
+   - Block A: Laos | 1953 | France | none | none
+558. **1918** Latvia becomes independent from the Russian Empire  [first (20-year gap)]
+   - Block A: Latvia | 1918 | Russian Empire (restored 1991 from Soviet Union) | none | none
+559. **1806** Liechtenstein is formed as a sovereign state  [first, slider]
+   - Block A: Liechtenstein | 1806 | Holy Roman Empire (dissolution) | none | none
+560. **1918** Lithuania becomes independent from the Russian Empire  [first (20-year gap)]
+   - Block A: Lithuania | 1918 | Russian Empire (restored 1990 from Soviet Union) | none | don't ask
+561. **1965** The Maldives becomes independent from the United Kingdom  [first, slider]
+   - Block A: Maldives | 1965 | United Kingdom (protectorate) | none | none
+562. **1960** Mali becomes independent from France  [first, slider]
+   - Block A: Mali | 1960 | France (via the Mali Federation) | French Sudan (to 1958) | none
+563. **1986** The Marshall Islands becomes independent from the United States  [first (20-year gap)]
+   - Block A: Marshall Islands | 1986 | US-administered UN trust territory | none | none
+564. **1968** Mauritius becomes independent from the United Kingdom  [first, slider]
+   - Block A: Mauritius | 1968 | United Kingdom | Isle de France (to 1810) | none
+565. **1986** Micronesia becomes independent from the United States  [first (20-year gap)]
+   - Block A: Micronesia | 1986 | US-administered UN trust territory | none | Kolonia to Palikir (1989)
+566. **1960** Niger becomes independent from France  [first, slider]
+   - Block A: Niger | 1960 | France | none | don't ask
+567. **1948** The state of North Korea is founded  [first (20-year gap)]
+   - Block A: North Korea | 1948 | Japanese rule ended 1945, state founded 1948 | none | none
+568. **1991** North Macedonia becomes independent from Yugoslavia  [first, slider]
+   - Block A: North Macedonia | 1991 | Yugoslavia | Macedonia (1991-2019) | none
+569. **1811** Paraguay becomes independent from Spain  [first, slider]
+   - Block A: Paraguay | 1811 | Spain | none | none
+570. **1918** Poland becomes independent from the partitioning powers (Russia, Prussia, Austria)  [first, slider]
+   - Block A: Poland | 1918 | partitioning powers (Russia, Prussia, Austria) | none | none
+571. **1971** Qatar becomes independent from the United Kingdom  [first, slider]
+   - Block A: Qatar | 1971 | United Kingdom (protectorate) | none | none
+572. **1960** The Republic of the Congo becomes independent from France  [first, slider]
+   - Block A: Republic of the Congo | 1960 | France | Middle Congo (to 1958) | none
+573. **1877** Romania becomes independent from the Ottoman Empire  [first (20-year gap)]
+   - Block A: Romania | 1877 | Ottoman Empire | none | none
+574. **1983** Saint Kitts and Nevis becomes independent from the United Kingdom  [first, slider]
+   - Block A: Saint Kitts and Nevis | 1983 | United Kingdom | none | none
+575. **1979** Saint Lucia becomes independent from the United Kingdom  [first, slider]
+   - Block A: Saint Lucia | 1979 | United Kingdom | none | none
+576. **1979** Saint Vincent and the Grenadines becomes independent from the United Kingdom  [first, slider]
+   - Block A: Saint Vincent and the Grenadines | 1979 | United Kingdom | none | none
+577. **1960** Senegal becomes independent from France  [first, slider]
+   - Block A: Senegal | 1960 | France (via the Mali Federation) | none | don't ask
+578. **1991** Slovenia becomes independent from Yugoslavia  [first, slider]
+   - Block A: Slovenia | 1991 | Yugoslavia | none | none
+579. **1948** The state of South Korea is founded  [first (20-year gap)]
+   - Block A: South Korea | 1948 | Japanese rule ended 1945, state founded 1948 | none | none
+580. **1848** The Swiss federal state is formed  [first, slider]
+   - Block A: Switzerland | 1848 | federal state formed | none | don't ask
+581. **1946** Syria becomes independent from France  [first, slider]
+   - Block A: Syria | 1946 | France (mandate) | none | none
+582. **1962** Trinidad and Tobago becomes independent from the United Kingdom  [first, slider]
+   - Block A: Trinidad and Tobago | 1962 | United Kingdom | none | none
+583. **1923** The Republic of Turkiye is founded as successor to the Ottoman Empire  [first, slider]
+   - Block A: Turkiye | 1923 | Ottoman Empire (successor republic) | none | Istanbul to Ankara (1923)
+584. **1776** The United States becomes independent from Great Britain  [not asked]
+   - Block A: United States | 1776 | Great Britain | none | Philadelphia to Washington (1800)
+585. **1920** The capital of Albania moves from Durres to Tirana  [first, slider]
+   - Block A: Albania | 1912 | Ottoman Empire | none | Durres to Tirana (1920)
+586. **1961** The capital of Bhutan moves from Punakha to Thimphu  [first, slider]
+   - Block A: Bhutan | don't ask | never colonised | none | Punakha to Thimphu (1961)
+587. **1879** The capital of Bulgaria moves from Tarnovo to Sofia  [first, slider]
+   - Block A: Bulgaria | 1908 | Ottoman Empire | none | Tarnovo to Sofia (1879)
+588. **1928** The capital of China moves from Beijing to Nanjing  [first, slider]
+   - Block A: China | 1949 | People's Republic proclaimed (not independence) | Qing Empire (to 1912) | Beijing to Nanjing (1928); Nanjing to Beijing (1949)
+589. **1949** The capital of China moves from Nanjing to Beijing  [first, slider]
+   - Block A: China | 1949 | People's Republic proclaimed (not independence) | Qing Empire (to 1912) | Beijing to Nanjing (1928); Nanjing to Beijing (1949)
+590. **1958** The capital of the Comoros moves from Dzaoudzi to Moroni  [first, slider]
+   - Block A: Comoros | 1975 | France | none | Dzaoudzi to Moroni (1958)
+591. **1823** The capital of Costa Rica moves from Cartago to San Jose  [first, slider]
+   - Block A: Costa Rica | 1821 | Spain | none | Cartago to San Jose (1823)
+592. **1894** The capital of Djibouti moves from Obock to Djibouti  [first, slider]
+   - Block A: Djibouti | 1977 | France | French Somaliland (to 1967); Afars and Issas (1967-1977) | Obock to Djibouti (1894)
+593. **1897** The capital of Eritrea moves from Massawa to Asmara  [first, slider]
+   - Block A: Eritrea | 1993 | Ethiopia | none | Massawa to Asmara (1897)
+594. **1902** The capital of Eswatini moves from Bremersdorp to Mbabane  [first, slider]
+   - Block A: Eswatini | 1968 | United Kingdom | Swaziland (to 2018) | Bremersdorp to Mbabane (1902)
+595. **1882** The capital of Fiji moves from Levuka to Suva  [first, slider]
+   - Block A: Fiji | 1970 | United Kingdom | none | Levuka to Suva (1882)
+596. **1812** The capital of Finland moves from Turku to Helsinki  [first, slider]
+   - Block A: Finland | 1917 | Russia | none | Turku to Helsinki (1812)
+597. **1990** The capital of Germany moves from Bonn to Berlin  [not asked]
+   - Block A: Germany | don't ask | unification 1871, refounded 1949, reunified 1990 | West Germany (1949-1990) | Bonn to Berlin (1990)
+598. **1877** The capital of Ghana moves from Cape Coast to Accra  [first, slider]
+   - Block A: Ghana | 1957 | United Kingdom | Gold Coast (to 1957) | Cape Coast to Accra (1877)
+599. **1880** The capital of Honduras moves from Comayagua to Tegucigalpa  [first, slider]
+   - Block A: Honduras | 1821 | Spain | none | Comayagua to Tegucigalpa (1880)
+600. **1911** The capital of India moves from Calcutta to Delhi  [first, slider]
+   - Block A: India | 1947 | United Kingdom | none | Calcutta to Delhi (1911); Delhi to New Delhi (1931)
+601. **1931** The capital of India moves from Delhi to New Delhi  [first, slider]
+   - Block A: India | 1947 | United Kingdom | none | Calcutta to Delhi (1911); Delhi to New Delhi (1931)
+602. **1865** The capital of Italy moves from Turin to Florence  [first, slider]
+   - Block A: Italy | 1861 | unification of Italian states | none | Turin to Florence (1865); Florence to Rome (1871)
+603. **1872** The capital of Jamaica moves from Spanish Town to Kingston  [first, slider]
+   - Block A: Jamaica | 1962 | United Kingdom | none | Spanish Town to Kingston (1872)
+604. **(no year)** The capital of Japan moves from Kyoto to Tokyo  [not asked]
+   - Block A: Japan | don't ask | never colonised | none | Kyoto to Tokyo (1868-1869)
+605. **1907** The capital of Kenya moves from Mombasa to Nairobi  [not asked]
+   - Block A: Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
+606. **1946** The capital of Montenegro moves from Cetinje to Podgorica  [first, slider]
+   - Block A: Montenegro | 2006 | Serbia and Montenegro | none | Cetinje to Podgorica (1946)
+607. **1912** The capital of Morocco moves from Fez to Rabat  [first, slider]
+   - Block A: Morocco | 1956 | France and Spain (protectorates) | none | Fez to Rabat (1912)
+608. **1898** The capital of Mozambique moves from Island of Mozambique to Lourenco Marques  [first, slider]
+   - Block A: Mozambique | 1975 | Portugal | none | Island of Mozambique to Lourenco Marques (1898)
+609. **1959** The capital of Pakistan moves from Karachi to Rawalpindi  [first, slider]
+   - Block A: Pakistan | 1947 | United Kingdom | none | Karachi to Rawalpindi (1959); Rawalpindi to Islamabad (1967)
+610. **1967** The capital of Pakistan moves from Rawalpindi to Islamabad  [first, slider]
+   - Block A: Pakistan | 1947 | United Kingdom | none | Karachi to Rawalpindi (1959); Rawalpindi to Islamabad (1967)
+611. **1948** The capital of the Philippines moves from Manila to Quezon City  [first, slider]
+   - Block A: Philippines | 1946 | United States | none | Manila to Quezon City (1948); Quezon City to Manila (1976)
+612. **1976** The capital of the Philippines moves from Quezon City to Manila  [first, slider]
+   - Block A: Philippines | 1946 | United States | none | Manila to Quezon City (1948); Quezon City to Manila (1976)
+613. **1808** The capital of Portugal moves from Lisbon to Rio de Janeiro  [first, slider]
+   - Block A: Portugal | don't ask | ancient kingdom | none | Lisbon to Rio de Janeiro (1808)
+614. **1841** The capital of Serbia moves from Kragujevac to Belgrade  [first, slider]
+   - Block A: Serbia | 1878 | Ottoman Empire | none | Kragujevac to Belgrade (1841)
+615. **1982** The capital of Sri Lanka moves from Colombo to Sri Jayawardenepura Kotte  [first, slider]
+   - Block A: Sri Lanka | 1948 | United Kingdom | Ceylon (to 1972) | Colombo to Sri Jayawardenepura Kotte (1982)
+616. **1996** The capital of Tanzania moves from Dar es Salaam to Dodoma  [not asked]
+   - Block A: Tanzania | 1964 | union of Tanganyika and Zanzibar | Tanganyika (to 1964) | Dar es Salaam to Dodoma (1996)
+617. **1934** The capital of Ukraine moves from Kharkiv to Kyiv  [first, slider]
+   - Block A: Ukraine | 1991 | Soviet Union (dissolution) | Ukrainian SSR (1919-1991) | Kharkiv to Kyiv (1934)
+618. **1945** The capital of Viet Nam moves from Hue to Hanoi  [first, slider]
+   - Block A: Viet Nam | 1976 | reunification of North and South | Dai Nam (1839-1945) | Hue to Hanoi (1945)
+619. **1920** The name Byelorussia comes into use for today's Belarus  [first, slider]
+   - Block A: Belarus | 1991 | Soviet Union (dissolution) | Byelorussia (1920-1991) | none
+620. **1970** The name Khmer Republic comes into use for today's Cambodia  [first, slider]
+   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
+621. **1975** The name Khmer Republic stops being used for today's Cambodia  [first, slider]
+   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
+622. **1976** The name Kampuchea comes into use for today's Cambodia  [first, slider]
+   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
+623. **1989** The name Kampuchea stops being used for today's Cambodia  [first, slider]
+   - Block A: Cambodia | 1953 | France | Khmer Republic (1970-1975); Kampuchea (1976-1989) | none
+624. **1841** The name Province of Canada comes into use for today's Canada  [first, slider]
+   - Block A: Canada | 1867 | United Kingdom (confederation, not independence) | Province of Canada (1841-1867) | none
+625. **1976** The name Central African Empire comes into use for today's Central African Republic  [first, slider]
+   - Block A: Central African Republic | 1960 | France | Ubangi-Shari (to 1958); Central African Empire (1976-1979) | none
+626. **1979** The name Central African Empire stops being used for today's Central African Republic  [first, slider]
+   - Block A: Central African Republic | 1960 | France | Ubangi-Shari (to 1958); Central African Empire (1976-1979) | none
+627. **1967** The name Afars and Issas comes into use for today's Djibouti  [first, slider]
+   - Block A: Djibouti | 1977 | France | French Somaliland (to 1967); Afars and Issas (1967-1977) | Obock to Djibouti (1894)
+628. **1821** The name Santo Domingo stops being used for today's Dominican Republic  [first, slider]
+   - Block A: Dominican Republic | 1844 | Haiti | Santo Domingo (to 1821) | none
+629. **1831** The name British Guiana comes into use for today's Guyana  [first, slider]
+   - Block A: Guyana | 1966 | United Kingdom | British Guiana (1831-1966) | none
+630. **1921** The name Mesopotamia stops being used for today's Iraq  [first, slider]
+   - Block A: Iraq | 1932 | United Kingdom (mandate) | Mesopotamia (to 1921) | none
+631. **1921** The name Transjordan comes into use for today's Jordan  [first, slider]
+   - Block A: Jordan | 1946 | United Kingdom (mandate) | Transjordan (1921-1949) | none
+632. **1949** The name Transjordan stops being used for today's Jordan  [first, slider]
+   - Block A: Jordan | 1946 | United Kingdom (mandate) | Transjordan (1921-1949) | none
+633. **1920** The name Greater Lebanon comes into use for today's Lebanon  [first, slider]
+   - Block A: Lebanon | 1943 | France (mandate) | Greater Lebanon (1920-1926) | none
+634. **1926** The name Greater Lebanon stops being used for today's Lebanon  [first, slider]
+   - Block A: Lebanon | 1943 | France (mandate) | Greater Lebanon (1920-1926) | none
+635. **1907** The name Nyasaland comes into use for today's Malawi  [first, slider]
+   - Block A: Malawi | 1964 | United Kingdom | Nyasaland (1907-1964) | Zomba to Lilongwe (1975)
+636. **1958** The name French Sudan stops being used for today's Mali  [first, slider]
+   - Block A: Mali | 1960 | France (via the Mali Federation) | French Sudan (to 1958) | none
+637. **1810** The name Isle de France stops being used for today's Mauritius  [first, slider]
+   - Block A: Mauritius | 1968 | United Kingdom | Isle de France (to 1810) | none
+638. **1940** The name Moldavia comes into use for today's Moldova  [first, slider]
+   - Block A: Moldova | 1991 | Soviet Union (dissolution) | Moldavia (1940-1991) | none
+639. **1911** The name Outer Mongolia stops being used for today's Mongolia  [first, slider]
+   - Block A: Mongolia | don't ask | Qing China, then Republic of China | Outer Mongolia (to 1911) | none
+640. **1915** The name German South West Africa stops being used for today's Namibia  [first, slider]
+   - Block A: Namibia | 1990 | South Africa | German South West Africa (1884-1915); South West Africa (to 1990) | none
+641. **1856** The name Muscat and Oman comes into use for today's Oman  [first, slider]
+   - Block A: Oman | don't ask | never colonised | Muscat and Oman (1856-1970) | don't ask
+642. **1970** The name Muscat and Oman stops being used for today's Oman  [first, slider]
+   - Block A: Oman | don't ask | never colonised | Muscat and Oman (1856-1970) | don't ask
+643. **1971** The name Papua and New Guinea stops being used for today's Papua New Guinea  [first, slider]
+   - Block A: Papua New Guinea | 1975 | Australia | Papua and New Guinea (1949-1971) | none
+644. **1958** The name Middle Congo stops being used for today's Republic of the Congo  [first, slider]
+   - Block A: Republic of the Congo | 1960 | France | Middle Congo (to 1958) | none
+645. **1917** The name Russian SFSR comes into use for today's Russia  [first, slider]
+   - Block A: Russia | don't ask | ancient state; continues the Soviet Union | Russian SFSR (1917-1991) | Petrograd to Moscow (1918)
+646. **1991** The name Russian SFSR stops being used for today's Russia  [first, slider]
+   - Block A: Russia | don't ask | ancient state; continues the Soviet Union | Russian SFSR (1917-1991) | Petrograd to Moscow (1918)
+647. **1900** The name German Samoa comes into use for today's Samoa  [first, slider]
+   - Block A: Samoa | 1962 | New Zealand (UN trust territory) | German Samoa (1900-1914); Western Samoa (to 1997) | none
+648. **1942** The name Syonan-to comes into use for today's Singapore  [first, slider]
+   - Block A: Singapore | 1965 | Malaysia | Syonan-to (1942-1945) | none
+649. **1945** The name Syonan-to stops being used for today's Singapore  [first, slider]
+   - Block A: Singapore | 1965 | Malaysia | Syonan-to (1942-1945) | none
+650. **1975** The name British Solomon Islands stops being used for today's Solomon Islands  [first, slider]
+   - Block A: Solomon Islands | 1978 | United Kingdom | British Solomon Islands (to 1975) | Tulagi to Honiara (1952)
+651. **1954** The name Dutch Guiana stops being used for today's Suriname  [first, slider]
+   - Block A: Suriname | 1975 | Netherlands | Dutch Guiana (to 1954) | none
+652. **1945** The name Siam comes back into use for today's Thailand  [first, slider]
+   - Block A: Thailand | don't ask | never colonised | Siam (to 1939; 1945-1949) | none
+653. **1949** The name Siam stops being used for today's Thailand  [first, slider]
+   - Block A: Thailand | don't ask | never colonised | Siam (to 1939; 1945-1949) | none
+654. **1916** The name French Togoland comes into use for today's Togo  [first, slider]
+   - Block A: Togo | 1960 | France | French Togoland (1916-1960) | none
+655. **1919** The name Ukrainian SSR comes into use for today's Ukraine  [first, slider]
+   - Block A: Ukraine | 1991 | Soviet Union (dissolution) | Ukrainian SSR (1919-1991) | Kharkiv to Kyiv (1934)
+656. **1911** The name Northern Rhodesia comes into use for today's Zambia  [first, slider]
+   - Block A: Zambia | 1964 | United Kingdom | Northern Rhodesia (1911-1964) | Livingstone to Lusaka (1935)
+657. **1970** Brunei Town, Brunei, is renamed Bandar Seri Begawan  [first, slider]
    - Block C line 2: Bandar Seri Begawan | Brunei | Brunei Town | 1970 | renamed to honour Sultan Omar Ali Saifuddien III
-469. **1973** Bathurst, Gambia, is renamed Banjul  [first, slider]
+658. **1973** Bathurst, Gambia, is renamed Banjul  [first, slider]
    - Block C line 3: Banjul | Gambia | Bathurst | 1973 | capital renamed after independence
-470. **1991** Frunze, Kyrgyzstan, is renamed Bishkek  [first, slider]
+659. **1991** Frunze, Kyrgyzstan, is renamed Bishkek  [first, slider]
    - Block C line 4: Bishkek | Kyrgyzstan | Frunze | 1991 | Soviet-era name dropped
-471. **2000** Santa Fe de Bogota, Colombia, is renamed Bogota  [first, slider]
+660. **2000** Santa Fe de Bogota, Colombia, is renamed Bogota  [first, slider]
    - Block C line 5: Bogota | Colombia | Santa Fe de Bogota | 2000 | constitutional reform made the name just Bogota
-472. **1919** Pressburg, Slovakia, is renamed Bratislava  [first, slider]
+661. **1919** Pressburg, Slovakia, is renamed Bratislava  [first, slider]
    - Block C line 6: Bratislava | Slovakia | Pressburg | 1919 | name Bratislava officially adopted
-473. **1961** Stalinabad, Tajikistan, is renamed Dushanbe  [first, slider]
+662. **1961** Stalinabad, Tajikistan, is renamed Dushanbe  [first, slider]
    - Block C line 7: Dushanbe | Tajikistan | Stalinabad | 1961 | renamed in de-Stalinization
-474. **1969** Gaberones, Botswana, is renamed Gaborone  [first, slider]
+663. **1969** Gaberones, Botswana, is renamed Gaborone  [first, slider]
    - Block C line 8: Gaborone | Botswana | Gaberones | 1969 | capital's name officially changed
-475. **1812** Stabroek, Guyana, is renamed Georgetown  [first, slider]
+664. **1812** Stabroek, Guyana, is renamed Georgetown  [first, slider]
    - Block C line 9: Georgetown | Guyana | Stabroek | 1812 | British renamed it for King George III
-476. **1966** Leopoldville, Democratic Republic of the Congo, is renamed Kinshasa  [first, slider]
+665. **1966** Leopoldville, Democratic Republic of the Congo, is renamed Kinshasa  [first, slider]
    - Block C line 11: Kinshasa | Democratic Republic of the Congo | Leopoldville | 1966 | capital renamed under Mobutu's Africanization drive
-477. **1973** Santa Isabel, Equatorial Guinea, is renamed Malabo  [first, slider]
+666. **1973** Santa Isabel, Equatorial Guinea, is renamed Malabo  [first, slider]
    - Block C line 12: Malabo | Equatorial Guinea | Santa Isabel | 1973 | European name replaced under Macias Nguema
-478. **1976** Lourenco Marques, Mozambique, is renamed Maputo  [first, slider]
+667. **1976** Lourenco Marques, Mozambique, is renamed Maputo  [first, slider]
    - Block C line 13: Maputo | Mozambique | Lourenco Marques | 1976 | capital renamed after independence
-479. **1973** Fort-Lamy, Chad, is renamed N'Djamena  [first, slider]
+668. **1973** Fort-Lamy, Chad, is renamed N'Djamena  [first, slider]
    - Block C line 14: N'Djamena | Chad | Fort-Lamy | 1973 | capital renamed by President Tombalbaye
-480. **1855** Bytown, Canada, is renamed Ottawa  [first, slider]
+669. **1855** Bytown, Canada, is renamed Ottawa  [first, slider]
    - Block C line 16: Ottawa | Canada | Bytown | 1855 | renamed Ottawa on gaining city status
-481. **1992** Titograd, Montenegro, is renamed Podgorica  [first, slider]
+670. **1992** Titograd, Montenegro, is renamed Podgorica  [first, slider]
    - Block C line 17: Podgorica | Montenegro | Titograd | 1992 | original name restored
-482. **1961** Ciudad Trujillo, Dominican Republic, is renamed Santo Domingo  [first, slider]
+671. **1961** Ciudad Trujillo, Dominican Republic, is renamed Santo Domingo  [first, slider]
    - Block C line 18: Santo Domingo | Dominican Republic | Ciudad Trujillo | 1961 | old name restored after the dictator's death
-483. **1946** Gyeongseong, South Korea, is renamed Seoul  [first, slider]
+672. **1946** Gyeongseong, South Korea, is renamed Seoul  [first, slider]
    - Block C line 19: Seoul | South Korea | Gyeongseong | 1946 | US military government named it Seoul
-484. **1936** Tiflis, Georgia, is renamed Tbilisi  [first, slider]
+673. **1936** Tiflis, Georgia, is renamed Tbilisi  [first, slider]
    - Block C line 20: Tbilisi | Georgia | Tiflis | 1936 | official Russian name changed to Tbilisi
-485. **1924** Niislel Khuree, Mongolia, is renamed Ulaanbaatar  [first, slider]
+674. **1924** Niislel Khuree, Mongolia, is renamed Ulaanbaatar  [first, slider]
    - Block C line 22: Ulaanbaatar | Mongolia | Niislel Khuree | 1924 | renamed at founding of People's Republic
-486. **1990** Qyteti Stalin, Albania, is renamed Kucove  [first, slider]
+675. **1990** Qyteti Stalin, Albania, is renamed Kucove  [first, slider]
    - Block C line 23: Kucove | Albania | Qyteti Stalin | 1990 | Stalin name dropped, old name back
-487. **1962** Philippeville, Algeria, is renamed Skikda  [first, slider]
+676. **1962** Philippeville, Algeria, is renamed Skikda  [first, slider]
    - Block C line 24: Skikda | Algeria | Philippeville | 1962 | French name dropped at independence
-488. **1975** Nova Lisboa, Angola, is renamed Huambo  [first, slider]
+677. **1975** Nova Lisboa, Angola, is renamed Huambo  [first, slider]
    - Block C line 25: Huambo | Angola | Nova Lisboa | 1975 | original name restored after independence
-489. **1976** Salazar, Angola, is renamed N'dalatando  [first, slider]
+678. **1976** Salazar, Angola, is renamed N'dalatando  [first, slider]
    - Block C line 26: N'dalatando | Angola | Salazar | 1976 | original name restored after independence
-490. **1955** Ciudad Eva Peron, Argentina, is renamed La Plata  [first, slider]
+679. **1955** Ciudad Eva Peron, Argentina, is renamed La Plata  [first, slider]
    - Block C line 27: La Plata | Argentina | Ciudad Eva Peron | 1955 | original name restored after Peron fell
-491. **1933** Stuart, Australia, is renamed Alice Springs  [first, slider]
+680. **1933** Stuart, Australia, is renamed Alice Springs  [first, slider]
    - Block C line 28: Alice Springs | Australia | Stuart | 1933 | town gazetted under its waterhole name
-492. **1891** Sandhurst, Australia, is renamed Bendigo  [first, slider]
+681. **1891** Sandhurst, Australia, is renamed Bendigo  [first, slider]
    - Block C line 29: Bendigo | Australia | Sandhurst | 1891 | official name changed back to Bendigo
-493. **1911** Palmerston, Australia, is renamed Darwin  [first, slider]
+682. **1911** Palmerston, Australia, is renamed Darwin  [first, slider]
    - Block C line 30: Darwin | Australia | Palmerston | 1911 | town renamed after Charles Darwin
-494. **1958** South Coast, Australia, is renamed Gold Coast  [first, slider]
+683. **1958** South Coast, Australia, is renamed Gold Coast  [first, slider]
    - Block C line 31: Gold Coast | Australia | South Coast | 1958 | Town of South Coast renamed Town of Gold Coast
-495. **1935** Ambleside, Australia, is renamed Hahndorf  [first, slider]
+684. **1935** Ambleside, Australia, is renamed Hahndorf  [first, slider]
    - Block C line 32: Hahndorf | Australia | Ambleside | 1935 | German name restored after WWI-era change
-496. **1915** Germanton, Australia, is renamed Holbrook  [first, slider]
+685. **1915** Germanton, Australia, is renamed Holbrook  [first, slider]
    - Block C line 33: Holbrook | Australia | Germanton | 1915 | German name dropped in WWI
-497. **1989** Kirovabad, Azerbaijan, is renamed Ganja  [first, slider]
+686. **1989** Kirovabad, Azerbaijan, is renamed Ganja  [first, slider]
    - Block C line 34: Ganja | Azerbaijan | Kirovabad | 1989 | original name restored during perestroika
-498. **2008** Ali Bayramli, Azerbaijan, is renamed Shirvan  [first, slider]
+687. **2008** Ali Bayramli, Azerbaijan, is renamed Shirvan  [first, slider]
    - Block C line 35: Shirvan | Azerbaijan | Ali Bayramli | 2008 | Azerbaijan parliament renamed the city
-499. **1930** Parahyba do Norte, Brazil, is renamed Joao Pessoa  [first, slider]
+688. **1930** Parahyba do Norte, Brazil, is renamed Joao Pessoa  [first, slider]
    - Block C line 36: Joao Pessoa | Brazil | Parahyba do Norte | 1930 | state capital renamed for a murdered governor
-500. **1835** Vila Real da Praia Grande, Brazil, is renamed Nictheroy (now spelled Niteroi)  [first, slider]
+689. **1835** Vila Real da Praia Grande, Brazil, is renamed Nictheroy (now spelled Niteroi)  [first, slider]
    - Block C line 37: Niteroi | Brazil | Vila Real da Praia Grande | 1835 | renamed Nictheroy (now spelled Niteroi)
-501. **1990** Tolbukhin, Bulgaria, is renamed Dobrich  [first, slider]
+690. **1990** Tolbukhin, Bulgaria, is renamed Dobrich  [first, slider]
    - Block C line 38: Dobrich | Bulgaria | Tolbukhin | 1990 | old name restored by decree
-502. **1956** Stalin, Bulgaria, is renamed Varna  [first, slider]
+691. **1956** Stalin, Bulgaria, is renamed Varna  [first, slider]
    - Block C line 39: Varna | Bulgaria | Stalin | 1956 | Stalin name dropped, old name back
-503. **1962** Usumbura, Burundi, is renamed Bujumbura  [first, slider]
+692. **1962** Usumbura, Burundi, is renamed Bujumbura  [first, slider]
    - Block C line 40: Bujumbura | Burundi | Usumbura | 1962 | capital renamed at independence
-504. **1982** Victoria, Cameroon, is renamed Limbe  [first, slider]
+693. **1982** Victoria, Cameroon, is renamed Limbe  [first, slider]
    - Block C line 41: Limbe | Cameroon | Victoria | 1982 | renamed by presidential decree
-505. **1989** Eskimo Point, Canada, is renamed Arviat  [first, slider]
+694. **1989** Eskimo Point, Canada, is renamed Arviat  [first, slider]
    - Block C line 42: Arviat | Canada | Eskimo Point | 1989 | English name replaced by Inuktitut name
-506. **1987** Frobisher Bay, Canada, is renamed Iqaluit  [first, slider]
+695. **1987** Frobisher Bay, Canada, is renamed Iqaluit  [first, slider]
    - Block C line 43: Iqaluit | Canada | Frobisher Bay | 1987 | English name replaced by Inuktitut name
-507. **1905** Rat Portage, Canada, is renamed Kenora  [first, slider]
+696. **1905** Rat Portage, Canada, is renamed Kenora  [first, slider]
    - Block C line 44: Kenora | Canada | Rat Portage | 1905 | new name built from Keewatin, Norman, Rat Portage
-508. **1916** Berlin, Canada, is renamed Kitchener  [first, slider]
+697. **1916** Berlin, Canada, is renamed Kitchener  [first, slider]
    - Block C line 45: Kitchener | Canada | Berlin | 1916 | German name dropped by referendum in WWI
-509. **1996** Coppermine, Canada, is renamed Kugluktuk  [first, slider]
+698. **1996** Coppermine, Canada, is renamed Kugluktuk  [first, slider]
    - Block C line 46: Kugluktuk | Canada | Coppermine | 1996 | English name replaced by Inuinnaqtun name
-510. **1980** Fort Chimo, Canada, is renamed Kuujjuaq  [first, slider]
+699. **1980** Fort Chimo, Canada, is renamed Kuujjuaq  [first, slider]
    - Block C line 47: Kuujjuaq | Canada | Fort Chimo | 1980 | took the Inuit name of the Koksoak River
-511. **1998** Broughton Island, Canada, is renamed Qikiqtarjuaq  [first, slider]
+700. **1998** Broughton Island, Canada, is renamed Qikiqtarjuaq  [first, slider]
    - Block C line 48: Qikiqtarjuaq | Canada | Broughton Island | 1998 | English name replaced by Inuktitut name
-512. **1882** Pile o' Bones, Canada, is renamed Regina  [first, slider]
+701. **1882** Pile o' Bones, Canada, is renamed Regina  [first, slider]
    - Block C line 49: Regina | Canada | Pile o' Bones | 1882 | renamed Regina in honour of Queen Victoria
-513. **1970** Fort William and Port Arthur, Canada, merge as Thunder Bay  [first, slider]
+702. **1970** Fort William and Port Arthur, Canada, merge as Thunder Bay  [first, slider]
    - Block C line 50: Thunder Bay | Canada | Fort William and Port Arthur | 1970 | two cities merged into Thunder Bay
-514. **1834** York, Canada, is renamed Toronto  [first, slider]
+703. **1834** York, Canada, is renamed Toronto  [first, slider]
    - Block C line 51: Toronto | Canada | York | 1834 | incorporated as a city under the name Toronto
-515. **1886** Granville, Canada, is renamed Vancouver  [first, slider]
+704. **1886** Granville, Canada, is renamed Vancouver  [first, slider]
    - Block C line 52: Vancouver | Canada | Granville | 1886 | renamed Vancouver on incorporation as a city
-516. **1974** Crampel, Central African Republic, is renamed Kaga-Bandoro  [first, slider]
+705. **1974** Crampel, Central African Republic, is renamed Kaga-Bandoro  [first, slider]
    - Block C line 53: Kaga-Bandoro | Central African Republic | Crampel | 1974 | colonial name (Fort-Crampel) replaced
-517. **1972** Fort-Archambault, Chad, is renamed Sarh  [first, slider]
+706. **1972** Fort-Archambault, Chad, is renamed Sarh  [first, slider]
    - Block C line 54: Sarh | Chad | Fort-Archambault | 1972 | renamed in Tombalbaye's authenticite campaign
-518. **2001** Zhongdian, China, is renamed Shangri-La  [first, slider]
+707. **2001** Zhongdian, China, is renamed Shangri-La  [first, slider]
    - Block C line 55: Shangri-La | China | Zhongdian | 2001 | county renamed after the novel's paradise
-519. **1954** Dihua, China, is renamed Urumqi  [first, slider]
+708. **1954** Dihua, China, is renamed Urumqi  [first, slider]
    - Block C line 56: Urumqi | China | Dihua | 1954 | name Urumqi restored by the government
-520. **1994** Dayong, China, is renamed Zhangjiajie  [first, slider]
+709. **1994** Dayong, China, is renamed Zhangjiajie  [first, slider]
    - Block C line 57: Zhangjiajie | China | Dayong | 1994 | city renamed after its famous scenic area
-521. **1990** Gottwaldov, Czechia, is renamed Zlin  [first, slider]
+710. **1990** Gottwaldov, Czechia, is renamed Zlin  [first, slider]
    - Block C line 58: Zlin | Czechia | Gottwaldov | 1990 | Gottwald name dropped, old name back
-522. **1966** Banningville, Democratic Republic of the Congo, is renamed Bandundu  [first, slider]
+711. **1966** Banningville, Democratic Republic of the Congo, is renamed Bandundu  [first, slider]
    - Block C line 59: Bandundu | Democratic Republic of the Congo | Banningville | 1966 | Belgian colonial name dropped
-523. **1966** Luluabourg, Democratic Republic of the Congo, is renamed Kananga  [first, slider]
+712. **1966** Luluabourg, Democratic Republic of the Congo, is renamed Kananga  [first, slider]
    - Block C line 60: Kananga | Democratic Republic of the Congo | Luluabourg | 1966 | colonial name replaced under Mobutu
-524. **1966** Stanleyville, Democratic Republic of the Congo, is renamed Kisangani  [first, slider]
+713. **1966** Stanleyville, Democratic Republic of the Congo, is renamed Kisangani  [first, slider]
    - Block C line 61: Kisangani | Democratic Republic of the Congo | Stanleyville | 1966 | colonial name replaced under authenticite policy
-525. **1966** Jadotville, Democratic Republic of the Congo, is renamed Likasi  [first, slider]
+714. **1966** Jadotville, Democratic Republic of the Congo, is renamed Likasi  [first, slider]
    - Block C line 62: Likasi | Democratic Republic of the Congo | Jadotville | 1966 | Belgian colonial name dropped
-526. **1966** Elisabethville, Democratic Republic of the Congo, is renamed Lubumbashi  [first, slider]
+715. **1966** Elisabethville, Democratic Republic of the Congo, is renamed Lubumbashi  [first, slider]
    - Block C line 63: Lubumbashi | Democratic Republic of the Congo | Elisabethville | 1966 | Belgian colonial name replaced under Mobutu
-527. **1966** Coquilhatville, Democratic Republic of the Congo, is renamed Mbandaka  [first, slider]
+716. **1966** Coquilhatville, Democratic Republic of the Congo, is renamed Mbandaka  [first, slider]
    - Block C line 64: Mbandaka | Democratic Republic of the Congo | Coquilhatville | 1966 | renamed to honour a local leader
-528. **1960** Bremersdorp, Eswatini, is renamed Manzini  [first, slider]
+717. **1960** Bremersdorp, Eswatini, is renamed Manzini  [first, slider]
    - Block C line 65: Manzini | Eswatini | Bremersdorp | 1960 | original Swazi name restored
-529. **2000** Nazret, Ethiopia, is renamed Adama  [first, slider]
+718. **2000** Nazret, Ethiopia, is renamed Adama  [first, slider]
    - Block C line 66: Adama | Ethiopia | Nazret | 2000 | Oromo name officially restored
-530. **1866** Port-de-France, France, is renamed Noumea  [first, slider]
+719. **1866** Port-de-France, France, is renamed Noumea  [first, slider]
    - Block C line 67: Noumea | France | Port-de-France | 1866 | New Caledonia capital renamed Noumea
-531. **1990** Karl-Marx-Stadt, Germany, is renamed Chemnitz  [first, slider]
+720. **1990** Karl-Marx-Stadt, Germany, is renamed Chemnitz  [first, slider]
    - Block C line 68: Chemnitz | Germany | Karl-Marx-Stadt | 1990 | historical name restored
-532. **1961** Stalinstadt, Germany, is renamed Eisenhuttenstadt  [first, slider]
+721. **1961** Stalinstadt, Germany, is renamed Eisenhuttenstadt  [first, slider]
    - Block C line 69: Eisenhuttenstadt | Germany | Stalinstadt | 1961 | renamed during de-Stalinization
-533. **1961** Sztalinvaros, Hungary, is renamed Dunaujvaros  [first, slider]
+722. **1961** Sztalinvaros, Hungary, is renamed Dunaujvaros  [first, slider]
    - Block C line 70: Dunaujvaros | Hungary | Sztalinvaros | 1961 | Stalin name dropped, new name given
-534. **2014** Bangalore, India, is renamed Bengaluru  [first, slider]
+723. **2014** Bangalore, India, is renamed Bengaluru  [first, slider]
    - Block C line 71: Bengaluru | India | Bangalore | 2014 | officially renamed with 12 other Karnataka cities
-535. **1996** Madras, India, is renamed Chennai  [first, slider]
+724. **1996** Madras, India, is renamed Chennai  [first, slider]
    - Block C line 72: Chennai | India | Madras | 1996 | official name changed to the Tamil name
-536. **2016** Gurgaon, India, is renamed Gurugram  [first, slider]
+725. **2016** Gurgaon, India, is renamed Gurugram  [first, slider]
    - Block C line 73: Gurugram | India | Gurgaon | 2016 | Haryana renamed it with central approval
-537. **1996** Cochin, India, is renamed Kochi  [first, slider]
+726. **1996** Cochin, India, is renamed Kochi  [first, slider]
    - Block C line 74: Kochi | India | Cochin | 1996 | reverted to its original Malayalam name
-538. **2001** Calcutta, India, is renamed Kolkata  [first, slider]
+727. **2001** Calcutta, India, is renamed Kolkata  [first, slider]
    - Block C line 75: Kolkata | India | Calcutta | 2001 | official name changed to the Bengali form
-539. **1995** Bombay, India, is renamed Mumbai  [first, slider]
+728. **1995** Bombay, India, is renamed Mumbai  [first, slider]
    - Block C line 76: Mumbai | India | Bombay | 1995 | state government adopted the Marathi name
-540. **2014** Mysore, India, is renamed Mysuru  [first, slider]
+729. **2014** Mysore, India, is renamed Mysuru  [first, slider]
    - Block C line 77: Mysuru | India | Mysore | 2014 | officially renamed with other Karnataka cities
-541. **2006** Pondicherry, India, is renamed Puducherry  [first, slider]
+730. **2006** Pondicherry, India, is renamed Puducherry  [first, slider]
    - Block C line 78: Puducherry | India | Pondicherry | 2006 | territory and city renamed by Act of Parliament
-542. **1991** Trivandrum, India, is renamed Thiruvananthapuram  [first, slider]
+731. **1991** Trivandrum, India, is renamed Thiruvananthapuram  [first, slider]
    - Block C line 79: Thiruvananthapuram | India | Trivandrum | 1991 | official name restored to the Malayalam name
-543. **1974** Baroda, India, is renamed Vadodara  [first, slider]
+732. **1974** Baroda, India, is renamed Vadodara  [first, slider]
    - Block C line 80: Vadodara | India | Baroda | 1974 | official name changed to the local name
-544. **1963** Kutaraja, Indonesia, is renamed Banda Aceh  [first, slider]
+733. **1963** Kutaraja, Indonesia, is renamed Banda Aceh  [first, slider]
    - Block C line 81: Banda Aceh | Indonesia | Kutaraja | 1963 | Indonesian ministry restored the name Banda Aceh
-545. **1999** Ujung Pandang, Indonesia, is renamed Makassar  [first, slider]
+734. **1999** Ujung Pandang, Indonesia, is renamed Makassar  [first, slider]
    - Block C line 82: Makassar | Indonesia | Ujung Pandang | 1999 | name reverted to Makassar
-546. **1979** Bandar Pahlavi, Iran, is renamed Bandar Anzali  [first, slider]
+735. **1979** Bandar Pahlavi, Iran, is renamed Bandar Anzali  [first, slider]
    - Block C line 83: Bandar Anzali | Iran | Bandar Pahlavi | 1979 | Pahlavi-era name dropped after the revolution
-547. **1920** Queenstown, Ireland, is renamed Cobh  [first, slider]
+736. **1920** Queenstown, Ireland, is renamed Cobh  [first, slider]
    - Block C line 84: Cobh | Ireland | Queenstown | 1920 | Irish name adopted
-548. **1920** Kingstown, Ireland, is renamed Dun Laoghaire  [first, slider]
+737. **1920** Kingstown, Ireland, is renamed Dun Laoghaire  [first, slider]
    - Block C line 85: Dun Laoghaire | Ireland | Kingstown | 1920 | Irish name adopted
-549. **1927** Girgenti, Italy, is renamed Agrigento  [first, slider]
+738. **1927** Girgenti, Italy, is renamed Agrigento  [first, slider]
    - Block C line 86: Agrigento | Italy | Girgenti | 1927 | Latin-based name adopted by decree
-550. **1946** Littoria, Italy, is renamed Latina  [first, slider]
+739. **1946** Littoria, Italy, is renamed Latina  [first, slider]
    - Block C line 87: Latina | Italy | Littoria | 1946 | Fascist-era name dropped
-551. **1991** Shevchenko, Kazakhstan, is renamed Aktau  [first, slider]
+740. **1991** Shevchenko, Kazakhstan, is renamed Aktau  [first, slider]
    - Block C line 88: Aktau | Kazakhstan | Shevchenko | 1991 | original name restored at independence
-552. **2022** Kapchagay, Kazakhstan, is renamed Konaev  [first, slider]
+741. **2022** Kapchagay, Kazakhstan, is renamed Konaev  [first, slider]
    - Block C line 89: Konaev | Kazakhstan | Kapchagay | 2022 | renamed after Soviet-era leader Dinmukhamed Kunaev
-553. **2002** Leninogorsk, Kazakhstan, is renamed Ridder  [first, slider]
+742. **2002** Leninogorsk, Kazakhstan, is renamed Ridder  [first, slider]
    - Block C line 90: Ridder | Kazakhstan | Leninogorsk | 2002 | original name restored
-554. **2007** Semipalatinsk, Kazakhstan, is renamed Semey  [first, slider]
+743. **2007** Semipalatinsk, Kazakhstan, is renamed Semey  [first, slider]
    - Block C line 91: Semey | Kazakhstan | Semipalatinsk | 2007 | city council voted for the Kazakh name
-555. **1997** Zhambyl, Kazakhstan, is renamed Taraz  [first, slider]
+744. **1997** Zhambyl, Kazakhstan, is renamed Taraz  [first, slider]
    - Block C line 92: Taraz | Kazakhstan | Zhambyl | 1997 | ancient name Taraz restored
-556. **1991** Przhevalsk, Kyrgyzstan, is renamed Karakol  [first, slider]
+745. **1991** Przhevalsk, Kyrgyzstan, is renamed Karakol  [first, slider]
    - Block C line 93: Karakol | Kyrgyzstan | Przhevalsk | 1991 | original name restored at independence
-557. **1967** Jesselton, Malaysia, is renamed Kota Kinabalu  [first, slider]
+746. **1967** Jesselton, Malaysia, is renamed Kota Kinabalu  [first, slider]
    - Block C line 94: Kota Kinabalu | Malaysia | Jesselton | 1967 | Sabah assembly renamed the capital
-558. **1972** Port Swettenham, Malaysia, is renamed Port Klang  [first, slider]
+747. **1972** Port Swettenham, Malaysia, is renamed Port Klang  [first, slider]
    - Block C line 95: Port Klang | Malaysia | Port Swettenham | 1972 | colonial name replaced
-559. **1960** Port-Etienne, Mauritania, is renamed Nouadhibou  [first, slider]
+748. **1960** Port-Etienne, Mauritania, is renamed Nouadhibou  [first, slider]
    - Block C line 96: Nouadhibou | Mauritania | Port-Etienne | 1960 | French name dropped after independence
-560. **1888** Paso del Norte, Mexico, is renamed Ciudad Juarez  [first, slider]
+749. **1888** Paso del Norte, Mexico, is renamed Ciudad Juarez  [first, slider]
    - Block C line 97: Ciudad Juarez | Mexico | Paso del Norte | 1888 | renamed in honour of Benito Juarez
-561. **1928** Cajeme, Mexico, is renamed Ciudad Obregon  [first, slider]
+750. **1928** Cajeme, Mexico, is renamed Ciudad Obregon  [first, slider]
    - Block C line 98: Ciudad Obregon | Mexico | Cajeme | 1928 | renamed after Alvaro Obregon's murder
-562. **1825** Santa Maria de Aguayo, Mexico, is renamed Ciudad Victoria  [first, slider]
+751. **1825** Santa Maria de Aguayo, Mexico, is renamed Ciudad Victoria  [first, slider]
    - Block C line 99: Ciudad Victoria | Mexico | Santa Maria de Aguayo | 1825 | made a city and named for Guadalupe Victoria
-563. **1936** Puerto Mexico, Mexico, is renamed Coatzacoalcos  [first, slider]
+752. **1936** Puerto Mexico, Mexico, is renamed Coatzacoalcos  [first, slider]
    - Block C line 100: Coatzacoalcos | Mexico | Puerto Mexico | 1936 | old name restored to the port city
-564. **1828** Valladolid, Mexico, is renamed Morelia  [first, slider]
+753. **1828** Valladolid, Mexico, is renamed Morelia  [first, slider]
    - Block C line 101: Morelia | Mexico | Valladolid | 1828 | renamed for independence hero Morelos
-565. **1911** Ciudad Porfirio Diaz, Mexico, is renamed Piedras Negras  [first, slider]
+754. **1911** Ciudad Porfirio Diaz, Mexico, is renamed Piedras Negras  [first, slider]
    - Block C line 102: Piedras Negras | Mexico | Ciudad Porfirio Diaz | 1911 | old name restored after Diaz fell
-566. **1956** Port-Lyautey, Morocco, is renamed Kenitra  [first, slider]
+755. **1956** Port-Lyautey, Morocco, is renamed Kenitra  [first, slider]
    - Block C line 103: Kenitra | Morocco | Port-Lyautey | 1956 | French name dropped at independence
-567. **1975** Vila Pery, Mozambique, is renamed Chimoio  [first, slider]
+756. **1975** Vila Pery, Mozambique, is renamed Chimoio  [first, slider]
    - Block C line 104: Chimoio | Mozambique | Vila Pery | 1975 | renamed at a rally by Samora Machel
-568. **1975** Porto Amelia, Mozambique, is renamed Pemba  [first, slider]
+757. **1975** Porto Amelia, Mozambique, is renamed Pemba  [first, slider]
    - Block C line 105: Pemba | Mozambique | Porto Amelia | 1975 | Portuguese name dropped at end of colonial rule
-569. **1975** Joao Belo, Mozambique, is renamed Xai-Xai  [first, slider]
+758. **1975** Joao Belo, Mozambique, is renamed Xai-Xai  [first, slider]
    - Block C line 106: Xai-Xai | Mozambique | Joao Belo | 1975 | Portuguese name dropped at independence
-570. **1996** Titov Veles, North Macedonia, is renamed Veles  [first, slider]
+759. **1996** Titov Veles, North Macedonia, is renamed Veles  [first, slider]
    - Block C line 107: Veles | North Macedonia | Titov Veles | 1996 | Tito name dropped
-571. **1931** Nidaros, Norway, is renamed Trondheim  [first, slider]
+760. **1931** Nidaros, Norway, is renamed Trondheim  [first, slider]
    - Block C line 108: Trondheim | Norway | Nidaros | 1931 | Nidaros dropped after protests
-572. **1978** Campbellpur, Pakistan, is renamed Attock  [first, slider]
+761. **1978** Campbellpur, Pakistan, is renamed Attock  [first, slider]
    - Block C line 109: Attock | Pakistan | Campbellpur | 1978 | Government of Pakistan restored the old name
-573. **1979** Lyallpur, Pakistan, is renamed Faisalabad  [first, slider]
+762. **1979** Lyallpur, Pakistan, is renamed Faisalabad  [first, slider]
    - Block C line 110: Faisalabad | Pakistan | Lyallpur | 1979 | renamed in honour of King Faisal of Saudi Arabia
-574. **1989** Puerto Presidente Stroessner, Paraguay, is renamed Ciudad del Este  [first, slider]
+763. **1989** Puerto Presidente Stroessner, Paraguay, is renamed Ciudad del Este  [first, slider]
    - Block C line 111: Ciudad del Este | Paraguay | Puerto Presidente Stroessner | 1989 | renamed after the dictator was overthrown
-575. **1945** Danzig, Poland, is renamed Gdansk  [first, slider]
+764. **1945** Danzig, Poland, is renamed Gdansk  [first, slider]
    - Block C line 112: Gdansk | Poland | Danzig | 1945 | German city became Polish Gdansk
-576. **1956** Stalinogrod, Poland, is renamed Katowice  [first, slider]
+765. **1956** Stalinogrod, Poland, is renamed Katowice  [first, slider]
    - Block C line 113: Katowice | Poland | Stalinogrod | 1956 | Stalin name dropped, old name back
-577. **1945** Stettin, Poland, is renamed Szczecin  [first, slider]
+766. **1945** Stettin, Poland, is renamed Szczecin  [first, slider]
    - Block C line 114: Szczecin | Poland | Stettin | 1945 | German city became Polish Szczecin
-578. **1945** Breslau, Poland, is renamed Wroclaw  [first, slider]
+767. **1945** Breslau, Poland, is renamed Wroclaw  [first, slider]
    - Block C line 115: Wroclaw | Poland | Breslau | 1945 | German city became Polish Wroclaw
-579. **1991** Loubomo, Republic of the Congo, is renamed Dolisie  [first, slider]
+768. **1991** Loubomo, Republic of the Congo, is renamed Dolisie  [first, slider]
    - Block C line 116: Dolisie | Republic of the Congo | Loubomo | 1991 | earlier name Dolisie restored
-580. **1960** Orasul Stalin, Romania, is renamed Brasov  [first, slider]
+769. **1960** Orasul Stalin, Romania, is renamed Brasov  [first, slider]
    - Block C line 117: Brasov | Romania | Orasul Stalin | 1960 | Stalin name dropped, old name back
-581. **1946** Pillau, Russia, is renamed Baltiysk  [first, slider]
+770. **1946** Pillau, Russia, is renamed Baltiysk  [first, slider]
    - Block C line 118: Baltiysk | Russia | Pillau | 1946 | German name replaced under Soviet rule
-582. **1931** Pokrovsk, Russia, is renamed Engels  [first, slider]
+771. **1931** Pokrovsk, Russia, is renamed Engels  [first, slider]
    - Block C line 121: Engels | Russia | Pokrovsk | 1931 | renamed after Friedrich Engels
-583. **1987** Ustinov, Russia, is renamed Izhevsk  [first, slider]
+772. **1987** Ustinov, Russia, is renamed Izhevsk  [first, slider]
    - Block C line 123: Izhevsk | Russia | Ustinov | 1987 | historical name regained after protests
-584. **1946** Konigsberg, Russia, is renamed Kaliningrad  [first, slider]
+773. **1946** Konigsberg, Russia, is renamed Kaliningrad  [first, slider]
    - Block C line 124: Kaliningrad | Russia | Konigsberg | 1946 | renamed after Mikhail Kalinin under Soviet rule
-585. **1934** Vyatka, Russia, is renamed Kirov  [first, slider]
+774. **1934** Vyatka, Russia, is renamed Kirov  [first, slider]
    - Block C line 125: Kirov | Russia | Vyatka | 1934 | renamed after Bolshevik Sergei Kirov
-586. **1920** Yekaterinodar, Russia, is renamed Krasnodar  [first, slider]
+775. **1920** Yekaterinodar, Russia, is renamed Krasnodar  [first, slider]
    - Block C line 127: Krasnodar | Russia | Yekaterinodar | 1920 | renamed after the revolution
-587. **1921** Petrovsk-Port, Russia, is renamed Makhachkala  [first, slider]
+776. **1921** Petrovsk-Port, Russia, is renamed Makhachkala  [first, slider]
    - Block C line 128: Makhachkala | Russia | Petrovsk-Port | 1921 | renamed under Soviet rule
-588. **1988** Brezhnev, Russia, is renamed Naberezhnye Chelny  [first, slider]
+777. **1988** Brezhnev, Russia, is renamed Naberezhnye Chelny  [first, slider]
    - Block C line 129: Naberezhnye Chelny | Russia | Brezhnev | 1988 | Brezhnev name dropped, old name back
-589. **1990** Gorky, Russia, is renamed Nizhny Novgorod  [first, slider]
+778. **1990** Gorky, Russia, is renamed Nizhny Novgorod  [first, slider]
    - Block C line 130: Nizhny Novgorod | Russia | Gorky | 1990 | original name reinstated
-590. **1926** Novonikolayevsk, Russia, is renamed Novosibirsk  [first, slider]
+779. **1926** Novonikolayevsk, Russia, is renamed Novosibirsk  [first, slider]
    - Block C line 131: Novosibirsk | Russia | Novonikolayevsk | 1926 | given its present name
-591. **1957** Chkalov, Russia, is renamed Orenburg  [first, slider]
+780. **1957** Chkalov, Russia, is renamed Orenburg  [first, slider]
    - Block C line 132: Orenburg | Russia | Chkalov | 1957 | original name regained
-592. **1957** Molotov, Russia, is renamed Perm  [first, slider]
+781. **1957** Molotov, Russia, is renamed Perm  [first, slider]
    - Block C line 133: Perm | Russia | Molotov | 1957 | historical name restored
-593. **1937** Detskoye Selo, Russia, is renamed Pushkin  [first, slider]
+782. **1937** Detskoye Selo, Russia, is renamed Pushkin  [first, slider]
    - Block C line 134: Pushkin | Russia | Detskoye Selo | 1937 | renamed after the poet Pushkin
-594. **1989** Andropov, Russia, is renamed Rybinsk  [first, slider]
+783. **1989** Andropov, Russia, is renamed Rybinsk  [first, slider]
    - Block C line 135: Rybinsk | Russia | Andropov | 1989 | Andropov name dropped, old name back
-595. **1991** Leningrad, Russia, is renamed Saint Petersburg  [first, slider]
+784. **1991** Leningrad, Russia, is renamed Saint Petersburg  [first, slider]
    - Block C line 136: Saint Petersburg | Russia | Leningrad | 1991 | old name restored after a city referendum
-596. **1991** Kuybyshev, Russia, is renamed Samara  [first, slider]
+785. **1991** Kuybyshev, Russia, is renamed Samara  [first, slider]
    - Block C line 137: Samara | Russia | Kuybyshev | 1991 | historical name restored
-597. **1991** Zagorsk, Russia, is renamed Sergiyev Posad  [first, slider]
+786. **1991** Zagorsk, Russia, is renamed Sergiyev Posad  [first, slider]
    - Block C line 139: Sergiyev Posad | Russia | Zagorsk | 1991 | original name restored
-598. **1946** Tilsit, Russia, is renamed Sovetsk  [first, slider]
+787. **1946** Tilsit, Russia, is renamed Sovetsk  [first, slider]
    - Block C line 141: Sovetsk | Russia | Tilsit | 1946 | German name replaced under Soviet rule
-599. **1964** Stavropol, Russia, is renamed Tolyatti  [first, slider]
+788. **1964** Stavropol, Russia, is renamed Tolyatti  [first, slider]
    - Block C line 142: Tolyatti | Russia | Stavropol | 1964 | renamed after Italian communist Togliatti
-600. **1990** Kalinin, Russia, is renamed Tver  [first, slider]
+789. **1990** Kalinin, Russia, is renamed Tver  [first, slider]
    - Block C line 143: Tver | Russia | Kalinin | 1990 | historical name restored
-601. **1924** Simbirsk, Russia, is renamed Ulyanovsk  [first, slider]
+790. **1924** Simbirsk, Russia, is renamed Ulyanovsk  [first, slider]
    - Block C line 144: Ulyanovsk | Russia | Simbirsk | 1924 | renamed after Lenin (Vladimir Ulyanov)
-602. **1957** Voroshilov, Russia, is renamed Ussuriysk  [first, slider]
+791. **1957** Voroshilov, Russia, is renamed Ussuriysk  [first, slider]
    - Block C line 145: Ussuriysk | Russia | Voroshilov | 1957 | Voroshilov name dropped
-603. **1990** Ordzhonikidze, Russia, is renamed Vladikavkaz  [first, slider]
+792. **1990** Ordzhonikidze, Russia, is renamed Vladikavkaz  [first, slider]
    - Block C line 146: Vladikavkaz | Russia | Ordzhonikidze | 1990 | old Russian name Vladikavkaz returned
-604. **1961** Stalingrad, Russia, is renamed Volgograd  [first, slider]
+793. **1961** Stalingrad, Russia, is renamed Volgograd  [first, slider]
    - Block C line 147: Volgograd | Russia | Stalingrad | 1961 | renamed during de-Stalinization
-605. **1991** Sverdlovsk, Russia, is renamed Yekaterinburg  [first, slider]
+794. **1991** Sverdlovsk, Russia, is renamed Yekaterinburg  [first, slider]
    - Block C line 148: Yekaterinburg | Russia | Sverdlovsk | 1991 | historical name restored
-606. **1950** Caribrod, Serbia, is renamed Dimitrovgrad  [first, slider]
+795. **1950** Caribrod, Serbia, is renamed Dimitrovgrad  [first, slider]
    - Block C line 149: Dimitrovgrad | Serbia | Caribrod | 1950 | renamed after Georgi Dimitrov
-607. **1946** Petrovgrad, Serbia, is renamed Zrenjanin  [first, slider]
+796. **1946** Petrovgrad, Serbia, is renamed Zrenjanin  [first, slider]
    - Block C line 150: Zrenjanin | Serbia | Petrovgrad | 1946 | renamed after partisan Zarko Zrenjanin
-608. **2002** Warmbaths, South Africa, is renamed Bela-Bela  [first, slider]
+797. **2002** Warmbaths, South Africa, is renamed Bela-Bela  [first, slider]
    - Block C line 151: Bela-Bela | South Africa | Warmbaths | 2002 | officially renamed by government
-609. **2021** Port Elizabeth, South Africa, is renamed Gqeberha  [first, slider]
+798. **2021** Port Elizabeth, South Africa, is renamed Gqeberha  [first, slider]
    - Block C line 152: Gqeberha | South Africa | Port Elizabeth | 2021 | name change officially gazetted
-610. **2021** Uitenhage, South Africa, is renamed Kariega  [first, slider]
+799. **2021** Uitenhage, South Africa, is renamed Kariega  [first, slider]
    - Block C line 153: Kariega | South Africa | Uitenhage | 2021 | name change officially gazetted
-611. **2002** Ellisras, South Africa, is renamed Lephalale  [first, slider]
+800. **2002** Ellisras, South Africa, is renamed Lephalale  [first, slider]
    - Block C line 154: Lephalale | South Africa | Ellisras | 2002 | renamed by Limpopo provincial government
-612. **2018** Grahamstown, South Africa, is renamed Makhanda  [first, slider]
+801. **2018** Grahamstown, South Africa, is renamed Makhanda  [first, slider]
    - Block C line 155: Makhanda | South Africa | Grahamstown | 2018 | officially renamed after colonial-era name
-613. **2009** Nelspruit, South Africa, is renamed Mbombela  [first (20-year gap)]
+802. **2009** Nelspruit, South Africa, is renamed Mbombela  [first (20-year gap)]
    - Block C line 156: Mbombela | South Africa | Nelspruit | 2009 | renamed by government, upheld in court 2014
-614. **2003** Potgietersrus, South Africa, is renamed Mokopane  [first, slider]
+803. **2003** Potgietersrus, South Africa, is renamed Mokopane  [first, slider]
    - Block C line 158: Mokopane | South Africa | Potgietersrus | 2003 | name officially changed by government
-615. **2005** Pietersburg, South Africa, is renamed Polokwane  [first, slider]
+804. **2005** Pietersburg, South Africa, is renamed Polokwane  [first, slider]
    - Block C line 159: Polokwane | South Africa | Pietersburg | 2005 | government declared Polokwane official name
-616. **2021** King William's Town, South Africa, is renamed Qonce  [first, slider]
+805. **2021** King William's Town, South Africa, is renamed Qonce  [first, slider]
    - Block C line 160: Qonce | South Africa | King William's Town | 2021 | officially renamed
-617. **2006** Witbank, South Africa, is renamed eMalahleni  [first, slider]
+806. **2006** Witbank, South Africa, is renamed eMalahleni  [first, slider]
    - Block C line 161: eMalahleni | South Africa | Witbank | 2006 | officially renamed
-618. **2018** Qurghonteppa, Tajikistan, is renamed Bokhtar  [first, slider]
+807. **2018** Qurghonteppa, Tajikistan, is renamed Bokhtar  [first, slider]
    - Block C line 162: Bokhtar | Tajikistan | Qurghonteppa | 2018 | city officially renamed Bokhtar
-619. **2000** Ura-Tyube, Tajikistan, is renamed Istaravshan  [first, slider]
+808. **2000** Ura-Tyube, Tajikistan, is renamed Istaravshan  [first, slider]
    - Block C line 163: Istaravshan | Tajikistan | Ura-Tyube | 2000 | Tajik government restored the historic name
-620. **1930** Constantinople, Turkiye, is renamed Istanbul  [first, slider]
+809. **1930** Constantinople, Turkiye, is renamed Istanbul  [first, slider]
    - Block C line 164: Istanbul | Turkiye | Constantinople | 1930 | Istanbul made the official name
-621. **1973** Maras, Turkiye, is given the title kahraman (heroic): Kahramanmaras  [first, slider]
+810. **1973** Maras, Turkiye, is given the title kahraman (heroic): Kahramanmaras  [first, slider]
    - Block C line 165: Kahramanmaras | Turkiye | Maras | 1973 | parliament added the title kahraman (heroic)
-622. **1984** Urfa, Turkiye, is given the title sanli (glorious): Sanliurfa  [first, slider]
+811. **1984** Urfa, Turkiye, is given the title sanli (glorious): Sanliurfa  [first, slider]
    - Block C line 166: Sanliurfa | Turkiye | Urfa | 1984 | parliament added the title sanli (glorious)
-623. **1993** Krasnovodsk, Turkmenistan, is renamed Turkmenbashi  [first, slider]
+812. **1993** Krasnovodsk, Turkmenistan, is renamed Turkmenbashi  [first, slider]
    - Block C line 167: Turkmenbashi | Turkmenistan | Krasnovodsk | 1993 | renamed after President Niyazov's title
-624. **2016** Dnipropetrovsk, Ukraine, is renamed Dnipro  [first, slider]
+813. **2016** Dnipropetrovsk, Ukraine, is renamed Dnipro  [first, slider]
    - Block C line 168: Dnipro | Ukraine | Dnipropetrovsk | 2016 | renamed under decommunization law
-625. **1962** Stanislav, Ukraine, is renamed Ivano-Frankivsk  [first, slider]
+814. **1962** Stanislav, Ukraine, is renamed Ivano-Frankivsk  [first, slider]
    - Block C line 169: Ivano-Frankivsk | Ukraine | Stanislav | 1962 | renamed after writer Ivan Franko
-626. **1954** Proskuriv, Ukraine, is renamed Khmelnytskyi  [first, slider]
+815. **1954** Proskuriv, Ukraine, is renamed Khmelnytskyi  [first, slider]
    - Block C line 170: Khmelnytskyi | Ukraine | Proskuriv | 1954 | renamed after Bohdan Khmelnytsky
-627. **2016** Kirovohrad, Ukraine, is renamed Kropyvnytskyi  [first, slider]
+816. **2016** Kirovohrad, Ukraine, is renamed Kropyvnytskyi  [first, slider]
    - Block C line 171: Kropyvnytskyi | Ukraine | Kirovohrad | 2016 | renamed under decommunization law
-628. **2019** Pereiaslav-Khmelnytskyi, Ukraine, is renamed Pereiaslav  [first, slider]
+817. **2019** Pereiaslav-Khmelnytskyi, Ukraine, is renamed Pereiaslav  [first, slider]
    - Block C line 172: Pereiaslav | Ukraine | Pereiaslav-Khmelnytskyi | 2019 | historic name reinstated by parliament
-629. **1839** Waterloo, United States, is renamed Austin  [first, slider]
+818. **1839** Waterloo, United States, is renamed Austin  [first, slider]
    - Block C line 173: Austin | United States | Waterloo | 1839 | renamed Austin when chosen as Texas capital
-630. **1873** Edwinton, United States, is renamed Bismarck  [first, slider]
+819. **1873** Edwinton, United States, is renamed Bismarck  [first, slider]
    - Block C line 174: Bismarck | United States | Edwinton | 1873 | railway renamed it for Otto von Bismarck
-631. **1998** Agana, United States, is renamed Hagatna  [first, slider]
+820. **1998** Agana, United States, is renamed Hagatna  [first, slider]
    - Block C line 175: Hagatna | United States | Agana | 1998 | Guam capital took its Chamorro name
-632. **1954** Mauch Chunk, United States, is renamed Jim Thorpe  [first, slider]
+821. **1954** Mauch Chunk, United States, is renamed Jim Thorpe  [first, slider]
    - Block C line 176: Jim Thorpe | United States | Mauch Chunk | 1954 | merged boroughs renamed for athlete Jim Thorpe
-633. **1996** North Tarrytown, United States, is renamed Sleepy Hollow  [first, slider]
+822. **1996** North Tarrytown, United States, is renamed Sleepy Hollow  [first, slider]
    - Block C line 177: Sleepy Hollow | United States | North Tarrytown | 1996 | village took the area's historical name
-634. **1950** Hot Springs, United States, is renamed Truth or Consequences  [first, slider]
+823. **1950** Hot Springs, United States, is renamed Truth or Consequences  [first, slider]
    - Block C line 178: Truth or Consequences | United States | Hot Springs | 1950 | renamed after a radio quiz show
-635. **2016** Barrow, United States, is renamed Utqiagvik  [first, slider]
+824. **2016** Barrow, United States, is renamed Utqiagvik  [first, slider]
    - Block C line 179: Utqiagvik | United States | Barrow | 2016 | English name replaced by Inupiaq name
-636. **1846** Angostura, Venezuela, is renamed Ciudad Bolivar  [first, slider]
+825. **1846** Angostura, Venezuela, is renamed Ciudad Bolivar  [first, slider]
    - Block C line 180: Ciudad Bolivar | Venezuela | Angostura | 1846 | renamed in honour of Simon Bolivar
-637. **1976** Saigon, Viet Nam, is renamed Ho Chi Minh City  [first, slider]
+826. **1976** Saigon, Viet Nam, is renamed Ho Chi Minh City  [first, slider]
    - Block C line 181: Ho Chi Minh City | Viet Nam | Saigon | 1976 | renamed at Vietnam's reunification
-638. **1966** Broken Hill, Zambia, is renamed Kabwe  [first, slider]
+827. **1966** Broken Hill, Zambia, is renamed Kabwe  [first, slider]
    - Block C line 182: Kabwe | Zambia | Broken Hill | 1966 | colonial name dropped after independence
-639. **1982** Hartley, Zimbabwe, is renamed Chegutu  [first, slider]
+828. **1982** Hartley, Zimbabwe, is renamed Chegutu  [first, slider]
    - Block C line 183: Chegutu | Zimbabwe | Hartley | 1982 | colonial name officially replaced
-640. **1982** Wankie, Zimbabwe, is renamed Hwange  [first, slider]
+829. **1982** Wankie, Zimbabwe, is renamed Hwange  [first, slider]
    - Block C line 184: Hwange | Zimbabwe | Wankie | 1982 | colonial name replaced
-641. **1982** Gatooma, Zimbabwe, is renamed Kadoma  [first, slider]
+830. **1982** Gatooma, Zimbabwe, is renamed Kadoma  [first, slider]
    - Block C line 185: Kadoma | Zimbabwe | Gatooma | 1982 | renamed in 1982 gazette of new names
-642. **1982** Fort Victoria, Zimbabwe, is renamed Masvingo  [first, slider]
+831. **1982** Fort Victoria, Zimbabwe, is renamed Masvingo  [first, slider]
    - Block C line 186: Masvingo | Zimbabwe | Fort Victoria | 1982 | colonial name replaced (briefly Nyanda)
-643. **1982** Umtali, Zimbabwe, is renamed Mutare  [first, slider]
+832. **1982** Umtali, Zimbabwe, is renamed Mutare  [first, slider]
    - Block C line 187: Mutare | Zimbabwe | Umtali | 1982 | colonial name officially replaced
-644. **1982** Shabani, Zimbabwe, is renamed Zvishavane  [first, slider]
+833. **1982** Shabani, Zimbabwe, is renamed Zvishavane  [first, slider]
    - Block C line 188: Zvishavane | Zimbabwe | Shabani | 1982 | colonial name replaced with indigenous one
+
+## Block D lines not asked
+
+- Block D line 62: 1902 | Dakar replaces Saint-Louis as capital of French West Africa | Senegal, France: Block A marks Senegal's capital changes "don't ask"
+- Block D line 65: 1905 | Nairobi replaces Mombasa as capital of the East Africa Protectorate | Kenya, United Kingdom: clashes with Block A (Kenya: Mombasa to Nairobi, 1907); neither year is asked
+- Block D line 86: 1926 | Niamey replaces Zinder as capital of the colony of Niger | Niger, France: Block A marks Niger's capital changes "don't ask"
+- Block D line 143: 1970 | Tonga ends British protection and becomes fully independent | Tonga, United Kingdom: Block A says Tonga was never colonised and its independence year is "don't ask"
 
 ## Block C lines not asked as "What was this city called?"
 
@@ -3173,11 +3652,11 @@ Wrong answers are drawn from the other questions' right answers of the same kind
   - Block A: Kazakhstan | 1991 | Soviet Union (dissolution) | none | Almaty to Astana (1997)
 - Which country moved its capital from Almaty to Astana? **Kazakhstan**
   - Block A: Kazakhstan | 1991 | Soviet Union (dissolution) | none | Almaty to Astana (1997)
-- In 1907, the capital of Kenya moved from Mombasa to… **Nairobi**
+- The capital of Kenya moved from Mombasa to… **Nairobi**
   - Block A: Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
-- In 1907, Kenya moved its capital to Nairobi. Where was it before? **Mombasa**
+- Kenya moved its capital to Nairobi. Where was it before? **Mombasa**
   - Block A: Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
-- In 1907, which country moved its capital from Mombasa to Nairobi? **Kenya**
+- Which country moved its capital from Mombasa to Nairobi? **Kenya**
   - Block A: Kenya | 1963 | United Kingdom | British East Africa (1895-1920) | Mombasa to Nairobi (1907)
 - In 1975, the capital of Malawi moved from Zomba to… **Lilongwe**
   - Block A: Malawi | 1964 | United Kingdom | Nyasaland (1907-1964) | Zomba to Lilongwe (1975)
@@ -3346,155 +3825,155 @@ Wrong answers are drawn from the other questions' right answers of the same kind
 
 ### No. 1, Sat (hard)
 
-1. Which came later? Santa Isabel, Equatorial Guinea, is renamed Malabo (1973) / Tuva is annexed into the Soviet Union (1944)
-1. Put in order: Lateran Treaty creates Vatican City as an independent state (1929) / Spain cedes the Philippines, Guam and Puerto Rico to US (1898) / Dual monarchy of Austria-Hungary established (1867)
-1. Which came first? Ustinov, Russia, is renamed Izhevsk (1987) / The name Syonan-to comes into use for today's Singapore (1942)
-1. When was it? United States buys Alaska from Russia (1867; slider 1819 to 1969)
-1. Which came first? Chaco peace treaty gives Paraguay most of the Gran Chaco (1938) / Saint Lawrence Seaway opens to ocean ships (1959)
-1. Which came first? British Crown takes over rule of India from the Company (1858) / Angostura, Venezuela, is renamed Ciudad Bolivar (1846)
-1. Which came first? British East India Company captures Aden (1839) / Valladolid, Mexico, is renamed Morelia (1828)
-1. Which came first? Six Trucial States form the United Arab Emirates (1971) / Sverdlovsk, Russia, is renamed Yekaterinburg (1991)
+1. Which came later? ICJ awards Ligitan and Sipadan islands to Malaysia (2002) / Dadra and Nagar Haveli and Daman and Diu merge (2020)
+1. Put in order: Kingdom of Swaziland renamed Kingdom of Eswatini (2018) / The name French Sudan stops being used for today's Mali (1958) / Fort Victoria, Zimbabwe, is renamed Masvingo (1982)
+1. Which came first? The name Middle Congo stops being used for today's Republic of the Congo (1958) / Gorky, Russia, is renamed Nizhny Novgorod (1990)
+1. When was it? United States buys Alaska from Russia (1867; slider 1858 to 2008)
+1. Which came first? Treaty of Waitangi signed; British sovereignty over New Zealand (1840) / British trading post founded at Singapore (1819)
+1. Which came later? Niislel Khuree, Mongolia, is renamed Ulaanbaatar (1924) / Philippines becomes independent from the United States (1946)
+1. Which came first? Santa Fe de Bogota, Colombia, is renamed Bogota (2000) / East and West Germany reunify (1990)
+1. Which came later? Togo becomes independent from France (1960) / Southern Rhodesia becomes independent Zimbabwe (1980)
 
 ### No. 2, Sun (hardest)
 
-1. Which came first? Spain cedes Florida to the United States (1819) / Liberia declares independence (1847)
-1. When was it? Namibia becomes independent from South Africa (1990; slider 1869 to 2019)
-1. Which came first? The capital of Costa Rica moves from Cartago to San Jose (1823) / Liechtenstein is formed as a sovereign state (1806)
-1. Put in order: Alaska becomes the 49th US state (1959) / Cabo Verde becomes independent from Portugal (1975) / Zagorsk, Russia, is renamed Sergiyev Posad (1991)
-1. When was it? Haiti declares independence from France (1804; slider 1800 to 1990)
-1. How many years apart? Lourenco Marques, Mozambique, is renamed Maputo (1976) / Belgium declares independence from the Netherlands (1830)
-1. Put in order: North and South Vietnam formally reunified (1976) / Prespa Agreement in force; Macedonia renamed North Macedonia (2019) / Agana, United States, is renamed Hagatna (1998)
-1. What was Toronto (Canada) called before 1834? York (options: Pile o' Bones, Fort William and Port Arthur, Berlin, York)
+1. Which came first? Austrian State Treaty restores Austria's independence (1955) / North and South Vietnam formally reunified (1976)
+1. When was it? Namibia becomes independent from South Africa (1990; slider 1863 to 2013)
+1. Which came later? Queensland separates from New South Wales (1859) / Britain establishes the Bechuanaland Protectorate (1885)
+1. Put in order: Peru cedes Tarapaca to Chile (1883) / Treaty of Fez makes Morocco a French protectorate (1912) / Girgenti, Italy, is renamed Agrigento (1927)
+1. When was it? The capital of Honduras moves from Comayagua to Tegucigalpa (1880; slider 1815 to 2005)
+1. How many years apart? United States buys southern Arizona strip from Mexico (1853) / Sudan becomes independent (1956)
+1. Put in order: Karl-Marx-Stadt, Germany, is renamed Chemnitz (1990) / Spain hands the Tarfaya Strip to Morocco (1958) / Fort-Archambault, Chad, is renamed Sarh (1972)
+1. What was Bandar Seri Begawan (Brunei) called before 1970? Brunei Town (options: Vila Pery, Brunei Town, Fort Chimo, Bathurst)
 
 ### No. 3, Mon (easy)
 
-1. Which came first? Germany claims north-eastern New Guinea (1884) / Slovenia becomes independent from Yugoslavia (1991)
-1. Put in order: United Nations adopts Turkiye as the country's name (2022) / Konigsberg, Russia, is renamed Kaliningrad (1946) / Fiji ceded to Britain (1874)
-1. In 1821, Honduras became independent from… Spain (options: Ethiopia, Spain, Brazil, South Africa)
-1. Put in order: Dihua, China, is renamed Urumqi (1954) / Dominican Republic declares independence from Haiti (1844) / Montenegro declares independence, ending Serbia and Montenegro union (2006)
-1. What was Kisangani (Democratic Republic of the Congo) called before 1966? Stanleyville (options: Stanleyville, Berlin, Titov Veles, Lyallpur)
-1. Which of these is a former name of Kyrgyzstan, used until 1991? Kirghizia (options: United Provinces of the Rio de la Plata, French Togoland, Ellice Islands, Kirghizia)
-1. In 1879, which country moved its capital from Tarnovo to Sofia? Bulgaria (options: Bulgaria, Montenegro, United States, Malawi)
-1. When was it? Barrow, United States, is renamed Utqiagvik (2016; slider 1933 to 2023)
+1. Which came first? Rome becomes capital of Italy (1871) / Czechoslovakia splits into the Czech Republic and Slovakia (1993)
+1. What was Piedras Negras (Mexico) called before 1911? Ciudad Porfirio Diaz (options: Vyatka, Ciudad Porfirio Diaz, Luluabourg, Petrovgrad)
+1. Put in order: Lusaka replaces Livingstone as capital of Northern Rhodesia (1935) / Britain annexes the Punjab (1849) / Qurghonteppa, Tajikistan, is renamed Bokhtar (2018)
+1. Which of these is a former name of Ghana, used until 1957? Gold Coast (options: Turkmenia, German Samoa, Ukrainian SSR, Gold Coast)
+1. In 1975, which country moved its capital from Zomba to Lilongwe? Malawi (options: Russia, Malawi, Albania, Italy)
+1. When was it? France's 13 merged metropolitan regions take effect (2016; slider 1953 to 2023)
+1. In 1811, Paraguay became independent from… Spain (options: Spain, New Zealand, Pakistan, Belgium)
+1. When was it? The name Isle de France stops being used for today's Mauritius (1810; slider 1801 to 1891)
 
 ### No. 4, Tue (fairly easy)
 
-1. Which came first? Mysore, India, is renamed Mysuru (2014) / Western Samoa becomes independent from New Zealand (1962)
-1. Put in order: Port Elizabeth, South Africa, is renamed Gqeberha (2021) / Saigon, Viet Nam, is renamed Ho Chi Minh City (1976) / Edwinton, United States, is renamed Bismarck (1873)
-1. When was it? Littoria, Italy, is renamed Latina (1946; slider 1906 to 1976)
-1. Which came first? Treaty of London recognises Belgium and partitions Luxembourg (1839) / Paso del Norte, Mexico, is renamed Ciudad Juarez (1888)
-1. When was it? Bremersdorp, Eswatini, is renamed Manzini (1960; slider 1904 to 1994)
-1. How many years apart? Britain annexes Lagos (1861) / The name British Solomon Islands stops being used for today's Solomon Islands (1975)
-1. Which came first? Sudan becomes independent (1956) / Gottwaldov, Czechia, is renamed Zlin (1990)
-1. What was Austin (United States) called before 1839? Waterloo (options: Waterloo, Ciudad Porfirio Diaz, Port Swettenham, Kingstown)
+1. Which came first? Tajik SSR becomes a union republic, gaining the Khujand area (1929) / The name Central African Empire stops being used for today's Central African Republic (1979)
+1. Put in order: Capital of Greece moves from Nafplio to Athens (1834) / Uganda becomes independent with Kampala as its capital (1962) / Atlantic Bridge opens over the Panama Canal (2019)
+1. When was it? Edwinton, United States, is renamed Bismarck (1873; slider 1867 to 1937)
+1. Which came first? Fiji declared a republic (1987) / The name Greater Lebanon comes into use for today's Lebanon (1920)
+1. When was it? Kyrgyzstan and Tajikistan sign their border treaty (2025; slider 1936 to 2026)
+1. How many years apart? Kingdom of Kandy ceded to British rule (1815) / Danzig, Poland, is renamed Gdansk (1945)
+1. Put in order: United Kingdom transfers Hong Kong to China (1997) / Jadotville, Democratic Republic of the Congo, is renamed Likasi (1966) / Gotthard Base Tunnel opens under the Alps (2016)
+1. What was Xai-Xai (Mozambique) called before 1975? Joao Belo (options: Joao Belo, Pressburg, Salisbury, Nidaros)
 
 ### No. 5, Wed (medium)
 
-1. Which came first? Treaty of Aigun moves Amur lands from China to Russia (1858) / The capital of Kenya moves from Mombasa to Nairobi (1907)
-1. In 1946, Montenegro moved its capital to Podgorica. Where was it before? Cetinje (options: Kyiv, Cetinje, Helsinki, Massawa)
-1. Put in order: Burma becomes independent outside the Commonwealth (1948) / Portugal transfers Macau to China (1999) / New Zealand forces capture German Samoa (1914)
-1. Which came first? Calcutta, India, is renamed Kolkata (2001) / Bathurst, Gambia, is renamed Banjul (1973)
-1. Put in order: Gorky, Russia, is renamed Nizhny Novgorod (1990) / Czech government adopts Czechia as official English short name (2016) / Stalinstadt, Germany, is renamed Eisenhuttenstadt (1961)
-1. When was it? Trivandrum, India, is renamed Thiruvananthapuram (1991; slider 1883 to 2003)
-1. What was Gurugram (India) called before 2016? Gurgaon (options: Pondicherry, Mysore, Bangalore, Gurgaon)
-1. When was it? Saint Petersburg renamed Petrograd (1914; slider 1849 to 1999)
+1. Which came first? The name Nyasaland comes into use for today's Malawi (1907) / General Artigas Bridge links Paysandu and Colon (1975)
+1. Japan moved its capital to Tokyo. Where was it before? Kyoto (options: Kyoto, Manila, Quezon City, Cape Coast)
+1. Which came later? Britain proclaims a protectorate over the Solomon Islands (1893) / Philippeville, Algeria, is renamed Skikda (1962)
+1. Put in order: Mauritius becomes independent from the United Kingdom (1968) / Newfoundland renamed Newfoundland and Labrador (2001) / Pereiaslav-Khmelnytskyi, Ukraine, is renamed Pereiaslav (2019)
+1. When was it? Barbados becomes a republic (2021; slider 1906 to 2026)
+1. Vyatka is a former name of which city? Kirov (Russia) (options: Maputo (Mozambique), Gqeberha (South Africa), Kirov (Russia), Arviat (Canada))
+1. How many years apart? Bukharan People's Soviet Republic replaces the Emirate of Bukhara (1920) / Rio-Antirrio Bridge opens across the Gulf of Corinth (2004)
+1. When was it? Saint Petersburg renamed Petrograd (1914; slider 1825 to 1975)
 
 ### No. 6, Thu (medium)
 
-1. Which came first? Indonesia becomes independent from the Netherlands (1945) / Czechoslovakia declares independence from Austria-Hungary (1918)
-1. Iceland became independent from… Denmark (options: Indonesia, Pakistan, Spain, Denmark)
-1. Eskimo Point is a former name of which city? Arviat (Canada) (options: Arviat (Canada), Kenitra (Morocco), Hahndorf (Australia), Ciudad Bolivar (Venezuela))
-1. Put in order: Argentina declares independence from Spain (1816) / The name German South West Africa stops being used for today's Namibia (1915) / China cedes Kowloon to Britain (1860)
-1. Which of these is a former name of Tuvalu? Ellice Islands (options: Kampuchea, Ellice Islands, United Provinces of the Rio de la Plata, Ukrainian SSR)
-1. Put in order: Algeria becomes independent from France (1962) / Timor-Leste becomes independent after UN administration (2002) / Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo (2026)
-1. When was it? Van Diemen's Land becomes a colony separate from New South Wales (1825; slider 1806 to 1956)
-1. How many years apart? Loubomo, Republic of the Congo, is renamed Dolisie (1991) / The capital of the Philippines moves from Quezon City to Manila (1976)
+1. Which came first? The capital of Sri Lanka moves from Colombo to Sri Jayawardenepura Kotte (1982) / Korean armistice creates the Demilitarized Zone (1953)
+1. Which of these is a former name of South Africa, used from 1910 to 1961? Union of South Africa (options: Turkmenia, Outer Mongolia, Union of South Africa, Anglo-Egyptian Sudan)
+1. Romania became independent from… Ottoman Empire (options: South Africa, Colombia, Spain, Ottoman Empire)
+1. Put in order: New South Wales transfers Federal Capital Territory to Australia (1911) / Treaty of Ayacucho sets the Bolivia-Brazil border (1867) / Argentina declares independence from Spain (1816)
+1. Petrovsk-Port is a former name of which city? Makhachkala (Russia) (options: Tolyatti (Russia), Bismarck (United States), Makhachkala (Russia), Harare (Zimbabwe))
+1. Put in order: Karakalpak ASSR moves from Russian SFSR to Uzbek SSR (1936) / Kuybyshev, Russia, is renamed Samara (1991) / Italy recognises Ethiopia's independence (1896)
+1. When was it? Western Samoa renamed Samoa (1997; slider 1855 to 2005)
+1. When was it? Van Diemen's Land becomes a colony separate from New South Wales (1825; slider 1818 to 1968)
 
 ### No. 7, Fri (hard)
 
-1. Which came later? Botswana becomes independent from the United Kingdom (1966) / Nazi Germany annexes Austria (Anschluss) (1938)
-1. In 1918, which country moved its capital from Petrograd to Moscow? Russia (options: Philippines, Russia, Guinea-Bissau, Montenegro)
-1. When was it? Flevoland, built on reclaimed polders, becomes 12th Dutch province (1986; slider 1879 to 1999)
-1. Kalinin is a former name of which city? Tver (Russia) (options: Saint Petersburg (Russia), Tver (Russia), Naberezhnye Chelny (Russia), Yekaterinburg (Russia))
-1. Put in order: Malawi becomes independent from the United Kingdom (1964) / King William's Town, South Africa, is renamed Qonce (2021) / Krasnovodsk, Turkmenistan, is renamed Turkmenbashi (1993)
-1. When was it? Bosnia and Herzegovina becomes independent from Yugoslavia (1992; slider 1867 to 2017)
-1. Put in order: Mauch Chunk, United States, is renamed Jim Thorpe (1954) / Coquilhatville, Democratic Republic of the Congo, is renamed Mbandaka (1966) / France accepts Lebanon's independence (1943)
-1. How many years apart? Dominion of Canada created by Confederation (1867) / Sierra Leone becomes a British crown colony (1808)
+1. Which came first? Puna de Atacama arbitration gives most of the area to Argentina (1899) / Denmark sells Danish West Indies to the United States (1917)
+1. Put in order: Fiji becomes independent from the United Kingdom (1970) / Bosnia and Herzegovina becomes independent from Yugoslavia (1992) / Sejong becomes a special self-governing city (2012)
+1. When was it? ICJ fixes the disputed Burkina Faso-Mali frontier (1986; slider 1905 to 2025)
+1. Put in order: Dominican capital Santo Domingo renamed Ciudad Trujillo (1936) / Berlin, Canada, is renamed Kitchener (1916) / Lourenco Marques, Mozambique, is renamed Maputo (1976)
+1. Which came first? Tolbukhin, Bulgaria, is renamed Dobrich (1990) / Saint Barthelemy and Saint Martin separate from Guadeloupe (2007)
+1. When was it? Flevoland, built on reclaimed polders, becomes 12th Dutch province (1986; slider 1865 to 2015)
+1. Which came later? China cedes Kowloon to Britain (1860) / The capital of Serbia moves from Kragujevac to Belgrade (1841)
+1. How many years apart? The capital of Italy moves from Turin to Florence (1865) / Arbitral award gives Laguna del Desierto to Argentina (1994)
 
 ### No. 8, Sat (hard)
 
-1. Which came first? United States hands full control of Panama Canal to Panama (1999) / Victoria, Cameroon, is renamed Limbe (1982)
-1. Put in order: Qurghonteppa, Tajikistan, is renamed Bokhtar (2018) / Titov Veles, North Macedonia, is renamed Veles (1996) / Bangladesh declares independence from Pakistan, wins war that year (1971)
-1. Which came later? Panama separates from Colombia (1903) / Soviet Union formed by four founding republics (1922)
-1. In 1965, the Maldives became independent from… United Kingdom (options: Portugal, Spain, United Kingdom, France)
-1. When was it? Treaty of Lima: Tacna returns to Peru, Chile keeps Arica (1929; slider 1835 to 1985)
-1. What was Lubumbashi (Democratic Republic of the Congo) called before 1966? Elisabethville (options: Banningville, Leopoldville, Elisabethville, Coquilhatville)
-1. When was it? Stalinabad, Tajikistan, is renamed Dushanbe (1961; slider 1803 to 1993)
-1. Which of these is a former name of Mauritius, used until 1810? Isle de France (options: Ellice Islands, Isle de France, Bechuanaland, British Honduras)
+1. Which came first? Britain annexes Lagos (1861) / Six Australian colonies federate as Commonwealth of Australia (1901)
+1. Put in order: Shabani, Zimbabwe, is renamed Zvishavane (1982) / Czech government adopts Czechia as official English short name (2016) / Saar joins West Germany as Saarland (1957)
+1. Which came first? Germany declares a protectorate over the Marshall Islands (1885) / The capital of Morocco moves from Fez to Rabat (1912)
+1. Coquilhatville is a former name of which city? Mbandaka (Democratic Republic of the Congo) (options: Lubumbashi (Democratic Republic of the Congo), Kinshasa (Democratic Republic of the Congo), Mbandaka (Democratic Republic of the Congo), Kisangani (Democratic Republic of the Congo))
+1. When was it? Treaty of Lima: Tacna returns to Peru, Chile keeps Arica (1929; slider 1830 to 1980)
+1. Put in order: The name German Samoa comes into use for today's Samoa (1900) / The name Moldavia comes into use for today's Moldova (1940) / Suez Canal opens (1869)
+1. When was it? Stalingrad, Russia, is renamed Volgograd (1961; slider 1832 to 2022)
+1. In 1960, the capital of Brazil moved from Rio de Janeiro to… Brasilia (options: Bissau, Island of Mozambique, Brasilia, Lourenco Marques)
 
 ### No. 9, Sun (hardest)
 
-1. Which came first? Alberta and Saskatchewan become Canadian provinces (1905) / Tunisia becomes a French protectorate (1881)
-1. Put in order: German Empire proclaimed (1871) / Korean Empire proclaimed (1897) / Burma separated from British India as its own colony (1937)
-1. Which came later? Zhongdian, China, is renamed Shangri-La (2001) / Southern Rhodesia becomes independent Zimbabwe (1980)
-1. Put in order: Kirovohrad, Ukraine, is renamed Kropyvnytskyi (2016) / Suriname becomes independent from the Netherlands (1975) / The name Russian SFSR stops being used for today's Russia (1991)
-1. Kuybyshev is a former name of which city? Samara (Russia) (options: Naberezhnye Chelny (Russia), Samara (Russia), Rybinsk (Russia), Nizhny Novgorod (Russia))
-1. How many years apart? New South Wales transfers Federal Capital Territory to Australia (1911) / Nunavut split from Northwest Territories as new Canadian territory (1999)
-1. In 1920, the capital of Albania moved from Durres to… Tirana (options: Nafplio, Tirana, Belgrade, Kragujevac)
+1. Which came first? Wankie, Zimbabwe, is renamed Hwange (1982) / Samoa crosses International Date Line, skipping 30 December (2011)
+1. In 1828, Uruguay became independent from… Brazil (options: Spain, Portugal, Brazil, United Kingdom)
+1. Put in order: Cambodia becomes independent from France (1953) / Interoceanic Highway between Brazil and Peru is inaugurated (2011) / Sverdlovsk, Russia, is renamed Yekaterinburg (1991)
+1. What was N'Djamena (Chad) called before 1973? Fort-Lamy (options: Fort Chimo, Fort-Lamy, Fort William and Port Arthur, Fort-Archambault)
+1. Which of these is a former name of Ireland, used from 1922 to 1937? Irish Free State (options: Malaya, Trucial States, Basutoland, Irish Free State)
+1. How many years apart? Anglo-Siamese Treaty: Siam cedes four Malay states to Britain (1909) / Viet Nam cedes three southern provinces to France (1862)
+1. When was it? Sao Tome and Principe becomes independent from Portugal (1975; slider 1800 to 2026)
 1. When was it? Persia cedes Erivan and Nakhchivan khanates to Russia (1828; slider 1800 to 2026)
 
 ### No. 10, Mon (easy)
 
-1. Which came later? Britain annexes the Punjab (1849) / North Schleswig votes to join Denmark and is transferred (1920)
-1. When was it? The name Siam comes back into use for today's Thailand (1945; slider 1913 to 1963)
-1. Which came later? Leopoldville, Democratic Republic of the Congo, is renamed Kinshasa (1966) / Viet Nam cedes three southern provinces to France (1862)
-1. Put in order: Treaty of Portsmouth: Japan gains southern Sakhalin from Russia (1905) / Nelspruit, South Africa, is renamed Mbombela (2009) / Caribrod, Serbia, is renamed Dimitrovgrad (1950)
-1. When was it? Yekaterinodar, Russia, is renamed Krasnodar (1920; slider 1915 to 1985)
-1. What was Harare (Zimbabwe) called before 1982? Salisbury (options: Nur-Sultan, Bombay, Salisbury, Stalinabad)
-1. Which came first? Erie Canal opens (1825) / Rome becomes capital of Italy (1871)
-1. Put in order: Peljesac Bridge opens, linking Dubrovnik area to rest of Croatia (2022) / Channel Tunnel opens between England and France (1994) / The capital of Ukraine moves from Kharkiv to Kyiv (1934)
+1. Which came first? Loubomo, Republic of the Congo, is renamed Dolisie (1991) / Kazakh capital moves from Orenburg to Kzyl-Orda (1925)
+1. When was it? Crampel, Central African Republic, is renamed Kaga-Bandoro (1974; slider 1965 to 2015)
+1. Put in order: People's Republic of China proclaimed in Beijing (1949) / ICJ fixes the Burkina Faso-Niger frontier (2013) / The name Muscat and Oman comes into use for today's Oman (1856)
+1. When was it? Stabroek, Guyana, is renamed Georgetown (1812; slider 1806 to 1876)
+1. In 1894, Djibouti moved its capital to the city of Djibouti. Where was it before? Obock (options: Kolonia, Entebbe, Petrograd, Obock)
+1. Put in order: Britain returns Weihaiwei to China (1930) / Saint Kitts and Nevis becomes independent from the United Kingdom (1983) / Equatorial Guinea decrees Ciudad de la Paz its capital, replacing Malabo (2026)
+1. How many years apart? South Coast, Australia, is renamed Gold Coast (1958) / Broughton Island, Canada, is renamed Qikiqtarjuaq (1998)
+1. What was Bujumbura (Burundi) called before 1962? Usumbura (options: Usumbura, Tilsit, Chkalov, Stalin)
 
 ### No. 11, Tue (fairly easy)
 
-1. Which came first? The state of South Korea is founded (1948) / Dnipropetrovsk, Ukraine, is renamed Dnipro (2016)
-1. What was Tolyatti (Russia) called before 1964? Stavropol (options: Tolbukhin, Stuart, Stavropol, Niislel Khuree)
-1. When was it? The name Transjordan comes into use for today's Jordan (1921; slider 1858 to 1928)
-1. In 1897, the capital of Eritrea moved from Massawa to… Asmara (options: Asmara, Almaty, Moroni, Auckland)
-1. When was it? Afsluitdijk closes off the Zuiderzee, creating the IJsselmeer (1932; slider 1869 to 1959)
-1. How many years apart? Semipalatinsk, Kazakhstan, is renamed Semey (2007) / Hawaii becomes the 50th US state (1959)
-1. Northern Rhodesia (from 1911 to 1964) is a former name of which country? Zambia (options: Egypt, Yemen, Zambia, Canada)
-1. Eritrea became independent from… Ethiopia (options: Ethiopia, Brazil, France, Colombia)
+1. Which came first? Iceland becomes a sovereign kingdom in union with Denmark (1918) / The name British Solomon Islands stops being used for today's Solomon Islands (1975)
+1. When was it? Tangier international zone returns to Moroccan sovereignty (1956; slider 1892 to 1962)
+1. Which came first? Republic of China proclaimed, ending Qing imperial rule (1912) / Compact of Free Association ends US trusteeship of Marshall Islands, Micronesia (1986)
+1. Put in order: Paraguay proclaims itself a republic (1813) / Argentina and Chile sign a boundary treaty (1881) / Treaty of Saint-Germain: South Tyrol passes from Austria to Italy (1919)
+1. When was it? The capital of Albania moves from Durres to Tirana (1920; slider 1885 to 1975)
+1. Bathurst is a former name of which city? Banjul (Gambia) (options: Banjul (Gambia), Wroclaw (Poland), Ciudad Obregon (Mexico), Izhevsk (Russia))
+1. Put in order: Przhevalsk, Kyrgyzstan, is renamed Karakol (1991) / Soviet Union formed by four founding republics (1922) / The capital of Montenegro moves from Cetinje to Podgorica (1946)
+1. Which came later? Erie Canal opens (1825) / Liberia declares independence (1847)
 
 ### No. 12, Wed (medium)
 
-1. Which came later? Swan River Colony founded in Western Australia (1829) / Britain annexes the Transvaal (1877)
-1. When was it? Expanded Panama Canal with new larger locks opens (2016; slider 1936 to 2026)
-1. Which came first? Kutaraja, Indonesia, is renamed Banda Aceh (1963) / Ali Bayramli, Azerbaijan, is renamed Shirvan (2008)
-1. Put in order: Federation of Rhodesia and Nyasaland created (1953) / Saint Kitts and Nevis becomes independent from the United Kingdom (1983) / South Sudan becomes independent from Sudan (2011)
-1. Which came first? The capital of Guinea-Bissau moves from Bolama to Bissau (1941) / Barbados becomes independent from the United Kingdom (1966)
-1. Stabroek is a former name of which city? Georgetown (Guyana) (options: Mutare (Zimbabwe), Georgetown (Guyana), Ciudad Obregon (Mexico), Mbandaka (Democratic Republic of the Congo))
-1. Which came first? The name Kampuchea comes into use for today's Cambodia (1976) / Ura-Tyube, Tajikistan, is renamed Istaravshan (2000)
-1. How many years apart? Kirovabad, Azerbaijan, is renamed Ganja (1989) / Pietersburg, South Africa, is renamed Polokwane (2005)
+1. Which came first? Britain occupies Egypt (1882) / Nazi Germany annexes Austria (Anschluss) (1938)
+1. In 1967, which country moved its capital from Rawalpindi to Islamabad? Pakistan (options: Honduras, Albania, Equatorial Guinea, Pakistan)
+1. In 1958, Guinea became independent from… France (options: Indonesia, France, Spain, Malaysia)
+1. When was it? Acre becomes a state of Brazil (1962; slider 1886 to 2006)
+1. Which of these is a former name of the Democratic Republic of the Congo, used from 1971 to 1997? Zaire (options: Gold Coast, Ubangi-Shari, Zaire, French Somaliland)
+1. What was Kabwe (Zambia) called before 1966? Broken Hill (options: Pile o' Bones, Broken Hill, Stalingrad, Palmerston)
+1. When was it? Pile o' Bones, Canada, is renamed Regina (1882; slider 1854 to 2004)
+1. How many years apart? Mauch Chunk, United States, is renamed Jim Thorpe (1954) / United States hands full control of Panama Canal to Panama (1999)
 
 ### No. 13, Thu (medium)
 
-1. Which came later? Mali becomes independent from France (1960) / The name French Togoland comes into use for today's Togo (1916)
-1. Put in order: Croatia becomes independent from Yugoslavia (1991) / Voroshilov, Russia, is renamed Ussuriysk (1957) / Canada and Denmark agree to split Hans Island between them (2022)
-1. When was it? British Honduras officially renamed Belize (1973; slider 1893 to 1983)
-1. Which of these is a former name of Namibia, used until 1990? South West Africa (options: Transjordan, Italian Libya, South West Africa, British East Africa)
-1. In 1970, Belize moved its capital to Belmopan. Where was it before? Belize City (options: Dar es Salaam, Abuja, Nairobi, Belize City)
-1. In 1991, North Macedonia became independent from… Yugoslavia (options: Denmark, Yugoslavia, Portugal, Pakistan)
-1. What was Chennai (India) called before 1996? Madras (options: Madras, Trivandrum, Calcutta, Cochin)
-1. When was it? Burma's English name changed to Myanmar, Rangoon to Yangon (1989; slider 1849 to 1999)
+1. Which came first? Petrograd renamed Leningrad (1924) / Italy proclaims the colony of Eritrea (1890)
+1. When was it? Expanded Panama Canal with new larger locks opens (2016; slider 1935 to 2025)
+1. Which came first? Italy unifies Tripolitania and Cyrenaica as the colony of Libya (1934) / Granville, Canada, is renamed Vancouver (1886)
+1. Put in order: Kazakhstan and Turkmenistan sign their border treaty (2001) / The name French Togoland comes into use for today's Togo (1916) / Cook Islands become self-governing under a new constitution (1965)
+1. Which came later? Russia transfers part of Bolshoy Ussuriysky Island to China (2008) / Yamoussoukro made capital of Cote d'Ivoire instead of Abidjan (1983)
+1. When was it? British Honduras officially renamed Belize (1973; slider 1896 to 2016)
+1. Which came later? ICJ rules Kasikili/Sedudu island belongs to Botswana (1999) / Nova Lisboa, Angola, is renamed Huambo (1975)
+1. Which came first? Kazakhstan and China sign their border agreement (1994) / Chile creates Arica y Parinacota and Los Rios regions (2007)
 
 ### No. 14, Fri (hard)
 
-1. Which came first? Equatorial Guinea becomes independent from Spain (1968) / Santa Fe de Bogota, Colombia, is renamed Bogota (2000)
-1. When was it? Siam officially renamed Thailand (1939; slider 1860 to 1980)
-1. Which came first? Kiribati moves International Date Line east around Line Islands (1995) / The Central African Republic becomes independent from France (1960)
-1. Parahyba do Norte is a former name of which city? Joao Pessoa (Brazil) (options: Makhachkala (Russia), Niteroi (Brazil), Joao Pessoa (Brazil), Kirov (Russia))
-1. When was it? Svalbard Treaty takes effect under Norwegian sovereignty (1925; slider 1827 to 1977)
-1. Put in order: Kingdom of Swaziland renamed Kingdom of Eswatini (2018) / Brunei Town, Brunei, is renamed Bandar Seri Begawan (1970) / Yamoussoukro made capital of Cote d'Ivoire instead of Abidjan (1983)
-1. Put in order: Myanmar's government moves capital from Yangon to Naypyidaw (2005) / Salazar, Angola, is renamed N'dalatando (1976) / The capital of Botswana moves from Mafeking to Gaborone (1965)
-1. How many years apart? Panama Canal opens (1914) / Mexico cedes California and the Southwest to the United States (1848)
+1. Which came first? Federation of Malaya becomes independent (1957) / Constantinople, Turkiye, is renamed Istanbul (1930)
+1. When was it? Stalinabad, Tajikistan, is renamed Dushanbe (1961; slider 1894 to 2014)
+1. Which came first? The capital of Viet Nam moves from Hue to Hanoi (1945) / Kenya becomes independent from the United Kingdom (1963)
+1. Put in order: Treaty fixes the Kyrgyzstan-Tajikistan-Uzbekistan border tripoint (2025) / Cochin, India, is renamed Kochi (1996) / Netherlands Antilles dissolved; Curacao and Sint Maarten become countries (2010)
+1. What was Brasov (Romania) called before 1960? Orasul Stalin (options: Ciudad Eva Peron, Stalin, Orasul Stalin, Luluabourg)
+1. Put in order: Mozambique becomes independent from Portugal (1975) / Norway's capital Kristiania renamed Oslo (1925) / Burma becomes independent outside the Commonwealth (1948)
+1. Which came first? Pillau, Russia, is renamed Baltiysk (1946) / The capital of Ukraine moves from Kharkiv to Kyiv (1934)
+1. How many years apart? Pamir boundary protocols create Afghanistan's Wakhan Corridor (1895) / Nurek Dam completed, then the world's tallest dam (1980)
 

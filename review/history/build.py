@@ -37,7 +37,8 @@ PREDECESSORS = {"Czechoslovakia", "Yugoslavia", "Soviet Union", "Ottoman Empire"
 # Two predecessor states rather than a name: left out by the same reasoning (an open question for Matthew).
 NOT_A_NAME = {("Yemen", "North Yemen and South Yemen")}
 # Capital moves never asked as a year (asked only as "which city"). Block B's Kazakhstan 1997 line follows the same rule.
-CAP_NO_YEAR = {"Japan", "Germany", "Kazakhstan", "Tanzania", "Solomon Islands"}
+CAP_NO_YEAR = {"Japan", "Germany", "Kazakhstan", "Tanzania", "Solomon Islands",
+               "Kenya"}   # Kenya: Block A says Mombasa to Nairobi in 1907, Block D says 1905. A clash, so neither year is asked.
 CAP_NO_YEAR_B = {"Kazakhstan moves capital from Almaty to Akmola (later Astana)"}
 POLITICAL_CAPITAL = {"Burundi"}
 # Countries the game treats as South America (Block B has only 24 events there: at most 2 a day).
@@ -58,6 +59,15 @@ C_TEXT = {("Thunder Bay", "Canada"): "Fort William and Port Arthur, Canada, merg
           ("Niteroi", "Brazil"): "Vila Real da Praia Grande, Brazil, is renamed Nictheroy (now spelled Niteroi)",
           ("Kahramanmaras", "Turkiye"): "Maras, Turkiye, is given the title kahraman (heroic): Kahramanmaras",
           ("Sanliurfa", "Turkiye"): "Urfa, Turkiye, is given the title sanli (glorious): Sanliurfa"}
+# Block D (240 more events). Lines not asked, and why:
+D_EXCLUDE = {
+    "Nairobi replaces Mombasa as capital of the East Africa Protectorate": "clashes with Block A (Kenya: Mombasa to Nairobi, 1907); neither year is asked",
+    "Tonga ends British protection and becomes fully independent": "Block A says Tonga was never colonised and its independence year is \"don't ask\"",
+    "Dakar replaces Saint-Louis as capital of French West Africa": "Block A marks Senegal's capital changes \"don't ask\"",
+    "Niamey replaces Zinder as capital of the colony of Niger": "Block A marks Niger's capital changes \"don't ask\"",
+}
+# Another year is defensible: never on the slider, 20 years apart in pairs (Duet's note on Paraguay; Guinea-Bissau is on Block A's list).
+D_FUZZY = {"Paraguay proclaims itself a republic", "Portugal recognises Guinea-Bissau's independence"}
 GAP_FIRST = 5      # "which came first" and "put in order": events at least 5 years apart
 GAP_FUZZY = 20     # 20 for the defensible-year countries
 FACT_REST = 21     # the same fact (in any kind of question) comes back no sooner than 21 days later
@@ -81,8 +91,8 @@ def block(fn, tag):
 
 
 A_LINES, B_LINES = block("block-a.txt", "A"), block("block-b.txt", "B")
-C_LINES = block("block-c.txt", "C")
-assert len(A_LINES) == 193 and len(B_LINES) == 303 and len(C_LINES) == 188
+C_LINES, D_LINES = block("block-c.txt", "C"), block("block-d.txt", "D")
+assert len(A_LINES) == 193 and len(B_LINES) == 303 and len(C_LINES) == 188 and len(D_LINES) == 240
 
 
 def split_top(s):  # split on ";" outside brackets
@@ -118,6 +128,10 @@ for k, line in enumerate(B_LINES, 1):
     y, text, cs = [x.strip() for x in line.split(" | ")]
     B.append({"k": k, "line": line, "y": int(y), "text": text, "cs": [x.strip() for x in cs.split(",")]})
 
+Dv = []
+for k, line in enumerate(D_LINES, 1):
+    y, text, cs = [x.strip() for x in line.split(" | ")]
+    Dv.append({"k": k, "line": line, "y": int(y), "text": text, "cs": [x.strip() for x in cs.split(",")]})
 C = []
 for k, line in enumerate(C_LINES, 1):
     city, country, old, y, what = [x.strip() for x in line.split(" | ")]
@@ -137,12 +151,18 @@ for b in B:
     fz = b["text"] in FUZZY_B
     noyear = b["text"] in CAP_NO_YEAR_B
     add_fact(b["y"], b["text"], b["cs"], ["B:%d" % b["k"]], tl=not fz and not noyear, wf=not noyear, fuzzy=fz)
+d_excluded = []
+for d in Dv:   # Block D's events join Block B's, under the same rules
+    if d["text"] in D_EXCLUDE: d_excluded.append((d, D_EXCLUDE[d["text"]])); continue
+    fz = d["text"] in D_FUZZY
+    add_fact(d["y"], d["text"], d["cs"], ["D:%d" % d["k"]], tl=not fz, fuzzy=fz)
+EVENTS = len(facts)   # Block B and Block D events come first; Block A and C facts join them where they say the same thing
 
 INDEP_RE = re.compile(r"independen|separates|federate|Confederation|proclaim|unify|unite|reunif|dissolve|splits|formed|established|recognis|partitioned into|protectorate in \w+ ends")
 merges = []  # for the review file
 
 
-ALIAS = {"Afghanistan": ["Afghan"], "Mexico": ["Mexican"], "Viet Nam": ["Vietnam"], "Czechia": ["Czech"],
+ALIAS = {"Afghanistan": ["Afghan"], "Somalia": ["Somali Republic"], "Mexico": ["Mexican"], "Viet Nam": ["Vietnam"], "Czechia": ["Czech"],
          "Costa Rica": ["Central America"], "El Salvador": ["Central America"], "Guatemala": ["Central America"],
          "Honduras": ["Central America"], "Nicaragua": ["Central America"]}
 
@@ -154,7 +174,7 @@ def mentions(text, country, extra=()):
 
 
 def find_b(year, country, pattern, extra=()):
-    return [f for f in facts[:len(B)] if f["y"] == year and country in f["cs"] and re.search(pattern, f["text"], re.I) and mentions(f["text"], country, extra)]
+    return [f for f in facts[:EVENTS] if f["y"] == year and country in f["cs"] and re.search(pattern, f["text"], re.I) and mentions(f["text"], country, extra)]
 
 
 def from_label(c, frm):
@@ -212,6 +232,7 @@ for c, r in A.items():
             hits = find_b(m["y"], c, r"capital|Parliament", (m["to"],))
             if hits:
                 h = hits[0]; h["src"].append("A:" + c); h["role"].append(("cap", c, i)); cap_fact[key] = h
+                if c in CAP_NO_YEAR: h["tl"] = h["wf"] = False
                 merges.append(("capital", c, m["y"], h["text"])); continue
         noyear = c in CAP_NO_YEAR or m["y"] is None
         text = "The %s of %s moves from %s to %s" % (word, the(c), m["from"], m["to"])
@@ -234,7 +255,7 @@ for c, r in A.items():
                 if c in FUZZY: skipped_names.append((c, nm, which, y, "defensible-year country")); continue
                 if y == r["y"]: skipped_names.append((c, nm, which, y, "same year as independence")); continue
                 distinct = [w for w in re.findall(r"[A-Za-z']+", nm) if w.lower() not in GENERIC and w.lower() not in STOP and len(w) > 2]
-                hits = [f for f in facts[:len(B)] if f["y"] == y and c in f["cs"] and (
+                hits = [f for f in facts[:EVENTS] if f["y"] == y and c in f["cs"] and (
                     any(re.search(r"\b" + re.escape(w) + r"\b", f["text"], re.I) for w in distinct) or re.search(r"renamed|\bname", f["text"], re.I))]
                 if hits:
                     h = hits[0]; h["src"].append("A:" + c); h["role"].append(("name", c, nm)); name_facts[(c, nm)].append(h)
@@ -256,7 +277,7 @@ city_fact, c_skipped = {}, []
 for e in C:
     key = (e["city"], e["c"])
     if key in C_ONE_SOURCE: c_skipped.append((e, "one source only")); continue
-    hits = [f for f in facts[:len(B)] if f["y"] == e["y"] and re.search(r"\b" + re.escape(e["city"]) + r"\b", f["text"]) and re.search(r"\b" + re.escape(e["old"]) + r"\b", f["text"])]
+    hits = [f for f in facts[:EVENTS] if f["y"] == e["y"] and re.search(r"\b" + re.escape(e["city"]) + r"\b", f["text"]) and re.search(r"\b" + re.escape(e["old"]) + r"\b", f["text"])]
     if hits:   # the same rename is a Block B event: one fact, both lines cited
         h = hits[0]; h["src"].append("C:%d" % e["k"]); h["role"].append(("city", e["city"])); city_fact[e["k"]] = h
         merges.append(("city name", e["city"], e["y"], h["text"])); continue
@@ -273,12 +294,21 @@ for e in C:
     for f in facts:
         if f["id"] != cf and any(p.search(f["text"]) for p in pats): related[cf].add(f["id"]); related[f["id"]].add(cf)
 
+# Lines that restate each other without being merged (same year, same country) never share a day either.
+by_year = collections.defaultdict(list)
+for f in facts:
+    if f["y"]: by_year[f["y"]].append(f)
+for fs in by_year.values():
+    for i, a in enumerate(fs):
+        for b in fs[i + 1:]:
+            if set(a["cs"]) & set(b["cs"]): related[a["id"]].add(b["id"]); related[b["id"]].add(a["id"])
+
 for f in facts:
     if f["y"] is None or f["y"] < YEAR_LO or f["y"] > YEAR_HI: f["tl"] = False; f["wf"] = f["wf"] and f["y"] is not None and YEAR_LO <= f["y"] <= YEAR_HI
 
 # ---------------------------------------------------------------- 4. multiple-choice questions
 E = collections.defaultdict(set)  # countries whose histories overlap with each country
-for b in B:
+for b in B + Dv:
     for x in b["cs"]:
         E[x].update(y for y in b["cs"] if y != x)
 for a, b in OVERLAP: E[a].add(b); E[b].add(a)
@@ -429,7 +459,8 @@ TL = [f for f in facts if f["tl"]]
 WF = [f for f in facts if f["wf"]]
 BANK = {"tl": TL, "mc_name": [q for q in Q if q["kind"] in ("name", "nameof")], "mc_from": [q for q in Q if q["kind"] == "from"],
         "mc_cap": [q for q in Q if q["kind"] in ("capto", "capfrom", "capwho")], "mc_city": [q for q in Q if q["kind"] in ("city", "cityof")]}
-CYCLE = int(os.environ.get("LOGBOOK_CYCLE", "371"))   # days before any single-fact question comes back
+SINGLES_PER_DAY = 3.9   # slider and four-choice questions a day, on average; the rest are pairs and orders made fresh
+CYCLE = int(os.environ.get("LOGBOOK_CYCLE", "0")) or max(371, -(-sum(len(v) for v in BANK.values()) * 10 // 39))   # days before any single-fact question comes back
 H = 2 * CYCLE                                         # the shipped schedule; it then starts again from No. 1
 R_ORDER = 1.75      # "put in order" questions a day, on average
 R_GAP = 0.6         # "how many years apart?" a day, on average, late in the round
@@ -604,7 +635,9 @@ for n in range(1, H + 1):
     n_order = per_day(n, round(R_ORDER * H), H)
     n_gap = per_day(n, round(R_GAP * H), H)
     n_pair = PER_DAY - len(singles) - n_order - n_gap
-    if n_pair < 1: n_order -= 1 - n_pair; n_pair = 1
+    while n_pair < 1 and n_order > 0: n_order -= 1; n_pair += 1
+    while n_pair < 1 and n_gap > 0: n_gap -= 1; n_pair += 1
+    assert n_pair >= 1, (n, len(singles))
     kinds = [("s", s) for s in singles] + [("o", None)] * n_order + [("w", None)] * (n_pair - 1)
     # Order: a "which came first" opens the round; then spread the kinds so the same kind rarely sits twice in a row.
     r.shuffle(kinds)
@@ -698,17 +731,18 @@ def srcline(s):
     t, v = s.split(":", 1)
     if t == "A": return "Block A: " + A[v]["line"]
     if t == "C": return "Block C line %s: %s" % (v, C[int(v) - 1]["line"])
+    if t == "D": return "Block D line %s: %s" % (v, Dv[int(v) - 1]["line"])
     return "Block B line %s: %s" % (v, B[int(v) - 1]["line"])
 
 
 out = []
 w = out.append
 w("# Logbook: every question the game can ask\n")
-w("Written by `review/history/build.py` from `review/history/block-a.txt`, `block-b.txt` and `block-c.txt` (the source-checked blocks, unchanged). "
+w("Written by `review/history/build.py` from `review/history/block-a.txt`, `block-b.txt`, `block-c.txt` and `block-d.txt` (the source-checked blocks, unchanged). "
   "Each entry quotes the Block line it came from. Regenerate this file by running the script; don't edit it by hand.\n")
 w("## The numbers\n")
 w("| | |\n|---|---|")
-w("| Dated facts (Block B events, Block A years, Block C city renames) | %d |" % len(facts))
+w("| Dated facts (Block B and D events, Block A years, Block C city renames) | %d |" % len(facts))
 w("| ...usable in \"Which came first?\" and \"Put in order\" | %d |" % len(WF))
 w("| ...usable in \"When was it?\" (the timeline slider) | %d |" % len(TL))
 w("| \"What was it called?\" questions | %d |" % len(BANK["mc_name"]))
@@ -743,7 +777,7 @@ for line in [
 w("")
 
 w("## Where Block A and Block B describe the same thing\n")
-w("These Block A years were joined to the Block B event with the same year, so the game asks it once. No clashes were found.\n")
+w("These Block A years and Block C renames were joined to the Block B or Block D event with the same year, so the game asks it once. One clash was found and nothing was chosen: Kenya's capital move is 1907 in Block A and 1905 in Block D, so neither year is asked (the move is still asked as \"which city?\", without a year).\n")
 for kind, c, y, t in merges: w("- %s, %s %d: \"%s\"" % (c, kind, y, t))
 w("")
 w("## Questions left out for want of fair wrong answers\n")
@@ -759,6 +793,9 @@ for f in facts:
     flags = ", ".join(x for x, ok in (("first" + (" (20-year gap)" if f["fuzzy"] else ""), f["wf"]), ("slider", f["tl"])) if ok) or "not asked"
     w("%d. **%s** %s  [%s]" % (f["id"] + 1, f["y"] if f["y"] else "(no year)", f["text"], flags))
     for s in f["src"]: w("   - %s" % srcline(s))
+w("")
+w("## Block D lines not asked\n")
+for d, why in d_excluded: w("- Block D line %d: %s: %s" % (d["k"], d["line"], why))
 w("")
 w("## Block C lines not asked as \"What was this city called?\"\n")
 for e, why in c_skipped: w("- %s (%s), %s %d: %s, not asked at all" % (e["city"], e["c"], e["old"], e["y"], why))

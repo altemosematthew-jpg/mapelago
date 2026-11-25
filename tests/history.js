@@ -18,13 +18,13 @@ function check(ok, name, detail) { if (ok) passed++; else failed.push(name + (de
 const box = { window: {} }; vm.runInNewContext(fs.readFileSync(path.join(ROOT, "history-data.js"), "utf8"), box);
 const D = box.window.MX_HIST, F = D.F, Q = D.Q, T = D.T, Z = new Set(D.z);
 function block(file, tag) { const L = fs.readFileSync(path.join(ROOT, "review/history", file), "utf8").split("\n"); return L.slice(L.indexOf("BLOCK " + tag) + 1, L.indexOf("END BLOCK " + tag)); }
-const A_LINES = block("block-a.txt", "A"), B_LINES = block("block-b.txt", "B"), C_LINES = block("block-c.txt", "C");
+const A_LINES = block("block-a.txt", "A"), B_LINES = block("block-b.txt", "B"), C_LINES = block("block-c.txt", "C"), D_LINES = block("block-d.txt", "D");
 const A = Object.fromEntries(A_LINES.map((l) => [l.split(" | ")[0], l]));
 const key = (it) => it[0] === "w" || it[0] === "g" ? it[0] + [it[1], it[2]].sort((a, b) => a - b).join(".") : it[0] === "o" ? "o" + it.slice(1).sort((a, b) => a - b).join(".") : it[0] + it[1];
 const factsOf = (it) => it[0] === "m" ? Q[it[1]][3] : it[0] === "t" ? [it[1]] : it[0] === "o" ? it.slice(1) : [it[1], it[2]];
 
 function dataChecks() {
-  check(A_LINES.length === 193 && B_LINES.length === 303 && C_LINES.length === 188, "history: the blocks are complete (193 + 303 + 188 lines)");
+  check(A_LINES.length === 193 && B_LINES.length === 303 && C_LINES.length === 188 && D_LINES.length === 240, "history: the blocks are complete (193 + 303 + 188 + 240 lines)");
   // 1. no question repeats within the claimed cycle, at any point, including where the schedule starts over
   const H = D.days, where = {}; let gap = Infinity, fgap = Infinity; const lastF = {};
   for (let n = 1; n <= 2 * H; n++) for (const it of D.D[(n - 1) % H]) {
@@ -45,7 +45,7 @@ function dataChecks() {
     if (!s.length) bad.push("fact " + i + " has no source");
     s.forEach((r) => {
       const [t, v] = [r.slice(0, 1), r.slice(2)];
-      if (t === "B") { const l = B_LINES[Number(v) - 1]; if (!l) bad.push(r); else if (s[0] === r && l !== `${y} | ${text} | ${l.split(" | ")[2]}`) bad.push(`fact ${i} wording differs from ${r}`); }
+      if (t === "B" || t === "D") { const l = (t === "B" ? B_LINES : D_LINES)[Number(v) - 1]; if (!l) bad.push(r); else if (s[0] === r && l !== `${y} | ${text} | ${l.split(" | ")[2]}`) bad.push(`fact ${i} wording differs from ${r}`); }
       else if (t === "A") { if (!A[v]) bad.push(r); else if (y && !A[v].includes(String(y))) bad.push(`fact ${i}: ${y} not in Block A ${v}`); }
       else if (t === "C") {
         const l = C_LINES[Number(v) - 1], f = l && l.split(" | ");

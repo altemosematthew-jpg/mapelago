@@ -16,7 +16,7 @@ The release version (`mapelago-0.14.0`, `?v=0.14.0`) is not changed anywhere. Lo
 | `history.js` | The game. The name "Logbook" is set once at the top (`NAME`); the page title, footer text and `site.js` entry say it too. |
 | `history-data.js` | Facts, questions and the 742-day schedule. Written by `review/history/build.py`; don't edit by hand. |
 | `og-history.png` | Link preview image (1200 × 630), in the same style as the others. |
-| `review/history/block-a.txt`, `block-b.txt`, `block-c.txt` | The source-checked blocks, unchanged. The only source of facts. |
+| `review/history/block-a.txt` to `block-d.txt` | The four source-checked blocks, unchanged. The only source of facts. |
 | `review/history/build.py` | Turns the blocks into `history-data.js` and `review/history-questions.md`. The rules that came with the data are the tables at its top. |
 | `review/history-questions.md` | Every question the game can ask, each with the Block line it came from, plus the first two weeks. |
 | `review/history-merge-notes.md` | This file. |
@@ -80,6 +80,21 @@ Not changed: `extras.js`, `site.css`, `index.html` and the other game pages, `sw
 6. **Counts.** "Eight daily games" becomes nine in `games/index.html` (title, description, lede), in `copy.json`'s `home.line` and `allGames.intro`, and in any other place that counts the games.
 7. **Tests.** Optionally add `"history.html"` to `tests/run.js` section 1 (loads cleanly). `tests/history.js` already checks that, at 375 px and on a desktop.
 
+## Follow-up release: Blocks C and D
+
+If an earlier commit of this branch has already been released, the follow-up changes only Logbook's own files:
+`history-data.js`, `history.js` (the city question's label and Block C's "what changed" note), `review/history/`
+(adds `block-c.txt` and `block-d.txt`, updates `build.py`), `review/history-questions.md`, `tests/history.js` and
+`tests/history-golden.json`. No shared file changes, so nothing in "To do" above changes either, except that the
+release that ships it bumps the version as usual (including the four `?v=` in `history.html`, so returning players
+get the new `history-data.js` and `history.js`).
+
+- Block C, 188 renamed cities: a new kind, "What was this city called?" (350 questions), and 177 new dated facts.
+- Block D, 240 events: joined to Block B's events under the same rules; 46 lines restate Block A facts and are one fact with them.
+- One clash, not chosen: Kenya's capital move is 1907 in Block A and 1905 in Block D, so neither year is asked.
+- Four Block D lines aren't asked (Tonga 1970, Dakar 1902, Niamey 1926, and the Kenya line), with reasons in `review/history-questions.md`.
+- The cycle is now 414 days before any question repeats (it was 371); the shipped schedule is 828 days and then starts again.
+
 ## Whole-branch check
 
-Against `claude/charming-bardeen-967w66` at commit 13959f4 ("Release 0.15.2: Mystery country on Mystery city's rules"), `git merge-tree --write-tree` reports no conflicts. Merged in a scratch worktree, both suites pass: `tests/run.js` 392 passed, 0 failed, and `tests/history.js` 66 passed, 0 failed. Re-run before merging, since both branches keep moving.
+Checked with the working copy that includes Blocks C and D. `git merge-tree --write-tree` reports no conflicts against `origin/main` (db566cc, release 0.15.5) or against `claude/charming-bardeen-967w66` (fc67a60). Merged with `main` in a scratch worktree, both suites pass: `tests/run.js` 403 passed, 0 failed, and `tests/history.js` 66 passed, 0 failed. Re-run before merging, since both branches keep moving.
