@@ -1,10 +1,11 @@
 // Pages come fresh from the network when there is one, and from the saved copy when there isn't.
 // Everything else (map data, fonts, icons) is answered from the saved copy at once and refreshed behind the scenes.
 // On install every game is saved, so all seven work offline after the first visit to any of them.
+// Release checklist: change this version here AND in every ?v= in the pages (tests/run.js checks they match).
 const C = "mapelago-0.14.0";
 const PRE = [
   "./", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html",
-  "offline.html", "site.js", "extras.js", "shapes.js", "world.js", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
+  "offline.html", "site.js?v=0.14.0", "extras.js?v=0.14.0", "shapes.js?v=0.14.0", "world.js?v=0.14.0", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
   "fonts/overpass-latin-400-normal.woff2", "fonts/overpass-latin-600-normal.woff2",
   "fonts/overpass-latin-800-normal.woff2", "fonts/overpass-latin-800-italic.woff2"
 ];

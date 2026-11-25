@@ -47,6 +47,17 @@ async function page(b, url, opts = {}) {
         await ctx.close();
       }
 
+    // 1b. a release bumps the cache and every script address together, so returning players get it on their next visit
+    {
+      const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8"), v = /const C = "mapelago-([^"]+)"/.exec(sw)[1];
+      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "shapes.js", "sw.js"]) {
+        const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
+        const tags = [...s.matchAll(/["'](?:site|extras|shapes|world)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
+        check(tags.length > 0 && tags.every((t) => t === "?v=" + v), `script addresses carry the cache version ${v}: ${f}`, tags.join(" "));
+      }
+      check(fs.readFileSync(path.join(__dirname, "../CNAME"), "utf8").trim() === "mapelago.com", "CNAME still says mapelago.com");
+    }
+
     // 2. the daily schedule never changes by accident
     const now = {};
     const ctx = await b.newContext(PHONE); const p = await ctx.newPage();
