@@ -1,0 +1,246 @@
+Source-checked history data, part 2b: Block D, 240 more dated map events since 1800 that fill Part 1's thin spots (the 2000s to 2020s, South America, Africa, Oceania and the Pacific, Central Asia). None repeats a Part 1 event. Built by Duet (a research assistant that opens web sources). Pasted unchanged.
+Fields: year | event | countries involved (present-day names).
+Notes from Duet: Some lines restate Part 1 Block A facts (for example 1997 Western Samoa renamed Samoa, 1975 Lilongwe); don't ask the same fact twice on one day. 25 African independence and colonial lines rest only on Britannica's list of African independence dates. Paraguay 1813 is the republic's proclamation (1811 and 1842 are also cited), so don't ask for its exact year. Salomon-Lozano Treaty: signed 1922, in force 1928. Tocantins: created by the 1988 constitution, set up in 1989. Word questions to match the year given. Sydney Harbour Bridge (1932) and Auckland Harbour Bridge (1959) are landmark links rather than border changes; your call whether they fit.
+
+BLOCK D
+1804 | Hobart founded as a British settlement in Van Diemen's Land | Australia, United Kingdom
+1811 | Venezuela declares independence from Spain | Venezuela, Spain
+1813 | Paraguay proclaims itself a republic | Paraguay
+1819 | Congress of Angostura proclaims the Republic of Colombia (Gran Colombia) | Colombia, Venezuela, Ecuador, Panama
+1830 | Venezuela separates from Gran Colombia | Venezuela, Colombia
+1831 | Gran Colombia legally ends; State of New Granada is created | Colombia, Panama
+1832 | Ecuador annexes the Galapagos Islands | Ecuador
+1839 | Peru-Bolivian Confederation is dissolved | Peru, Bolivia
+1841 | Auckland becomes the capital of New Zealand | New Zealand
+1841 | New Zealand becomes a colony separate from New South Wales | New Zealand, Australia, United Kingdom
+1842 | France makes Tahiti a protectorate | France
+1853 | France takes possession of New Caledonia | France
+1856 | Norfolk Island separated from Tasmania | Australia
+1858 | Granadine Confederation replaces the Republic of New Granada | Colombia, Panama
+1859 | Queensland separates from New South Wales | Australia
+1863 | Granadine Confederation becomes the United States of Colombia | Colombia, Panama
+1863 | Northern Territory becomes part of South Australia | Australia
+1866 | Bolivia and Chile set their border at the 24th parallel | Bolivia, Chile
+1867 | Russia creates Turkestan Governor-Generalship with capital Tashkent | Uzbekistan, Kazakhstan, Kyrgyzstan, Tajikistan, Russia
+1867 | Treaty of Ayacucho sets the Bolivia-Brazil border | Bolivia, Brazil
+1867 | United States takes formal possession of Midway Atoll | United States
+1868 | Basutoland becomes a British protectorate | Lesotho, United Kingdom
+1868 | Russia annexes Samarkand from the Emirate of Bukhara | Uzbekistan, Russia
+1872 | Paraguay cedes land north of the Apa River to Brazil | Paraguay, Brazil
+1873 | Khanate of Khiva becomes a Russian protectorate | Uzbekistan, Turkmenistan, Russia
+1874 | New Bolivia-Chile treaty confirms the 24th parallel border | Bolivia, Chile
+1876 | Russia annexes the Kokand Khanate as Fergana Oblast | Uzbekistan, Kyrgyzstan, Tajikistan, Russia
+1876 | Treaty gives Argentina Misiones and land south of the Pilcomayo | Argentina, Paraguay
+1878 | Hayes arbitral award gives the disputed Chaco to Paraguay | Paraguay, Argentina
+1879 | Queensland annexes the remaining Torres Strait Islands | Australia
+1880 | Buenos Aires city is federalized as Argentina's capital | Argentina
+1880 | France annexes Tahiti as a colony | France
+1881 | Treaty of Saint Petersburg returns eastern Ili to China | China, Kazakhstan, Russia
+1882 | La Plata is founded as the new capital of Buenos Aires province | Argentina
+1884 | Germany declares a protectorate over Togoland | Togo, Ghana, Germany
+1884 | Germany establishes the protectorate of Kamerun | Cameroon, Germany
+1884 | Merv Turkmen tribes come under Russian rule | Turkmenistan, Russia
+1885 | Britain establishes the Bechuanaland Protectorate | Botswana, United Kingdom
+1885 | Germany declares a protectorate over the Marshall Islands | Marshall Islands, Germany
+1886 | United States of Colombia becomes the Republic of Colombia | Colombia, Panama
+1887 | Kermadec Islands assigned to the colony of New Zealand | New Zealand, United Kingdom
+1888 | Cook Islands become a British protectorate | New Zealand, United Kingdom
+1888 | Germany annexes Nauru | Nauru, Germany
+1890 | Italy proclaims the colony of Eritrea | Eritrea, Italy
+1892 | Gilbert and Ellice Islands become British protectorates | Kiribati, Tuvalu, United Kingdom
+1893 | Britain proclaims a protectorate over the Solomon Islands | Solomon Islands, United Kingdom
+1895 | Britain proclaims the East Africa Protectorate | Kenya, United Kingdom
+1895 | Cleveland award gives the Palmas region to Brazil over Argentina | Brazil, Argentina
+1895 | France creates the federation of French West Africa | Senegal, Mali, Guinea, Cote d'Ivoire, France
+1895 | Pamir boundary protocols create Afghanistan's Wakhan Corridor | Afghanistan, Tajikistan, Pakistan, Russia, United Kingdom
+1897 | Belo Horizonte replaces Ouro Preto as capital of Minas Gerais | Brazil
+1899 | Germany buys the Carolines, Palau and Northern Marianas from Spain | Micronesia, Palau, United States, Germany, Spain
+1899 | Puna de Atacama arbitration gives most of the area to Argentina | Argentina, Chile
+1899 | United States claims Wake Island | United States
+1900 | Congress organizes the Territory of Hawaii | United States
+1900 | Ocean Island (Banaba) added to the Gilbert and Ellice protectorate | Kiribati, United Kingdom
+1900 | Swiss arbitration gives Amapa to Brazil over French Guiana | Brazil, France
+1900 | Tonga becomes a British protected state | Tonga, United Kingdom
+1900 | Tutuila ceded to the United States | United States
+1901 | Cook Islands and Niue brought within New Zealand's boundaries | New Zealand
+1902 | British arbitral award fixes much of the Argentina-Chile Andes border | Argentina, Chile
+1902 | Dakar replaces Saint-Louis as capital of French West Africa | Senegal, France
+1904 | Italian king's award fixes the British Guiana-Brazil border | Guyana, Brazil, United Kingdom
+1904 | Manu'a Islands ceded to the United States | United States
+1905 | Nairobi replaces Mombasa as capital of the East Africa Protectorate | Kenya, United Kingdom
+1906 | British New Guinea becomes Australia's Territory of Papua | Papua New Guinea, Australia
+1906 | Marshall Islands annexed to German New Guinea | Marshall Islands, Papua New Guinea, Germany
+1909 | Brazil and Peru sign a treaty completing their border | Brazil, Peru
+1909 | Brazil-Uruguay treaty redraws the border on Lagoa Mirim | Brazil, Uruguay
+1910 | France forms French Equatorial Africa, run from Brazzaville | Gabon, Republic of the Congo, Central African Republic, Chad, France
+1911 | Northern Territory transferred from South Australia to Commonwealth | Australia
+1911 | US Samoan islands officially renamed American Samoa | United States
+1914 | Japan seizes German Micronesia | Japan, Micronesia, Palau, Marshall Islands, United States, Germany
+1914 | Norfolk Island transferred from Britain to Australia | Australia, United Kingdom
+1916 | Colombia and Ecuador sign their land border treaty | Colombia, Ecuador
+1916 | Gilbert and Ellice Islands become a British Crown colony | Kiribati, Tuvalu, United Kingdom
+1916 | Tokelau annexed to the Gilbert and Ellice Islands Colony | New Zealand, United Kingdom
+1920 | Bukharan People's Soviet Republic replaces the Emirate of Bukhara | Uzbekistan, Tajikistan, Turkmenistan
+1920 | Khorezm People's Soviet Republic replaces the Khanate of Khiva | Uzbekistan, Turkmenistan
+1922 | Salomon-Lozano Treaty signed: Leticia corridor to Colombia | Colombia, Peru
+1924 | Northern Rhodesia passes from company rule to a British protectorate | Zambia, United Kingdom
+1924 | Soviet national delimitation creates Uzbek and Turkmen SSRs | Uzbekistan, Turkmenistan
+1925 | Kazakh capital moves from Orenburg to Kzyl-Orda | Kazakhstan, Russia
+1925 | Kirghiz ASSR renamed Kazakh ASSR | Kazakhstan
+1925 | Swains Island annexed to American Samoa | United States
+1926 | Niamey replaces Zinder as capital of the colony of Niger | Niger, France
+1927 | Northern Territory split into North and Central Australia | Australia
+1929 | Tajik SSR becomes a union republic, gaining the Khujand area | Tajikistan, Uzbekistan
+1930 | Uzbek SSR capital moves from Samarkand to Tashkent | Uzbekistan
+1931 | Arbitration awards Clipperton Island to France | France, Mexico
+1931 | North and Central Australia reunited as the Northern Territory | Australia
+1932 | Sydney Harbour Bridge opens | Australia
+1934 | Rio Protocol ends the Colombia-Peru War | Colombia, Peru
+1935 | Lusaka replaces Livingstone as capital of Northern Rhodesia | Zambia, United Kingdom
+1936 | Karakalpak ASSR moves from Russian SFSR to Uzbek SSR | Uzbekistan, Russia
+1936 | Kirghiz SSR becomes a full Soviet union republic | Kyrgyzstan, Russia
+1941 | Bissau replaces Bolama as capital of Portuguese Guinea | Guinea-Bissau, Portugal
+1941 | Colombia and Venezuela sign their land border treaty | Colombia, Venezuela
+1943 | Brazil creates five federal territories, including Amapa | Brazil
+1946 | Tarawa made capital of the Gilbert and Ellice Islands | Kiribati, Tuvalu, United Kingdom
+1947 | UN Trust Territory of the Pacific Islands created under the US | Micronesia, Palau, Marshall Islands, United States
+1949 | Papua and New Guinea merged under one administration | Papua New Guinea, Australia
+1949 | Tokelau formally becomes part of New Zealand | New Zealand
+1950 | Guam Organic Act makes Guam an unincorporated US territory | United States
+1952 | Eritrea is federated with Ethiopia under a UN resolution | Eritrea, Ethiopia
+1952 | Honiara replaces Tulagi as capital of the Solomon Islands | Solomon Islands
+1956 | Tangier international zone returns to Moroccan sovereignty | Morocco
+1958 | Spain hands the Tarfaya Strip to Morocco | Morocco, Spain
+1959 | Auckland Harbour Bridge opens | New Zealand
+1959 | Kariba Dam on the Zambezi completed, forming Lake Kariba | Zambia, Zimbabwe
+1960 | Belgian Congo becomes independent | Democratic Republic of the Congo, Belgium
+1960 | British and Italian Somaliland unite as the Somali Republic | Somalia, United Kingdom, Italy
+1960 | Chad becomes independent from France | Chad, France
+1960 | Cote d'Ivoire becomes independent from France | Cote d'Ivoire, France
+1960 | French Cameroun becomes independent as Cameroon | Cameroon, France
+1960 | Gabon becomes independent from France | Gabon, France
+1960 | Madagascar becomes independent from France | Madagascar, France
+1960 | Mali Federation breaks up as Senegal secedes | Senegal, Mali
+1960 | Mauritania becomes independent from France | Mauritania, France
+1960 | Togo becomes independent from France | Togo, France
+1960 | Upper Volta becomes independent from France | Burkina Faso, France
+1961 | Northern Cameroons joins Nigeria, Southern Cameroons joins Cameroon | Cameroon, Nigeria, United Kingdom
+1961 | Sierra Leone becomes independent from the United Kingdom | Sierra Leone, United Kingdom
+1961 | Tanganyika becomes independent from the United Kingdom | Tanzania, United Kingdom
+1962 | Acre becomes a state of Brazil | Brazil
+1962 | Eritrea's federation with Ethiopia ends; Eritrea annexed | Eritrea, Ethiopia
+1962 | Ruanda-Urundi splits into independent Rwanda and Burundi | Rwanda, Burundi, Belgium
+1962 | Uganda becomes independent with Kampala as its capital | Uganda, United Kingdom
+1963 | Federation of Rhodesia and Nyasaland is dissolved | Zimbabwe, Zambia, Malawi, United Kingdom
+1963 | Kenya becomes independent from the United Kingdom | Kenya, United Kingdom
+1964 | Northern Rhodesia becomes independent as Zambia | Zambia, United Kingdom
+1964 | Nyasaland becomes independent as Malawi | Malawi, United Kingdom
+1965 | Akosombo Dam completed on the Volta, forming Lake Volta | Ghana
+1965 | Cook Islands become self-governing under a new constitution | New Zealand
+1965 | Friendship Bridge links Brazil and Paraguay over the Parana | Brazil, Paraguay
+1965 | Gaborone replaces Mafikeng as capital of Bechuanaland | Botswana, United Kingdom
+1965 | Gambia becomes independent from the United Kingdom | Gambia, United Kingdom
+1966 | Basutoland becomes independent as Lesotho | Lesotho, United Kingdom
+1966 | Bechuanaland becomes independent as Botswana | Botswana, United Kingdom
+1968 | Equatorial Guinea becomes independent from Spain | Equatorial Guinea, Spain
+1968 | Swaziland becomes independent from the United Kingdom | Eswatini, United Kingdom
+1969 | Spain cedes the Ifni enclave to Morocco | Morocco, Spain
+1970 | Tonga ends British protection and becomes fully independent | Tonga, United Kingdom
+1974 | Niue becomes self-governing in free association with New Zealand | New Zealand
+1974 | Portugal recognises Guinea-Bissau's independence | Guinea-Bissau, Portugal
+1975 | Angola becomes independent from Portugal | Angola, Portugal
+1975 | Cabo Verde becomes independent from Portugal | Cabo Verde, Portugal
+1975 | General Artigas Bridge links Paysandu and Colon | Uruguay, Argentina
+1975 | Guanabara state merges into Rio de Janeiro state | Brazil
+1975 | Lilongwe replaces Zomba as capital of Malawi | Malawi
+1975 | Sao Tome and Principe becomes independent from Portugal | Sao Tome and Principe, Portugal
+1976 | Libertador General San Martin Bridge links Uruguay and Argentina | Uruguay, Argentina
+1976 | Seychelles becomes independent from the United Kingdom | Seychelles, United Kingdom
+1976 | Toktogul Dam floods the Ketmen-Tobo valley | Kyrgyzstan
+1977 | Djibouti becomes independent from France | Djibouti, France
+1978 | Australia and Papua New Guinea sign the Torres Strait Treaty | Australia, Papua New Guinea
+1978 | Northern Territory becomes self-governing | Australia
+1978 | Solomon Islands becomes independent | Solomon Islands, United Kingdom
+1980 | Nurek Dam completed, then the world's tallest dam | Tajikistan
+1985 | Tancredo Neves Bridge links Foz do Iguacu and Puerto Iguazu | Brazil, Argentina
+1986 | ICJ fixes the disputed Burkina Faso-Mali frontier | Burkina Faso, Mali
+1987 | Fiji declared a republic | Fiji
+1988 | Brazil's new constitution creates the state of Tocantins | Brazil
+1989 | Palikir replaces Kolonia as capital of Micronesia | Micronesia
+1994 | Arbitral award gives Laguna del Desierto to Argentina | Argentina, Chile
+1994 | ICJ awards the Aouzou Strip to Chad; Libya withdraws | Chad, Libya
+1994 | Kazakhstan and China sign their border agreement | Kazakhstan, China
+1994 | South Africa replaces its four provinces with nine | South Africa
+1997 | Western Samoa renamed Samoa | Samoa
+1999 | ICJ rules Kasikili/Sedudu island belongs to Botswana | Botswana, Namibia
+2000 | India creates Chhattisgarh, Uttaranchal and Jharkhand states | India
+2000 | Treaty of Jeddah fixes the Saudi Arabia-Yemen border | Saudi Arabia, Yemen
+2001 | ICJ gives Hawar Islands to Bahrain and Zubarah to Qatar | Bahrain, Qatar
+2001 | Kazakhstan and Kyrgyzstan sign their border treaty | Kazakhstan, Kyrgyzstan
+2001 | Kazakhstan and Turkmenistan sign their border treaty | Kazakhstan, Turkmenistan
+2001 | Newfoundland renamed Newfoundland and Labrador | Canada
+2002 | ICJ awards Ligitan and Sipadan islands to Malaysia | Malaysia, Indonesia
+2002 | Japan-Palau Friendship Bridge links Koror and Babeldaob | Palau
+2002 | Kazakhstan and China complete border demarcation | Kazakhstan, China
+2003 | Kazakhstan-Uzbekistan border treaties enter into force | Kazakhstan, Uzbekistan
+2003 | South Africa's Northern Province is renamed Limpopo | South Africa
+2004 | Australia and New Zealand sign a maritime boundary treaty | Australia, New Zealand
+2004 | Iran splits Khorasan into three provinces | Iran
+2004 | Rio-Antirrio Bridge opens across the Gulf of Corinth | Greece
+2005 | ICJ splits Niger River islands, giving Lete to Niger | Benin, Niger
+2005 | Kazakhstan and Russia sign their border treaty | Kazakhstan, Russia
+2005 | Kokaral Dike completed, separating the North Aral Sea | Kazakhstan
+2005 | Perm Oblast and Komi-Permyak merge into Perm Krai | Russia
+2006 | Micronesia and Marshall Islands sign a maritime boundary treaty | Micronesia, Marshall Islands
+2007 | Chile creates Arica y Parinacota and Los Rios regions | Chile
+2007 | Denmark replaces its 13 counties with five regions | Denmark
+2007 | Lotschberg Base Tunnel opens under the Bernese Alps | Switzerland
+2007 | Saint Barthelemy and Saint Martin separate from Guadeloupe | France
+2008 | Ha Tay province is merged into Hanoi | Viet Nam
+2008 | ICJ awards Pedra Branca to Singapore | Singapore, Malaysia
+2008 | Nepal abolishes its monarchy and becomes a republic | Nepal
+2009 | ICJ sets the Romania-Ukraine boundary in the Black Sea | Romania, Ukraine
+2009 | Merowe Dam on the Nile is inaugurated | Sudan
+2009 | Takutu River Bridge opens between Guyana and Brazil | Guyana, Brazil
+2010 | North-West Frontier Province renamed Khyber Pakhtunkhwa | Pakistan
+2010 | Norway and Russia sign Barents Sea boundary treaty | Norway, Russia
+2011 | Bueng Kan province split from Nong Khai | Thailand
+2011 | Indian state of Orissa renamed Odisha | India
+2011 | Interoceanic Highway between Brazil and Peru is inaugurated | Brazil, Peru
+2011 | Tajikistan ratifies ceding about 1,000 sq km of Pamirs to China | Tajikistan, China
+2012 | Sejong becomes a special self-governing city | South Korea
+2012 | Seven Pacific states sign maritime boundary treaties at Rarotonga | Kiribati, Tuvalu, Nauru, Marshall Islands, New Zealand
+2013 | Cape Verde asks to be known officially as Cabo Verde | Cabo Verde
+2013 | ICJ fixes the Burkina Faso-Niger frontier | Burkina Faso, Niger
+2013 | Marmaray rail tunnel under the Bosphorus opens | Turkiye
+2013 | Namibia renames the Caprivi Region the Zambezi Region | Namibia
+2014 | ICJ sets the Peru-Chile maritime boundary | Peru, Chile
+2014 | Telangana becomes a state, split from Andhra Pradesh | India
+2015 | Egypt opens the New Suez Canal parallel channel | Egypt
+2016 | Federal District renamed Mexico City (CDMX) | Mexico
+2016 | France's 13 merged metropolitan regions take effect | France
+2016 | Gotthard Base Tunnel opens under the Alps | Switzerland
+2017 | Oyapock River Bridge opens between Brazil and French Guiana | Brazil, France
+2018 | Australia and Timor-Leste sign first Timor Sea maritime boundary | Australia, Timor-Leste
+2018 | Chile's Nuble Region takes effect, split from Biobio | Chile
+2018 | Hong Kong-Zhuhai-Macau Bridge opens | China
+2018 | Maputo-Katembe bridge opens across Maputo Bay | Mozambique
+2018 | Shymkent split off; South Kazakhstan renamed Turkistan Region | Kazakhstan
+2018 | Tribal areas (FATA) merged into Khyber Pakhtunkhwa | Pakistan
+2019 | Atlantic Bridge opens over the Panama Canal | Panama
+2019 | Bangsamoro autonomous region replaces the ARMM | Philippines
+2019 | Senegambia Bridge opens over the River Gambia | Gambia, Senegal
+2020 | Dadra and Nagar Haveli and Daman and Diu merge | India
+2020 | Norway merges its 19 counties into 11 | Norway
+2021 | Barbados becomes a republic | Barbados
+2021 | Kazungula Bridge opens over the Zambezi | Zambia, Botswana
+2022 | 1915 Canakkale Bridge opens over the Dardanelles | Turkiye
+2022 | Fiji and Solomon Islands sign maritime boundary agreement | Fiji, Solomon Islands
+2022 | Kazakhstan creates Abai, Jetisu and Ulytau regions | Kazakhstan
+2022 | Padma Bridge opens over the Padma River | Bangladesh
+2023 | Kyrgyzstan-Uzbekistan border treaty ratifications exchanged | Kyrgyzstan, Uzbekistan
+2025 | Grand Ethiopian Renaissance Dam on the Blue Nile is inaugurated | Ethiopia
+2025 | Kyrgyzstan and Tajikistan sign their border treaty | Kyrgyzstan, Tajikistan
+2025 | Treaty fixes the Kyrgyzstan-Tajikistan-Uzbekistan border tripoint | Kyrgyzstan, Tajikistan, Uzbekistan
+2025 | Viet Nam merges its 63 provinces and cities into 34 | Viet Nam
+END BLOCK D
