@@ -448,6 +448,15 @@ async function page(b, url, opts = {}) {
       await ctx.close();
     }
 
+    // 22. the app manifest and the home page's search data know all eight games
+    {
+      const m = JSON.parse(fs.readFileSync(path.join(__dirname, "../manifest.webmanifest"), "utf8"));
+      const ok = (m.shortcuts || []).every((x) => fs.existsSync(path.join(__dirname, "..", x.url === "./" ? "index.html" : x.url.endsWith("/") ? x.url + "index.html" : x.url)));
+      check(ok && m.shortcuts.length >= 3, "manifest: shortcuts point at real pages");
+      const home = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+      check(/Eight free daily geography games[^"]*Crossings/.test(home), "home page search data lists all eight games");
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });

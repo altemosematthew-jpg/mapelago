@@ -1,7 +1,7 @@
 {
   "name": "Mapelago",
   "short_name": "Mapelago",
-  "description": "Mapelago is a free daily geography game. Slide tiles like 2048 to earn clues about a mystery city, then drop a pin on the map. A new city every day.",
+  "description": "Eight free daily geography games: find a mystery city or country, pick the bigger one, sail a trivia voyage, name a country, collect stamps and cross the map border by border.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -25,6 +25,52 @@
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mystery city",
+      "url": "./",
+      "icons": [
+        {
+          "src": "icon-180.png",
+          "sizes": "180x180",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Mystery country",
+      "url": "country.html",
+      "icons": [
+        {
+          "src": "icon-180.png",
+          "sizes": "180x180",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Crossings",
+      "url": "crossings.html",
+      "icons": [
+        {
+          "src": "icon-180.png",
+          "sizes": "180x180",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "All games",
+      "url": "games/",
+      "icons": [
+        {
+          "src": "icon-180.png",
+          "sizes": "180x180",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
