@@ -2,13 +2,13 @@
 
 Dead Reckoning is a new daily game: five places a day, tapped on a blank world map, scored by great-circle
 distance. It becomes the tenth game once Logbook (0.15.8, `history.html`) is out, the ninth before that.
-Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at **0.15.11** (`5e27d0b`) is already merged
-into it, with the patch re-applied on top, so merging the branch into 0.15.11 brings no conflicts. The version
-is not bumped here; `dead-reckoning.html`'s `?v=` follows `sw.js` (0.15.11).
+Branch `claude/zealous-allen-u0n2ro`; main (`claude/charming-bardeen-967w66`) at **0.15.12** (`592097e`) is already merged
+into it, with the patch re-applied on top, so merging the branch into 0.15.12 brings no conflicts. The version
+is not bumped here; `dead-reckoning.html`'s `?v=` follows `sw.js` (0.15.12).
 
 ## How to merge
 
-1. Merge the branch. If main has moved on past 0.15.11, the shared files may conflict: take **main's**
+1. Merge the branch. If main has moved on past 0.15.12, the shared files may conflict: take **main's**
    version of every shared file listed below (`git checkout --theirs` / `--ours` as appropriate, i.e. the side
    that is main), then run step 2, which puts Dead Reckoning back in.
 2. Run the patch for the shared files from anywhere:
@@ -27,7 +27,7 @@ is not bumped here; `dead-reckoning.html`'s `?v=` follows `sw.js` (0.15.11).
    version at the time it ran, and `tests/run.js` section 1b now checks that page too. A global replace of the old
    `?v=` value covers it, along with `dead-reckoning.js?v=` in the `sw.js` PRE list.
 
-Checked on clean copies of 0.15.5, 0.15.7, 0.15.8, 0.15.10 and 0.15.11: every edit applies once and a second run adds nothing. On
+Checked on clean copies of 0.15.5, 0.15.7, 0.15.8, 0.15.10, 0.15.11 and 0.15.12: every edit applies once and a second run adds nothing. On
 0.15.8, Dead Reckoning goes after Logbook everywhere (menus, cards, streaks sheet, lists) and every count reads "ten".
 
 ## New files (no conflicts possible)
@@ -61,6 +61,8 @@ in `site.js` once Dead Reckoning is added (ten with Logbook).
 | `manifest.webmanifest` | Description: "N free daily geography games: … and tap places on a blank map." The shortcuts are left as they are. |
 | `games/index.html` | A Dead Reckoning section before "Streaks"; title and descriptions say N games and add "blank-map pins" to the list. |
 | `how-to-play/index.html` | A "Dead Reckoning, the blank map" section just before "The quick games". |
+| `privacy/index.html`, `teachers/index.html` | The same menu line (from 0.15.12, where these menus list Logbook). |
+| `teachers/index.html` | A Dead Reckoning row in "Which game for which lesson" after Logbook's ("Five places, a few minutes"; place, distance and direction), and "ten short geography games" / "See all ten games". |
 | `about/index.html` | Lede: "N games a day … and Dead Reckoning." |
 | `dead-reckoning.html` | Script addresses take the `sw.js` version. |
 | `sw.js` | PRE list: `"dead-reckoning.html"` and `"dead-reckoning.js?v=<version>"` on the line before `offline.html`. |
@@ -146,3 +148,5 @@ as `DR_LANDMARKS`.
   (that rule now covers the city rounds only), and the reveal shows Duet's clue, then "Volcano · Italy".
 - Duet's notes on coarse points, off-centre points and Mount Sinai are kept in the data file; nothing in the game
   depends on them (distance scoring is forgiving enough for a coarse point).
+
+Latest run on this branch (0.15.12 merged, landmarks in): `tests/run.js` 560 passed, 0 failed; `tests/history.js` 78 passed, 0 failed.
