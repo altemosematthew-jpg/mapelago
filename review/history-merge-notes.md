@@ -4,8 +4,7 @@ For the session merging `claude/compassionate-johnson-kphp1c` into `claude/charm
 
 Logbook lives in its own files. Shared files have small, marked changes, each placed at least one unchanged line
 away from that branch's own edits, so git merges them without conflicts. This was checked file by file with
-`git merge-file` against `claude/charming-bardeen-967w66` at commit 2169659, and for the whole branch with
-`git merge-tree` (see the end of this file).
+`git merge-file` against `claude/charming-bardeen-967w66`, and for the whole branch with `git merge-tree` (see the end of this file).
 
 The release version (`mapelago-0.14.0`, `?v=0.14.0`) is not changed anywhere. Logbook's page uses `?v=0.14.0` like every other page.
 
@@ -83,4 +82,4 @@ Not changed: `extras.js`, `site.css`, `index.html` and the other game pages, `sw
 
 ## Whole-branch check
 
-`git merge-tree --write-tree claude/compassionate-johnson-kphp1c origin/claude/charming-bardeen-967w66` reported no conflicts at the time of writing. Re-run it before merging, since both branches keep moving.
+Against `claude/charming-bardeen-967w66` at commit 93dfcaa ("Crossings: map labels never overlap"), `git merge-tree --write-tree` reports no conflicts. Merged in a scratch worktree, both suites pass: `tests/run.js` 363 passed, 0 failed, and `tests/history.js` 65 passed, 0 failed. Re-run before merging, since both branches keep moving.
