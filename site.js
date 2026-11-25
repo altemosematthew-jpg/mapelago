@@ -95,13 +95,13 @@
 
   // ---------- 3. streaks across all seven games (5.1, 5.2, 5.3, 5.4) ----------
   var GAMES = [
-    { id: "city", name: "Mystery city", key: "dailycity:v2", url: "./" },
-    { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html" },
-    { id: "bigger", name: "Bigger city?", key: "dailycity:bigger:v1", url: "bigger.html" },
-    { id: "bigcountry", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html" },
-    { id: "voyage", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html" },
-    { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html" },
-    { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html" }
+    { id: "city", name: "Mystery city", key: "dailycity:v2", url: "./", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
+    { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "The same, with a country to find." },
+    { id: "bigger", name: "Bigger city?", key: "dailycity:bigger:v1", url: "bigger.html", icon: "\u{1F465}", about: "Ten pairs: tap the city where more people live." },
+    { id: "bigcountry", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
+    { id: "voyage", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
+    { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html", icon: "\u{1F30A}", about: "Name the least obvious right answer." },
+    { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." }
   ];
   var FREEZE_EVERY = 7, FREEZE_MAX = 2;
   function today() {
@@ -155,7 +155,14 @@
     + '.mx-cal i.p{background:var(--accent,#b4237d)}.mx-cal i.f{border-style:dashed}.mx-cal i.t{outline:2px solid var(--focus,#b4237d);outline-offset:1px}'
     + '.mxs textarea{width:100%;min-height:76px;box-sizing:border-box;font:12px ui-monospace,monospace;border:1.5px solid var(--line,#000);border-radius:8px;padding:6px}'
     + '.mxs .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.mxs .btns button{min-height:44px;padding:0 14px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r-btn,12px);background:var(--paper,#fff);color:inherit;font:inherit;font-weight:800;cursor:pointer}'
-    + '.mxs .btns .go{background:var(--accent,#b4237d);color:var(--on-accent,#fff)}';
+    + '.mxs .btns .go{background:var(--accent,#b4237d);color:var(--on-accent,#fff)}'
+    + '.mx-today{grid-column:1/-1;margin:36px 0 0}.mx-today h2{margin:0 0 10px;font-size:20px}'
+    + '.mx-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}'
+    + '.mx-card a{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;align-items:start;height:100%;box-sizing:border-box;padding:10px 12px;min-height:44px;border:var(--bw,2px) solid var(--line,#000);border-bottom-width:var(--lip,6px);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);text-decoration:none}'
+    + '.mx-card .ic{grid-row:span 3;font-size:26px;line-height:1.1}.mx-card b{font-size:16px;line-height:1.2}.mx-card .ab{font-size:13px;line-height:1.3;color:var(--ink-2,#3d4a52)}'
+    + '.mx-card .st{font-size:12.5px;font-weight:800;color:var(--accent-ink,#b4237d)}.mx-card.done a{background:var(--tint,#dcedf5)}.mx-card.here a{outline:3px solid var(--accent,#b4237d);outline-offset:-3px}'
+    + '.mx-next{margin:10px 0 0;font-size:15px;font-weight:600}.mx-next a{font-weight:800;color:inherit}'
+    + '@media (min-width:700px){.mx-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}';
 
   function here() {
     var f = location.pathname.split("/").pop() || "";
@@ -269,11 +276,28 @@
     setTimeout(function () { location.reload(); }, 900);
   }
 
+  // 16.5 Today's games: a card for every game with today's status, and what to play next
+  function today_games(app) {
+    var me = here(), all = info();
+    var sec = document.createElement("section");
+    sec.className = "mx-today"; sec.setAttribute("aria-labelledby", "mxTodayH");
+    var next = all.filter(function (s) { return !s.doneToday && (!me || s.game.id !== me.id); })[0];
+    sec.innerHTML = '<h2 id="mxTodayH">Today\'s games</h2><ul class="mx-cards">' + all.map(function (s) {
+      var g = s.game, isMe = me && g.id === me.id;
+      var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
+      return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc(g.about) + '</span><span class="st">' + st + "</span></a></li>";
+    }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">All seven done today. See you tomorrow.</p>');
+    var foot = app.querySelector("footer");
+    if (foot && foot.parentNode === app) app.insertBefore(sec, foot); else app.appendChild(sec);
+  }
+
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
-    if (app) riskNote(app);
+    if (app) { riskNote(app); today_games(app); }
     var nav = document.querySelector('nav[aria-label="Daily games"]');
+    var me = here();
+    if (nav && me) Array.prototype.forEach.call(nav.querySelectorAll("a"), function (a) { if (a.getAttribute("href") === me.url || (me.url === "./" && /^(\.\/|index\.html|\.)$/.test(a.getAttribute("href")))) a.setAttribute("aria-current", "page"); });
     if (nav) {
       var b = document.createElement("button");
       b.className = "mx-link"; b.type = "button"; b.textContent = "Your streaks"; b.onclick = openSheet;
