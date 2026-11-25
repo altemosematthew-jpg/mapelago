@@ -127,6 +127,69 @@ async function page(b, url, opts = {}) {
       await ctx.close();
     }
 
+    // ---- mx-country-rules: Mystery country plays by Mystery city's rules from No. 14 (review/country-rules-patch.py) ----
+    {
+      const fresh = { "dailycity:country:v1": '{"games":{},"results":{},"seenHelp":true}' };
+      const far = () => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat]);
+      const read = (p) => p.evaluate(() => ({ S: __lf.S(), pts: document.querySelector("#score").textContent, clues: document.querySelectorAll("#clues li").length,
+        label: (document.querySelector("#nextClue").textContent.match(/\d+/) || [""])[0], slot: (document.querySelector("#track .upnext") || {}).textContent,
+        cost: document.querySelector("#costNote").textContent, live: document.querySelector("#live").textContent }));
+      // the start number: No. 13 starts on the old rules, No. 14 on the new
+      for (const [day, cost, r] of [[13, 8, 1], [14, 6, 2]]) {
+        const { ctx, p } = await page(b, U + "country.html#day-" + day, { storage: fresh });
+        await p.waitForFunction(() => window.__WORLD);
+        const s = await read(p);
+        check(s.S.r === r && s.S.moveCost === cost && s.cost.startsWith(`Each move costs ${cost} points`), `country: a new No. ${day} round starts on rules ${r} (moves cost ${cost})`, JSON.stringify([s.S.r, s.S.moveCost, s.cost]));
+        await ctx.close();
+      }
+      // the rules: one clue to start, moves cost 6, a miss costs 150 and opens the next clue, and the label matches the slot after it
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-14", { storage: fresh });
+        await p.waitForFunction(() => window.__WORLD);
+        const s0 = await read(p);
+        check(s0.clues === 1 && s0.S.tiles.every((t) => t.v === 2), "country: a new round starts with two 2-tiles and one clue", JSON.stringify([s0.clues, s0.S.tiles.map((t) => t.v)]));
+        for (const k of ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"]) await p.keyboard.press(k);
+        const s1 = await read(p), m = s1.S.swipes;
+        check(m > 0 && s1.pts === String(1000 - 6 * m), "country: each move costs 6", JSON.stringify([m, s1.pts]));
+        await p.evaluate(far); await p.waitForTimeout(1500);
+        const s2 = await read(p);
+        check(s2.pts === String(1000 - 6 * m - 150), "country: a missed pin costs 150", s2.pts);
+        check(s2.clues === s1.clues + 1 && /Free clue: /.test(s2.live), "country: a missed pin opens the next clue", JSON.stringify([s1.clues, s2.clues, s2.live]));
+        check(s2.label && s2.label === s2.slot, "country: next-clue label matches the highlighted slot after a free clue", JSON.stringify([s2.label, s2.slot]));
+        check(/^(\S+ )?\S+( and (warmer|colder))?: Missed by [\d,]+ km\. The country is to the (north|south|east|west|northeast|northwest|southeast|southwest)\./u.test(s2.live), "country: the miss line gives heat, distance and direction", s2.live);
+        await p.evaluate(() => __lf.openMap()); await p.waitForTimeout(400);
+        check((await p.evaluate(() => document.querySelectorAll("#mapClues li").length)) === s2.clues && (await p.isVisible("#mapClues")), "country: the clues are inside the pin map");
+        check(!p.errs.length, "country rules: no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+      // the miss distance is to the nearest point of the country's border; three misses score on the softer curve
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-19", { storage: fresh });
+        await p.waitForFunction(() => window.__WORLD);
+        const r = await p.evaluate(() => ({ name: __lf.P.city, sq: __lf.near([5, -1], { type: "Polygon", coordinates: [[[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]] }), az: __lf.dist([-110, 32.5]) }));
+        check(Math.abs(r.sq[0] - 111.19) < 0.05 && r.sq[1][0] === 5 && r.sq[1][1] === 0, "country: distance to the middle of a long edge, not its corners", JSON.stringify(r.sq));
+        check(r.name === "Mexico" && r.az.d > 125 && r.az.d < 136 && Math.abs(r.az.b - 180) < 10, "country: a pin in Arizona is about 130 km north of Mexico's nearest border", JSON.stringify(r));
+        for (let i = 0; i < 3; i++) { await p.evaluate(() => __lf.confirmAt([-110, 32.5])); await p.waitForTimeout(1900); }
+        const s = await p.evaluate(() => __lf.S()), want = Math.round(700 * (1 - Math.sqrt((r => r - 50)(s.pins[0].d) / 2450)));
+        check(s.done && !s.won && s.score === want, `country: three near misses score on the softer last-pin curve (${want})`, JSON.stringify([s.score, s.pins.map((x) => x.d)]));
+        await ctx.close();
+      }
+      // a save made on the live release (0.14.0): results, streak and a No. 14 round in progress keep their rules and scores
+      {
+        const live = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/country-save-from-v0.14.json"), "utf8"));
+        const { ctx, p } = await page(b, U + "country.html#day-14", { storage: live, clock: new Date("2026-11-27T12:00:00"), wait: 1200 });
+        await p.waitForFunction(() => window.__WORLD);
+        const s = await read(p), info = await p.evaluate(() => MXS.info().find((x) => x.game.id === "country"));
+        check(s.S.r === 1 && s.S.moveCost === 8 && s.S.swipes === 7 && s.pts === "794" && s.S.pins.length === 1 && s.S.clues === s.clues, "0.14.0 country save: the No. 14 round in progress keeps the old rules (7 moves, 1 miss, 794 points)", JSON.stringify([s.S.r, s.S.moveCost, s.S.swipes, s.pts, s.clues]));
+        check(info.cur === 2 && info.played === 2, "0.14.0 country save: streak kept (2)", JSON.stringify([info.cur, info.played]));
+        await p.evaluate(() => (location.hash = "#day-12")); await p.waitForTimeout(1200);
+        check((await p.evaluate(() => __lf.S().score)) === 802, "0.14.0 country save: a finished round keeps its score (802)");
+        check(!p.errs.length, "0.14.0 country save: no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+    }
+    // ---- end mx-country-rules ----
+
     // 8. a game in progress survives midnight
     {
       const { ctx, p } = await page(b, U, { clock: new Date("2026-11-25T23:59:30"), ctx: { timezoneId: "Europe/London" } });

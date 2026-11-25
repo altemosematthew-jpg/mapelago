@@ -1,0 +1,3 @@
+{
+ "dailycity:country:v1": "{\"games\":{\"12\":{\"moves\":\"ULDRUL\",\"pins\":[{\"ll\":[35,-31.45],\"d\":6774.8882518591945,\"b\":359.90452904927173,\"moves\":6},{\"ll\":[35.869,33.433],\"d\":0,\"b\":0,\"moves\":6}],\"done\":true,\"won\":true,\"score\":802},\"13\":{\"moves\":\"DR\",\"pins\":[{\"ll\":[0.96,8.52],\"d\":0,\"b\":0,\"moves\":2}],\"done\":true,\"won\":true,\"score\":984},\"14\":{\"moves\":\"ULDRULD\",\"pins\":[{\"ll\":[127.87,-36.45],\"d\":7746.675141350767,\"b\":358.58143754426277,\"moves\":7}],\"done\":false,\"won\":false,\"score\":0}},\"results\":{\"12\":{\"score\":802,\"won\":true,\"pins\":2,\"moves\":6},\"13\":{\"score\":984,\"won\":true,\"pins\":1,\"moves\":2}},\"seenHelp\":true}"
+}
