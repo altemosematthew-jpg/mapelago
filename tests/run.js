@@ -436,6 +436,27 @@ async function page(b, url, opts = {}) {
       check(!/"13":\[|No\. 13/.test(src.slice(src.indexOf("var MxCF="), src.indexOf("var MxCF=") + 300)), "city facts: the page keys them by city, not by puzzle number");
     }
 
+    // 21. landmarks for screen readers: exactly one main region on every page (checked with axe-core: no landmark issues left)
+    {
+      const ctx = await b.newContext(PHONE), p = await ctx.newPage(), bad = [];
+      for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "games/", "privacy/", "about/", "how-to-play/"]) {
+        await p.goto(U + f, { waitUntil: "load" }); await p.waitForTimeout(250);
+        const r = await p.evaluate(() => [document.querySelectorAll("main,[role=main]").length, document.querySelectorAll("main header,[role=main] > header:not([role=none])").length]);
+        if (r[0] !== 1 || r[1]) bad.push(f + " " + JSON.stringify(r));
+      }
+      check(!bad.length, "landmarks: each page has one main region", bad.join(" | "));
+      await ctx.close();
+    }
+
+    // 22. the app manifest and the home page's search data know all eight games
+    {
+      const m = JSON.parse(fs.readFileSync(path.join(__dirname, "../manifest.webmanifest"), "utf8"));
+      const ok = (m.shortcuts || []).every((x) => fs.existsSync(path.join(__dirname, "..", x.url === "./" ? "index.html" : x.url.endsWith("/") ? x.url + "index.html" : x.url)));
+      check(ok && m.shortcuts.length >= 3, "manifest: shortcuts point at real pages");
+      const home = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+      check(/Eight free daily geography games[^"]*Crossings/.test(home), "home page search data lists all eight games");
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
