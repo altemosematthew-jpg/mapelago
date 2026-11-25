@@ -8,7 +8,8 @@ report a conflict on it. To resolve: keep the other branch's side of that one li
 
 In bigger-country.html it changes one spot: the start of the game ("W.forEach(...)...H();") hands the round
 to MxBC() when it is there, and plays the old way when it isn't. In bigger.html it adds one call after the
-game starts, which hands the city pool to the practice mode (MxPractice). Everything else this branch adds to the page sits on its own
+game draws its first round, which hands the city pool, the day's pairs and the save to MxCity (the checked
+figures from No. 14, the end card and Play more). Everything else this branch adds to the page sits on its own
 lines, between "bigcountry" markers, and merges cleanly. Safe to run twice. Stops without writing if an
 anchor has changed.
 """
@@ -39,11 +40,11 @@ for block in ["/* bigcountry: the round bar", "/* bigcountry: the round, the tru
     if block not in s:
         sys.exit("missing this branch's block: " + block)
 
-# bigger.html: hand the pool to the practice mode
+# bigger.html: hand the game to MxCity just before it draws the first round
 cpath = path.parent / "bigger.html"
 c = cpath.read_text(encoding="utf-8")
 COLD = 'J.forEach((n,a)=>n.onclick=()=>wn(a));c("#shareBtn").onclick=An;window.addEventListener("hashchange",()=>location.reload());O();'
-CNEW = COLD + '/*bigcountry-practice*/window.MxPractice&&MxPractice({id:"bigger",pool:x,unit:v.unit,esc:$,icon:L});/*/bigcountry-practice*/'
+CNEW = COLD[:-4] + '/*bigcountry-city*/window.MxCity&&MxCity({x,A,n:M,f,k,ok:N,deal:_,v,esc:$,icon:L});/*/bigcountry-city*/O();'
 if CNEW in c:
     print("bigger.html: hook already there")
 elif c.count(COLD) == 1:
@@ -51,7 +52,8 @@ elif c.count(COLD) == 1:
     print("bigger.html: hook added")
 else:
     sys.exit("bigger.html: anchor not found; add the hook by hand (see review/bigcountry-merge-notes.md)")
-for need in ["var x=[{name:", 'var v={key:"dailycity:bigger:v1"', "function L(n,a=16)", "/* bigcountry-practice:", 'id="mxprGo"', 'class="tools"']:
+for need in ["var x=[{name:", 'var v={key:"dailycity:bigger:v1"', "function L(n,a=16)", "function _(n,a){", ",A=_(x,M),k=", "N=n=>X(x,A[n],f[n])",
+             "/* bigcountry-practice:", "/* bigcountry-city:", 'id="mxprGo"', 'class="tools"']:
     if need not in c:
         sys.exit("bigger.html no longer has " + need + ": check by hand before committing")
 

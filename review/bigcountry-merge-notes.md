@@ -70,6 +70,29 @@ It is safe to run twice and stops without writing if an anchor has changed.
   under `dailycity:`) leaves it alone. Practice never writes the daily save, so results, streaks, stats,
   the share text and "today's games" are unchanged (a test compares them before and after).
 
+## Review fixes (official areas, checked city figures), from No. 14
+
+- **Start number 14 (Fri 27 Nov 2026), in two places:** `var FROM = 14` in the `bigcountry` script of
+  bigger-country.html and in the `bigcountry-city` script of bigger.html. Nos. 1 to 13 keep their pairs and
+  figures (tests/golden.json changed only for the two Bigger games from No. 14; a test checks it). Merge
+  before 27 Nov, or move both numbers to the day after the merge, then run `npm run golden` and check the
+  diff touches only `bigger` and `biggercountry` from that number.
+- Bigger country?: areas are the CIA World Factbook's "Area: total" (read from the factbook.json mirror on
+  25 Nov 2026), in `AREAS` in the bigcountry script, keyed by the map's country number. Morocco is left out.
+  A seeded deal (`deal()` there) replaces the game's own from No. 14: same ten-a-day deck rotation idea,
+  bands from at least 8x down to 1.05-1.15x for the last pair.
+- Bigger city?: the checked figures, names and drops are the `FIX` and `DROP` lists in the new
+  `bigcountry-city` script of bigger.html; every decision is listed in `review/bigger-city-data.md`. The game's
+  own deal runs on the checked pool, and a day is re-dealt if any pair is within 10%.
+- bigger.html's hook moved: it now runs just before `O();` (the first round), not after.
+  `review/bigcountry-patch.py` knows the new form.
+- Both games: the result list marks the player's pick and a "Your stats" panel (played, average, streak,
+  best streak, score spread) sits above it, from `MxBigEnd` in the shared practice block. The country
+  reveal waits for the Next tap (no auto-advance) and the next pair takes the focus.
+- A source line under each game's explainer, just after `<!-- copy:end -->` (copy.json not touched; you
+  may want the explainers in copy.json to name the sources too).
+- **Shared test file:** tests/golden.json (Bigger games, No. 14 on).
+
 ## What it relies on in the game script
 `MxBC()` is handed the game's own values: the countries (`M`), the day's pairs (`R`), the puzzle number,
 the picks array and save object (mutated in place, so midnight handling still sees them), the
