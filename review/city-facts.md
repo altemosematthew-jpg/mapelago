@@ -1,85 +1,92 @@
-# "About this city" facts for review (4.2): 60 upcoming mystery cities
+# "About this city" facts: 60 upcoming mystery cities (source-checked by Duet)
 
-Written from general reference knowledge, not checked against live sources (this session cannot open web pages).
-**None of this is live.** The facts card in the game is unchanged. Once you have reviewed a city, tick it, and
-the approved facts can be added to its end card in a later change.
-
-How sure: **certain** (standard, widely known), **high** (confident, worth a glance), **check** (verify before use).
-Two facts per city: what it is known for, and one piece of history or a "did you know".
+These are live on the end-of-round facts card from release 0.15.4: three facts per city, each under 120 characters,
+shown instead of the standard facts. They replace the draft facts that were here before.
 The cities are in alphabetical order, so this file doesn't show which day each one is the answer.
 
-| City | Fact 1 | Fact 2 | How sure |
-|---|---|---|---|
-| Adelaide, Australia | Known as the "City of Churches". | It was laid out in 1836 within a ring of parkland. | certain |
-| Amsterdam, Netherlands | Its ring of 17th-century canals is a UNESCO World Heritage Site. | The constitutional capital of the Netherlands, though the government sits in The Hague. | certain |
-| Athens, Greece | Home of the Acropolis and the Parthenon. | It hosted the first modern Olympic Games in 1896. | certain |
-| Baku, Azerbaijan | Azerbaijan's capital, on the Caspian Sea, below sea level. | Its walled Old City with the Maiden Tower is a UNESCO World Heritage Site. | certain |
-| Bamako, Mali | Mali's capital, on the Niger River. | Its name is often said to mean "crocodile river" in Bambara. | high |
-| Bangkok, Thailand | Thailand's capital and largest city, on the Chao Phraya River. | Its full ceremonial name is one of the longest place names in the world. | certain |
-| Barranquilla, Colombia | Hosts one of the world's largest carnivals, recognised by UNESCO. | It sits where the Magdalena River meets the Caribbean. | certain |
-| Bayamo, Cuba | Capital of Granma province in eastern Cuba. | Cuba's national anthem, "La Bayamesa", is named after the city, where it was first sung in 1868. | high |
-| Belo Horizonte, Brazil | One of Brazil's first planned modern cities, founded in 1897. | The Pampulha buildings by Oscar Niemeyer are a UNESCO World Heritage Site. | certain |
-| Bishkek, Kyrgyzstan | Kyrgyzstan's capital, with the Tian Shan mountains in view to the south. | It was called Frunze in Soviet times. | certain |
-| Bo, Sierra Leone | Sierra Leone's second-largest city. | It was the administrative capital of the colonial Protectorate. | check |
-| Boa Vista, Brazil | The only Brazilian state capital entirely north of the equator. | It was laid out on a fan-shaped plan. | high |
-| Calgary, Canada | Hosts the Calgary Stampede, a ten-day rodeo and festival every July. | It held the 1988 Winter Olympics, the first in Canada. | certain |
-| Chandler, Arizona, United States | A fast-growing city in the Phoenix metro area, known for its tech industry. | It was founded in 1912 by a veterinarian, Alexander Chandler. | check |
-| Colombo, Sri Lanka | Sri Lanka's largest city and commercial capital. | The official capital is next door: Sri Jayawardenepura Kotte. | certain |
-| Culiacán, Mexico | Capital of Sinaloa state in north-west Mexico. | It lies where two rivers join to form the Culiacán River. | high |
-| Dili, East Timor | East Timor's capital, on the north coast. | A large Cristo Rei statue stands on a headland east of the city. | certain |
-| Dublin, Ireland | Home of Trinity College and the Book of Kells. | Its name comes from the Irish dubh linn, "black pool". | certain |
-| Erzurum, Türkiye | One of Türkiye's highest big cities, at about 1,900 m, with long, cold winters. | Its Double Minaret Madrasa dates from the 13th century. | high |
-| Homyel', Belarus | Belarus's second-largest city, in the south-east near the Ukrainian and Russian borders. | The Rumyantsev-Paskevich palace and park sit on the bank of the Sozh River. | high |
-| Iztapalapa, Mexico | A borough of Mexico City and its most populous. | It is known for a large Passion play re-enacted every Easter. | high |
-| Juba, South Sudan | The capital of the world's youngest country, independent since 2011. | It lies on the White Nile. | certain |
-| Kampala, Uganda | Uganda's capital, traditionally said to be built on seven hills. | It lies near the northern shore of Lake Victoria. | certain |
-| Kawasaki, Japan | An industrial city between Tokyo and Yokohama. | Its Fujiko F. Fujio Museum celebrates the creator of Doraemon. | high |
-| Kobe, Japan | A port city famous for Kobe beef. | It was struck by the Great Hanshin earthquake in 1995. | certain |
-| Lomé, Togo | Togo's capital, right on the border with Ghana. | Its port is one of the deepest natural ports in West Africa. | high |
-| Los Angeles, United States | Home of Hollywood and the second-largest city in the United States. | It was founded in 1781 as a Spanish pueblo. | certain |
-| Luanda, Angola | Angola's capital, on the Atlantic coast. | Founded by the Portuguese in 1576. | certain |
-| Lubumbashi, DR Congo | The DR Congo's mining capital, in the Copperbelt. | It was called Élisabethville in colonial times. | certain |
-| Macau | Its historic centre is a UNESCO World Heritage Site. | It was administered by Portugal until 1999. | certain |
-| Malabo, Equatorial Guinea | The capital sits on Bioko Island, not on the mainland. | It was called Santa Isabel until 1973. | certain |
-| Mandalay, Myanmar | Myanmar's last royal capital, founded in 1857. | Kuthodaw Pagoda holds stone tablets often called the world's largest book. | high |
-| Maracay, Venezuela | Known as the "Garden City" of Venezuela. | It is home to Venezuela's aviation history and its main military air base. | check |
-| Mbandaka, DR Congo | Sits on the Congo River almost exactly on the equator. | It was called Coquilhatville in colonial times. | high |
-| Meiktila, Myanmar | A town in central Myanmar beside Meiktila Lake. | It was the site of a major battle in 1945. | high |
-| Milan, Italy | Home of Leonardo da Vinci's Last Supper and the Duomo cathedral. | It co-hosts the 2026 Winter Olympics with Cortina d'Ampezzo. | certain |
-| Monterrey, Mexico | An industrial hub below the Cerro de la Silla, "Saddle Hill". | It is one of Mexico's three largest cities. | certain |
-| Montevideo, Uruguay | Uruguay's capital, on the Río de la Plata. | It hosted the first FIFA World Cup final, in 1930. | certain |
-| Munich, Germany | Capital of Bavaria and home of Oktoberfest. | It hosted the 1972 Summer Olympics. | certain |
-| Naples, Italy | The home of pizza margherita, at the foot of Mount Vesuvius. | Its historic centre is a UNESCO World Heritage Site. | certain |
-| Nassau, Bahamas | The capital sits on New Providence island. | It was once a base for pirates such as Blackbeard. | certain |
-| Newcastle, South Africa | An industrial town in northern KwaZulu-Natal. | It was named after the Duke of Newcastle, a British colonial secretary. | check |
-| Nicosia, Cyprus | The last divided capital in Europe. | Its old city is ringed by 16th-century Venetian walls. | certain |
-| Osmaniye, Türkiye | Capital of Osmaniye province in southern Türkiye. | The ruins of the ancient city of Castabala lie nearby. | check |
-| Qarchak, Iran | A fast-growing town just south of Tehran. | — (no well-known fact I'm sure of; consider replacing this city) | check |
-| Rawalpindi, Pakistan | Twin city of Islamabad, next door. | It served as Pakistan's interim capital while Islamabad was being built in the 1960s. | certain |
-| Salvador, Brazil | Brazil's first capital, from 1549 to 1763. | Its historic centre, Pelourinho, is a UNESCO World Heritage Site. | certain |
-| Semarang, Indonesia | Capital of the province of Central Java, on Java's north coast. | Its Lawang Sewu building, "a thousand doors", was built for a Dutch railway company in the early 1900s. | high |
-| Shah Alam, Malaysia | Capital of the state of Selangor. | Its Blue Mosque has one of the largest domes of any mosque. | high |
-| Skopje, North Macedonia | Mother Teresa was born here in 1910. | Much of the city was rebuilt after an earthquake in 1963. | certain |
-| Solapur, India | A textile city in Maharashtra, known for its chaddars (bedsheets). | Its old fort dates back several centuries. | check |
-| Suzuka, Japan | Home of the Suzuka Circuit, which hosts the Formula 1 Japanese Grand Prix. | The circuit's figure-of-eight layout, with a crossing bridge, is rare in racing. | certain |
-| Takeo, Cambodia | Capital of Takeo province, south of Phnom Penh. | The province is sometimes called the cradle of Khmer civilisation, with pre-Angkor temples at Angkor Borei. | check |
-| Tegucigalpa, Honduras | Honduras's capital, in a mountain valley. | Its airport, Toncontín, was famous for one of the world's trickiest approaches; most international flights now use a newer airport. | high |
-| Tehran, Iran | Iran's capital and largest city, below the Alborz mountains. | It has been the capital since the late 18th century. | certain |
-| Ufa, Russia | Capital of the Republic of Bashkortostan. | It sits where the Ufa and Belaya rivers meet. | high |
-| Volgograd, Russia | Known as Stalingrad from 1925 to 1961. | The Motherland Calls statue on Mamayev Kurgan is one of the tallest statues in Europe. | certain |
-| Windhoek, Namibia | Namibia's capital, almost in the middle of the country. | Its Christuskirche, a German colonial-era church, is a city landmark. | certain |
-| Yangon, Myanmar | Home of the gilded Shwedagon Pagoda. | It was Myanmar's capital until 2005, when the government moved to Naypyidaw. | certain |
-| Zanzibar City, Tanzania | Its old quarter, Stone Town, is a UNESCO World Heritage Site. | Freddie Mercury was born here in 1946. | certain |
+**Sources:** Duet opened a source for every fact; its document lists them, one line per city. That source list
+wasn't included in the block pasted here, so it isn't in this file yet. Paste it and it goes in the Source column.
 
-## Data notes found while writing these
-- **Iztapalapa** is a borough of Mexico City, not a separate city: players looking for "a city" may find this unfair.
-- **Macau** is listed with country "Macao"; it's a special administrative region of China.
-- **Qarchak** is obscure even for a hard day; consider swapping it.
-- **Zanzibar** is listed as "Zanzibar"; the city is usually called Zanzibar City (its old quarter is Stone Town).
+| City | Fact 1 | Fact 2 | Fact 3 | Source |
+|---|---|---|---|---|
+| Adelaide, Australia | It was nicknamed the "City of Churches" in colonial times for its diversity of faiths. | It was founded in 1836 as the planned capital of a colony of free settlers, not convicts. | Colonel William Light laid out its grid-shaped centre and ringed it with parklands. | (in Duet's list) |
+| Amsterdam, Netherlands | Its 17th-century ring of canals was added to the UNESCO World Heritage List in 2010. | The settlement first appears in a document from 1275 about a road toll. | It is the official capital, yet the government and foreign embassies sit in The Hague. | (in Duet's list) |
+| Athens, Greece | Known for the Acropolis and its Parthenon, and often called the birthplace of democracy. | It hosted the first modern Olympic Games in 1896. | Its Metro displays ancient artefacts that were found while the system was being built. | (in Duet's list) |
+| Baku, Azerbaijan | Known for its walled Old City, home to the Maiden Tower and the Palace of the Shirvanshahs. | In 1846 an oil well was drilled in its Bibi-Heybat suburb; a later oil boom transformed the city. | It lies about 28 metres below sea level and is nicknamed the City of Winds for its strong gusts. | (in Duet's list) |
+| Bamako, Mali | Set on the Niger River, it is famed for its music scene, which boomed in the 1990s with stars like Salif Keita. | The French made it the capital of the colony of French Sudan in 1908, and it grew quickly afterwards. | Its name is usually translated from the Bambara language as "crocodile river". | (in Duet's list) |
+| Bangkok, Thailand | Known for the Grand Palace, temples such as Wat Arun and Wat Pho, and its street food stalls. | Its City Pillar was erected on 21 April 1782, the date taken as its founding as the capital. | Thais call it Krung Thep, short for its ceremonial name, Krung Thep Maha Nakhon. | (in Duet's list) |
+| Barranquilla, Colombia | Famous for its Carnival, which was recognised by UNESCO in 2003. | SCADTA, the airline that grew into Avianca, was founded here on 5 December 1919. | Its nickname is "La Puerta de Oro de Colombia", meaning Colombia's Golden Gate. | (in Duet's list) |
+| Bayamo, Cuba | Cuba's national anthem, "La Bayamesa", was first performed here during the 1868 Battle of Bayamo. | Founded in 1513, it was the second of seven towns Diego Velázquez set up in Cuba. | In January 1869 its residents set the city on fire rather than surrender it to Spanish troops. | (in Duet's list) |
+| Belo Horizonte, Brazil | Nicknamed the "capital of neighbourhood bars" for its many small local bars, called botecos. | It opened in 1897 as a planned city named Cidade de Minas and took the name Belo Horizonte in 1906. | Its Pampulha buildings, designed by a young Oscar Niemeyer in the 1940s, became a UNESCO World Heritage Site in 2016. | (in Duet's list) |
+| Bishkek, Kyrgyzstan | Known for Ala-Too Square and the Kyrgyz Ala-Too mountain range, about 40 km away, which forms a backdrop to the city. | It began as Pishpek, a fortress the Kokand Khanate built in 1825, and was called Frunze from 1926 to 1991. | Its name is said to come from the paddle used to churn fermenting milk. | (in Duet's list) |
+| Bo, Sierra Leone | Known as the main home of the Mende people and for Bo School, founded in 1906. | The town's modern growth began when the Sierra Leone Government Railway arrived in 1889. | From 1930 until independence in 1961 it was the capital of the Protectorate of Sierra Leone. | (in Duet's list) |
+| Boa Vista, Brazil | It is a planned city with a radial layout that fans out from the banks of the Rio Branco. | It was created on 9 July 1890, under the name Boa Vista do Rio Branco. | It is the only Brazilian state capital lying entirely north of the equator. | (in Duet's list) |
+| Calgary, Canada | Famous for the Calgary Stampede, a rodeo and exhibition first held in 1912. | It began in 1875 as a post of the North-West Mounted Police. | It is named after Calgary Castle on the Isle of Mull in Scotland. | (in Duet's list) |
+| Chandler, Arizona, United States | It hosts a yearly Ostrich Festival; early farmers here raised ostriches for their prized feathers. | Dr. A.J. Chandler opened the townsite office on his ranch land south of Mesa in 1912. | Its founder was the first veterinary surgeon of the Arizona Territory. | (in Duet's list) |
+| Colombo, Sri Lanka | Galle Face Green is its seaside promenade on the Indian Ocean, right in the heart of the city. | The Dutch captured the city in 1656 after a long siege. | Its name is thought to come from "Kolon thota", meaning port on the Kelani River. | (in Duet's list) |
+| Culiacán, Mexico | Home of the Tomateros baseball team, Caribbean Series champions in 1996 and 2002. | Spanish conquistadors founded it in 1531 under the name Villa de San Miguel. | Its official name, Culiacán Rosales, honours Antonio Rosales, a soldier and governor of Sinaloa. | (in Duet's list) |
+| Dili, East Timor | Known for Cristo Rei, a 27-metre statue of Jesus standing on a globe atop a seaside peninsula. | In 1769 the Portuguese moved their colonial capital here from Lifau, bringing some 1,200 people. | Its first cathedral, opened in 1937, was destroyed by Allied bombing in World War II. | (in Duet's list) |
+| Dublin, Ireland | Guinness has been brewed at the St James's Gate Brewery since 1759. | Vikings set up a fortified base here in 841. | Phoenix Park has been home to a herd of wild fallow deer since the 17th century. | (in Duet's list) |
+| Erzurum, Türkiye | Nearby Palandöken Mountain makes it a winter sports hub; it hosted the 2011 Winter Universiade. | The Erzurum Congress of 1919 was one of the starting points of the Turkish War of Independence. | In Roman times the city was called Theodosiopolis. | (in Duet's list) |
+| Homyel', Belarus | Known for the Rumyantsev-Paskevich palace and park on the Sozh River, begun in 1777. | It is first mentioned in the Hypatian Codex chronicle under the year 1142. | The estate's last owner, Irina Paskevich, made the first French translation of War and Peace. | (in Duet's list) |
+| Iztapalapa, Mexico | Known for its Holy Week Passion Play, one of Mexico City's major yearly cultural events. | Its hill, Cerro de la Estrella, hosted the Aztec New Fire ceremony, last held in 1507. | Its ruler Cuitláhuac briefly succeeded Moctezuma as Aztec emperor before dying of smallpox. | (in Duet's list) |
+| Juba, South Sudan | A river port on the White Nile, it marks the southern end of traffic along the Nile. | The town was founded in 1920–21 by missionaries on the site of a small Bari village also called Juba. | Greek merchants helped build the early town in the 1920s, including the Juba Hotel. | (in Duet's list) |
+| Kampala, Uganda | Known for the Kasubi Tombs, a UNESCO World Heritage Site where the kings of Buganda are buried. | After Uganda's independence in 1962, the capital moved here from Entebbe. | It was originally built on seven hills but has since spread well beyond them. | (in Duet's list) |
+| Kawasaki, Japan | Known for Kawasaki Daishi, a Buddhist temple founded in 1128 and a major pilgrimage site. | It became a city on 1 July 1924 through a merger with neighbouring Daishi and Miyuki. | A museum devoted to Doraemon creator Fujiko F. Fujio opened in its Tama ward in 2011. | (in Duet's list) |
+| Kobe, Japan | It is famous for Kobe beef, raised in the surrounding Hyōgo Prefecture. | Its harbour, then called Hyōgo Port, opened to foreign trade on 1 January 1868. | The name comes from kanbe, an old word for the people who supported Ikuta Shrine. | (in Duet's list) |
+| Lomé, Togo | Known for the Akodessewa fetish market, a specialist market selling traditional charms and fetish objects. | It became the capital of the German colony of Togoland in 1897. | In 1975 Europe and dozens of African, Caribbean and Pacific nations signed the Lomé Convention here. | (in Duet's list) |
+| Los Angeles, United States | Home of Hollywood: by 1921 over 80% of the world's film industry was based in the city. | Founded on 4 September 1781 as El Pueblo de Nuestra Señora la Reina de los Ángeles. | The first message over ARPANET, the internet's forerunner, was sent from UCLA. | (in Duet's list) |
+| Luanda, Angola | An oil hub, where petroleum from nearby offshore fields is refined. | Paulo Dias de Novais founded it in 1576 as São Paulo da Assunção de Loanda. | The Dutch briefly held the city in the 1640s, calling it Fort Aardenburgh. | (in Duet's list) |
+| Lubumbashi, DR Congo | Known as DR Congo's mining capital, sited near the Etoile du Congo copper mine. | Belgian authorities founded it in 1910 as Élisabethville, named after Queen Elisabeth. | Local club TP Mazembe once reached the FIFA Club World Cup final, losing 3–0 to Inter Milan. | (in Duet's list) |
+| Macau | Known for its casino resorts and food that blends Cantonese and Portuguese cooking. | Portugal gained a permanent lease here in 1557 and handed it over to China on 20 December 1999. | About two-thirds of its land was reclaimed from the sea. | (in Duet's list) |
+| Malabo, Equatorial Guinea | Its Gothic Revival Cathedral of Santa Isabel was built between 1897 and 1916. | The British founded it as Port Clarence on 25 December 1827. | Its name, given in 1973, honours Malabo Löpèlo Mëlaka, the last king of the Bubi people. | (in Duet's list) |
+| Mandalay, Myanmar | Known for Mandalay Hill and Kuthodaw Pagoda, whose 729 stone slabs are carved with Buddhist scripture. | King Mindon founded it as a royal capital in 1857, officially naming it Yadanarbon. | Legend says the Buddha foretold that a great city would rise at the foot of Mandalay Hill. | (in Duet's list) |
+| Maracay, Venezuela | Venezuelans know it as the "Garden City" (Ciudad Jardín). | It was officially established on 5 March 1701, by Bishop Diego de Baños y Sotomayor. | It is called the cradle of Venezuelan aviation and has its own Aviation Museum. | (in Duet's list) |
+| Mbandaka, DR Congo | It sits almost on the equator, near where the Ruki River flows into the Congo River. | Explorer Henry Morton Stanley founded it in 1883 under the name Équateurville. | Under Belgian rule it was called Coquilhatville; it was renamed Mbandaka in 1966 after a local leader. | (in Duet's list) |
+| Meiktila, Myanmar | Sits on Meiktila Lake, an 11 km-long reservoir split into north and south halves by a bridge. | In 1945 Allied forces under William Slim captured it, cutting Japanese supply lines to Mandalay. | Legend says its lake was begun by the grandfather of the Buddha, and later kings repaired it. | (in Duet's list) |
+| Milan, Italy | A global fashion capital, home to the Duomo cathedral and the La Scala opera house, opened in 1778. | In AD 313 Emperor Constantine issued the Edict of Milan here, granting tolerance to all religions. | Its cathedral took almost five centuries to complete, built between 1386 and 1877. | (in Duet's list) |
+| Monterrey, Mexico | Its symbol is Cerro de la Silla, the saddle-shaped mountain; its classic dish is cabrito, roast kid goat. | Diego de Montemayor founded it on 20 September 1596 beside the Santa Lucía spring. | The nearby García Caves, discovered in 1843, are known for stalagmites and fossil snail shells. | (in Duet's list) |
+| Montevideo, Uruguay | Known for the Rambla, a waterfront avenue that runs along the city's whole shoreline. | Governor Bruno Mauricio de Zabala's diary marks 24 December 1726 as the city's founding date. | It hosted every match of the first FIFA World Cup in 1930, including the final. | (in Duet's list) |
+| Munich, Germany | Famous for Oktoberfest, which began in October 1810 to celebrate a royal wedding. | Henry the Lion founded it to control the salt trade; 14 June 1158 is its official founding day. | The name comes from "zu den Munchen", meaning "to the monks", after an early monastic settlement. | (in Duet's list) |
+| Naples, Italy | Famous for pizza: UNESCO listed the art of the Neapolitan pizzaiuolo as intangible heritage in 2017. | Emperor Frederick II founded its university, now the University of Naples Federico II, in 1224. | Its name comes from the Greek Neapolis, which means "new town". | (in Duet's list) |
+| Nassau, Bahamas | It is known for Junkanoo, a colourful street parade whose handmade costumes take all year to make. | It was rebuilt in 1695 and renamed Nassau in honour of King William III, Prince of Orange-Nassau. | In the early 1700s pirates proclaimed it a pirate republic, and Blackbeard was among them. | (in Duet's list) |
+| Newcastle, South Africa | Long known for coal mining and steel production in northern KwaZulu-Natal. | Founded in 1864, it was named after the Duke of Newcastle, a British Colonial Secretary, not the English city. | Before it had a name, 1840s military maps marked the spot simply as Post Halt Number 2. | (in Duet's list) |
+| Nicosia, Cyprus | Its old town sits inside star-shaped Venetian walls with eleven bastions and three gates. | It has been the island's capital since around 965, when Byzantine rulers chose it. | The old Famagusta Gate in the city walls now hosts art exhibitions and concerts. | (in Duet's list) |
+| Osmaniye, Türkiye | The farmland around it, watered by the Ceyhan River, is known for growing peanuts. | In 1996 it became the capital of the restored Osmaniye Province, Türkiye's 80th province. | It's a base for visiting Hierapolis-Castabala, Roman ruins below a crag topped by a castle. | (in Duet's list) |
+| Qarchak, Iran | A residential and industrial suburb southeast of Tehran. | Long part of Varamin County, it became the capital of its own new Qarchak County in 2012. | Historic ruins have been recorded nearby at Puinak, in the same county. | (in Duet's list) |
+| Rawalpindi, Pakistan | Known together with neighbouring Islamabad as the "twin cities". | A Gakhar chief, Jhanda Khan, restored the town and named it Rawalpindi in 1493. | It became Pakistan's interim capital in 1959, before the seat of government moved to Islamabad. | (in Duet's list) |
+| Salvador, Brazil | Famous for its Carnival, capoeira and Afro-Brazilian culture, and named a UNESCO City of Music. | Founded in 1549 by Tomé de Sousa, it served as colonial Brazil's capital until 1763. | The Lacerda Elevator, built between 1869 and 1873, carries people between the upper and lower city. | (in Duet's list) |
+| Semarang, Indonesia | Local favourites include lumpia spring rolls and bandeng presto, a milkfish dish. | On 2 May 1547 Pandan Arang was declared its first bupati, creating the city administratively. | Locals nickname the Dutch-era old town, Kota Lama, "Little Netherlands". | (in Duet's list) |
+| Shah Alam, Malaysia | Known for the Sultan Salahuddin Abdul Aziz Mosque, popularly called the Blue Mosque. | It was proclaimed the capital of Selangor on 7 December 1978, taking over from Kuala Lumpur. | It's named after Sultan Alam Shah; the Persian-origin name roughly means "king of the world". | (in Duet's list) |
+| Skopje, North Macedonia | Its Stone Bridge over the Vardar, built under Sultan Mehmed II, is a symbol of the city. | A 1963 earthquake destroyed about 80% of the city; the old station clock stopped at 5:17. | The name comes from Scupi, a Roman settlement founded in the late 1st century AD. | (in Duet's list) |
+| Solapur, India | Known for Solapuri chadars, cotton bedsheets protected by a Geographical Indication (GI) tag. | During the freedom struggle, the city enjoyed three days of full freedom, from 9 to 11 May 1930. | Its name is believed to come from the sixteen villages the city was once spread across. | (in Duet's list) |
+| Suzuka, Japan | Home of Suzuka Circuit, a figure-eight track that first hosted Formula 1's Japanese Grand Prix in 1987. | It became a city on 1 December 1942, when the town of Kanbe merged with a group of nearby villages. | Since 1990 it has been twinned with Le Mans in France, home of the 24 Hours of Le Mans race. | (in Duet's list) |
+| Takeo, Cambodia | The town and its province are known for silk weaving done in nearby villages. | Hindu statues from nearby Phnom Da are linked to King Rudravarman, who reigned 514 to 539 CE. | The town's official name, Doun Kaev, means "Crystal Grandmother"; Takeo means "Grandpa Keo". | (in Duet's list) |
+| Tegucigalpa, Honduras | It shares the role of national capital with its sister city Comayagüela, across the Choluteca River. | It became the capital of Honduras on 30 October 1880, taking over from the old capital, Comayagua. | Its name is often traced to a Nahuatl phrase usually translated as "hills of silver". | (in Duet's list) |
+| Tehran, Iran | Known for the Qajar dynasty's Golestan Palace, a UNESCO World Heritage Site. | Agha Mohammad Khan of the Qajar dynasty first made it the capital of Iran in 1786. | In 1943 Stalin, Roosevelt and Churchill met here for the Tehran Conference, held at the Soviet embassy. | (in Duet's list) |
+| Ufa, Russia | Known for oil refining and the chemical industry, and home to the Salavat Yulaev ice hockey club. | It was founded in 1574 as a fortress built on the orders of Ivan the Terrible. | Its Bashkir name is written Өфө, earning it the playful nickname "City of Three Screws". | (in Duet's list) |
+| Volgograd, Russia | The Motherland Calls, an 85-metre statue on Mamayev Kurgan, was dedicated in 1967. | It was founded in 1589 as the fortress of Tsaritsyn. | From 1925 to 1961 it was called Stalingrad, the name of the 1942-43 battle fought there. | (in Duet's list) |
+| Windhoek, Namibia | Known for Christ Church, a sandstone church dedicated in 1910 with stained glass from Kaiser Wilhelm II. | Jonker Afrikaner set up an Orlam settlement here in 1840; German colonists refounded the town in 1890. | Its name is most often traced to the Afrikaans words for "wind" and "corner". | (in Duet's list) |
+| Yangon, Myanmar | Known for the gilded Shwedagon Pagoda, a deeply sacred Buddhist shrine. | King Alaungpaya captured the town of Dagon in 1755 and renamed it Yangon. | Its name can be translated as "End of Strife"; the old English name was Rangoon. | (in Duet's list) |
+| Zanzibar City, Tanzania | Known for Stone Town, its old quarter famed for intricately carved wooden doors. | The Omanis built the Old Fort in Stone Town in 1699. | Queen frontman Freddie Mercury was born in Stone Town. | (in Duet's list) |
 
-## "See this land through time": possible new eras (not built)
-The game draws 1914, 1950 and 1980 from Mapelago's own table of who ruled each of today's countries. Eras that would
-add the most, if you'd like them researched and checked: **1990** (the end of the USSR, Yugoslavia and
-Czechoslovakia begins; German reunification), **1938** (just before the Second World War) and **1885** (before the
-Scramble for Africa). Each needs a full ownership table for today's countries, which I can't verify without sources,
-so none were added.
+## Notes from Duet
+- **Not fully verified:** Qarchak's county date (2012 per Wikipedia, 2016 per a travel site); Bayamo's 1869 burning
+  comes only from Prensa Latina.
+- **Left out because sources disagree:** Calgary's fort date, Erzurum's elevation, when Homyel's palace was finished,
+  Mandalay's founding day, Luanda's Dutch years, Lubumbashi's renaming year, when Islamabad replaced Rawalpindi,
+  Windhoek's water plant, the first Iztapalapa Passion Play, when Zanzibar became the Omani capital.
+- **Wrong in the old draft, so dropped:** the Japanese Grand Prix at Suzuka "every year since 1987" (it skipped 2007,
+  2008, 2020 and 2021); Mahamuni Pagoda under King Mindon (1784, King Bodawpaya); Luanda's fort from 1576 (1634).
+  Record claims dropped: Lacerda Elevator as the first urban lift, Kobe's first golf course and mosque, Baku as the
+  lowest capital, Zanzibar's "shortest war", Kuthodaw as the world's largest book, Shah Alam's largest mosque,
+  Ufa's first tick monument.
+
+## The flagged cities
+- **Iztapalapa** (a borough of Mexico City) and **Zanzibar City** (Stone Town is its old quarter): the game is won with
+  a pin within 50 km, so a pin on Mexico City or on Stone Town already finds them. Nothing to change.
+- **Macau:** the end card now reads "Macau" over "China (Macao SAR)". The game has no typed answers, so both
+  spellings are fine.
+- **Swap candidates** (not swapped; Matthew decides). Both pairs are in the game's city list and not among these 60:
+  - for Iztapalapa: **Guadalajara** or **Puebla**, Mexico;
+  - for Qarchak: **Isfahan** or **Shiraz**, Iran.

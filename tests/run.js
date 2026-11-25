@@ -308,35 +308,60 @@ async function page(b, url, opts = {}) {
       await o.ctx.close();
     }
 
-    // 14. visitor counting is built but switched off; the privacy page always matches the switch
+    // 14. visitor counting (Cloudflare Web Analytics, switched on 25 Nov 2026): the beacon loads on mapelago.com only,
+    //     never for Global Privacy Control or Do Not Track, and the privacy page always matches the switch
     {
-      const hits = [];
-      const ctx = await b.newContext(PHONE);
-      ctx.on("request", (r) => { if (/cloudflareinsights/.test(r.url())) hits.push(r.url()); });
-      const p = await ctx.newPage();
-      for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/", "about/", "games/"]) {
-        await p.goto(U + f, { waitUntil: "load" }); await p.waitForTimeout(150);
+      const PAGES = ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/", "about/", "games/"];
+      const words = (q) => q.evaluate(() => [MXANALYTICS.on, [...document.querySelectorAll('[data-analytics="on"]')].every((e) => !e.hidden), [...document.querySelectorAll('[data-analytics="off"]')].every((e) => e.hidden), /Cloudflare Web Analytics/.test(document.querySelector("main").innerText), /no tracking scripts/.test(document.querySelector("main").innerText), (document.querySelector("#analyticsSince") || {}).textContent]);
+      // switched on, on this machine: nothing is loaded, the wording is the counting wording
+      {
+        const ctx = await b.newContext(PHONE), hits = [];
+        ctx.on("request", (r) => { if (/cloudflareinsights/.test(r.url())) hits.push(r.url()); });
+        const p = await ctx.newPage();
+        for (const f of PAGES) { await p.goto(U + f, { waitUntil: "load" }); await p.waitForTimeout(120); }
+        check(hits.length === 0, "analytics: never counted on localhost", hits.join(" "));
+        await p.goto(U + "privacy/", { waitUntil: "load" });
+        const w = await words(p);
+        check(JSON.stringify(w) === '[true,true,true,true,false,"November 25, 2026"]', "analytics: switched on, the privacy page says what is counted and by whom", JSON.stringify(w));
+        await ctx.close();
       }
-      check(hits.length === 0, "analytics: no request to the analytics host while the token is empty", hits.join(" "));
-      await p.goto(U + "privacy/", { waitUntil: "load" });
-      const off = await p.evaluate(() => [MXANALYTICS.on, [...document.querySelectorAll('[data-analytics="off"]')].every((e) => !e.hidden), [...document.querySelectorAll('[data-analytics="on"]')].every((e) => e.hidden), /no tracking scripts/.test(document.querySelector("main").innerText), /Cloudflare/.test(document.querySelector("main").innerText)]);
-      check(JSON.stringify(off) === "[false,true,true,true,false]", "analytics: switched off, the privacy page promises no tracking and doesn't mention Cloudflare", JSON.stringify(off));
-      const rules = await p.evaluate(() => { const a = MXANALYTICS.allowed; return [a("mapelago.com", {}), a("www.mapelago.com", {}), a("localhost", {}), a("claude-charming-bardeen-967w.mapelago.pages.dev", {}), a("mapelago.com", { globalPrivacyControl: true }), a("mapelago.com", { doNotTrack: "1" }), a("mapelago.com", {}, { doNotTrack: "1" })]; });
-      check(JSON.stringify(rules) === "[true,true,false,false,false,false,false]", "analytics: only mapelago.com, never previews, never with GPC or Do Not Track", JSON.stringify(rules));
-      await ctx.close();
-      // the same pages with a token set (served to this test only)
-      const on = await b.newContext(PHONE), hits2 = [];
-      on.on("request", (r) => { if (/cloudflareinsights/.test(r.url())) hits2.push(r.url()); });
-      await on.route(/analytics\.js/, async (route) => { const res = await route.fetch(); route.fulfill({ response: res, body: (await res.text()).replace('token: "", since: ""', 'token: "0123456789abcdef0123456789abcdef", since: "1 December 2026"') }); });
-      const q = await on.newPage(); await q.goto(U + "privacy/", { waitUntil: "load" }); await q.waitForTimeout(200);
-      const w = await q.evaluate(() => [MXANALYTICS.on, [...document.querySelectorAll('[data-analytics="on"]')].every((e) => !e.hidden), [...document.querySelectorAll('[data-analytics="off"]')].every((e) => e.hidden), /Cloudflare Web Analytics/.test(document.querySelector("main").innerText), /no tracking scripts/.test(document.querySelector("main").innerText), document.querySelector("#analyticsSince").textContent]);
-      check(JSON.stringify(w) === '[true,true,true,true,false,"1 December 2026"]', "analytics: switched on, the privacy page says what is counted and by whom", JSON.stringify(w));
-      check(hits2.length === 0, "analytics: even switched on, localhost is never counted", hits2.join(" "));
-      await on.close();
+      // the same pages served as mapelago.com and as a pages.dev preview (the beacon itself is stopped, only recorded)
+      const asHost = async (host, init) => {
+        const ctx = await b.newContext(PHONE), hits = [];
+        if (init) await ctx.addInitScript(init);
+        await ctx.route(/cloudflareinsights/, (r) => { hits.push(r.request().url()); r.abort(); });
+        await ctx.route(new RegExp("^https?://" + host.replace(/\./g, "\\.") + "/"), async (r) => { const u = new URL(r.request().url()); const res = await r.fetch({ url: U + u.pathname.slice(1) + u.search }); r.fulfill({ response: res }); });
+        const p = await ctx.newPage();
+        await p.goto("http://" + host + "/bigger.html", { waitUntil: "load" }); await p.waitForTimeout(300);
+        await p.goto("http://" + host + "/privacy/", { waitUntil: "load" }); await p.waitForTimeout(300);
+        const w = await words(p);
+        await ctx.close();
+        return { hits, w };
+      };
+      const live = await asHost("mapelago.com");
+      check(live.hits.length === 2 && live.hits.every((u) => /static\.cloudflareinsights\.com\/beacon\.min\.js/.test(u)), "analytics: on mapelago.com every page loads the beacon", live.hits.join(" "));
+      check(live.w[1] && live.w[3], "analytics: mapelago.com's privacy page shows the counting wording");
+      check((await asHost("claude-charming-bardeen-967w.mapelago.pages.dev")).hits.length === 0, "analytics: never on a pages.dev preview");
+      check((await asHost("mapelago.com", () => Object.defineProperty(Navigator.prototype, "globalPrivacyControl", { get: () => true }))).hits.length === 0, "analytics: never with Global Privacy Control");
+      check((await asHost("mapelago.com", () => Object.defineProperty(Navigator.prototype, "doNotTrack", { get: () => "1" }))).hits.length === 0, "analytics: never with Do Not Track");
+      // with the token removed (the off switch), nothing loads and the page promises no tracking
+      {
+        const ctx = await b.newContext(PHONE), hits = [];
+        await ctx.route(/cloudflareinsights/, (r) => { hits.push(r.request().url()); r.abort(); });
+        await ctx.route(/^https?:\/\/mapelago\.com\//, async (r) => { const u = new URL(r.request().url()); const res = await r.fetch({ url: U + u.pathname.slice(1) }); r.fulfill({ response: res }); });
+        // registered last, so it wins for analytics.js
+        await ctx.route(/analytics\.js/, async (route) => { const res = await route.fetch({ url: U + "analytics.js" }); route.fulfill({ response: res, body: (await res.text()).replace(/token: "[0-9a-f]*"/, 'token: ""') }); });
+        const p = await ctx.newPage();
+        await p.goto("http://mapelago.com/privacy/", { waitUntil: "load" }); await p.waitForTimeout(300);
+        const w = await words(p);
+        check(hits.length === 0 && w[0] === false && w[4] === true && w[3] === false, "analytics: with an empty token nothing loads and the page says no tracking", JSON.stringify([hits, w]));
+        await ctx.close();
+      }
+      const rules = await (async () => { const c = await b.newContext(); const q = await c.newPage(); await q.goto(U + "privacy/"); const r = await q.evaluate(() => { const a = MXANALYTICS.allowed; return [a("mapelago.com", {}), a("www.mapelago.com", {}), a("localhost", {}), a("x.mapelago.pages.dev", {}), a("mapelago.com", { globalPrivacyControl: true }), a("mapelago.com", { doNotTrack: "1" }), a("mapelago.com", {}, { doNotTrack: "1" })]; }); await c.close(); return r; })();
+      check(JSON.stringify(rules) === "[true,true,false,false,false,false,false]", "analytics: the host and privacy rules", JSON.stringify(rules));
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8");
-      check(/new URL\(r\.url\)\.origin !== location\.origin\) return/.test(sw), "analytics: the service worker never saves another host's files");
+      check(/new URL\(r\.url\)\.origin !== location\.origin\) return/.test(sw) && !/cloudflareinsights/.test(sw.split("const PRE")[1].split("];")[0]), "analytics: the service worker never saves the beacon");
     }
-
 
     // 16. Crossings map labels never overlap (No. 12 put Hungary on Ukraine and the two Koreas on each other)
     {
@@ -376,6 +401,39 @@ async function page(b, url, opts = {}) {
       check((await p.evaluate(() => __cross.G().steps.map((s) => __cross.name(s.i)).join(","))) === "North Korea", "0.15.0 save: a crossing in progress keeps its guesses");
       check(!p.errs.length, "0.15.0 save: no errors", p.errs.join("; "));
       await ctx.close();
+    }
+
+    // 19. Fathoms: Tuvalu is a country (from No. 20), and from No. 20 each day deals seven different kinds of prompt
+    {
+      const { ctx, p } = await page(b, U + "fathoms.html#day-20", { storage: { "dailycity:fathoms:v1": '{"results":{},"game":null}' }, wait: 600 });
+      const kinds = await p.evaluate(() => __fath.S().prompts.map((x) => x.kind));
+      check(new Set(kinds).size === 7, "fathoms: seven different kinds of prompt on No. 20", kinds.join(","));
+      const at = await p.evaluate(() => __fath.S().prompts.findIndex((x) => x.answers.includes("TV")));
+      for (let i = 0; i < at; i++) { await p.click("#fpass"); await p.waitForTimeout(150); await p.click("#fnext"); await p.waitForTimeout(150); }
+      await p.fill("#fin", "Tuvalu"); await p.waitForTimeout(100); await p.click("#fgo"); await p.waitForTimeout(400);
+      const r = await p.evaluate(() => __fath.S());
+      check(at >= 0 && r.picks[at] === "TV" && r.total > 0, "fathoms: Tuvalu is accepted as a right answer", JSON.stringify([at, r.picks, r.total]));
+      await ctx.close();
+      const o = await page(b, U + "fathoms.html#day-19", { wait: 600 });
+      check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 20 are dealt exactly as before");
+      await o.ctx.close();
+    }
+
+    // 20. source-checked city facts on the end card (looked up by city, never by puzzle number)
+    {
+      const ends = {};
+      for (const d of [12, 13, 46]) {
+        const { ctx, p } = await page(b, U + "#day-" + d, { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+        await p.waitForFunction(() => window.__WORLD);
+        await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2600);
+        ends[d] = await p.evaluate(() => ({ facts: [...document.querySelectorAll("#endBody .facts li")].map((l) => l.textContent), country: document.querySelector("#endBody .country").textContent }));
+        await ctx.close();
+      }
+      check(ends[13].facts.length === 3 && /bandeng presto/.test(ends[13].facts.join(" ")), "city facts: No. 13 shows its three checked facts", JSON.stringify(ends[13]));
+      check(ends[12].facts.length >= 1 && !/bandeng/.test(ends[12].facts.join(" ")), "city facts: a city without checked facts keeps the standard ones");
+      check(ends[46].country === "China (Macao SAR)" && /1557/.test(ends[46].facts.join(" ")), "city facts: Macau reads China (Macao SAR)", JSON.stringify(ends[46]));
+      const src = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+      check(!/"13":\[|No\. 13/.test(src.slice(src.indexOf("var MxCF="), src.indexOf("var MxCF=") + 300)), "city facts: the page keys them by city, not by puzzle number");
     }
 
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
