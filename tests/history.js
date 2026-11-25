@@ -154,7 +154,7 @@ function spoilerFree(share, day) {
   const leaks = [...secrets].filter((s) => s.length >= 4 && share.includes(s));
   return lines.length === 3 && new RegExp(`^Mapelago Logbook No\\. ${day} \u{1F422} \\d+ points$`, "u").test(lines[0])
     && /^(✅|❌|\u{1F3AF}|\u{1F525}|\u{1F321}️|❄️|\u{1F9CA}){8}$/u.test(lines[1])
-    && new RegExp(`mapelago\\.com/history\\.html#c-${day}-\\d+$`).test(lines[2]) && !leaks.length && !/\b(1[89]\d\d|20[0-2]\d)\b/.test(share);
+    && new RegExp(`mapelago\\.com/history\\.html#(?:c-${day}-\\d+|b-lb-${day}-0-\\d+)$`).test(lines[2]) && !leaks.length && !/\b(1[89]\d\d|20[0-2]\d)\b/.test(share);
 }
 
 (async () => {

@@ -69,7 +69,7 @@ h2{font-size:21px;font-weight:800;margin-top:28px}
   <div class="list">${v.map((e,a)=>`<div class="hint"><span class="sw" style="background:${c.tileColors[e.v]};${e.v===64?"color:#fff":""}">${e.v}</span><span class="ht">${e.label}</span><button data-i="${a}" aria-label="Show the ${e.label.toLowerCase()} hint">Show</button><div class="hv" id="h${a}" hidden>${w(e.key,z)}</div></div>`).join("")}</div>
   <a class="play" href="./">Play today's ${c.name}</a>
   <h2>How ${c.name} works</h2>
-  <p>There is one mystery city a day, the same for everyone. You slide tiles on a 4 by 4 board, and the first time you make a 2, 4, 8, 16, 32 or 64 you get a clue: hemisphere, continent, climate, population, the country's shape, then the first letter. Each move costs 8 points. When you think you know, you drop a pin on the map. Within 50 km counts as found, and you get three pins.</p>
+  <p>There is one mystery city a day, the same for everyone. You slide tiles on a 4 by 4 board, and the first time you make a 2, 4, 8, 16, 32 or 64 you get a clue: hemisphere, continent, climate, population, the country's shape, then the first letter. Each move costs 6 points. When you think you know, you drop a pin on the map. Within 50 km counts as found, and you get three pins.</p>
   <nav class="foot" aria-label="Site"><a href="./">Play</a><a href="games/">All games</a>
     <a href="how-to-play/">How to play</a><a href="about/">About</a><a href="privacy/">Privacy</a></nav>`;document.querySelectorAll("button[data-i]").forEach(e=>e.addEventListener("click",()=>{let a=document.getElementById(`h${e.dataset.i}`);a.hidden=!1,e.remove()}));})();
 </script></body></html>
