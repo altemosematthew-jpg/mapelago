@@ -682,6 +682,26 @@ async function page(b, url, opts = {}) {
       await ctx.close();
     }
 
+    // 24. the next-game button goes to the first unplayed game; the release line is in every game's footer
+    {
+      const pre = await page(b, U + "bigger.html"); const T = await pre.p.evaluate(() => MXS.today()); await pre.ctx.close();
+      const done = (k) => JSON.stringify({ results: { [T]: { score: 5 } }, games: {} });
+      const st = { "dailycity:v2": done(), "dailycity:country:v1": done(), "dailycity:bigger:v1": done(), "dailycity:coach": "1" };
+      const { ctx, p } = await page(b, U + "crossings.html", { storage: st, wait: 600 });
+      await p.evaluate(() => { const X = __cross, P = X.P(); let x = P.from; while (X.dist[x][P.to] > 1) { x = X.C.map((_, i) => i).find((n) => X.dist[x][n] === 1 && X.dist[n][P.to] === X.dist[x][P.to] - 1); X.guess(x); } });
+      await p.waitForTimeout(400);
+      const btn = await p.evaluate(() => { const a = document.querySelector("#done .row2 a.act.plain"); return [a.getAttribute("href"), a.textContent]; });
+      check(btn[0] === "bigger-country.html" && btn[1] === "Play Bigger country? next", "next game: skips the games already played today", JSON.stringify(btn));
+      check(/^Mapelago release \d+\.\d+\.\d+$/.test(await p.textContent(".mx-ver")), "the footer names the release");
+      await ctx.close();
+      // with every other game done and this one not, it doesn't say everything is done
+      const all = {}; for (const k of ["dailycity:v2", "dailycity:country:v1", "dailycity:bigger:v1", "dailycity:bigcountry:v1", "dailycity:voyage:v1", "dailycity:fathoms:v1", "dailycity:stamps:v1", "dailycity:history:v1"]) all[k] = done();
+      const q = await page(b, U + "crossings.html", { storage: all, wait: 600 });
+      const line = await q.p.evaluate(() => [...document.querySelectorAll(".mx-next")].map((e) => e.textContent).join(" "));
+      check(!/Every game done/.test(line) && /last game left/.test(line), "today's games: not 'every game done' while this one is unplayed", line);
+      await q.ctx.close();
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
