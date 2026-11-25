@@ -457,6 +457,17 @@ a.act{text-decoration:none}
 #recap .f{display:block}
 #recap .f b{font-variant-numeric:tabular-nums}
 #recap .src{display:block;margin-top:3px;font-size:13px;color:var(--ink-2)}
+.morebar{display:flex;flex-wrap:wrap;gap:4px 16px;margin:12px 0 0}
+.morebar .act{margin:0}
+.linkbtn{min-height:44px;color:var(--ground-ink)}
+.panel .linkbtn{color:var(--ink)}
+.sheet .x{font-size:24px}
+.sh{margin:16px 0 4px;font-size:16px}
+.hbar.me{background:var(--accent);color:var(--on-accent)}
+#statsBody .hrow{grid-template-columns:76px 1fr;white-space:nowrap}
+.pastlist{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:4px;max-height:60vh;overflow:auto}
+.pastlist li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1.5px solid var(--rule);border-radius:8px;font-size:15px}
+.pastlist a{font-weight:800;color:inherit}
 [data-look="arcade"] #qask{font-size:24px}
 [data-look="arcade"] .hint,[data-look="arcade"] #recap li{font-size:17px}
 [data-look="metro"] .nudge button,[data-look="arcade"] .nudge button,[data-look="metro"] #recap li,[data-look="arcade"] #recap li{border-radius:0}
@@ -480,7 +491,7 @@ a.act{text-decoration:none}
   <rect x="29" y="34" width="42" height="43" rx="15" style="fill:var(--shell);stroke:var(--ink)" stroke-width="2.4"></rect>
   <rect x="34.2" y="39.2" width="10.8" height="10.8" style="fill:var(--t2);stroke:var(--ink)" stroke-width="1.4"></rect><rect x="45" y="39.2" width="10.8" height="10.8" style="fill:var(--t4);stroke:var(--ink)" stroke-width="1.4"></rect><rect x="55.800000000000004" y="39.2" width="10.8" height="10.8" style="fill:var(--t8);stroke:var(--ink)" stroke-width="1.4"></rect><rect x="34.2" y="50" width="10.8" height="10.8" style="fill:var(--t16);stroke:var(--ink)" stroke-width="1.4"></rect><rect x="45" y="50" width="10.8" height="10.8" style="fill:var(--accent);stroke:var(--ink)" stroke-width="1.4"></rect><path d="M50.4 58.9c-.7-1.4-3-3.3-3-5.2a3 3 0 0 1 6 0c0 1.9-2.3 3.8-3 5.2z" style="fill:var(--on-accent);"></path><circle cx="50.4" cy="53.8" r="1" style="fill:var(--accent);"></circle><rect x="55.800000000000004" y="50" width="10.8" height="10.8" style="fill:var(--t32);stroke:var(--ink)" stroke-width="1.4"></rect><rect x="34.2" y="60.800000000000004" width="10.8" height="10.8" style="fill:var(--t8);stroke:var(--ink)" stroke-width="1.4"></rect><rect x="45" y="60.800000000000004" width="10.8" height="10.8" style="fill:var(--t4);stroke:var(--ink)" stroke-width="1.4"></rect><rect x="55.800000000000004" y="60.800000000000004" width="10.8" height="10.8" style="fill:var(--t2);stroke:var(--ink)" stroke-width="1.4"></rect>
 </svg></a><div class="name"><p class="word" id="gameName">Logbook</p><span class="no" id="num"></span></div></div>
-    <div class="tools"><button class="tool" id="soundBtn" type="button"></button></div>
+    <div class="tools"><button class="tool" id="statsBtn" type="button" aria-label="Your Logbook stats"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg></button><button class="tool" id="soundBtn" type="button"></button></div>
   </header>
   <main id="game">
   <p class="lede" id="lede">Eight questions on how the world map has changed since 1800. They get harder as you go.</p>
@@ -493,6 +504,8 @@ a.act{text-decoration:none}
     <p id="qsay" class="qsay" role="status" hidden></p>
     <button class="act" id="qnext" type="button" hidden>Next question</button>
   </section>
+  <p class="morebar" id="practiceBar" hidden><button class="linkbtn" id="practiceDone" type="button">Back to today's result</button></p>
+  <p class="morebar"><button class="linkbtn" id="pastBtn" type="button">Past logbooks</button><a class="linkbtn" id="todayLink" href="history.html" hidden>Today's logbook</a></p>
   <noscript><p class="note">This game needs JavaScript to run. Turn it on in your browser settings, then reload this page.</p></noscript>
 
   <section id="done" hidden>
@@ -504,6 +517,9 @@ a.act{text-decoration:none}
       <p class="next">A new logbook in <b class="countdown" id="countdown"></b></p>
       <p class="note" id="fresh" hidden>Today's logbook is ready. <a href="history.html">Open it</a></p>
       <p class="note" id="streakNote" hidden></p>
+      <p class="note" id="pastNote" hidden></p>
+      <p class="morebar"><button class="act plain" id="moreBtn" type="button">Play more (practice)</button></p>
+      <p class="morebar"><button class="linkbtn" id="statsLink" type="button">Your stats</button><button class="linkbtn" id="pastLink" type="button">Past logbooks</button></p>
     </div>
     <h2 class="recaph" id="recapH">Today's entries</h2>
     <ol id="recap" aria-labelledby="recapH"></ol>
@@ -533,6 +549,8 @@ a.act{text-decoration:none}
     </nav>
   </footer>
 </div>
+<div class="modal" id="statsSheet" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="statsT"><button class="tool x" id="closeStats" type="button" aria-label="Close">×</button><h2 id="statsT">Your Logbook stats</h2><div id="statsBody"></div></div></div>
+<div class="modal" id="pastSheet" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pastT"><button class="tool x" id="closePast" type="button" aria-label="Close">×</button><h2 id="pastT">Past logbooks</h2><p class="note">Play any earlier day. These rounds are saved on their own and don't count toward your streak or stats.</p><ol class="pastlist" id="pastList"></ol></div></div>
 <div id="toast" role="status"></div>
 <script src="copy.js?v=0.14.0"></script>
 <script src="site.js?v=0.14.0"></script>
