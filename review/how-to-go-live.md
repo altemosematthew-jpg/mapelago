@@ -4,7 +4,7 @@ The site is served by GitHub Pages straight from `main`, with `mapelago.com` poi
 
 ## Before you merge (five minutes)
 1. **Start numbers.** `FROM=14` (the corrected facts) is already live since release 0.14.0; leave it. Every change made after that starts at its own puzzle number, and each must be **at least the day after the merge**, or a puzzle someone already played on the live site would change. Day 1 was 14 Nov 2026, so No. N is 13 Nov plus N days. Current list:
-   - `country.html`: `X>=20?MxPick(X)` and `let MxFrom=20` (the mystery country stops repeating). Both 20s together.
+   - `country.html`: `X>=20?MxPick(X)` and `let MxFrom=20` (the mystery country stops repeating). Live since 0.15.0; leave it.
    - Any start number added by later stages is listed in the changelog for that stage.
 2. **Sitemap dates.** In `sitemap.xml`, set the changed pages' `lastmod` to the merge date.
 3. **Review folders.** `review/` and `tests/` become public files on the site (search engines are told to skip them). Delete them first if you'd rather not publish them.
@@ -21,7 +21,7 @@ Merge with a merge commit, so rollback is one command:
 GitHub Pages rebuilds in a minute or two. Its CDN can serve the old page for up to about 10 minutes after that.
 
 ## Who sees the new version, and when
-- Pages always come fresh from the network, and every script address carries the release version (`site.js?v=0.15.0`), so a returning player gets the whole new version on their **first visit** after the CDN refreshes. The old offline cache (`mapelago-0.14.0`) is deleted on that visit.
+- Pages always come fresh from the network, and every script address carries the release version (`site.js?v=0.15.1`), so a returning player gets the whole new version on their **first visit** after the CDN refreshes. The old offline cache (`mapelago-0.15.0`) is deleted on that visit.
 - A tab left open from before keeps the old version until it's reloaded. The games reload themselves at the next midnight when the tab is idle.
 - Offline players keep the old saved copy until they're next online.
 - Because one visit is enough, there is no "new version, tap to refresh" notice.
@@ -43,7 +43,7 @@ Find the merge commit (`git log --merges -1 --format=%h main`), then:
     git revert -m 1 <merge-commit>
     git push origin main
 
-Pages redeploys the old version within a couple of minutes. Its service worker uses a different cache name (`mapelago-0.14.0`), so it replaces the new one on each player's next visit.
+Pages redeploys the old version within a couple of minutes. Its service worker uses a different cache name (`mapelago-0.15.0`), so it replaces the new one on each player's next visit.
 
 Saves are kept: results and streaks are stored per day, and the old version reads them. Exceptions, both only for a round started and not finished on the day of the rollback: a mystery-city round started on the new rules may restart under the old rules, and a Quick-mode round carries on as a tile round with three pins. Finished days and streaks are unaffected.
 

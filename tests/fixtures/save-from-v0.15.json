@@ -1,0 +1,6 @@
+{
+ "dailycity:v2": "{\"games\":{\"10\":{\"moves\":\"\",\"pins\":[{\"ll\":[117.177,39.142],\"d\":0,\"b\":0,\"moves\":0,\"rc\":1}],\"done\":true,\"won\":true,\"score\":1000,\"r\":3},\"11\":{\"moves\":\"\",\"pins\":[{\"ll\":[-79.52,8.994],\"d\":0,\"b\":0,\"moves\":0,\"rc\":1}],\"done\":true,\"won\":true,\"score\":1000,\"r\":3},\"12\":{\"moves\":\"\",\"pins\":[{\"ll\":[32.11,13.514],\"d\":3241.4151681457024,\"b\":273.5828288785344,\"moves\":0,\"rc\":0},{\"ll\":[2.11,13.514],\"d\":0,\"b\":0,\"moves\":0,\"rc\":1}],\"done\":true,\"won\":true,\"score\":800,\"r\":3,\"q\":1}},\"results\":{\"10\":{\"score\":1000,\"won\":true,\"pins\":1,\"moves\":0},\"11\":{\"score\":1000,\"won\":true,\"pins\":1,\"moves\":0},\"12\":{\"score\":800,\"won\":true,\"pins\":2,\"moves\":0,\"q\":1}},\"seenHelp\":true}",
+ "dailycity:crossings:v1": "{\"v\":1,\"games\":{\"12\":{\"steps\":[{\"c\":\"KP\",\"h\":0}]}},\"results\":{}}",
+ "dailycity:coach": "1",
+ "dailycity:mode": "quick"
+}

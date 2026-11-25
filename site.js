@@ -167,9 +167,13 @@
     + '.mx-vs{margin:0 0 10px;padding:10px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000)}.mx-vs-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center}.mx-vs-cols span{display:block;font-size:13px;font-weight:600}.mx-vs-cols b{font-size:34px;font-weight:800;font-style:var(--num-style,normal)}.mx-vs p{margin:6px 0 0;font-weight:700;text-align:center}.mx-vs .mx-link{display:block;margin:0 auto}'
     + '.mx-past{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}.mx-past li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1.5px solid var(--rule,#c9e1ec);border-radius:8px}.mx-past a{font-weight:800;color:inherit}';
 
+  // Addresses come with or without ".html" (mapelago.com/bigger and the previews' /bigger work too), and the home
+  // page as "/", "/index" or "/index.html". Pages inside a folder (/games/, /about/) are not games.
+  function pageKey(p) { p = String(p || "").replace(/^\.?\//, "").replace(/\.html$/, ""); return p === "index" ? "" : p; }
   function here() {
-    var f = location.pathname.split("/").pop() || "";
-    return GAMES.filter(function (g) { return g.url === (f === "index.html" ? "./" : f || "./"); })[0];
+    var parts = location.pathname.split("/"), f = parts.pop();
+    if (parts.filter(Boolean).length) return undefined;
+    return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(f); })[0];
   }
 
   // 5.2 a note on every game page when another game's streak is waiting for today
@@ -472,7 +476,7 @@
     stamps: { code: "st", max: 6, modes: 1 }, crossings: { code: "cr", max: 1000, modes: 1 }
   };
   function gameByCode(c) { var id = Object.keys(BEAT).filter(function (k) { return BEAT[k].code === c; })[0]; return id ? GAMES.filter(function (g) { return g.id === id; })[0] : null; }
-  function gameByPage(page) { page = page || ""; return GAMES.filter(function (g) { return g.url === (page === "index.html" || page === "" ? "./" : page); })[0]; }
+  function gameByPage(page) { return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(page); })[0]; }
   function said(id, mode, n) {
     if (mode === 1) return n >= 200 && n % 200 === 0 ? "found it on pin " + ((1000 - n) / 200 + 1) + " of 5 in Quick mode" : "didn't find it in 5 pins in Quick mode";
     if (id === "city" || id === "country" || id === "crossings") return n + " points";
