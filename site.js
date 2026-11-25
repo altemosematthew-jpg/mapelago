@@ -163,6 +163,7 @@
     + '.mx-card .st{font-size:12.5px;font-weight:800;color:var(--accent-ink,#b4237d)}.mx-card.done a{background:var(--tint,#dcedf5)}.mx-card.here a{outline:3px solid var(--accent,#b4237d);outline-offset:-3px}'
     + '.mx-next{margin:10px 0 0;font-size:15px;font-weight:600}.mx-next a{font-weight:800;color:inherit}'
     + '@media (min-width:700px){.mx-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}'
+    + '.mx-passport{margin:18px 0 0}.mx-passport h3{margin:0 0 4px;font-size:17px}.mx-passport p{margin:0 0 8px;font-size:14px}.mx-passport ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.mx-passport li{display:grid;justify-items:center;gap:2px;padding:6px 2px;border:1.5px dashed var(--line,#000);border-radius:8px;font-size:12px}.mx-passport b{font-size:11px;letter-spacing:-1px;color:var(--accent-ink,#b4237d);word-break:break-all;text-align:center;line-height:1.1}'
     + '.mx-past{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}.mx-past li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1.5px solid var(--rule,#c9e1ec);border-radius:8px}.mx-past a{font-weight:800;color:inherit}';
 
   function here() {
@@ -356,6 +357,64 @@
     return { n: parts.length, text: "Mapelago today, No. " + t + " \u{1F422}\n" + parts.join(" · ") + "\nmapelago.com/games/" };
   }
 
+
+  // 13.4 a real celebration for a perfect game; 15.5 the Stamps passport book
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function perfect(me, text) {
+    var line = (text.split("\n")[0] || "") + " " + (text.split("\n")[1] || "");
+    if (me.id === "voyage") return /✅{10}/.test(text.replace(/\s/g, ""));
+    if (me.id === "bigger" || me.id === "bigcountry") return /\b10\/10\b/.test(line);
+    if (me.id === "stamps") return /\b6 of 6\b/.test(line);
+    if (me.id === "fathoms") return /7,000 of 7,000/.test(line);
+    return false;
+  }
+  function confetti(box) {
+    if (reduce || !box.animate) return;
+    var cs = getComputedStyle(document.documentElement), cols = ["--accent", "--t8", "--t16", "--t32", "--t4"].map(function (v) { return cs.getPropertyValue(v).trim() || "#b4237d"; });
+    var layer = document.createElement("div");
+    layer.setAttribute("aria-hidden", "true");
+    layer.style.cssText = "position:fixed;left:0;right:0;top:0;height:0;pointer-events:none;z-index:80";
+    document.body.appendChild(layer);
+    for (var i = 0; i < 30; i++) {
+      var c = document.createElement("i");
+      c.style.cssText = "position:absolute;top:-12px;width:10px;height:10px;border-radius:2px;left:" + (4 + (i * 37) % 92) + "%;background:" + cols[i % cols.length];
+      layer.appendChild(c);
+      c.animate([{ transform: "translate(0,0) rotate(0)", opacity: 1 }, { transform: "translate(" + ((i % 7) - 3) * 16 + "px," + (420 + (i % 5) * 60) + "px) rotate(" + (i % 2 ? 1 : -1) * (220 + i * 9) + "deg)", opacity: 0 }],
+        { duration: 1200 + (i % 6) * 120, delay: (i % 9) * 40, easing: "cubic-bezier(.2,.6,.4,1)", fill: "forwards" });
+    }
+    setTimeout(function () { layer.remove(); }, 2600);
+  }
+  function passport(done) {
+    if (document.getElementById("mxPassport")) return;
+    var save = read("dailycity:stamps:v1"), res = (save && save.results) || {}, t = today(), rows = "";
+    for (var d = Math.max(1, t - 13); d <= t; d++) {
+      var r = res[d], got = r && r.got != null ? r.got : null;
+      rows += '<li title="No. ' + d + (got == null ? ": not played" : ": " + got + " of 6") + '"><span>' + d + "</span><b>" + (got == null ? "·" : "■".repeat(got) + "□".repeat(6 - got)) + "</b></li>";
+    }
+    var sec = document.createElement("section");
+    sec.id = "mxPassport"; sec.className = "mx-passport";
+    sec.innerHTML = "<h3>Your passport</h3><p>The last two weeks of pages. Each square is a stamp.</p><ol>" + rows + "</ol>";
+    done.appendChild(sec);
+  }
+  function watchDone() {
+    var me = here(), done = document.getElementById("done");
+    if (!me || !done || me.id === "city" || me.id === "country") return;
+    var seen = false;
+    function check() {
+      if (done.hidden || seen) return;
+      seen = true;
+      var t = document.getElementById("shareText");
+      if (me.id === "stamps") passport(done);
+      if (t && perfect(me, t.textContent)) {
+        confetti(done);
+        var tm = document.getElementById("logoMascot");
+        if (tm && tm.animate && !reduce) tm.animate([{ transform: "translateY(0)" }, { transform: "translateY(-8px)" }, { transform: "translateY(0)" }], { duration: 450, iterations: 3 });
+      }
+    }
+    new MutationObserver(check).observe(done, { attributes: true, attributeFilter: ["hidden"] });
+    check();
+  }
+
   // 16.5 Today's games: a card for every game with today's status, and what to play next
   function today_games(app) {
     var me = here(), all = info();
@@ -404,6 +463,7 @@
     var app = document.querySelector(".app");
     if (app) { riskNote(app); challenge(app); today_games(app); }
     addImageButton();
+    watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');
     var me = here();
     if (nav && me) Array.prototype.forEach.call(nav.querySelectorAll("a"), function (a) { if (a.getAttribute("href") === me.url || (me.url === "./" && /^(\.\/|index\.html|\.)$/.test(a.getAttribute("href")))) a.setAttribute("aria-current", "page"); });
