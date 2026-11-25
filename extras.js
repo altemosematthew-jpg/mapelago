@@ -254,6 +254,40 @@
     return '<p class="freeze">' + held + "Play 7 days and you earn a freeze (you can hold 2). It covers a day you miss, so one gap doesn't end your streak." + used + "</p>";
   }
 
+
+  // ---------- archive of past cities (7.1) ----------
+  // Lists every earlier number. Playing one opens #past-N, which saves separately and never touches streaks.
+  function pastList() {
+    var m = document.getElementById("mxPast");
+    if (!m) {
+      m = document.createElement("div"); m.className = "modal mxm"; m.id = "mxPast"; m.hidden = true;
+      m.innerHTML = '<div class="mxs" role="dialog" aria-modal="true" aria-labelledby="mxPastT"><button class="x" id="closeMxPast" aria-label="Close">\u00d7</button>'
+        + '<h2 id="mxPastT">Past cities</h2><p>Play any earlier city. These don\'t count toward your streak.</p><ol class="mx-past" id="mxPastList"></ol></div>';
+      document.body.appendChild(m);
+      m.querySelector("#closeMxPast").onclick = function () { m.hidden = true; };
+      m.addEventListener("click", function (e) { if (e.target === m) m.hidden = true; });
+    }
+    var main = {}, arc = {};
+    try { main = (JSON.parse(localStorage.getItem("dailycity:v2")) || {}).results || {}; } catch (e) {}
+    try { arc = (JSON.parse(localStorage.getItem("dailycity:archive:v1")) || {}).results || {}; } catch (e) {}
+    var t = window.MXS ? window.MXS.today() : 1, days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], rows = [];
+    for (var n = t - 1; n >= 1; n--) {
+      var d = new Date(Date.UTC(2026, 10, 13 + n)), r = main[n] || arc[n];
+      rows.push('<li><a href="#past-' + n + '">No. ' + n + " \u00b7 " + days[d.getUTCDay()] + "</a><span>" + (r ? (r.won ? "\u2713 found, " : "played, ") + r.score + " points" : "not played") + "</span></li>");
+    }
+    m.querySelector("#mxPastList").innerHTML = rows.join("") || "<li>No earlier cities yet.</li>";
+    m.hidden = false;
+  }
+  function addPastButton() {
+    var nav = document.querySelector('nav[aria-label="Daily games"]');
+    if (!nav || document.getElementById("pastCities")) return;
+    var b = document.createElement("button");
+    b.className = "mx-link"; b.type = "button"; b.id = "pastCities"; b.textContent = "Past cities"; b.style.marginLeft = "16px";
+    b.onclick = pastList;
+    var after = nav.nextSibling && nav.nextSibling.classList && nav.nextSibling.classList.contains("mx-link") ? nav.nextSibling : nav;
+    after.parentNode.insertBefore(b, after.nextSibling);
+  }
+
   // ---------- events from the game ----------
   var handlers = {
     move: function (d) {
@@ -288,6 +322,7 @@
     streak: streak // exposed for tests
   };
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", addMuteButton);
-  else addMuteButton();
+  function ready() { addMuteButton(); setTimeout(addPastButton, 0); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ready);
+  else ready();
 })();

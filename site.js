@@ -162,7 +162,8 @@
     + '.mx-card .ic{grid-row:span 3;font-size:26px;line-height:1.1}.mx-card b{font-size:16px;line-height:1.2}.mx-card .ab{font-size:13px;line-height:1.3;color:var(--ink-2,#3d4a52)}'
     + '.mx-card .st{font-size:12.5px;font-weight:800;color:var(--accent-ink,#b4237d)}.mx-card.done a{background:var(--tint,#dcedf5)}.mx-card.here a{outline:3px solid var(--accent,#b4237d);outline-offset:-3px}'
     + '.mx-next{margin:10px 0 0;font-size:15px;font-weight:600}.mx-next a{font-weight:800;color:inherit}'
-    + '@media (min-width:700px){.mx-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}';
+    + '@media (min-width:700px){.mx-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}'
+    + '.mx-past{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}.mx-past li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1.5px solid var(--rule,#c9e1ec);border-radius:8px}.mx-past a{font-weight:800;color:inherit}';
 
   function here() {
     var f = location.pathname.split("/").pop() || "";
