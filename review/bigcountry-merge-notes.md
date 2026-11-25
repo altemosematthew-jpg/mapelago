@@ -63,3 +63,10 @@ toast, the escape and icon helpers, and the rank names. It saves exactly what th
 - `world.js` gives Ashmore and Cartier Islands the same number as Australia. The old card shapes in
   shapes.js drew Australia as that islet; the new drawing keeps the larger geometry. shapes.js is left
   as it is (it now only loads the outlines).
+
+## Checked
+
+Throwaway merge of this branch into yours at 13959f4 ("Release 0.15.2: Mystery country on Mystery
+city's rules"): no conflicts (bigger-country.html and tests/run.js merged on their own), and the whole
+test suite passed on the merged tree, 450 checks, including the 0.15.2 version check (Bigger country?
+picked up `extras.js?v=0.15.2` from the page's site.js tag). On this branch alone: 413 checks.
