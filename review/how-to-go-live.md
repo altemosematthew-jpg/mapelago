@@ -34,6 +34,7 @@ GitHub Pages rebuilds in a minute or two. Its CDN can serve the old page for up 
 4. In your normal browser (where you have saves): reload once. Your streaks and today's results should all be there.
 5. Paste a game link (for example mapelago.com/fathoms.html) into a chat: the preview should show the Fathoms image, not "Can you find today's city?". Chat apps cache previews, so a link they've already seen may show the old one.
 6. In the repository's Settings, Pages: the custom domain still reads mapelago.com.
+7. Open mapelago.com/review/how-to-go-live.md and mapelago.com/tests/run.js: both should be "404 File not found". From this release Jekyll publishes the site and leaves out review/, tests/, copy/ and data/ (see `_config.yml`). Once they 404, the two Disallow lines in robots.txt can go. If the Pages build fails instead (repository Actions tab, "pages build and deployment"), the previous version simply stays live; roll back as below.
 
 ## Rollback (one step)
 Find the merge commit (`git log --merges -1 --format=%h main`), then:

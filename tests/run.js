@@ -241,6 +241,22 @@ async function page(b, url, opts = {}) {
       check(/new URL\(r\.url\)\.origin !== location\.origin\) return/.test(sw), "analytics: the service worker never saves another host's files");
     }
 
+    // 15. review/, tests/, copy/ and data/ stay in the repository but off the published site (GitHub Pages + Jekyll)
+    {
+      const root = path.join(__dirname, "..");
+      check(!fs.existsSync(path.join(root, ".nojekyll")), "publishing: no .nojekyll, so the exclude list in _config.yml is used");
+      const cfg = fs.existsSync(path.join(root, "_config.yml")) ? fs.readFileSync(path.join(root, "_config.yml"), "utf8") : "";
+      const ex = (cfg.split(/^exclude:\s*$/m)[1] || "").split(/\n(?!\s*-)/)[0].match(/^\s*-\s*(\S+)/gm) || [];
+      const list = ex.map((x) => x.replace(/^\s*-\s*/, ""));
+      check(["review", "tests", "copy", "data"].every((d) => list.includes(d)), "publishing: _config.yml excludes review, tests, copy and data", list.join(" "));
+      // anything published must reach the site byte for byte: no front matter, no Markdown for Jekyll to render
+      const { execSync } = require("child_process");
+      const files = execSync("git ls-files", { cwd: root }).toString().trim().split("\n").filter((f) => !list.some((d) => f === d || f.startsWith(d + "/")));
+      const touched = files.filter((f) => /\.(md|markdown|scss|sass|coffee)$/i.test(f) || /^---\s*$/m.test(fs.readFileSync(path.join(root, f)).subarray(0, 8).toString()));
+      check(touched.length === 0, "publishing: no published file would be changed by Jekyll", touched.join(" "));
+      check(files.every((f) => !/(^|\/)_/.test(f) || f === "_config.yml"), "publishing: no published file starts with an underscore (Jekyll would drop it)");
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
