@@ -134,6 +134,7 @@ country.html conflict whichever way you merge. What worked both times, with this
     python3 review/country-rules-patch.py country.html
     python3 review/scoring-patch.py
     python3 review/country-quick-patch.py
+    python3 review/review-fixes-patch.py
     python3 copy/apply.py
     git add index.html country.html
 
@@ -154,3 +155,18 @@ Noticed in Mystery city, not changed (your code): the Tiles/Quick choice stays o
 first move until the page redraws, and tapping it then does nothing. The country version hides it on
 the first move (one extra call after a move); the same fix in the city would be adding `MxModeUi()`
 to the move handler `za`.
+
+## Round 3: fixes from the review of 0.15.2
+
+Made by `review/review-fixes-patch.py` (both pages; run after the other scripts). Tests: the
+`// ---- mx-review ... ----` block (15 checks).
+- index.html (shared): a `MxTodayRules` function on its own line before the mx-scoring block, an
+  empty `<p class="note" id="todayRules" hidden>` at the top of the footer (outside the copy markers),
+  one call in the cost-line code, and "make an 8" in the next-clue label.
+- country.html: the same note and function; old-rules cost line "Today: 8 points a move; a miss costs
+  150 and opens no clue."; the languages clue without its label; `title` "Mystery country" and the
+  header "No. 12"; "make an 8" in the label and the coach line; Past countries (`#past-N`,
+  `dailycity:country:archive:v1`, the `#arcBan` banner, a `#mxPast` dialog, "Past countries" next to
+  Your streaks; Quick mode not offered in the archive).
+- Not touched: site.js and extras.js. The country archive list lives in country.html, so it doesn't
+  depend on extras.js (which the country page doesn't load).

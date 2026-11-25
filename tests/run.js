@@ -143,7 +143,7 @@ async function page(b, url, opts = {}) {
         const { ctx, p } = await page(b, U + "country.html#day-" + day, { storage: fresh });
         await p.waitForFunction(() => window.__WORLD);
         const s = await read(p);
-        check(s.S.r === r && s.S.moveCost === cost && s.cost.startsWith(`Each move costs ${cost} points`), `country: a new No. ${day} round starts on rules ${r} (moves cost ${cost})`, JSON.stringify([s.S.r, s.S.moveCost, s.cost]));
+        check(s.S.r === r && s.S.moveCost === cost && s.cost.startsWith(r === 1 ? `Today: ${cost} points a move; a miss costs 150 and opens no clue.` : `Each move costs ${cost} points`), `country: a new No. ${day} round starts on rules ${r} (moves cost ${cost})`, JSON.stringify([s.S.r, s.S.moveCost, s.cost]));
         await ctx.close();
       }
       // the rules: one clue to start, moves cost 6, a miss costs 150 and opens the next clue, and the label matches the slot after it
@@ -349,6 +349,75 @@ async function page(b, url, opts = {}) {
       }
     }
     // ---- end mx-country-quick ----
+
+    // ---- mx-review: fixes from the review of 0.15.2 (review/review-fixes-patch.py) ----
+    {
+      const fresh = (k) => ({ [k]: '{"games":{},"results":{},"seenHelp":true}' });
+      const today12 = { clock: new Date("2026-11-25T12:00:00") };
+      // the rules shown match the round: before No. 14 the round's own rules, from No. 14 the new ones
+      for (const [f, key, g] of [["country.html", "dailycity:country:v1", "country"], ["", "dailycity:v2", "city"]]) {
+        for (const day of [12, 14]) {
+          const { ctx, p } = await page(b, U + f + "#day-" + day, { storage: fresh(key) });
+          const r = await p.evaluate(() => ({ note: document.querySelector("#todayRules").hidden ? "" : document.querySelector("#todayRules").textContent, cost: document.querySelector("#costNote").textContent }));
+          const ok = day === 14 ? !r.note && !/^Today:/.test(r.cost) : g === "country" ? r.note.startsWith("Today's round, No. 12, plays by the earlier rules: 8 points a move, and a missed pin costs 150 and opens no clue.") && r.cost === "Today: 8 points a move; a miss costs 150 and opens no clue." : r.note.startsWith("Today's round, No. 12, uses the earlier scoring: no tile bonus, and every missed pin costs 150.");
+          check(ok, `review: ${g} No. ${day} shows the rules of its own round`, JSON.stringify(r));
+          await ctx.close();
+        }
+      }
+      // No. 12 keeps its answer and its rules: a miss costs 150 and opens no clue
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-12", { storage: fresh("dailycity:country:v1") });
+        await p.waitForFunction(() => window.__WORLD);
+        const c0 = await p.evaluate(() => document.querySelectorAll("#clues li").length);
+        await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
+        const r = await p.evaluate(() => ({ name: __lf.P.city, clues: document.querySelectorAll("#clues li").length, pts: document.querySelector("#score").textContent }));
+        check(r.name === "Israel" && r.clues === c0 && r.pts === "850", "review: country No. 12 keeps its answer and old rules (a miss: -150, no clue)", JSON.stringify([c0, r]));
+        // the languages clue says its label once, for eyes and for screen readers
+        for (let k = 1; k < 3; k++) { await p.evaluate((k) => __lf.confirmAt([((__lf.P.lon + 180 - 25 * k) % 360) - 180, -__lf.P.lat]), k); await p.waitForTimeout(1900); }
+        const lang = await p.evaluate(() => [...document.querySelectorAll("#clues .tx")].map((x) => x.textContent).find((t) => /Hebrew/.test(t)));
+        check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
+        // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
+        const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
+        check(sh.share.startsWith("Mystery country No. 12, ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        await ctx.close();
+      }
+      for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
+        const { ctx, p } = await page(b, U + "country.html" + link, { storage: fresh("dailycity:country:v1"), ...today12, wait: 900 });
+        const t = await p.evaluate(() => document.body.innerText);
+        check(/A friend scored 640/.test(t), `review: an old share link still works (${link})`);
+        await ctx.close();
+      }
+      // the next-clue wording is the city's
+      {
+        const { ctx, p } = await page(b, U + "country.html#day-14", { storage: fresh("dailycity:country:v1") });
+        const lines = [await p.textContent("#nextClue")];
+        await p.keyboard.press("ArrowUp"); await p.keyboard.press("ArrowLeft"); await p.keyboard.press("ArrowDown");
+        lines.push(await p.textContent("#nextClue"), await p.textContent("#coachText"));
+        const body = await p.evaluate(() => document.documentElement.innerHTML);
+        check(/^Next clue: make an? \d+$/.test(lines[0]) && lines.some((l) => /make an 8/.test(l)) && /Next clue: make an? \d+\./.test(lines[2]) && !/Next clue at|comes at/.test(body), "review: country says 'Next clue: make an 8', like the city", JSON.stringify(lines));
+        await ctx.close();
+      }
+      // Past countries: today's player can play any earlier number, in its own save
+      {
+        const { ctx, p } = await page(b, U + "country.html", { storage: fresh("dailycity:country:v1"), ...today12, wait: 900 });
+        await p.click("#pastCountries"); await p.waitForTimeout(200);
+        const list = await p.evaluate(() => [...document.querySelectorAll("#mxPastList a")].map((a) => a.getAttribute("href")));
+        check(list.length === 11 && list[0] === "#past-11" && list[10] === "#past-1" && (await p.isVisible("#mxPast")), "review: Past countries lists No. 11 to No. 1", list.join());
+        await p.keyboard.press("Escape"); await p.waitForTimeout(100);
+        check(!(await p.isVisible("#mxPast")), "review: the Past countries list closes with Escape");
+        await p.evaluate(() => (location.hash = "#past-5")); await p.waitForTimeout(1200); await p.waitForFunction(() => window.__WORLD);
+        const p5 = await ctx.newPage(); await p5.goto(U + "country.html#day-5", { waitUntil: "domcontentloaded" }); await p5.waitForFunction(() => window.__lf);
+        const g5 = await p5.evaluate(() => __lf.P.city); await p5.close();
+        const a = await p.evaluate(() => ({ num: document.querySelector("#num").textContent, ban: !document.querySelector("#arcBan").hidden, name: __lf.P.city }));
+        check(a.num === "No. 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
+        await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
+        const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
+        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mystery country No. 5 (archive)"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
+        check(!p.errs.length, "review: Past countries, no errors", p.errs.join("; "));
+        await ctx.close();
+      }
+    }
+    // ---- end mx-review ----
 
     // 8. a game in progress survives midnight
     {
