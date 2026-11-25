@@ -421,10 +421,11 @@
     var sec = document.createElement("section");
     sec.className = "mx-today"; sec.setAttribute("aria-labelledby", "mxTodayH");
     var next = all.filter(function (s) { return !s.doneToday && (!me || s.game.id !== me.id); })[0];
-    sec.innerHTML = '<h2 id="mxTodayH">Today\'s games</h2><ul class="mx-cards">' + all.map(function (s) {
+    var homeCopy = me && me.id === "city" && window.MXCOPY && MXCOPY.home;
+    sec.innerHTML = (homeCopy ? '<h2 id="mxTodayH">' + esc(homeCopy.headline) + '</h2><p class="mx-next">' + esc(homeCopy.line) + "</p>" : '<h2 id="mxTodayH">Today\'s games</h2>') + '<ul class="mx-cards">' + all.map(function (s) {
       var g = s.game, isMe = me && g.id === me.id;
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
-      return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc(g.about) + '</span><span class="st">' + st + "</span></a></li>";
+      return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
     }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">All seven done today. See you tomorrow.</p>');
     var tt = todayText();
     if (tt.n >= 2) {
