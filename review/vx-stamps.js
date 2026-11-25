@@ -80,7 +80,13 @@
   var byName = null;
   function country(n) { if (!byName) { byName = {}; H.T.forEach(function (c) { byName[c.name] = c; }); } return byName[n]; }
   function explain(q, cat, salt) {
-    if (!q || cat === "border" || cat === "continent") return q; // these already name the neighbours, or the capital
+    if (!q || cat === "border") return q; // this one already names the neighbours
+    if (cat === "continent") {
+      // "Its capital is Vatican City" says nothing new about a city-state: give another fact there
+      var cc = country(q.options[q.answer]);
+      if (cc && cc.capital === cc.name) { var g = V.factAbout(cc, "capital", salt); if (g) q.about = q.about.replace(/ Its capital is .*$/, " " + g); }
+      return q;
+    }
     var right = q.options[q.answer], c = country(right), f;
     if (cat === "size") {
       var areas = q.options.map(function (o) { var x = country(o); return x ? x.area : 0; }), second = 0, wi = -1;
@@ -93,7 +99,8 @@
     if (cat === "tongue") { var m = /official language of (.+)\?$/.exec(q.ask); c = m && country(m[1]); }
     f = V.factAbout(c, cat, salt);
     if (!f) return q;
-    q.about = cat === "peak" ? q.about + " " + f : "It's " + right + ". " + f;
+    // the fact names the answer, so the recap still shows it after a miss; a language answer is said first
+    q.about = cat === "peak" ? q.about + " " + f : cat === "tongue" ? "It's " + right + ". " + f : f;
     return q;
   }
   function explainAll(A, t) {
@@ -122,7 +129,7 @@
     }
     return q;
   }
-  function score() { $("#sxpStreak").innerHTML = "Streak <b>" + pr.streak + "</b> · Best <b>" + V.best("stamps") + "</b>"; }
+  function score() { $("#sxpStreak").innerHTML = "<span>Streak <b>" + pr.streak + "</b></span> <span>Best <b>" + V.best("stamps") + "</b></span>"; }
   function show() {
     var q = pr.q = practiceQuestion();
     pr.done = false;

@@ -67,6 +67,19 @@ Stamps
 - A line under the wheel: "Tap the wheel to stop it early. It skips categories that are already stamped or missed
   twice, and when only one is left it picks that one for you." Hidden while a question is open and on the result.
 
+## Play-through on the branch (375 px phone, after merging 0.15.10)
+
+The Cloudflare preview host is blocked by this session's network policy, so the same commit was played through the
+local test server, which serves the files exactly as Pages does (the site has no build step). Played: Voyage No. 14 to
+all ten islands, No. 15 anchored at island 4, Stamps No. 14 to a full page with three misses, practice in both
+(right and wrong answers), and No. 12 on the real date. No console errors and nothing wider than 375 px. Fixed:
+
+- Stamps explanations no longer say the answer twice ("It's Lesotho. Lesotho drives on the left." is now
+  "Lesotho drives on the left."; the recap read "Lesotho. It's Lesotho. ..."). Language answers still lead with
+  "It's English." because the fact is about the country. Tests check each explanation names the right answer.
+- City-states: "Vatican City is in Europe. Its capital is Vatican City." now gives another fact instead.
+- Practice: "Streak 0 · Best 0" is two separate items, spaced apart.
+
 ## Facts never asked (from the pack's notes and review/data-pack-check.md)
 
 - Flag colours (not fully verified): no flag questions at all.

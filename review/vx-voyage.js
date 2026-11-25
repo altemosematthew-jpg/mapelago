@@ -145,7 +145,7 @@
   function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function score() {
     var b = V.best("voyage");
-    $("#vxpStreak").innerHTML = "Streak <b>" + pr.streak + "</b> · Best <b>" + b + "</b>";
+    $("#vxpStreak").innerHTML = "<span>Streak <b>" + pr.streak + "</b></span> <span>Best <b>" + b + "</b></span>";
   }
   function show() {
     var q = pr.q = practiceQuestion();

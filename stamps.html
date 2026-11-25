@@ -420,7 +420,7 @@ a.act{text-decoration:none}
 .vx-wheel-note{margin:0 0 10px;text-align:center}#wheelbox.asked + .vx-wheel-note,#wheelbox[hidden] + .vx-wheel-note{display:none}
 .vx-practicing .passport,.vx-practicing #say{display:none}
 .vxp{margin-top:14px}.vxp-tag{display:inline-block;margin:0 0 8px;padding:3px 10px;border:2px dashed var(--muted);border-radius:999px;font-size:13px;font-weight:700;color:var(--ink-2)}
-.vxp-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}.vxp-streak{margin:0;font-size:15px;font-variant-numeric:tabular-nums}
+.vxp-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}.vxp-streak{margin:0;font-size:15px;font-variant-numeric:tabular-nums}.vxp-streak span+span{margin-left:14px}
 .vxp-cat{display:flex;align-items:center;gap:6px}.vxp-ask{margin:0 0 12px;font-size:21px;line-height:1.2}
 </style>
 </head>
@@ -722,7 +722,13 @@ window.VXPACK={"Afghanistan":{"c":"+93","w":".af","p":"Noshak","h":7492,"r":1},"
   var byName = null;
   function country(n) { if (!byName) { byName = {}; H.T.forEach(function (c) { byName[c.name] = c; }); } return byName[n]; }
   function explain(q, cat, salt) {
-    if (!q || cat === "border" || cat === "continent") return q; // these already name the neighbours, or the capital
+    if (!q || cat === "border") return q; // this one already names the neighbours
+    if (cat === "continent") {
+      // "Its capital is Vatican City" says nothing new about a city-state: give another fact there
+      var cc = country(q.options[q.answer]);
+      if (cc && cc.capital === cc.name) { var g = V.factAbout(cc, "capital", salt); if (g) q.about = q.about.replace(/ Its capital is .*$/, " " + g); }
+      return q;
+    }
     var right = q.options[q.answer], c = country(right), f;
     if (cat === "size") {
       var areas = q.options.map(function (o) { var x = country(o); return x ? x.area : 0; }), second = 0, wi = -1;
@@ -735,7 +741,8 @@ window.VXPACK={"Afghanistan":{"c":"+93","w":".af","p":"Noshak","h":7492,"r":1},"
     if (cat === "tongue") { var m = /official language of (.+)\?$/.exec(q.ask); c = m && country(m[1]); }
     f = V.factAbout(c, cat, salt);
     if (!f) return q;
-    q.about = cat === "peak" ? q.about + " " + f : "It's " + right + ". " + f;
+    // the fact names the answer, so the recap still shows it after a miss; a language answer is said first
+    q.about = cat === "peak" ? q.about + " " + f : cat === "tongue" ? "It's " + right + ". " + f : f;
     return q;
   }
   function explainAll(A, t) {
@@ -764,7 +771,7 @@ window.VXPACK={"Afghanistan":{"c":"+93","w":".af","p":"Noshak","h":7492,"r":1},"
     }
     return q;
   }
-  function score() { $("#sxpStreak").innerHTML = "Streak <b>" + pr.streak + "</b> · Best <b>" + V.best("stamps") + "</b>"; }
+  function score() { $("#sxpStreak").innerHTML = "<span>Streak <b>" + pr.streak + "</b></span> <span>Best <b>" + V.best("stamps") + "</b></span>"; }
   function show() {
     var q = pr.q = practiceQuestion();
     pr.done = false;

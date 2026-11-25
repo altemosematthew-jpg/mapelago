@@ -584,8 +584,8 @@ async function page(b, url, opts = {}) {
       const before = await snap();
       check(await p.isVisible(more), `vx: ${f} "Play more" shows under the result`);
       await p.focus(more); await p.keyboard.press("Enter"); await p.waitForTimeout(200);
-      const st = await p.evaluate(([panel, opts]) => ({ open: !document.querySelector(panel).hidden, doneHidden: document.querySelector("#done").hidden, focus: document.activeElement && document.activeElement.closest(opts) !== null, tag: document.querySelector(panel + " .vxp-tag").textContent }), [panel, opts]);
-      check(st.open && st.doneHidden && st.focus && /Practice/.test(st.tag), `vx: ${f} practice opens, labelled as practice, focus on the first answer`, JSON.stringify(st));
+      const st = await p.evaluate(([panel, opts]) => ({ open: !document.querySelector(panel).hidden, doneHidden: document.querySelector("#done").hidden, focus: document.activeElement && document.activeElement.closest(opts) !== null, tag: document.querySelector(panel + " .vxp-tag").textContent, streak: [...document.querySelectorAll(panel + " .vxp-streak > span")].map((x) => x.textContent).join("|") }), [panel, opts]);
+      check(st.open && st.doneHidden && st.focus && /Practice/.test(st.tag) && /^Streak 0\|Best \d+$/.test(st.streak), `vx: ${f} practice opens, labelled as practice, focus on the first answer`, JSON.stringify(st));
       const game = f === "voyage.html" ? "VXV" : "SX";
       let streak = 0;
       for (let i = 0; i < 7; i++) {
@@ -659,10 +659,12 @@ async function page(b, url, opts = {}) {
         for (const [d, k, q] of r) {
           const right = q.options[q.answer];
           if (k === "size" && q.ask !== "Which of these countries is the largest by area?") bad.push([d, k, q.ask]);
+          if (k === "continent" && /^(.+) is in .+\. Its capital is \1\.$/.test(q.about)) bad.push([d, k, q.about]);
           if (k === "border" || k === "continent") continue;
           if (k === "size") { if (!/^(The )?.+ is the largest by area: about [\d.]+ times the size of .+, the next largest of the four\.$/.test(q.about)) bad.push([d, k, q.about]); continue; }
-          const facts = q.about.split(/(?<=\.) /).slice(1).join(" ");
-          if (!facts) { bad.push([d, k, q.about]); continue; }
+          // a language answer is said first ("It's English."); every other explanation is the fact alone and names the answer
+          const facts = k === "tongue" || k === "peak" ? q.about.split(/(?<=\.) /).slice(1).join(" ") : q.about;
+          if (!facts || (k !== "tongue" && (!q.about.includes(right) || q.about.startsWith("It's "))) || (k === "tongue" && !q.about.startsWith(`It's ${right}. `))) { bad.push([d, k, q.about]); continue; }
           let m, ok = true;
           if ((m = /^The currency of (?:the )?(.+) is the (.+)\.$/.exec(facts))) ok = P[m[1]] && pack.parse && P[m[1]].money.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").includes(m[2].normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase());
           else if ((m = /^The highest point of (?:the )?(.+) is (.+), ([\d,]+) m\.$/.exec(facts))) ok = P[m[1]] && P[m[1]].peak === m[2] && P[m[1]].height === +m[3].replace(/,/g, "");

@@ -120,6 +120,8 @@ voyage = [
      '.dots li.harbor:not(.done)::before{content:"\\2693";font-size:14px;line-height:1;color:var(--ink-2)}\n'
      '.vx-key{margin:0 0 10px;font-size:13px;color:var(--ground-ink-2)}.vx-harbor{margin:-4px 0 10px}.vx-harbor[hidden]{display:none}\n'
      '.spy:disabled{opacity:.6;cursor:default;border-style:dotted}\n'),
+    # play-through on the branch: practice streak and best spaced apart
+    ('.vxp-streak{margin:0;font-size:15px;font-variant-numeric:tabular-nums}', '.vxp-streak{margin:0;font-size:15px;font-variant-numeric:tabular-nums}.vxp-streak span+span{margin-left:14px}'),
 ]
 
 stamps = [
@@ -167,6 +169,8 @@ stamps = [
     ('  </div>\n  <button class="act" id="spin">Spin the wheel</button>',
      '  </div>\n  <p class="note vx-wheel-note" id="vxWheelNote">Tap the wheel to stop it early. It skips categories that are already stamped or missed twice, and when only one is left it picks that one for you.</p>\n  <button class="act" id="spin">Spin the wheel</button>'),
     ('#sxpNext[hidden]{display:none}\n', '#sxpNext[hidden]{display:none}\n.qsay.ok::before,.qsay.no::before{content:none}\n.vx-wheel-note{margin:0 0 10px;text-align:center}#wheelbox.asked + .vx-wheel-note,#wheelbox[hidden] + .vx-wheel-note{display:none}\n'),
+    # play-through on the branch: practice streak and best spaced apart
+    ('.vxp-streak{margin:0;font-size:15px;font-variant-numeric:tabular-nums}', '.vxp-streak{margin:0;font-size:15px;font-variant-numeric:tabular-nums}.vxp-streak span+span{margin-left:14px}'),
 ]
 
 patch("voyage.html", voyage)
