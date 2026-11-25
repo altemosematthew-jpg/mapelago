@@ -123,5 +123,10 @@ edit("tests/run.js", 'require("./dead-reckoning.test.js")', before(
     '    // 10. Dead Reckoning (tests/dead-reckoning.test.js)\n    await require("./dead-reckoning.test.js")({ b, U, page, check });\n'),
     "Dead Reckoning checks")
 
+edit("tests/run.js", '"Crossings", "Dead Reckoning"].every', lambda s: s.replace(
+    '"Stamps", "Crossings"].every((g) => (/<p class="lede">(.*?)<\\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Eight games a day/.test(ab), "about page: names all eight daily games");',
+    '"Stamps", "Crossings", "Dead Reckoning"].every((g) => (/<p class="lede">(.*?)<\\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Nine games a day/.test(ab), "about page: names all nine daily games");', 1),
+    "about-page check counts nine games")
+
 print("done" if not problems else "finished with problems in: " + ", ".join(sorted(set(problems))))
 sys.exit(1 if problems else 0)

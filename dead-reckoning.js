@@ -170,11 +170,17 @@
   }
   function screenToMap(cx, cy) { var b = box(); return [view.x + (cx - b.l) / b.w * view.w, view.y + (cy - b.t) / b.h * view.h]; }
 
-  var answerShown = null;
+  var answerShown = null, doneMarks = null;
   function drawPins() {
     if (!gPins) return;
     gPins.innerHTML = "";
     var u = unit();
+    if (doneMarks && mode === "daily") doneMarks.forEach(function (m) {
+      var a = toXY(m[0].lat, m[0].lon), g = toXY(m[1].lat, m[1].lon);
+      el("line", { class: "gap", x1: g[0], y1: g[1], x2: a[0], y2: a[1] }, gPins);
+      el("circle", { class: "pin", cx: g[0], cy: g[1], r: 4 * u }, gPins);
+      el("circle", { class: "ans", cx: a[0], cy: a[1], r: 7 * u }, gPins);
+    });
     if (answerShown) {
       var a = toXY(answerShown.lat, answerShown.lon);
       if (pin) { var p = toXY(pin.lat, pin.lon); el("line", { class: "gap", x1: p[0], y1: p[1], x2: a[0], y2: a[1] }, gPins); }
@@ -329,10 +335,9 @@
       s1.textContent = band(x.d); s2.textContent = places[i].name + ", " + places[i].country + " · " + fmtKm(x.d); s3.textContent = x.s;
       li.appendChild(s1); li.appendChild(s2); li.appendChild(s3); $("#recap").appendChild(li);
     });
-    // show today's five on the map
-    gPins.innerHTML = "";
-    var u = unit();
-    places.forEach(function (p, i) { var a = toXY(p.lat, p.lon), g = toXY(r.g[i][0], r.g[i][1]); el("line", { class: "gap", x1: g[0], y1: g[1], x2: a[0], y2: a[1] }, gPins); el("circle", { class: "ans", cx: a[0], cy: a[1], r: 7 * u }, gPins); });
+    // show today's five on the whole map, each answer joined to its pin
+    doneMarks = places.map(function (p, i) { return [p, { lat: r.g[i][0], lon: r.g[i][1] }]; });
+    fit(); applyView();
     drawDots();
     $("#done").hidden = false;
   }

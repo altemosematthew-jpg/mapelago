@@ -37,7 +37,7 @@ module.exports = async function ({ b, U, page, check }) {
     check(JSON.stringify(again) === JSON.stringify(r.day12), "dead reckoning: No. 12 is the same five on every load", JSON.stringify([again, r.day12]));
     const fp = require("crypto").createHash("sha256").update(JSON.stringify(again)).digest("hex").slice(0, 16);
     // fingerprint of No. 12, so a data change that moves the schedule is noticed (update it on purpose, with the data)
-    check(fp === "e0e3fa1bc2ab4b5d" || process.env.DR_PRINT, "dead reckoning: No. 12 schedule fingerprint unchanged", fp);
+    check(fp === "2200ced7c10674a3", "dead reckoning: No. 12 schedule fingerprint unchanged", fp);
     await k.ctx.close();
   }
 
