@@ -91,7 +91,16 @@ It is safe to run twice and stops without writing if an anchor has changed.
   reveal waits for the Next tap (no auto-advance) and the next pair takes the focus.
 - A source line under each game's explainer, just after `<!-- copy:end -->` (copy.json not touched; you
   may want the explainers in copy.json to name the sources too).
-- **Shared test file:** tests/golden.json (Bigger games, No. 14 on).
+- **Shared test file:** tests/golden.json (Bigger games, No. 14 on). Your branch now stores fingerprints
+  there, so git reports a conflict on this file. It can't be avoided, and it resolves mechanically:
+
+      git checkout --theirs tests/golden.json
+      cd tests && npm run golden && cd ..
+      git diff tests/golden.json    # only "bigger" and "biggercountry", only from "14", should change
+      git add tests/golden.json
+
+  Done on a throwaway merge with your branch at a87cb35 (0.15.8): exactly those entries changed, and the
+  suite passed (see Checked, below).
 
 ## What it relies on in the game script
 `MxBC()` is handed the game's own values: the countries (`M`), the day's pairs (`R`), the puzzle number,
