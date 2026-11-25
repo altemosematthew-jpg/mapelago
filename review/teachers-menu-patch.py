@@ -3,7 +3,8 @@
 
 Safe to run again: a page that already links to teachers/ is left alone. Run from anywhere:
     python3 review/teachers-menu-patch.py
-A new page added later gets the link the next time this runs."""
+A new page added later gets the link the next time this runs. It also gives the teachers page's
+scripts the current ?v= version from sw.js, so run it after a release bump."""
 import os, re, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +42,15 @@ def main():
         s = s.replace(line.group(0), line.group(0) + f"\n{line.group(1)}<url><loc>https://mapelago.com/teachers/</loc><lastmod>2026-11-25</lastmod></url>", 1)
         open(sm, "w", encoding="utf-8").write(s)
         print("sitemap.xml: teachers/ added")
+    # the teachers page loads its scripts with the site's current version, read from sw.js (a release changes it there)
+    v = re.search(r'const C = "mapelago-([^"]+)"', open(os.path.join(ROOT, "sw.js"), encoding="utf-8").read())
+    tp = os.path.join(ROOT, "teachers", "index.html")
+    if v and os.path.exists(tp):
+        t = open(tp, encoding="utf-8").read()
+        t2 = re.sub(r'(\.js)\?v=[0-9A-Za-z.-]+', lambda m: m.group(1) + "?v=" + v.group(1), t)
+        if t2 != t:
+            open(tp, "w", encoding="utf-8").write(t2)
+            print(f"teachers/index.html: scripts now carry ?v={v.group(1)}")
     print(f"{changed} pages changed")
 
 

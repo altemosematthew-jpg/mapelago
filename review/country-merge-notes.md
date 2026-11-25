@@ -174,8 +174,8 @@ Made by `review/review-fixes-patch.py` (both pages; run after the other scripts)
 
 ## Round 4: For teachers (/teachers/)
 
-- `teachers/index.html` (new), in the About page's look; it loads `../analytics.js?v=...` like About,
-  so include it when a release bumps the version strings.
+- `teachers/index.html` (new), in the About page's look. It loads `../analytics.js?v=...` like About;
+  after a release bump, `python3 review/teachers-menu-patch.py` sets it to the version in sw.js.
 - `review/teachers-menu-patch.py` (new) adds `For teachers` just before `About` in the Site menu of
   every page (index.html, country.html, the other games, hints.html, offline.html, about/, privacy/,
   how-to-play/, games/) and a `teachers/` line in sitemap.xml after `about/`. It's safe to run again,
