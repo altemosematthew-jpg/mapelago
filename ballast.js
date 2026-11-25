@@ -60,19 +60,52 @@
   // ---------- the daily ---------
   var EPOCH = Date.UTC(2026, 10, 14);
   function today() { return window.MXS ? MXS.today() : Math.round((Date.now() - EPOCH) / 864e5) + 1; }
-  function dailyLevel(n) {
-    var r = rng(n * 977 + 31), pool = SHAPES.filter(function (s) { return s.a >= 40000 && s.a <= 2500000; });
-    var anchor = pool[Math.floor(r() * pool.length)], lo = anchor.a / 5, hi = anchor.a * 2.5;
-    var near = shuffle(pool.filter(function (s) { return s.a >= lo && s.a <= hi && s.cc !== anchor.cc; }), r).slice(0, 9);
-    var list = shuffle([anchor].concat(near), r).map(function (s) { return s.cc; });
-    var opts = [[230, 0, 0], [220, 2, 0], [220, 0, 1], [210, 2, 1], [200, 3, 1], [200, 3, 2], [190, 4, 1]][(6 + n - 1) % 7]; // calm Monday to rough Sunday
-    return R("daily", "Daily", "Daily Ballast No. " + n, list, { deck: opts[0], swell: opts[1], wind: opts[2], name: "pick", daily: n, line: 1 });
+  // ---------- the level generator: one seed and a difficulty number make a level ----------
+  // Used by the Daily climb (seed = the date), Endless practice (a random seed) and nothing else.
+  // n = 1 is easy; every step adds a little: more pieces, bigger pieces for the deck, a higher load line,
+  // then swell, then wind, then long awkward shapes, and typed names from level 5.
+  var GEN_REGIONS = ["Europe", "Africa", "Asia", "Americas", "Oceania", "World"];
+  function regionOf(s) { return /America/.test(s.r) ? "Americas" : s.r === "Europe and Asia" ? "Asia" : s.r; }
+  function longness(s) { var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; s.p.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }); var w = x1 - x0, h = y1 - y0; return Math.max(w, h) / Math.max(1, Math.min(w, h)); }
+  function genLevel(seed, n, attempt) {
+    var r = rng(seed * 7919 + n * 104729 + (attempt || 0) * 31), order = shuffle(GEN_REGIONS.slice(0, 5), rng(seed * 13 + 5));
+    var region = n % 6 === 0 ? "World" : order[(n - 1) % 5];
+    var pool = SHAPES.filter(function (s) { return s.a >= 15000 && (region === "World" || regionOf(s) === region); });
+    var count = Math.min(10, 4 + Math.floor(n * 0.6));
+    // pieces of similar size, around a random anchor
+    var anchor = pool[Math.floor(r() * pool.length)], near = pool.filter(function (s) { return s.a >= anchor.a / 6 && s.a <= anchor.a * 3; });
+    if (near.length < count) near = pool.slice().sort(function (a, b) { return Math.abs(Math.log(a.a / anchor.a)) - Math.abs(Math.log(b.a / anchor.a)); }).slice(0, Math.max(count, 8));
+    // from level 7, long thin countries are favoured
+    var picks = shuffle(near, r);
+    if (n >= 7) picks.sort(function (a, b) { return (longness(b) > 2 ? 1 : 0) - (longness(a) > 2 ? 1 : 0); });
+    picks = shuffle(picks.slice(0, count), r);
+    var lv = R("g" + n, region, "Level " + n, picks.map(function (s) { return s.cc; }), {
+      deck: Math.max(170, 236 - 5 * n), big: Math.min(0.62, 0.4 + 0.016 * n),
+      swell: n < 3 ? 0 : Math.min(5, Math.floor((n - 1) / 2)), wind: n < 4 ? 0 : Math.min(3, Math.floor((n - 1) / 3)),
+      name: n >= 5 ? "type" : "pick", climb: n, endAtLine: true
+    });
+    var est = 0; lv.list.forEach(function (cc) { est += Math.sqrt(byCC[cc].a); });
+    lv.lineKm = Math.round(est * 0.27 * Math.min(2.2, 0.8 + 0.09 * n));
+    return lv;
   }
+  // the five tutorial levels, shown once: each teaches one thing on one screen
+  var TUTORIAL = [
+    R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country over the deck, then press Drop. Stack past the dashed load line.", name: "none", line: 0, lineKm: 700, endAtLine: true, tut: 1 }),
+    R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap the play area to turn a country (or use the round arrows, or Q and E). Lay long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
+    R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "Name each country before you drop it for bonus points. A wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
+    R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right. Build a little to the left.", name: "pick", wind: 2, lineKm: 600, endAtLine: true, tut: 4 }),
+    R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck. Keep the stack low and in the middle. Three lives a run: a failed load costs one.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
+  ];
+  var RUN = null; // { mode: "daily" | "practice" | "tut", seed, lvl, lives, cleared, named, lost, marks: [], attempt }
+  function newRun(mode, seed) { return { mode: mode, seed: seed, lvl: 1, lives: 3, cleared: 0, named: 0, lost: 0, marks: [], attempt: 0 }; }
+  function runPoints(r) { return r.cleared * 100 + r.named * 10; }
+  function cargoPreview(seed) { var l = genLevel(seed, 1); return "Today's cargo starts in " + (l.region === "World" ? "every corner of the world" : l.region === "Americas" ? "the Americas" : l.region) + "."; }
 
   // ---------- save ----------
   var save = (function () { try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && typeof s === "object") return s; } catch (e) {} return {}; })();
   save.results = save.results && typeof save.results === "object" ? save.results : {};
   save.levels = save.levels && typeof save.levels === "object" ? save.levels : {};
+  save.stats = save.stats && typeof save.stats === "object" ? save.stats : {}; // { best, bestPractice, runs, sum }
   function store() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
 
   // ---------- sound (shared mute with the other games) ----------
@@ -119,10 +152,10 @@
   var cv = $("#sea"), cx = cv.getContext("2d");
   var engine, world, ship, rails, pieces, current, hover, L, S, camY = 0, raf = 0, last = 0, acc = 0, time = 0, settleT = 0, state = "idle", ttl = 0;
 
-  function scaleFor(list, deck) {
+  function scaleFor(list, deck, share) {
     // one km-to-unit scale for the whole round: the biggest piece is ~45% of the deck wide
     var big = 0; list.forEach(function (cc) { var s = byCC[cc]; big = Math.max(big, s.u * 100); });
-    return deck * 0.45 / big;
+    return deck * (share || 0.45) / big;
   }
   function localOutline(s, k) { return s.p.map(function (q) { return { x: q[0] * s.u * k, y: q[1] * s.u * k }; }); }
   function makeBody(s, k, x, y, ang) {
@@ -146,7 +179,7 @@
   function start(level) {
     stop();
     L = level;
-    S = { i: 0, k: scaleFor(L.list, L.deck), named: [], lost: [], kept: [], score: 0, over: false, won: false, height: 0, peak: 0 };
+    S = { i: 0, k: scaleFor(L.list, L.deck, L.big), named: [], lost: [], kept: [], score: 0, over: false, won: false, height: 0, peak: 0 };
     engine = M.Engine.create({ gravity: { x: 0, y: 1, scale: 0.0007 }, positionIterations: 10, velocityIterations: 8, enableSleeping: !L.swell && !L.wind });
     world = engine.world; pieces = [];
     ship = M.Bodies.rectangle(0, DECK_Y + 7, L.deck, 14, { isStatic: true, friction: 1, frictionStatic: 1.4, label: "deck" });
@@ -159,7 +192,11 @@
     L.lineKm = L.lineKm || Math.round((BOT[L.id] || estimateLine(L)) * L.line);
     camY = null; time = 0;
     $("#lvlTitle").textContent = L.title;
-    $("#lvlMeta").textContent = (L.daily ? "No. " + L.daily + " · " : L.region + " · ") + L.list.length + " countries · load line " + fmt(L.lineKm) + " km" + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
+    $("#lvlTitle").textContent = RUN && RUN.mode === "daily" ? "Daily Ballast · Level " + RUN.lvl : RUN && RUN.mode === "practice" ? "Practice · Level " + RUN.lvl : L.title;
+    $("#lvlMeta").textContent = (RUN && RUN.mode !== "tut" ? "\u2665".repeat(RUN.lives) + "\u2661".repeat(3 - RUN.lives) + " · " : "") + L.region + " · " + L.list.length + " countries · load line " + fmt(L.lineKm) + " km" + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
+    $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
+    $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
+    $("#nameBox").hidden = L.name === "none";
     $("#play").hidden = false; $("#done").hidden = true; $("#chart").hidden = true;
     next();
     if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); }
@@ -188,7 +225,7 @@
     state = "fall"; settleT = 0; ttl = 0;
     $("#dropBtn").disabled = true;
     SFX.drop();
-    if (hover.answer === null) markName(false, true);
+    if (hover.answer === null && L.name !== "none") markName(false, true);
   }
   function overboard(b) { return b.position.y > DECK_Y + 140 || Math.abs(b.position.x) > VW; }
   function settled() { return pieces.every(function (b) { return b.mxGone || b.isSleeping || (b.speed < 0.1 && b.angularSpeed < 0.008); }); }
@@ -213,15 +250,17 @@
       if (settleT > 450 || ttl > 6000) {
         S.height = heightKm(); S.peak = Math.max(S.peak, S.height);
         SFX.land(); S.i++;
-        if (S.height >= L.lineKm && !L.daily) { finish(); return; }
+        if (S.height >= L.lineKm && L.endAtLine !== false) { finish(); return; }
         next();
       }
       renderHud();
     }
   }
+  var fpsNow = 60;
   function loop(now) {
     raf = requestAnimationFrame(loop);
     var dt = Math.min(64, now - last); last = now;
+    if (dt > 0) fpsNow += (1000 / dt - fpsNow) * 0.05;
     if (engine && !S.over) { acc += dt; while (acc >= 1000 / 60) { step(1000 / 60); acc -= 1000 / 60; if (S.over) break; } }
     draw();
   }
@@ -293,7 +332,7 @@
     $("#nameSay").textContent = "";
     if (L.name === "pick") {
       $("#nameType").hidden = true; $("#nameOpts").hidden = false;
-      var r = rng((L.daily || 7) * 131 + S.i * 17 + s.cc.charCodeAt(0));
+      var r = rng(((RUN && RUN.seed) || 7) * 131 + S.i * 17 + s.cc.charCodeAt(0) + (L.climb || 0) * 7);
       var same = SHAPES.filter(function (x) { return x.cc !== s.cc && (x.r === s.r) && x.a > 2000; });
       if (same.length < 3) same = SHAPES.filter(function (x) { return x.cc !== s.cc && x.a > 2000; });
       var opts = shuffle([s].concat(shuffle(same, r).slice(0, 3)), r);
@@ -333,37 +372,88 @@
   function finish() {
     S.over = true; state = "done";
     S.height = heightKm();
+    if (RUN) { runStep(); return; }
+    // a voyage
     var st = stars(), pts = S.height + 100 * named();
     if (st) SFX.line(); else SFX.fail();
     turtle(st ? "swim" : "peek");
-    var marks = L.list.map(function (cc, i) { var lost = S.lost.indexOf(cc) >= 0, nm = S.named[i]; return lost ? "\u{1F7E5}" : nm ? "\u{1F7E9}" : "\u{1F7E8}"; }).join("");
-    if (L.daily) {
-      if (!save.results[L.daily]) { save.results[L.daily] = { score: pts, h: S.height, named: named(), lost: S.lost.length, stars: st }; store(); }
-    } else {
-      var prev = save.levels[L.id] || { stars: 0, best: 0 };
-      save.levels[L.id] = { stars: Math.max(prev.stars, st), best: Math.max(prev.best, pts) }; store();
-    }
+    var prev = save.levels[L.id] || { stars: 0, best: 0 };
+    save.levels[L.id] = { stars: Math.max(prev.stars, st), best: Math.max(prev.best, pts) }; store();
     $("#doneTitle").textContent = st ? (st === 3 ? "Three stars. A perfect load." : "Loaded to the line.") : "Below the line this time.";
-    $("#doneStars").textContent = "★".repeat(st) + "☆".repeat(3 - st);
+    $("#doneStars").hidden = false; $("#doneStars").textContent = "★".repeat(st) + "☆".repeat(3 - st);
     $("#doneStars").setAttribute("aria-label", st + " of 3 stars");
-    $("#bigScore").textContent = fmt(pts);
+    $("#bigScore").textContent = fmt(pts); $("#bigUnit").textContent = "points";
     $("#doneLine").textContent = "Stack " + fmt(S.height) + " km (load line " + fmt(L.lineKm) + " km) · " + named() + " of " + L.list.length + " named · " + S.lost.length + " overboard.";
-    $("#doneWhy").textContent = "Points: " + fmt(S.height) + " for the height + " + fmt(100 * named()) + " for the names = " + fmt(pts) + ". Stars: reach the line; nothing overboard; every country named.";
-    var share = $("#shareText"), sb = $("#shareBtn");
-    if (L.daily) {
-      share.hidden = false; sb.hidden = false;
-      share.textContent = "Mapelago Ballast No. " + L.daily + " \u{1F422} " + fmt(save.results[L.daily].score) + " points\n" + marks + "\n" + "Stack " + fmt(save.results[L.daily].h) + " km · " + save.results[L.daily].named + " of " + L.list.length + " named\n" + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.ballast) || "Can you stack higher?") + " mapelago.com/ballast.html#c-" + L.daily + "-" + save.results[L.daily].score;
-      if (window.MXS && MXS.beat) share.textContent = MXS.beat.upgrade(share.textContent);
-      $("#nextLvl").hidden = true;
-    } else {
-      share.hidden = true; sb.hidden = true;
-      var idx = LEVELS.indexOf(L), nx = LEVELS[idx + 1];
-      $("#nextLvl").hidden = !(st && nx); if (nx) $("#nextLvl").textContent = "Next voyage: " + nx.title;
-    }
-    $("#retryBtn").hidden = !!L.daily;
-    $("#play").hidden = true; $("#done").hidden = false;
-    renderChart();
+    $("#doneWhy").textContent = "Stars: reach the line; nothing overboard; every country named.";
+    $("#shareText").hidden = true; $("#shareBtn").hidden = true;
+    var idx = LEVELS.indexOf(L), nx = LEVELS[idx + 1];
+    $("#nextLvl").hidden = !(st && nx); if (nx) $("#nextLvl").textContent = "Next voyage: " + nx.title;
+    $("#retryBtn").hidden = false; $("#retryBtn").textContent = "Try this voyage again";
+    showDone();
+  }
+  function showDone() {
+    $("#play").hidden = true; $("#done").hidden = false; renderChart();
     setTimeout(function () { var t = $("#doneTitle"); t.setAttribute("tabindex", "-1"); t.focus(); }, 30);
+  }
+  // one level of a run (daily, practice or tutorial) has ended
+  function runStep() {
+    var ok = S.height >= L.lineKm, r = RUN;
+    r.named += named(); r.lost += S.lost.length;
+    if (r.mode === "tut") {
+      if (ok) { SFX.line(); r.lvl++; } else { SFX.fail(); toast("Not quite: try that one again."); }
+      if (r.lvl > TUTORIAL.length) { save.tut = 1; store(); RUN = null; toast("That's the tutorial. Here is today's Daily Ballast."); startDaily(); return; }
+      setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
+    }
+    if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
+    else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast("Below the line. " + r.lives + (r.lives === 1 ? " life" : " lives") + " left: a fresh cargo for level " + r.lvl + "."); }
+    if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt }; store(); }
+    if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(genLevel(r.seed, r.lvl, r.attempt)); }, 900); return; }
+    endRun();
+  }
+  function endRun() {
+    var r = RUN, pts = runPoints(r), reached = r.cleared + 1, st = save.stats;
+    if (r.mode === "daily") {
+      if (!save.results[dayNo]) {
+        save.results[dayNo] = { score: pts, lvl: r.cleared, named: r.named, lost: r.lost, marks: r.marks.join("") };
+        st.runs = (st.runs || 0) + 1; st.sum = (st.sum || 0) + r.cleared; st.best = Math.max(st.best || 0, r.cleared);
+      }
+      delete save.run;
+    } else st.bestPractice = Math.max(st.bestPractice || 0, r.cleared);
+    store();
+    var res = r.mode === "daily" ? save.results[dayNo] : { score: pts, lvl: r.cleared, named: r.named, marks: r.marks.join("") };
+    $("#doneTitle").textContent = r.mode === "daily" ? "The stack gave out on level " + (res.lvl + 1) + "." : "Practice over on level " + reached + ".";
+    $("#doneStars").hidden = true;
+    $("#bigScore").textContent = res.lvl; $("#bigUnit").textContent = res.lvl === 1 ? "level cleared" : "levels cleared";
+    $("#doneLine").textContent = fmt(res.score) + " points: " + res.lvl + " × 100 for the levels + " + res.named + " × 10 for the names.";
+    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " A new run arrives at midnight; Endless practice and the voyages are open any time." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
+    var share = $("#shareText"), sb = $("#shareBtn");
+    share.hidden = sb.hidden = r.mode !== "daily";
+    if (r.mode === "daily") share.textContent = shareText(dayNo, res);
+    $("#nextLvl").hidden = true; $("#retryBtn").hidden = r.mode !== "practice"; $("#retryBtn").textContent = "Another practice run";
+    RUN = null;
+    showDone();
+  }
+  function statsLine() { var st = save.stats; return st.runs ? "Your best: level " + (st.best || 0) + " cleared. Average over " + st.runs + (st.runs === 1 ? " run: " : " runs: ") + (Math.round((st.sum || 0) / st.runs * 10) / 10) + "." : ""; }
+  function shareText(n, res) {
+    var t = "Mapelago Ballast No. " + n + " \u{1F422} " + fmt(res.score) + " points\n" + res.marks + "\nCleared " + res.lvl + (res.lvl === 1 ? " level" : " levels") + " · " + res.named + " named\n" + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.ballast) || "How high can you stack?") + " mapelago.com/ballast.html#c-" + n + "-" + res.score;
+    return window.MXS && MXS.beat ? MXS.beat.upgrade(t) : t;
+  }
+  function startDaily() {
+    if (save.results[dayNo]) { home(); return; }
+    var sv = save.run && save.run.day === dayNo ? save.run : null;
+    RUN = newRun("daily", dayNo);
+    if (sv) { RUN.lvl = sv.lvl; RUN.lives = sv.lives; RUN.cleared = sv.cleared; RUN.named = sv.named; RUN.lost = sv.lost; RUN.marks = sv.marks || []; RUN.attempt = sv.attempt || 0; }
+    start(genLevel(RUN.seed, RUN.lvl, RUN.attempt));
+  }
+  function startPractice() { RUN = newRun("practice", Math.floor(Math.random() * 1e9)); start(genLevel(RUN.seed, 1, 0)); }
+  function startTutorial() { RUN = newRun("tut", 0); start(TUTORIAL[0]); }
+  function home() {
+    stop(); RUN = null; $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
+    var r = save.results[dayNo], d = $("#dailyBtn");
+    d.disabled = !!r; d.textContent = r ? "Daily Ballast done: " + r.lvl + (r.lvl === 1 ? " level" : " levels") + " cleared" : save.run && save.run.day === dayNo ? "Carry on today's Daily Ballast (level " + save.run.lvl + ")" : "Play today's Daily Ballast";
+    $("#dailyNote").hidden = false;
+    $("#dailyNote").textContent = (r ? "New cargo at midnight. " : cargoPreview(dayNo) + " ") + statsLine();
+    $("#homeShare").hidden = !r; if (r) $("#homeShareText").textContent = shareText(dayNo, r);
   }
 
   // ---------- the level chart ----------
@@ -431,28 +521,32 @@
       try { if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) { await navigator.share({ text: t }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
       try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); }
     };
-    $("#retryBtn").onclick = function () { start(L); };
+    $("#retryBtn").onclick = function () { if (LEVELS.indexOf(L) >= 0) start(L); else startPractice(); };
     $("#nextLvl").onclick = function () { var i = LEVELS.indexOf(L); if (LEVELS[i + 1]) start(LEVELS[i + 1]); };
-    $("#chartBtn").onclick = $("#chartBtn2").onclick = function () { stop(); $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart(); };
-    $("#dailyBtn").onclick = function () { start(dailyLevel(dayNo)); };
-    $("#chartList").addEventListener("click", function (e) { var b = e.target.closest("button[data-i]"); if (b && !b.disabled) start(LEVELS[+b.dataset.i]); });
+    $("#skipTut").hidden = true;
+    $("#chartBtn").onclick = $("#chartBtn2").onclick = home;
+    $("#dailyBtn").onclick = startDaily;
+    $("#practiceBtn").onclick = startPractice;
+    $("#tutBtn").onclick = startTutorial;
+    $("#skipTut").onclick = function () { save.tut = 1; store(); RUN = null; startDaily(); };
+    $("#homeShareBtn").onclick = async function () { var t = $("#homeShareText").textContent, b = this; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); } };
+    // a new day while the page is open: offer it, never interrupt a run
+    setInterval(function () { if (today() !== dayNo && !dm) { $("#fresh").hidden = false; } }, 30000);
+    $("#chartList").addEventListener("click", function (e) { var b = e.target.closest("button[data-i]"); if (b && !b.disabled) { RUN = null; start(LEVELS[+b.dataset.i]); } });
     renderChart();
-    // today's daily, unless it's already played: then the level chart
-    if (save.results[dayNo]) { $("#chart").hidden = false; $("#play").hidden = true; $("#dailyBtn").textContent = "Replay today's Daily Ballast (not counted)"; showDailyDone(); }
-    else start(dailyLevel(dayNo));
+    // first visit: the tutorial; then today's run, unless it's already played
+    if (!save.tut && !Object.keys(save.results).length && !Object.keys(save.levels).length) startTutorial();
+    else if (save.results[dayNo]) home();
+    else startDaily();
     if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__ballast = {
       // test bot helpers: lay the piece flat, and run the physics until it settles, without waiting for frames
       flat: function () { var best = 0, bh = Infinity, o = localOutline(hover.s, S.k); for (var i = 0; i < 24; i++) { var a = i * Math.PI / 12, c = Math.cos(a), sn = Math.sin(a), lo = 0, hi = 0; o.forEach(function (v) { var y = v.x * sn + v.y * c; lo = Math.max(lo, y); hi = Math.min(hi, y); }); var h = lo * 2 + (lo - hi) * 0.3; if (h < bh) { bh = h; best = a; } } hover.ang = best; },
       settle: function () { for (var n = 0; n < 900 && state === "fall" && !S.over; n++) step(1000 / 60); return state; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, daily: dailyLevel, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, save: function () { return save; } };
-  }
-  function showDailyDone() {
-    var r = save.results[dayNo]; if (!r) return;
-    $("#dailyNote").hidden = false;
-    $("#dailyNote").textContent = "Today's Daily Ballast: " + fmt(r.score) + " points (" + fmt(r.h) + " km, " + r.named + " named). New cargo at midnight. Meanwhile, sail the voyages.";
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang] : null; }, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);
   if (dm && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) dayNo = Number(dm[1]);
   init();
+  if (location.protocol !== "file:" && "serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
 })();

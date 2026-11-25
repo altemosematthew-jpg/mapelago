@@ -148,15 +148,15 @@
    "title": "Ballast: a daily stack-the-countries game | Mapelago",
    "description": "Stack real country outlines on a rocking ship without toppling them, and name each one for bonus points. A free daily geography game from Mapelago.",
    "heading": "Stack the world without tipping it over.",
-   "explainer": "Ballast is Mapelago's stacking game. Real country outlines, all drawn at the same scale, come one at a time. Move each one, turn it, and drop it on the ship's deck. The stack obeys gravity, so a careless Chile can bring the whole load down, and anything that falls in the sea is lost. Before you drop a country you can name it for 100 bonus points: from four choices on early voyages, typed later. Daily Ballast gives everyone the same ten countries each day, calm on Mondays and rough by Sunday, and scores the height of your stack in kilometres plus your names. The thirty voyages are levels grouped by region, with swell, wind and narrower decks as they go: load each ship to its load line for one star, lose nothing overboard for two, and name every country for three.",
+   "explainer": "Ballast is Mapelago's stacking game. Real country outlines, all drawn at the same scale, come one at a time. Move each one, turn it, and drop it on the ship's deck. The stack obeys gravity, so a careless Chile can bring the whole load down, and anything that falls in the sea is lost. Before you drop a country you can name it for bonus points: from four choices at first, typed from level 5. Daily Ballast is one run a day with the same cargo for everyone. Level 1 is easy, and every level you load to the line is harder: more countries, a higher line, then swell, wind and long awkward shapes, in a new region each level. There's no top level. You have three lives, and a load that ends below the line costs one. Your score is 100 for each level cleared plus 10 for each country named. Endless practice is the same climb with a random cargo, and the thirty voyages are set levels by region with one to three stars each.",
    "howto": [
-    "Name the country for +100: tap a choice, or type it on later voyages.",
+    "Name the country for bonus points: tap a choice, or type it from level 5.",
     "Drag to move it, tap to turn it. On a keyboard: arrows move, Q and E turn.",
-    "Press Drop (or Space). It falls and settles on the stack.",
-    "Keep the stack on the deck. Anything that topples into the sea is lost.",
-    "Daily Ballast scores the stack's height in km plus 100 per name. Voyages give 1 to 3 stars."
+    "Press Drop (or Space). Stack past the dashed load line to clear the level.",
+    "Anything that topples into the sea is lost. A load that ends below the line costs one of your three lives.",
+    "Every level is harder. Your score is 100 a level plus 10 a name. One Daily run a day; practice and voyages any time."
    ],
-   "invite": "Can you stack higher?",
+   "invite": "How high can you stack?",
    "image": "Stack the world."
   }
  },

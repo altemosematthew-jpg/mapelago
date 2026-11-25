@@ -10,7 +10,7 @@ window.MXCOPY = {
   "stamps": "Can you fill all six in fewer spins than me?",
   "crossings": "Can you cross it in par?",
   "history": "How close to the year can you get?",
-  "ballast": "Can you stack higher?"
+  "ballast": "How high can you stack?"
  },
  "cards": {
   "city": "Guess the city: slide tiles for clues, then pin it on the map.",
