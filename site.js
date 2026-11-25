@@ -291,10 +291,27 @@
     if (foot && foot.parentNode === app) app.insertBefore(sec, foot); else app.appendChild(sec);
   }
 
+  // 18.5 a friend's challenge link (#c-<number>-<score>) on the games that had none
+  var UNIT = { bigger: function (n) { return n + " of 10"; }, bigcountry: function (n) { return n + " of 10"; }, voyage: function (n) { return n + " points"; },
+    fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; } };
+  function challenge(app) {
+    var me = here(), m = /^#c-(\d+)-(\d+)$/.exec(location.hash);
+    if (!me || !m || !UNIT[me.id]) return;
+    var n = Number(m[1]), t = today();
+    if (Math.abs(n - t) > 1) return;
+    var el = document.createElement("p");
+    el.className = "mx-risk"; el.setAttribute("role", "status");
+    el.textContent = n === t
+      ? "A friend scored " + UNIT[me.id](m[2]) + " on No. " + n + ". Try to beat it."
+      : "A friend scored " + UNIT[me.id](m[2]) + " on No. " + n + ". That is " + (n < t ? "yesterday's" : "tomorrow's") + " puzzle where you are, so today you get No. " + t + ". Play it and send yours back.";
+    var head = app.querySelector("header");
+    if (head && head.parentNode === app) app.insertBefore(el, head.nextSibling); else app.insertBefore(el, app.firstChild);
+  }
+
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
-    if (app) { riskNote(app); today_games(app); }
+    if (app) { riskNote(app); challenge(app); today_games(app); }
     var nav = document.querySelector('nav[aria-label="Daily games"]');
     var me = here();
     if (nav && me) Array.prototype.forEach.call(nav.querySelectorAll("a"), function (a) { if (a.getAttribute("href") === me.url || (me.url === "./" && /^(\.\/|index\.html|\.)$/.test(a.getAttribute("href")))) a.setAttribute("aria-current", "page"); });

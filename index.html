@@ -581,7 +581,7 @@ a.act{text-decoration:none}
 ${P.score} points \u00B7 ${En(J.moves.length,"move","moves")}
 ${"\u{1F513}".repeat(c)}${"\u{1F512}".repeat(Wt.length-c)} ${c} of ${Wt.length} clues${P.h?" + \u{1F422} hint":""}
 ${t.join("\n")}
-${gr}/${at.path}#c-${j}-${P.score}-${P.pins.length}`}function In(t=!1){let e=Object.values(pt.results),n=e.filter(c=>c.won).length,a=[0,0,0,0,0];e.forEach(c=>a[Math.min(4,Math.floor(c.score/200))]++);let i=Math.max(1,...a),r=Math.min(...P.pins.map(c=>c.d)),o=P.won?`Found it with ${En(P.pins.length,"pin","pins")}.`:r<=150?`So close: ${Sn(r)} away.`:"Not this time.",l="";if(gn&&gn.n===j){let c=P.score-gn.score;l=`<p class="vs">${c>0?`You beat your friend by ${c} points.`:c===0?"You tied with your friend.":`Your friend wins by ${-c} points. Try again tomorrow.`}</p>`}b("#endBody").innerHTML=`
+Can you beat ${P.score}? ${gr}/${at.path}#c-${j}-${P.score}-${P.pins.length}`}function In(t=!1){let e=Object.values(pt.results),n=e.filter(c=>c.won).length,a=[0,0,0,0,0];e.forEach(c=>a[Math.min(4,Math.floor(c.score/200))]++);let i=Math.max(1,...a),r=Math.min(...P.pins.map(c=>c.d)),o=P.won?`Found it with ${En(P.pins.length,"pin","pins")}.`:r<=150?`So close: ${Sn(r)} away.`:"Not this time.",l="";if(gn&&gn.n===j){let c=P.score-gn.score;l=`<p class="vs">${c>0?`You beat your friend by ${c} points.`:c===0?"You tied with your friend.":`Your friend wins by ${-c} points. Try again tomorrow.`}</p>`}b("#endBody").innerHTML=`
     <div class="mascot${P.won?"":" sad"}">${te({size:56,live:!0})}</div>
     <h2 id="endTitle">${o}</h2>
     <p class="place">${V(ht.city)}</p>
