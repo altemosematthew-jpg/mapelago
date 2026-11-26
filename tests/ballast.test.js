@@ -188,6 +188,8 @@ module.exports = async function ({ b, U, page, check }) {
     });
     await p.waitForTimeout(1500);
     const z = await p.evaluate(() => __ballast.zoom());
+    const one = await p.evaluate(() => { const B = __ballast; B.start(B.TUTORIAL[0]); B.drop(); B.tick(400); return [B.height() > 0, B.S().cleared, B.state(), B.L().lineKm]; });
+    check(one[0] && !one[1] && one[2] === "aim", "ballast tutorial: one country alone never clears a level (at least two must be aboard)", JSON.stringify(one));
     check(r.easy.every((x) => x[1] === 0 && x[2]), "ballast feel: on easy levels a plain centre drop never goes overboard (Italy included) and the level clears", JSON.stringify(r.easy));
     check(r.hold && r.hold[0] && r.hold[1] === false && r.hold[2] === true, "ballast feel: the stack must stand above the line for two seconds to clear", JSON.stringify(r.hold));
     check(r.spare === 2 && r.lost[0] === 3 && r.lost[1] && !r.lost[2], "ballast feel: two countries may be lost; the third ends the load", JSON.stringify(r.lost));

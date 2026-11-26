@@ -96,7 +96,7 @@
   }
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [
-    R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Press and drag the country: it follows your finger. Let go to drop it. Hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 700, endAtLine: true, tut: 1 }),
+    R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Press and drag the country: it follows your finger. Let go to drop it. Hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
     R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap without dragging to turn a country 15 degrees (or Q and E). Lay long ones flat, then drag and let go.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
     R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "After you place a country, name it for bonus points (10 each in a run). It never holds up the next piece, and a wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
     R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right. Build a little to the left.", name: "pick", wind: 1, lineKm: 600, endAtLine: true, tut: 4 }),
@@ -279,7 +279,7 @@
   function overboard(b) { return b.position.y > DECK_Y + WATER + 16 || Math.abs(b.position.x) > VW; } // lost only when it's in the water
   function settled() { return pieces.every(function (b) { return b.mxGone || b.isSleeping || (b.speed < 0.1 && b.angularSpeed < 0.008); }); }
   function heightKm() { return Math.max(0, Math.round((DECK_Y - stackTop(true)) / S.k)); }
-  function need() { return L.climb ? Math.ceil(L.list.length / 2) : 1; } // in the climb the line only counts once half the cargo is aboard
+  function need() { return L.climb ? Math.ceil(L.list.length / 2) : L.tut ? 2 : 1; } // in the climb the line only counts once half the cargo is aboard
   function endLevel(ok) {
     if (S.judged) return;
     S.judged = true; S.cleared = ok; S.height = heightKm(); hover = null;
@@ -404,6 +404,8 @@
     cx.fillStyle = css("--paper", "#fff"); cx.strokeStyle = ink; cx.lineWidth = 1.5 * k / 1.2;
     cx.fillRect(gx0, Y(lineY), 8 * k, gh); cx.strokeRect(gx0, Y(lineY), 8 * k, gh);
     cx.fillStyle = accent; cx.fillRect(gx0, Y(DECK_Y) - gh * frac, 8 * k, gh * frac);
+    // a tick and the figure at the stack's highest point, so the reading and the drawing can be compared at a glance
+    if (S.height > 0 && !cleared) { var ty = Y(DECK_Y - S.height * S.k); cx.strokeStyle = ink; cx.lineWidth = 1.5 * k / 1.2; cx.beginPath(); cx.moveTo(gx0 - 26 * k, ty); cx.lineTo(gx0 + 8 * k, ty); cx.stroke(); cx.fillStyle = ink; cx.font = "700 " + 10 * k + "px " + font; cx.textAlign = "right"; cx.fillText(fmt(S.height) + " km", gx0 - 2 * k, ty - 3 * k); }
     cx.textAlign = "center"; cx.fillStyle = ink;
     if (cleared) { var pulse = reduce ? 1 : 1 + 0.12 * Math.sin(cheerT / 90); cx.font = "800 " + 30 * k * pulse + "px " + font; cx.fillStyle = accent; cx.fillText("Loaded!", W / 2, Y(lineY) - 22 * k); }
     else if (holdT > 0) { cx.font = "800 " + 24 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Hold " + Math.max(0, (HOLD - holdT) / 1000).toFixed(1), W / 2, Y(lineY) - 22 * k); }

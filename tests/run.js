@@ -1015,6 +1015,24 @@ async function page(b, url, opts = {}) {
       }
     }
 
+    // 26. site-wide: one rules text per game on How to play; 1,000 with a comma; common English city names
+    {
+      const C = JSON.parse(fs.readFileSync(path.join(__dirname, "../copy/copy.json"), "utf8")).games;
+      const how = fs.readFileSync(path.join(__dirname, "../how-to-play/index.html"), "utf8"), strip = (t) => t.replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&").trim();
+      const bad = ["voyage", "fathoms", "history", "stamps", "crossings", "ballast", "bigger", "bigcountry"].filter((id) => { const m = new RegExp("<!-- rules:" + id + " -->([\\s\\S]*?)<!-- /rules:" + id + " -->").exec(how); return !m || strip(m[1]) !== C[id].explainer; });
+      check(!bad.length, "how to play: each game's rules are the same text as its footer and All games (copy.json)", bad.join(" "));
+      check(/<h2 id="crossings">/.test(how) && /rules of all eleven daily games/.test(how) && how.indexOf("From No. 14, on 27 November 2026") < how.indexOf("plays by the same rules as Mystery city"), "how to play: Crossings has its own heading; the title covers every game; Mystery country's date comes first");
+      const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+      await p.waitForFunction(() => window.__WORLD);
+      const s0 = await p.textContent("#score");
+      await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3200);
+      const end = await p.evaluate(() => [document.querySelector("#endBody .score b").textContent, document.querySelector("#endBody .share").textContent]);
+      check(s0 === "1,000" && end[0] === "1,000" && /1,000 points/.test(end[1]) && /#b-mc-12-0-1000$/.test(end[1].trim()), "mystery city: 1,000 has its comma on the score, the result and the share (the link keeps plain digits)", JSON.stringify([s0, end]));
+      await ctx.close();
+      const src = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+      check(/"Nizhniy Novgorod":"Nizhny Novgorod"/.test(src) && /"Ludhi\\u0101na":"Ludhiana"/.test(src) && /"G\\xF6teborg":"Gothenburg"/.test(src), "mystery city: Nizhny Novgorod, Ludhiana and Gothenburg use their common English names");
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
