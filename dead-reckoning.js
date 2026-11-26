@@ -123,7 +123,9 @@
   }
   function shareText() {
     var r = S.results[N]; if (!r) return "";
-    return "Dead Reckoning No. " + N + ": " + r.total.toLocaleString("en-US") + " of 1,000 " + r.b + "\nBeat my score: mapelago.com/dead-reckoning.html#b-dr-" + N + "-0-" + r.total;
+    // the marks, closest to furthest: bullseye, pin, compass, adrift, lost at sea
+    var marks = String(r.b || "").replace(/\u{1F7E9}/gu, "\u{1F4CD}").replace(/\u{1F7E8}/gu, "\u{1F9ED}").replace(/\u{1F7E7}/gu, "\u26F5").replace(/\u{1F7E5}/gu, "\u{1F30A}");
+    return "Mapelago Dead Reckoning No. " + N + " \u{1F422} " + r.total.toLocaleString("en-US") + " of 1,000\n" + marks + "\nFive pins on a blank map. How close can you get? mapelago.com/dead-reckoning.html#b-dr-" + N + "-0-" + r.total;
   }
   function stats() {
     var days = Object.keys(S.results).map(Number).filter(function (n) { return n > 0 && S.results[n] && isFinite(S.results[n].total); });

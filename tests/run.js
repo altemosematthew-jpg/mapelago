@@ -378,7 +378,7 @@ async function page(b, url, opts = {}) {
         check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
         // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
         const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
-        check(sh.share.startsWith("Mystery country No. 12, ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        check(sh.share.startsWith("Mapelago No. 12 \u00B7 mystery country ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
         await ctx.close();
       }
       for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
@@ -412,7 +412,7 @@ async function page(b, url, opts = {}) {
         check(a.num === "No. 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
         await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
         const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
-        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mystery country No. 5 (archive)"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
+        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mapelago No. 5 (archive) \u00B7 mystery country"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
         check(!p.errs.length, "review: Past countries, no errors", p.errs.join("; "));
         await ctx.close();
       }

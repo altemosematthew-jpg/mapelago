@@ -122,7 +122,7 @@ module.exports = async function ({ b, U, page, check }) {
       return { share, leak: names.filter((n) => share.includes(n)), res: sv.results[20], stats: sv.stats, run: sv.run, info: MXS.info().find((s) => s.game.id === "ballast"), title: document.querySelector("#doneTitle").textContent };
     });
     check(r.res && r.res.lvl >= 1 && r.res.score === r.res.lvl * 100 + r.res.named * 10 && (r.res.marks.match(/\u{1F7E5}/gu) || []).length === 3 && !r.run, `ballast ${tag}: three failed loads end the run; score = 100 a level + 10 a name`, JSON.stringify(r.res));
-    check(/^Mapelago Ballast No\. 20 \u{1F422} [\d,]+ points\n/u.test(r.share) && /Cleared \d+ level/.test(r.share) && !r.leak.length && /#b-bl-20-0-\d+$/.test(r.share.trim()), "ballast: the share shows the levels cleared and squares, has a beat-my-score link, and names no country", r.share);
+    check(/^Mapelago Ballast No\. 20 \u{1F422} [\d,]+ points\n/u.test(r.share) && /Loaded \d+ level/.test(r.share) && /^[\u{1F4E6}\u{1F30A}]+$/mu.test(r.share) && !r.leak.length && /#b-bl-20-0-\d+$/.test(r.share.trim()), "ballast: the share shows the levels cleared and squares, has a beat-my-score link, and names no country", r.share);
     check(r.info && r.info.played === 1 && r.stats.best === r.res.lvl && r.stats.runs === 1, "ballast: the daily counts in Your streaks; personal best and runs are kept", JSON.stringify(r.stats));
     await p.reload(); await p.waitForTimeout(700);
     const home = await p.evaluate(() => ({ chart: !document.querySelector("#chart").hidden, btn: document.querySelector("#dailyBtn").disabled, note: document.querySelector("#dailyNote").textContent, share: document.querySelector("#homeShareText").textContent, best: JSON.parse(localStorage.getItem("dailycity:ballast:v1")).stats.best }));
@@ -257,6 +257,23 @@ module.exports = async function ({ b, U, page, check }) {
     check(r.ang === 0, "ballast: a piece arrives north-up", String(r.ang));
     check(r.n >= 480 && r.worst <= 1.6, "ballast daily: from No. 15 the first two levels hold only compact countries", `${r.n} pieces, longest ${r.worst.toFixed(2)}`);
     check(r.same[0] === "AOMAETEG" && r.same[1] === "ARPYPECO", "ballast daily: Nos. 13 and 14 keep the cargo they had", r.same.join(" "));
+    await ctx.close();
+  }
+  // today's cargo: the last stack that stood is kept as outlines only, drawn on the home screen and on the share image
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
+    const r = await p.evaluate(async () => {
+      const B = __ballast; let n = 0;
+      while (B.run() && B.run().cleared < 1 && n++ < 30) { if (B.state() === "aim") { B.flat(); B.drop(); } B.settle(); B.tick(200); if (B.state() === "last") document.querySelector("#contBtn").click(); }
+      const cleared = B.run().cleared; B.run().lives = 1; B.S().cleared = false; B.finish(); await new Promise((r) => setTimeout(r, 400));
+      const res = B.save().results[Object.keys(B.save().results)[0]], c = document.createElement("canvas"); c.width = 400; c.height = 300;
+      const drew = window.MX_SHARE_ART(c.getContext("2d"), { x: 0, y: 0, w: 400, h: 300 }), px = c.getContext("2d").getImageData(0, 0, 400, 300).data; let ink = 0; for (let i = 3; i < px.length; i += 4) if (px[i]) ink++;
+      document.querySelector("#chartBtn2").click(); await new Promise((r) => setTimeout(r, 200));
+      return { cleared, pic: res.pic && res.pic.p.length, names: /[A-Za-z]{3}/.test(JSON.stringify(res.pic || {}).replace(/"[dp]"/g, "")), drew, ink, fig: !document.querySelector("#cargoFig").hidden, share: document.querySelector("#homeShareText").textContent };
+    });
+    check(r.cleared >= 1 && r.pic >= 1 && !r.names, "ballast cargo: the stack that stood is saved as outlines, with no country names", JSON.stringify(r));
+    check(r.drew === true && r.ink > 2000 && r.fig, "ballast cargo: it is drawn on the share image and shown as today's cargo on the home screen", JSON.stringify([r.drew, r.ink, r.fig]));
+    check(/^\u{1F4E6}+\u{1F30A}*$/mu.test(r.share) && /Loaded \d+ level/.test(r.share) && /mapelago\.com\/ballast\.html#b-bl-/.test(r.share.trim().split("\n").pop()), "ballast share: crates for loaded levels, waves for lost loads, the link last", r.share);
     await ctx.close();
   }
   // offline after a first load

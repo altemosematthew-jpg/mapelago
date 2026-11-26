@@ -303,10 +303,13 @@
     if (/points$/.test(score)) { x.font = "600 46px " + font; x.fillStyle = "#3d4a52"; x.fillText("points", 116, 590); }
     // marks as shapes, so they read the same on every phone
     var marks = Array.from(lines[1] || "").filter(function (ch) { return /\S/.test(ch) && ch !== "️"; }), size = Math.min(110, Math.floor((W - 220) / Math.max(1, marks.length)) - 12);
+    // a game can draw its own picture in place of the marks (Ballast: the outline of the stack)
+    var art = false; try { art = !!(window.MX_SHARE_ART && window.MX_SHARE_ART(x, { x: 110, y: 640, w: W - 220, h: 380 })); } catch (e) { art = false; }
+    if (art) marks = [];
     marks.forEach(function (m, i) {
       var px = 110 + i * (size + 12), py = 680;
       x.lineWidth = 5; x.strokeStyle = "#000"; x.setLineDash([]);
-      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8", "\u{1F4A1}": "#f3d98a" }[m];
+      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8", "\u{1F4A1}": "#f3d98a", "\u{1F97E}": "#b4237d", "\u{1F9ED}": "#f3d98a", "\u{1F30A}": "#a9d3e8", "\u{1F419}": "#2c7bb6", "\u{1F41F}": "#f3d98a" }[m];
       if (m === "❌") { x.setLineDash([12, 8]); x.strokeRect(px, py, size, size); x.setLineDash([]); x.beginPath(); x.moveTo(px + size * .28, py + size * .28); x.lineTo(px + size * .72, py + size * .72); x.moveTo(px + size * .72, py + size * .28); x.lineTo(px + size * .28, py + size * .72); x.stroke(); return; }
       x.fillStyle = fill || MXFILL[m] || "#ffffff"; x.fillRect(px, py, size, size); x.strokeRect(px, py, size, size); // MXFILL: Logbook's heat marks
       if (m === "✅") { x.strokeStyle = "#fff"; x.lineWidth = 8; x.beginPath(); x.moveTo(px + size * .25, py + size * .52); x.lineTo(px + size * .43, py + size * .7); x.lineTo(px + size * .76, py + size * .3); x.stroke(); }
