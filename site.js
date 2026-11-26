@@ -160,6 +160,7 @@
   }
   if (puzzleDay() >= FIX_FROM) ["VXPACK", "DR_COUNTRIES"].forEach(function (name) { var val = fixNames(window[name]); try { Object.defineProperty(window, name, { configurable: true, enumerable: true, get: function () { return val; }, set: function (v) { val = fixNames(v); } }); } catch (e) {} });
   window.MXA = function (table) {
+    window.MXA.names = window.MXA.names || {}; table.forEach(function (c) { if (c.name && c.cid != null) window.MXA.names[c.name.toLowerCase()] = c.cid; });
     if (puzzleDay() >= FIX_FROM) table.forEach(function (c) {
       if (c.cc === "BW" && c.langs) c.langs = ["English"];
       if (c.cc === "CA" && c.next && c.next.indexOf("DK") < 0) c.next = c.next.concat("DK");
@@ -242,7 +243,7 @@
     + '.mxs textarea{width:100%;min-height:76px;box-sizing:border-box;font:12px ui-monospace,monospace;border:1.5px solid var(--line,#000);border-radius:8px;padding:6px}'
     + '.mxs .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.mxs .btns button{min-height:44px;padding:0 14px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r-btn,12px);background:var(--paper,#fff);color:inherit;font:inherit;font-weight:800;cursor:pointer}'
     + '.mxs .btns .go{background:var(--accent,#b4237d);color:var(--on-accent,#fff)}'
-    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}.act[hidden],.linkbtn[hidden],.mx-img[hidden]{display:none!important}.mx-daily{margin:6px 0;font-size:13.5px;font-weight:700;line-height:1.3}#done .panel>.mx-daily,#endBody>.mx-daily{order:4}#done:has(.mx-daily) .panel>.next,#endBody:has(.mx-daily)>.next{display:none}.mx-site{font-weight:700}'
+    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}canvas.mx-mini{display:block;width:100%;height:72px;margin:6px 0;border-radius:10px}canvas.mx-mini[hidden]{display:none}.app:has(canvas.mx-mini:not([hidden])) .wheelbox.asked{display:none}.act[hidden],.linkbtn[hidden],.mx-img[hidden]{display:none!important}.mx-daily{margin:6px 0;font-size:13.5px;font-weight:700;line-height:1.3}#done .panel>.mx-daily,#endBody>.mx-daily{order:4}#done:has(.mx-daily) .panel>.next,#endBody:has(.mx-daily)>.next{display:none}.mx-site{font-weight:700}'
     + '@keyframes mxFirst{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 5px var(--accent,#b4237d)}}.mx-fresh [data-first]{animation:mxFirst 1.6s ease-in-out infinite;border-radius:var(--r-btn,12px)}@media (prefers-reduced-motion:reduce){.mx-fresh [data-first]{animation:none;box-shadow:0 0 0 4px var(--accent,#b4237d)}}'
     + '.mx-today{grid-column:1/-1;margin:36px 0 0}.mx-today h2{margin:0 0 10px;font-size:20px}'
     + '.mx-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}'
@@ -788,6 +789,82 @@
     new MutationObserver(function (ms) { ms.forEach(function (m) { if (m.type === "attributes" && m.attributeName === "class") mark(m.target); else if (m.type === "attributes" && m.target.id === "done" && !m.target.hidden) SFX.win(); }); }).observe(app, { subtree: true, attributes: true, attributeFilter: ["class", "hidden"] });
   }
 
+  // ---------- a small answer map after each reveal (Voyage, Stamps, Logbook, Fathoms, Bigger city?) ----------
+  // Drawn from the shared world map (world-lite.js, loaded on first use), in the Chart room colours. It shows where the
+  // answer is; it never appears before the answer.
+  var MXMAP = (function () {
+    var feats = null, byName = {}, waiting = [];
+    var ALIAS = { "united states": "united states of america", "usa": "united states of america", "czech republic": "czechia", "ivory coast": "côte d'ivoire", "cote d'ivoire": "côte d'ivoire", "dr congo": "dem. rep. congo", "democratic republic of the congo": "dem. rep. congo", "republic of the congo": "congo", "central african republic": "central african rep.", "south sudan": "s. sudan", "bosnia and herzegovina": "bosnia and herz.", "dominican republic": "dominican rep.", "equatorial guinea": "eq. guinea", "eswatini": "eswatini", "north macedonia": "macedonia", "solomon islands": "solomon is.", "western sahara": "w. sahara", "türkiye": "turkey", "turkiye": "turkey", "east timor": "timor-leste", "cabo verde": "cape verde", "the bahamas": "bahamas", "the gambia": "gambia" };
+    function load(cb) {
+      if (window.__WORLD) return cb();
+      waiting.push(cb); if (waiting.length > 1) return;
+      var me = document.querySelector('script[src*="site.js"]'), v = me ? (me.getAttribute("src").split("?")[1] || "") : "", sc = document.createElement("script");
+      sc.src = "world-lite.js" + (v ? "?" + v : ""); sc.async = true; sc.onload = function () { var w = waiting; waiting = []; w.forEach(function (f) { f(); }); }; document.head.appendChild(sc);
+    }
+    function decode() {
+      if (feats) return;
+      var W = window.__WORLD, T = W.transform, arcs = W.arcs.map(function (a) { var x = 0, y = 0; return a.map(function (q) { x += q[0]; y += q[1]; return [x * T.scale[0] + T.translate[0], y * T.scale[1] + T.translate[1]]; }); });
+      var ring = function (ix) { var out = []; ix.forEach(function (i, n) { var a = i < 0 ? arcs[~i].slice().reverse() : arcs[i]; out = out.concat(n ? a.slice(1) : a); }); return out; };
+      feats = W.objects.countries.geometries.map(function (g) {
+        var polys = g.type === "Polygon" ? [g.arcs.map(ring)] : g.type === "MultiPolygon" ? g.arcs.map(function (p) { return p.map(ring); }) : [];
+        var f = { id: +g.id, name: (g.properties && g.properties.name) || "", polys: polys }; if (!byName[f.name.toLowerCase()]) byName[f.name.toLowerCase()] = f; return f;
+      });
+    }
+    function find(name) {
+      var n = String(name || "").toLowerCase().replace(/^the /, "").trim(), cid = window.MXA && MXA.names && MXA.names[n];
+      if (cid != null) { var hit = feats.filter(function (f) { return f.id === cid; })[0]; if (hit) return hit; }
+      return byName[n] || byName[ALIAS[n] || ""] || null;
+    }
+    // every country name inside a piece of text (longest first, whole words)
+    function namesIn(text) {
+      decode(); var t = " " + String(text || "").toLowerCase() + " ", out = [];
+      var all = Object.keys(byName).concat(Object.keys(ALIAS)).concat(window.MXA && MXA.names ? Object.keys(MXA.names) : []).filter(function (x) { return x.length > 3; }).sort(function (a, b) { return b.length - a.length; });
+      all.forEach(function (k) { var i = t.indexOf(k); if (i > 0 && !/[a-z]/.test(t[i - 1]) && !/[a-z]/.test(t[i + k.length])) { var f = find(k); if (f && out.indexOf(f) < 0) out.push(f); t = t.split(k).join(" "); } });
+      return out;
+    }
+    function draw(cv, hi) {
+      var w = cv.clientWidth || 300, h = cv.clientHeight || 72, dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = w * dpr; cv.height = h * dpr;
+      var g = cv.getContext("2d"), cs = getComputedStyle(document.documentElement), col = function (v, d) { return (cs.getPropertyValue(v) || "").trim() || d; };
+      var x0 = 180, x1 = -180, y0 = 90, y1 = -90;
+      hi.forEach(function (f) { f.polys.forEach(function (p) { p[0].forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }); }); });
+      if (x1 - x0 > 200) { x0 = -170; x1 = 190; } // across the date line: show the world
+      var mx = (x0 + x1) / 2, my = (y0 + y1) / 2, span = Math.max(x1 - x0, (y1 - y0) * 1.6, 14) * 1.8, cos = Math.cos(my * Math.PI / 180), k = w / (span * cos);
+      if ((y1 - y0) * 1.8 * k > h) k = h / ((y1 - y0) * 1.8);
+      var P = function (q) { return [w / 2 + (q[0] - mx) * cos * k, h / 2 - (q[1] - my) * k]; };
+      g.setTransform(dpr, 0, 0, dpr, 0, 0); g.fillStyle = col("--sea", "#dcedf5"); g.fillRect(0, 0, w, h); g.lineJoin = "round";
+      var path = function (f) { g.beginPath(); f.polys.forEach(function (p) { p.forEach(function (r) { r.forEach(function (q, i) { var s = P(q); if (i) g.lineTo(s[0], s[1]); else g.moveTo(s[0], s[1]); }); g.closePath(); }); }); };
+      feats.forEach(function (f) { path(f); g.fillStyle = col("--land", "#f3d98a"); g.fill(); g.strokeStyle = col("--land-line", "#6f5d22"); g.lineWidth = 0.6; g.stroke(); });
+      hi.forEach(function (f) { path(f); g.fillStyle = col("--accent", "#b4237d"); g.fill(); g.strokeStyle = col("--ink", "#000"); g.lineWidth = 1.2; g.stroke(); });
+      g.strokeStyle = col("--ink", "#000"); g.lineWidth = 2; g.strokeRect(1, 1, w - 2, h - 2);
+    }
+    function show(after, text, label) {
+      if (!after || !after.parentNode) return;
+      load(function () {
+        decode(); var hi = namesIn(text), cv = after.parentNode.querySelector("canvas.mx-mini");
+        if (!hi.length) { if (cv) cv.hidden = true; return; }
+        if (!cv) { cv = document.createElement("canvas"); cv.className = "mx-mini"; cv.setAttribute("role", "img"); after.parentNode.insertBefore(cv, after.nextSibling); }
+        cv.hidden = false; cv.setAttribute("aria-label", "Map: " + hi.map(function (f) { return f.name; }).join(", ")); requestAnimationFrame(function () { draw(cv, hi); });
+      });
+    }
+    return { show: show, namesIn: namesIn, load: load };
+  })();
+  window.MXMAP = MXMAP;
+  // which text names the answer, and where the map goes, in each game
+  function answerMaps() {
+    var me = here(); if (!me) return;
+    var rules = {
+      voyage: function () { var s = document.getElementById("say"); return s && /^(Right|Wrong)/.test(s.textContent) ? [s, s.textContent + " " + ((document.querySelector("#opts .opt.right") || {}).textContent || "")] : null; },
+      stamps: function () { var s = document.getElementById("qsay"); return s && !s.hidden ? [s, ((document.querySelector("#qopts .opt.right") || {}).textContent || "") + " " + ((document.getElementById("qask") || {}).textContent || "")] : null; },
+      history: function () { var s = document.getElementById("qsay"), sl = document.getElementById("slider"); return s && !s.hidden && !(sl && sl.offsetParent) ? [s, s.textContent + " " + ((document.getElementById("qbody") || {}).innerText || "")] : null; },
+      fathoms: function () { var s = document.getElementById("shownNote"), sh = document.getElementById("shown"); return s && sh && !sh.hidden ? [s, (document.getElementById("shownTitle") || {}).textContent.split(":")[0] + " " + s.textContent] : null; },
+      bigger: function () { var s = document.getElementById("say"), d = document.getElementById("done"); return s && (!d || d.hidden) ? [s, [].map.call(document.querySelectorAll("#play .pick .where"), function (x) { return x.textContent; }).join(" ")] : null; } // where the two cities are (their countries are already on the cards)
+    }, rule = rules[me.id];
+    if (!rule) return;
+    var last = "";
+    new MutationObserver(function () { var r = rule(); if (!r) { var cv = document.querySelector("canvas.mx-mini"); if (cv && !cv.hidden && last) { cv.hidden = true; last = ""; } return; } if (r[1] === last) return; last = r[1]; MXMAP.show(r[0], r[1]); })
+      .observe(document.querySelector(".app"), { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden", "class"] });
+  }
+
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
@@ -798,7 +875,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove();
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps();
     // the day's level in words on the games whose own dial is not set yet (from No. 19)
     var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
     setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
