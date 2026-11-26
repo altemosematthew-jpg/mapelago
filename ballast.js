@@ -74,6 +74,8 @@
     var pool = SHAPES.filter(function (s) { return s.a >= 15000 && (region === "World" || regionOf(s) === region); });
     var count = Math.min(10, 4 + Math.floor(n * 0.6));
     // the first two levels (the day's first nine pieces) use each region's best-known countries
+    // (from No. 15, and in practice) those first pieces are also compact: no long thin countries in the first minute
+    if (n <= 2 && seed !== 13 && seed !== 14) { var squat = pool.filter(function (s) { return longness(s) <= 1.6; }); if (squat.length >= count + 2) pool = squat; }
     if (n <= 2) { var known = pool.slice().sort(function (a, b) { return b.f - a.f; }).slice(0, 14); if (known.length >= count + 2) pool = known; }
     // pieces of similar size, around a random anchor
     var anchor = pool[Math.floor(r() * pool.length)], near = pool.filter(function (s) { return s.a >= anchor.a / 6 && s.a <= anchor.a * 3; });
@@ -208,7 +210,7 @@
     $("#lvlMeta").textContent = (RUN && RUN.mode !== "tut" ? "♥".repeat(RUN.lives) + "♡".repeat(3 - RUN.lives) + " · " : "") + L.region + " · " + L.list.length + " countries" + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
     $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
     $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
-    $("#nameBox").hidden = L.name === "none";
+    $("#nameBox").hidden = L.name === "none"; $("#nameBox").dataset.mode = L.name === "type" ? "type" : "pick";
     asked = null; dropping = null; $("#dropBtn").hidden = false; $("#contBtn").hidden = true;
     $("#play").hidden = false; $("#done").hidden = true; $("#chart").hidden = true;
     resize();

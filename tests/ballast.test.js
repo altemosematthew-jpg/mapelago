@@ -49,7 +49,7 @@ module.exports = async function ({ b, U, page, check }) {
       for (let seed = 1; seed <= 30; seed++) { B.gen(seed, 1, 0).list.concat(B.gen(seed, 2, 0).list).forEach((cc) => { tot++; if (rank[cc] < 110) easy++; });
         for (const n of [3, 8]) { const l = B.gen(seed, n, 0).list.map((cc) => by[cc]); lv++; if (l.every((x) => l[0].a / long(l[0]) ** 2 >= x.a / long(x) ** 2)) base++; } }
       return { easy: easy / tot, base, lv, until: B.until() }; });
-    check(gen.easy > 0.9 && gen.base === gen.lv, "ballast generator: the day's first two levels use well-known countries; every level opens with its broadest piece", JSON.stringify(gen));
+    check(gen.easy > 0.85 && gen.base === gen.lv, "ballast generator: the day's first two levels use well-known countries; every level opens with its broadest piece", JSON.stringify(gen));
     check(/^\d+h \d+m$/.test(gen.until), "ballast: the countdown to the next climb reads like '5h 12m'", gen.until);
     check(r.levels === 30 && r.ids === 30 && Object.keys(r.regions).length === 6 && !r.unknown.length && r.tut === 5, "ballast: thirty voyages in six regions, five tutorial levels, every country known");
     await ctx.close();
@@ -236,6 +236,27 @@ module.exports = async function ({ b, U, page, check }) {
     const stepMs = await p.evaluate(() => { const B = __ballast, t0 = performance.now(); B.tick(120); return (performance.now() - t0) / 120; });
     check(fps >= 45 && stepMs < 8, "ballast: steady frame rate on a slow-phone profile with a full stack", `fps ${fps.toFixed(1)}, physics ${stepMs.toFixed(2)} ms a step, ${await p.evaluate(() => __ballast.pieces().filter((x) => !x.mxGone).length)} pieces on deck`);
     console.log(`  (ballast slow-phone profile: ${fps.toFixed(1)} fps, ${stepMs.toFixed(2)} ms per physics step)`);
+    await ctx.close();
+  }
+  // a 375px phone: the control row fits, Continue stays hidden until the load is over, and the question never moves the buttons
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, ctx: { viewport: { width: 375, height: 700 } }, wait: 700 });
+    const r = await p.evaluate(() => {
+      const B = __ballast, box = (q) => document.querySelector(q).getBoundingClientRect(), o = {};
+      o.row = [...document.querySelectorAll(".ctrl button")].filter((x) => x.offsetParent).map((x) => { const c = x.getBoundingClientRect(); return [x.id, Math.round(c.left), Math.round(c.right)]; });
+      o.cont = !!document.querySelector("#contBtn").offsetParent; o.ang = B.hover()[1]; o.y0 = box(".ctrl").top;
+      B.drop(); B.tick(120); o.asked = !!document.querySelector("#nameOpts .opt"); o.y1 = box(".ctrl").top; o.cont2 = !!document.querySelector("#contBtn").offsetParent;
+      const long = (cc) => { const s = MX_BALLAST.find((x) => x.cc === cc); let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; s.p.forEach((q) => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }); return Math.max(x1 - x0, y1 - y0) / Math.max(1, Math.min(x1 - x0, y1 - y0)); };
+      o.worst = 0; o.n = 0; for (let d = 15; d < 75; d++) for (let n = 1; n <= 2; n++) B.gen(d, n, 0).list.forEach((cc) => { o.n++; o.worst = Math.max(o.worst, long(cc)); });
+      o.same = [13, 14].map((d) => B.gen(d, 1, 0).list.join(""));
+      return o;
+    });
+    check(r.row.length === 5 && r.row.every((x) => x[1] >= 0 && x[2] <= 375), "ballast phone: every control button is inside a 375px screen", JSON.stringify(r.row));
+    check(!r.cont && !r.cont2, "ballast phone: Continue is hidden while a piece is waiting", JSON.stringify([r.cont, r.cont2]));
+    check(r.asked && Math.abs(r.y1 - r.y0) < 1, "ballast phone: the name question does not move the control row", `${r.y0} -> ${r.y1}`);
+    check(r.ang === 0, "ballast: a piece arrives north-up", String(r.ang));
+    check(r.n >= 480 && r.worst <= 1.6, "ballast daily: from No. 15 the first two levels hold only compact countries", `${r.n} pieces, longest ${r.worst.toFixed(2)}`);
+    check(r.same[0] === "AOMAETEG" && r.same[1] === "ARPYPECO", "ballast daily: Nos. 13 and 14 keep the cargo they had", r.same.join(" "));
     await ctx.close();
   }
   // offline after a first load
