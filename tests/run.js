@@ -984,6 +984,37 @@ async function page(b, url, opts = {}) {
       await q.ctx.close();
     }
 
+    // 25. Mystery city review items: ranks explained, play again in the other mode, zoom keeps the pin, mode choice hides on a move
+    {
+      const fresh = { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" };
+      const { ctx, p } = await page(b, U + "#day-12", { storage: fresh });
+      await p.waitForFunction(() => window.__WORLD);
+      await p.keyboard.press("ArrowUp"); await p.waitForTimeout(250);
+      check(!(await p.isVisible("#mxMode")), "city: the Tiles/Quick choice goes away on the first move");
+      await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2600);
+      const end = await p.evaluate(() => ({ ranks: (document.querySelector("#endBody .mx-ranks") || {}).textContent, again: (document.querySelector("#mxAgain") || {}).textContent, score: JSON.parse(localStorage.getItem("dailycity:v2")).results[12].score }));
+      check(/Legend 900\+, Voyager 750\+, Navigator 550\+, Paddler 300\+, Hatchling below/.test(end.ranks || ""), "city: the result explains the ranks", end.ranks);
+      check(/again in Quick mode \(practice, not scored\)/.test(end.again || ""), "city: a finished Tiles round offers a Quick replay", end.again);
+      await p.click("#mxAgain"); await p.waitForTimeout(1500); await p.waitForFunction(() => window.__lf && window.__WORLD);
+      const re = await p.evaluate(() => ({ hash: location.hash, quick: document.documentElement.classList.contains("mx-quick"), same: __lf.P.city, pins: document.querySelector("#pinsText").textContent }));
+      check(re.hash === "#past-12" && re.quick && /5 pins/.test(re.pins), "city: the replay is the same city in Quick mode, as practice", JSON.stringify(re));
+      await p.evaluate(() => __lf.confirmAt([__lf.P.lon + 30, __lf.P.lat])); await p.waitForTimeout(1600);
+      await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2600);
+      const after = await p.evaluate(() => ({ today: JSON.parse(localStorage.getItem("dailycity:v2")).results[12], n: Object.keys(JSON.parse(localStorage.getItem("dailycity:v2")).results).length, back: (document.querySelector("#mxAgain") || {}).textContent }));
+      check(after.today.score === end.score && !after.today.q && after.n === 1 && /again in Tiles/.test(after.back || ""), "city: the replay never changes the day's result or streak", JSON.stringify(after));
+      await ctx.close();
+      for (const f of ["", "country.html"]) {
+        const z = await page(b, U + f + "#day-7", { desktop: true, storage: { [f ? "dailycity:country:v1" : "dailycity:v2"]: '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+        await z.p.waitForFunction(() => window.__WORLD);
+        await z.p.focus("#pinBtn"); await z.p.keyboard.press("Enter"); await z.p.waitForTimeout(500);
+        for (let i = 0; i < 9; i++) await z.p.keyboard.press(i % 2 ? "ArrowUp" : "ArrowRight", { delay: 5 });
+        for (let i = 0; i < 3; i++) { await z.p.keyboard.press("+"); await z.p.waitForTimeout(350); }
+        const seen = await z.p.evaluate(() => { const m = document.querySelector("#map").getBoundingClientRect(), k = document.querySelector("#marks .mk-new"); if (!k) return "no pin"; const r = k.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2; return x > m.left && x < m.right && y > m.top && y < m.bottom; });
+        check(seen === true, `keyboard zoom keeps the pin in view: /${f}`, String(seen));
+        await z.ctx.close();
+      }
+    }
+
     // 9. Crossings: a shortest route scores 1000, the pairs last two years, it can be played by keyboard alone
     {
       const { ctx, p } = await page(b, U + "crossings.html#day-20", { wait: 800 });
