@@ -14,6 +14,9 @@ head = re.sub(r'(og:title" content=")[^"]*', r'\g<1>' + T, head)
 head = re.sub(r'(name="description" content=")[^"]*', r'\g<1>' + DESC, head)
 head = re.sub(r'(og:description" content=")[^"]*', r'\g<1>' + DESC, head)
 head = re.sub(r'"name":"Fathoms"', '"name":"Mapelago"', head)
+head = re.sub(r'<script type="application/ld\+json">.*?</script>', '', head, flags=re.S)
+LD = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Mapelago","url":"https://mapelago.com/","description":"Eleven free daily geography games: Mystery city, Mystery country, Bigger city?, Bigger country?, Voyage, Fathoms, Stamps, Crossings, Logbook, Dead Reckoning and Ballast, and a Daily Voyage that strings four of them together."}</script>'
+head = head.replace('<head>', '<head>\n' + LD, 1)
 head = head.replace('<head>', '<head>\n<script>/* links made for the Mystery city game when it lived here (shares, archive days, #day-N) go on to it */\nif (location.hash.length > 1 || /[?&](q|city)=/.test(location.search)) location.replace("city.html" + location.search + location.hash);</script>', 1)
 CSS = r'''
 /* Home */

@@ -933,7 +933,7 @@ async function page(b, url, opts = {}) {
       check(ends[13].facts.length === 3 && /bandeng presto/.test(ends[13].facts.join(" ")), "city facts: No. 13 shows its three checked facts", JSON.stringify(ends[13]));
       check(ends[12].facts.length >= 1 && !/bandeng/.test(ends[12].facts.join(" ")), "city facts: a city without checked facts keeps the standard ones");
       check(ends[46].country === "China (Macao SAR)" && /1557/.test(ends[46].facts.join(" ")), "city facts: Macau reads China (Macao SAR)", JSON.stringify(ends[46]));
-      const src = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+      const src = fs.readFileSync(path.join(__dirname, "../city.html"), "utf8");
       check(!/"13":\[|No\. 13/.test(src.slice(src.indexOf("var MxCF="), src.indexOf("var MxCF=") + 300)), "city facts: the page keys them by city, not by puzzle number");
     }
 
@@ -1035,7 +1035,7 @@ async function page(b, url, opts = {}) {
       const end = await p.evaluate(() => [document.querySelector("#endBody .score b").textContent, document.querySelector("#endBody .share").textContent]);
       check(s0 === "1,000" && end[0] === "1,000" && /1,000 points/.test(end[1]) && /#b-mc-12-0-1000$/.test(end[1].trim()), "mystery city: 1,000 has its comma on the score, the result and the share (the link keeps plain digits)", JSON.stringify([s0, end]));
       await ctx.close();
-      const src = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+      const src = fs.readFileSync(path.join(__dirname, "../city.html"), "utf8");
       check(/"Nizhniy Novgorod":"Nizhny Novgorod"/.test(src) && /"Ludhi\\u0101na":"Ludhiana"/.test(src) && /"G\\xF6teborg":"Gothenburg"/.test(src), "mystery city: Nizhny Novgorod, Ludhiana and Gothenburg use their common English names");
     }
 
