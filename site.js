@@ -394,7 +394,7 @@
     marks.forEach(function (m, i) {
       var px = 110 + i * (size + 12), py = 680;
       x.lineWidth = 5; x.strokeStyle = "#000"; x.setLineDash([]);
-      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8", "\u{1F4A1}": "#f3d98a", "\u{1F97E}": "#b4237d", "\u{1F9ED}": "#f3d98a", "\u{1F30A}": "#a9d3e8", "\u{1F419}": "#2c7bb6", "\u{1F41F}": "#f3d98a" }[m];
+      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8", "\u{1F4A1}": "#f3d98a", "\u{1F97E}": "#b4237d", "\u{1F9ED}": "#f3d98a", "\u{1F30A}": "#a9d3e8", "\u{1F419}": "#2c7bb6", "\u{1F41F}": "#f3d98a", "\u{1F4CD}": "#b4237d", "\u26F5": "#dcedf5", "\u{1F4E6}": "#c08a50" }[m];
       if (m === "❌") { x.setLineDash([12, 8]); x.strokeRect(px, py, size, size); x.setLineDash([]); x.beginPath(); x.moveTo(px + size * .28, py + size * .28); x.lineTo(px + size * .72, py + size * .72); x.moveTo(px + size * .72, py + size * .28); x.lineTo(px + size * .28, py + size * .72); x.stroke(); return; }
       x.fillStyle = fill || MXFILL[m] || "#ffffff"; x.fillRect(px, py, size, size); x.strokeRect(px, py, size, size); // MXFILL: Logbook's heat marks
       if (m === "✅") { x.strokeStyle = "#fff"; x.lineWidth = 8; x.beginPath(); x.moveTo(px + size * .25, py + size * .52); x.lineTo(px + size * .43, py + size * .7); x.lineTo(px + size * .76, py + size * .3); x.stroke(); }
@@ -431,7 +431,7 @@
   }
   function addImageButton() {
     var me = here(), btn = document.getElementById("shareBtn");
-    if (!me || !btn || document.getElementById("imgBtn") || me.id === "city" || me.id === "country" || (me.id === "reckoning")) return;
+    if (!me || !btn || document.getElementById("imgBtn") || me.id === "city" || me.id === "country") return; // those two make their own
     var b = document.createElement("button");
     b.className = btn.className + " mx-img"; b.type = "button"; b.textContent = "Share image";
     b.onclick = function () { shareImageClick(me); };

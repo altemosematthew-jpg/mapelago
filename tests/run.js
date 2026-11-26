@@ -1222,6 +1222,14 @@ async function page(b, url, opts = {}) {
       check(/Your best: 900 points\. Beat yesterday's 400 points\./.test(t), "result card: personal best and beat yesterday", t);
       await ctx.close();
     }
+    // ---- Fathoms practice: seven random prompts, nothing saved
+    {
+      const { ctx, p } = await page(b, U + "fathoms.html?practice", { storage: { "dailycity:fathoms:v1": '{"results":{},"game":null}' }, wait: 700 });
+      const r = await p.evaluate(async () => { const n0 = __fath.S().n; for (let i = 0; i < 7; i++) { document.querySelector("#fpass").click(); const nx = document.querySelector("#fnext"); if (nx) nx.click(); } await new Promise((r) => setTimeout(r, 900));
+        return [document.querySelector("#num").textContent, n0 > 1e5, __fath.S().prompts.length, !document.querySelector("#done").hidden, localStorage.getItem("dailycity:fathoms:v1"), document.querySelector("#shareText").textContent]; });
+      check(r[0] === "Practice · not saved" && r[1] && r[2] === 7 && r[3] && r[4] === '{"results":{},"game":null}' && !r[5], "fathoms practice: seven prompts from beyond the daily schedule, a result, nothing saved or shared", JSON.stringify(r));
+      await ctx.close();
+    }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });
