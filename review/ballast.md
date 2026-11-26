@@ -22,6 +22,43 @@ no requests to other companies. Save key: `dailycity:ballast:v1` (`results` per 
 - **Voyages:** the 30 set levels in six regions, with stars (reach the line; nothing overboard; every country named).
 - **Stats:** personal best level, runs and average, and "Today's cargo starts in ..." on the menu.
 
+## Ballast feel (0.15.21)
+What changed, after Matthew played 0.15.18:
+- **Handling:** press anywhere and drag; the country follows the finger one for one in both directions; letting go drops
+  it from there. A tap or click without a drag turns it 15 degrees. The arrow, turn and Drop buttons are a small
+  fallback row under the question. Keys: arrows (all four), Q and E, Space.
+- **Physics:** outlines simplified to at most 22 points (about 6 convex parts each), and the same outline is drawn, so
+  what you see is what touches. No bounce, high grip, spin that dies away quickly, taller rails. A plain centre drop on
+  the tutorial's calm levels and the day's first two levels never goes overboard (tested, Italy included).
+- **Size:** the play area fills most of the screen; the deck is about 28% wider and the pieces scale with it; each
+  placed country carries its name once it has been named (or straight away where there is no question to spoil).
+- **Goal:** a gauge beside the line and "Stack 640 of 900 km"; the stack must stand above the line for two seconds
+  ("Hold 1.4" counts down); then the line goes solid, "Loaded!" and the win sound (no pulsing with reduced motion).
+- **Failure:** a country is lost only when it is in the water. Two may be lost in a load ("Overboard 1 of 2 allowed");
+  the third ends it. A load also fails if the cargo runs out and the stack settles below the line.
+- **Voyages:** each piece is earned with a four-choice question about that country (which outline, capital, continent,
+  a neighbour). Wrong costs nothing but gives a plain crate about a third of the size. Third star: every question right.
+  Capitals and neighbours come from the checked country tables; countries with more than one capital are never asked.
+- **Camera:** the view keeps the deck at the bottom and zooms out smoothly so the stack, the line and the piece in hand fit.
+- **Not done:** flag-colour questions (the pack marks flag colours as not fully verified, and many flags share colours,
+  so a wrong "right answer" was likely); freezing settled pieces; strict one-dial-at-a-time difficulty.
+- One bot sweep after: levels 1 to 4 cleared every time, 5 and 6 about 73%, 7 and 8 about 45%, 11 and up 15 to 25%.
+  No retuning of the Daily. The voyage load lines were re-measured once with the new physics (same shares of the bot's stack); the plain bot clears each region's first voyage (tested). A new piece waits just above the stack, so a plain drop is gentle on any screen size.
+
+## Polish stage (0.15.20), from Duet's research
+- A translucent landing ghost shows where the piece in hand will first touch; a small "Next" box previews the next country.
+- The name is asked **after** a country is placed, about that country, and never holds up the next piece. An unanswered
+  question lapses at the next drop. After a load's last piece there is a Continue button, with the question still open.
+- The day's first two levels (nine pieces) use each region's best-known countries. Every level opens with its
+  broadest piece as a base. In the climb the line only counts once half the cargo is aboard.
+- The last piece of a load must lie still for 1.2 s before the load is judged (0.45 s for earlier pieces).
+- "Next climb in 5h 12m" on the menu and the result.
+- Voyage stars: "every country named" now means every country you placed (a voyage can end early at the line).
+- Not done: freezing settled pieces below the top (risk of visible snapping); Monday-to-Saturday weather (difficulty
+  follows the level reached instead); strictly one dial at a time (swell, wind and count are staggered but overlap).
+- One bot sweep after these changes: levels 1 to 4 cleared every time, 5 and 6 about 83%, 7 to 9 about 50%, 10 and up
+  about 25%: no worse than before, so nothing was retuned.
+
 ## How the difficulty was set (three bot sweeps, then stopped)
 A test bot plays plainly: each piece laid flat, dropped in the middle or alternating sides, every name right.
 - Generator: the load line is 27% of the pieces' summed square-root areas times (0.8 + 0.09 × level). With that, one

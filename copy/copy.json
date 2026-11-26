@@ -148,13 +148,14 @@
    "title": "Ballast: a daily load-the-ship geography game | Mapelago",
    "description": "Load real country outlines onto a rocking ship without toppling them, and name each one for bonus points. A free daily geography game from Mapelago.",
    "heading": "Load the ship without tipping it over.",
-   "explainer": "Ballast is Mapelago's load-the-ship game. Real country outlines, all drawn at the same scale, come one at a time. Move each one, turn it, and drop it on the ship's deck. The stack obeys gravity, so a careless Chile can bring the whole load down, and anything that falls in the sea is lost. Before you drop a country you can name it for bonus points: from four choices at first, typed from level 5. Daily Ballast is one run a day with the same cargo for everyone. Level 1 is easy, and every level you load to the line is harder: more countries, a higher line, then swell, wind and long awkward shapes, in a new region each level. There's no top level. You have three lives, and a load that ends below the line costs one. Your score is 100 for each level cleared plus 10 for each country named. Endless practice is the same climb with a random cargo, and the thirty voyages are set levels by region with one to three stars each.",
+   "explainer": "Ballast is Mapelago's load-the-ship game. Real country outlines, all drawn at the same scale, come one at a time. Press and drag a country and it follows your finger; tap to turn it; let go and it drops from exactly there. The stack obeys gravity, and a country is lost only if it falls in the sea. To clear a level, the stack has to stand above the load line for two seconds. Daily Ballast is one run a day with the same cargo for everyone: level 1 is easy and every level after is harder, with more countries, a higher line, then swell, wind and long awkward shapes, in a new region each level. There's no top level. You have three lives; a load fails if a third country goes overboard or the cargo runs out below the line. After you place a country you can name it for bonus points, and your score is 100 for each level cleared plus 10 for each name. Endless practice is the same climb with a random cargo. On the thirty voyages you earn each country by answering a question about it first: a wrong answer costs nothing, but you get a plain crate instead.",
    "howto": [
-    "Name the country for bonus points: tap a choice, or type it from level 5.",
-    "Drag to move it, tap to turn it. On a keyboard: arrows move, Q and E turn.",
-    "Press Drop (or Space). Stack past the dashed load line to clear the level.",
-    "Anything that topples into the sea is lost. A load that ends below the line costs one of your three lives.",
-    "Every level is harder. Your score is 100 a level plus 10 a name. One Daily run a day; practice and voyages any time."
+    "Press and drag the country: it follows your finger. Tap without dragging to turn it 15 degrees.",
+    "Let go to drop it. A faint outline shows where it will land, and a small box shows the next country.",
+    "Hold the stack above the dashed line for two seconds to clear the level.",
+    "A country is lost only if it falls in the sea. You may lose two in a load; the third ends it.",
+    "In the Daily, name the country you just placed for bonus points. On a voyage, answer a question to earn each country.",
+    "On a keyboard: arrows move, Q and E turn, Space drops."
    ],
    "invite": "How high can you load it?",
    "image": "Load the deck."
