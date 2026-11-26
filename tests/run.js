@@ -1194,6 +1194,17 @@ async function page(b, url, opts = {}) {
       const want = '[["English"],true,true]';
       check(v17 === '[["English","Tswana"],false,false]' && v18 === want && f18 === want && s18 === want && p17 === '"Ntheledi"' && p18 === '"Mafadi (Ntheledi)"' && /^"Mafadi \(Ntheledi\), 3450"$/.test(d18), "facts from No. 18: Botswana English only, Canada and Denmark border each other, Mafadi (Ntheledi); No. 17 unchanged", [v17, v18, f18, s18, p17, p18, d18].join(" "));
     }
+    // ---- Voyage from No. 19: early islands pay more, harbors at 1, 3, 6 and 8, and no sail-or-anchor question where nothing is at risk
+    {
+      const run = async (day) => { const t = await page(b, U + "voyage.html?v=" + day + "#day-" + day, { storage: { "dailycity:voyage:v1": "{}" }, wait: 700 }); await t.p.waitForFunction(() => window.__voy);
+        const ladder = await t.p.evaluate(() => [...document.querySelectorAll(".vx-ladder li")].map((l) => l.textContent.replace(", harbor", "*")).join(" ")), seen = [];
+        for (let i = 0; i < 3; i++) { await t.p.evaluate(() => { const S = __voy.S(), q = S.qs[S.g.at], want = q.options[q.answer]; [...document.querySelectorAll("#opts button")].find((x) => x.textContent.trim() === want).click(); }); await t.p.waitForTimeout(1300);
+          const choice = await t.p.evaluate(() => !document.querySelector("#choice").hidden); seen.push([choice, await t.p.evaluate(() => __voy.S().points)]); if (choice) { await t.p.click("#sail"); await t.p.waitForTimeout(300); } }
+        await t.ctx.close(); return [ladder, JSON.stringify(seen)]; };
+      const a = await run(18), c = await run(19);
+      check(a[0] === "50 100 150* 250 350 500* 650 800 900 1,000" && a[1] === "[[true,50],[true,100],[true,150]]", "voyage: No. 18 keeps the old ladder and choices", a.join(" "));
+      check(c[0] === "200* 400 600* 680 750 810* 870 920* 960 1,000" && c[1] === "[[false,200],[true,400],[false,600]]", "voyage: from No. 19 the ladder pays early, and a harbor sails straight on (the choice is asked only when points are at risk)", c.join(" "));
+    }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });

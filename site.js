@@ -211,7 +211,7 @@
     if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
     if (p.textContent !== t) p.textContent = t;
   }
-  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel };
+  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay };
 
   var CSS = '.mx-risk{display:block;margin:0 0 10px;line-height:1.45;padding:8px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000);font-size:14px;font-weight:600}'
     + '.mx-risk a{color:inherit;font-weight:800}'

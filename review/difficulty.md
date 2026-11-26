@@ -64,3 +64,9 @@ Monday is gentlest, Saturday hardest; one dial per game. The header shows it, fo
 | Mystery country, Voyage, Fathoms, Stamps, Dead Reckoning | none yet | not done: each needs its schedule or scoring reworked (Fathoms' deck, Dead Reckoning's pools, and the Voyage and Stamps decisions waiting on Matthew) |
 
 Sunday is "medium" in the two Bigger games; it has no special round there.
+
+## Voyage from No. 19 (0.15.46)
+- Ladder 200, 400, 600, 680, 750, 810, 870, 920, 960, 1,000; harbors at islands 1, 3, 6 and 8; a miss still ends the voyage and keeps what is banked.
+- At a harbor nothing is at risk, so the sail-or-anchor question is no longer asked there; between harbors it is, and sailing risks the unbanked points.
+- Same simple player as before (83 / 63 / 41% right by thirds): reaches island 3 in 57% of voyages, so the median is 600 of 1,000 (was 150). 26% wreck before island 3 and keep 200; 16% score nothing.
+- The questions were already ordered from the best-known subject to the most obscure; that is unchanged.
