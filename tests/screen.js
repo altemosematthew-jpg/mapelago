@@ -8,15 +8,18 @@ const { chromium } = require("playwright"); const start = require("./server.js")
 const W = 375, H = 667;
 // what counts as "the game": every visible leaf outside these
 const BELOW = "footer, .mx-today, .mx-today *, footer *, [data-below], [data-below] *, #toast, .sr, dialog:not([open]) *";
-const measure = (p, area) => p.evaluate(([BELOW, area]) => {
+const measure = (p, area, must) => p.evaluate(([BELOW, area, must, H]) => {
   let bot = 0, who = "";
+  // a state can name what must be on screen (a long result sheet: the result itself first, the extras below it)
+  if (must) { for (const q of must) { const e = document.querySelector(q), r = e && e.getBoundingClientRect(); if (!r || !r.height) return { bot: 9999, who: "missing " + q, wide: 0 }; if (r.bottom > bot) { bot = r.bottom; who = q; } } return { bot: Math.round(bot), who, wide: document.documentElement.scrollWidth }; }
+  const clip = (e, y) => { for (let a = e.parentElement; a && a !== document.body; a = a.parentElement) { if (getComputedStyle(a).overflowY !== "visible") y = Math.min(y, a.getBoundingClientRect().bottom); } return y; };
   document.querySelectorAll((area || "body") + " *").forEach((e) => {
     if (e.matches(BELOW) || e.children.length > 3 || !e.offsetParent && getComputedStyle(e).position !== "fixed") return;
     const r = e.getBoundingClientRect(), c = getComputedStyle(e); if (!r.width || !r.height || c.visibility === "hidden" || +c.opacity === 0) return;
-    if (r.bottom + scrollY > bot) { bot = r.bottom + scrollY; who = e.id || e.className || e.tagName; }
+    const y = clip(e, r.bottom) + scrollY; if (y > bot) { bot = y; who = e.id || e.className || e.tagName; }
   });
   return { bot: Math.round(bot), who: String(who).slice(0, 24), wide: document.documentElement.scrollWidth };
-}, [BELOW, area]);
+}, [BELOW, area, must || null, H]);
 const first = (p, g) => p.evaluate(([g, H]) => {
   const vis = (e) => { if (!e) return false; const r = e.getBoundingClientRect(), c = getComputedStyle(e); return r.width > 0 && r.height > 0 && c.visibility !== "hidden" && (e.offsetParent || c.position === "fixed"); };
   const o = { why: [] };
@@ -39,10 +42,17 @@ const GAMES = [
       await p.click("#nameOpts .opt"); await m("after an answer");
       await p.evaluate(() => { const B = __ballast; B.run().lives = 1; B.run().cleared = 3; B.run().lvl = 4; B.S().cleared = false; B.finish(); }); await p.waitForTimeout(500); await m("finish");
     } },
-  { id: "bigger", name: "Bigger city?", page: "bigger.html", first: "#pick0", read: ".lede", states: async () => {} },
-  { id: "bigcountry", name: "Bigger country?", page: "bigger-country.html", first: "#pick0", read: ".lede", states: async () => {} },
+  { id: "bigger", name: "Bigger city?", page: "bigger.html", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async () => {} },
+  { id: "bigcountry", name: "Bigger country?", page: "bigger-country.html", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async () => {} },
   { id: "history", name: "Logbook", page: "history.html", first: ".opt, #q button, main button", read: ".lede", states: async () => {} },
-  { id: "city", name: "Mystery city", page: "index.html", strict: true, first: "#board", read: ".lede, .tip, #tip, .coach", states: async () => {} },
+  { id: "city", name: "Mystery city", page: "index.html", strict: true, first: "#board", read: ".lede, #tip, .modes", ready: "!!window.__lf",
+    states: async (p, m) => {
+      const far = (k) => p.evaluate((k) => { __lf.confirmAt([((__lf.P.lon + 180 - k) % 360) - 180, -__lf.P.lat]); }, k);
+      await p.evaluate(() => { const d = ["left", "up", "right", "down"]; for (let i = 0; i < 40; i++) __lf.move(d[i % 4]); }); await p.waitForTimeout(900); await m("mid-play");
+      await p.click("#pinBtn"); await p.waitForTimeout(900); await m("the map"); await p.evaluate(() => document.querySelector("#closeMap").click()); await p.waitForTimeout(300);
+      await far(0); await p.waitForTimeout(1300); await m("after a miss"); await far(10); await p.waitForTimeout(1300); await m("after two misses");
+      await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2500); await m("finish", ["#endTitle", "#endBody .place", "#endBody .score", "#endBody .row2", "#endBody .also", "#endBody .next"]);
+    } },
   { id: "voyage", name: "Voyage", page: "voyage.html", strict: true, first: "#play button, .opts button, main button", read: ".lede, .note", states: async () => {} },
   { id: "crossings", name: "Crossings", page: "crossings.html", strict: true, first: "#cin", read: ".lede, #parNote", ready: "!document.querySelector('#map').classList.contains('wait')", states: async () => {} },
   { id: "reckoning", name: "Dead Reckoning", page: "dead-reckoning.html", strict: true, first: "#map", read: ".lede, .note", states: async () => {} },
@@ -51,7 +61,7 @@ const GAMES = [
   { id: "fathoms", name: "Fathoms", page: "fathoms.html", strict: true, first: "#fin", read: ".lede", states: async () => {} },
 ];
 // games that must pass all three; a game joins this list in the release that fixes it
-const MUST = ["ballast", "bigger", "bigcountry", "history"];
+const MUST = ["ballast", "bigger", "bigcountry", "history", "city"];
 
 (async () => {
   const srv = await start({ gzip: true }), b = await chromium.launch(), rows = [], only = process.argv[2];
@@ -60,7 +70,7 @@ const MUST = ["ballast", "bigger", "bigcountry", "history"];
     let ctx = await b.newContext({ viewport: { width: W, height: H }, hasTouch: true, isMobile: true, serviceWorkers: "block" }), p = await ctx.newPage(); p.on("pageerror", (e) => row.errs.push(e.message));
     await p.goto(srv.url + g.page, { waitUntil: "load" }); await ready(p, g).catch(() => {}); await p.waitForTimeout(700);
     row.A = (await first(p, g)).why;
-    const m = async (state) => { const r = await measure(p, g.area); if (r.bot > H || r.wide > W) row.B.push(`${state}: ${r.wide > W ? "wider than the screen" : "ends at " + r.bot + " (" + r.who + ")"}`); row.states = (row.states || 0) + 1; };
+    const m = async (state, must) => { const r = await measure(p, g.area, must); if (r.bot > H || r.wide > W) row.B.push(`${state}: ${r.wide > W ? "wider than the screen" : "ends at " + r.bot + " (" + r.who + ")"}`); row.states = (row.states || 0) + 1; };
     await m("opening"); try { await g.states(p, m); } catch (e) { row.B.push("could not play through: " + e.message.split("\n")[0]); }
     await ctx.close();
     ctx = await b.newContext({ viewport: { width: W, height: H }, hasTouch: true, isMobile: true, serviceWorkers: "block" }); p = await ctx.newPage(); const c = await ctx.newCDPSession(p);

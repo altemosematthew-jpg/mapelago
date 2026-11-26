@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+# One screen on a phone (375x667) for Mystery city and Mystery country: adds a small style block and marks the
+# first action. Safe to run again: it replaces its own block. Run after any script that rebuilds those pages.
+import re, sys
+CSS = r'''
+/* One screen: on a phone the whole game (score, board, the newest clue, the pin button) fits without scrolling. */
+@media (max-width:520px){
+.top{margin-bottom:8px}
+.mx-find{margin-bottom:8px}.mx-find a{min-height:38px;font-size:15px;padding:2px 4px}
+.status{margin-bottom:8px;min-height:0}.stat{padding:4px 4px;gap:2px}.stat b{font-size:22px}
+.modes{margin-bottom:8px}.modes button{min-height:44px;padding:4px 10px;text-align:center;align-content:center}.modes button span{display:none}
+.tip{margin-bottom:8px;min-height:44px}.tip p{font-size:13.5px;line-height:1.25}.tipm{width:24px;height:24px}.tipx{height:40px}
+#guesses{margin-bottom:6px;font-size:13px;gap:2px}#guesses{min-width:0;max-width:100%}#guesses li.hrow{flex-wrap:nowrap;min-height:24px;min-width:0;max-width:100%}#guesses li.hrow>span:last-of-type{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app:has(#guesses li+li) #tip{display:none}
+.app{--y1:0px;--y2:0px;--y3:0px;--y4:0px;--y5:0px}
+.app:has(#tip:not([hidden])){--y1:54px}.app:has(#challenge:not([hidden])){--y2:66px}.app:has(#guesses li){--y3:26px}.app:has(#guesses li+li){--y3:52px;--y1:0px}.app:has(#guesses li+li+li){--y3:78px}.app:has(#guesses li+li+li+li){--y3:104px}
+.app:has(#mxMode:not([hidden])){--y4:52px}.app:has(#askBtn:not([hidden])){--y5:44px}
+.board{width:min(100%,max(180px,calc(100vh - 402px - var(--y1) - var(--y2) - var(--y3) - var(--y4) - var(--y5))));width:min(100%,max(180px,calc(100svh - 402px - var(--y1) - var(--y2) - var(--y3) - var(--y4) - var(--y5))))}
+.legend,[data-look] .legend{margin:8px 0 0;min-width:0;max-width:100%;overflow:hidden}#clues{max-width:100%;min-width:0}
+.lhead,[data-look] .lhead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:0}
+.track,[data-look] .track{margin:0 0 6px;gap:6px}.sw,[data-look] .sw{width:auto;min-width:36px;height:32px;font-size:15px}[data-look="island"] .sw{width:36px;height:36px}
+/* the clues are a row of cards, newest first: swipe sideways (or tap a tile size above) to see the earlier ones */
+#clues,[data-look] #clues{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0;background:none;height:74px}
+#clues::-webkit-scrollbar{display:none}#clues::before{display:none!important}
+#clues .clue,[data-look] #clues .clue{flex:0 0 88%;box-sizing:border-box;scroll-snap-align:start;height:74px;overflow:hidden;padding:6px 10px;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;font-size:14px;line-height:1.3;align-content:center}
+#clues .clue:only-child{flex-basis:100%}
+#clues .clue svg,#clues .clue img{max-height:58px;width:auto}
+[data-look="postcard"] .legend::after{display:none}
+[data-look="arcade"] .word{font-size:26px}[data-look="arcade"] .no{font-size:13px}[data-look="arcade"] .stat b{font-size:24px}[data-look="arcade"] .stat span{font-size:13px}[data-look="arcade"] #guesses{font-size:14px}[data-look="arcade"] #clues .clue{font-size:15px}[data-look="arcade"] .tip p{font-size:15px}[data-look="arcade"] .ask{font-size:14px}
+.ask{margin-top:6px;min-height:38px;padding:2px 10px;font-size:13px;line-height:1.15}
+.stuck{position:relative;z-index:4;margin:-96px 6px 8px;min-height:88px;box-sizing:border-box;font-size:13.5px}.stuck p{margin:0}
+.actbar{padding-top:6px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}.actbar .act{min-height:50px}
+#toast{bottom:calc(150px + env(safe-area-inset-bottom))}
+/* the result: place, score, share, the next game and the countdown come first; the map, facts and stats follow */
+#endBody{display:flex;flex-direction:column}#endBody>*{order:9}
+#endBody>.mascot{order:0}#endBody>#endTitle{order:1;font-size:19px;margin:0 0 2px}#endBody>.place{order:1;font-size:26px}#endBody>.country{order:1;margin:0}
+#endBody>.score{order:2;margin:8px 0 6px}#endBody .score b{font-size:44px}
+#endBody>.row2{order:3;margin:0 0 8px}#endBody>.also{order:3;margin:0}#endBody>.next{order:4;margin:8px 0}
+#endBody>#miniMap{order:5}#endBody>.facts{order:6}
+/* first visit: show the first move on the board */
+.app:has(#mxMode:not([hidden])) .board::after{content:"\1F446";position:absolute;left:50%;top:50%;font-size:34px;line-height:1;z-index:6;pointer-events:none;animation:mxSwipe 1.8s ease-in-out infinite}
+html.mx-quick .app:has(#mxMode:not([hidden])) .board::after{display:none}
+html.mx-quick .app:has(#mxMode:not([hidden])) .actbar .act{animation:mxPulse 1.6s ease-in-out infinite}
+}
+@keyframes mxSwipe{0%{transform:translate(-90px,-10px);opacity:0}15%{opacity:1}70%{transform:translate(50px,-10px);opacity:1}100%{transform:translate(50px,-10px);opacity:0}}
+@keyframes mxPulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 35%,transparent)}}
+@media (prefers-reduced-motion:reduce){.app:has(#mxMode:not([hidden])) .board::after{animation:none;transform:translate(-17px,-10px)}html.mx-quick .app:has(#mxMode:not([hidden])) .actbar .act{animation:none}}
+'''
+JS = r'''
+<script id="mxOneJs">
+// One screen: a new clue brings the clue row back to its start, and tapping a tile size shows that clue.
+(function(){var c=document.getElementById("clues"),t=document.getElementById("track");if(!c||!t)return;
+new MutationObserver(function(){c.scrollLeft=0}).observe(c,{childList:true});
+t.addEventListener("click",function(e){var li=e.target.closest("li");if(!li)return;var i=[].indexOf.call(t.children,li),k=c.children[i];if(k&&k.scrollIntoView)k.scrollIntoView({block:"nearest",inline:"start",behavior:"smooth"})});
+})();
+</script>
+'''
+for f in sys.argv[1:] or ['index.html', 'country.html']:
+    s = open(f, encoding='utf8').read()
+    s = re.sub(r'<style id="mxOne">.*?</style>\n', '', s, flags=re.S); s = re.sub(r'\n<script id="mxOneJs">.*?</script>\n', '\n', s, flags=re.S)
+    assert s.count('</head>') == 1 and s.count('</body>') == 1
+    s = s.replace('</head>', '<style id="mxOne">' + CSS + '</style>\n</head>')
+    s = s.replace('</body>', JS.strip('\n') + '\n</body>') if False else s.replace('</body>', JS.lstrip('\n') + '</body>')
+    s = s.replace('<div id="board" class="board" tabindex="0"', '<div id="board" class="board" data-first tabindex="0"') if 'class="board" data-first' not in s else s
+    for a in ['<p class="note" id="costNote"', '<div class="pad" role="group"', '<p class="note" id="streakNote"', '<p class="note" id="nextNote"']:
+        if a in s: s = s.replace(a, a.replace(' ', ' data-below ', 1))
+    open(f, 'w', encoding='utf8').write(s); print('patched', f)

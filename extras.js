@@ -157,8 +157,8 @@
   // ---------- play-first coach (9.1) ----------
   // A first-time player gets the board straight away. The turtle explains one thing at a time, as it happens.
   var TIPS = [
-    "Find today's mystery city. Swipe the board, or use the arrow keys: two matching tiles join into one.",
-    "Each new tile size opens a clue about the city. Every move costs 6 points, so stop when you think you know.",
+    "Swipe the board to join matching tiles and open clues to today's mystery city.",
+    "Each new tile size opens a clue, and every move costs 6 points, so stop when you think you know.",
     "Think you know where the city is? Tap Drop a pin, then tap the map.",
     "Follow the arrow to your next pin. A miss also opens the next clue for free."
   ];
