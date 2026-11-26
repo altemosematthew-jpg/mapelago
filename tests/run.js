@@ -1152,6 +1152,15 @@ async function page(b, url, opts = {}) {
       check(!p.errs.length, `vx: ${f} practice: no errors`, p.errs.join("; "));
       await ctx.close();
     }
+    // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
+    {
+      const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });
+      const { ctx, p } = await page(b, U + "fathoms.html", { clock: new Date("2026-11-25T12:00:00"), storage: { "dailycity:fathoms:v1": JSON.stringify(day([3, 4, 5, 6])), "dailycity:voyage:v1": JSON.stringify(day([7, 8, 9])), "dailycity:stamps:v1": JSON.stringify(day([11, 12])) } });
+      const r = await p.evaluate(() => { const s = MXS.siteStreak(); return { cur: s.cur, best: s.best, today: s.today, done: s.doneToday, total: s.total, frozen: s.frozen, until: MXS.untilNext() }; });
+      // days 3 to 9 in a row earn a freeze at seven; day 10 is missed and covered; days 11 and 12 follow; today is No. 12
+      check(r.cur === 9 && r.today && r.done === 1 && r.total === 11 && JSON.stringify(r.frozen) === "[10]" && r.until === "12h 0m", "site streak: any game counts for the day, a freeze covers a gap, and the next puzzles are 12h 0m away at noon", JSON.stringify(r));
+      await ctx.close();
+    }
     // ---- vx review fixes (hands-on review of live 0.15.2). No. 12 and 13 keep their answers and scoring (golden.json). ----
     {
       const pack = require("../review/vx-pack.js"), P = {};
