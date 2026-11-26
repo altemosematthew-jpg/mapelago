@@ -264,7 +264,7 @@ module.exports = async function ({ b, U, page, check }) {
   {
     const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
     const r = await p.evaluate(async () => {
-      const B = __ballast; let n = 0;
+      const B = __ballast; let n = 0; B.L().lineKm = Math.min(B.L().lineKm, 60); // a low line, so the first load always clears (the test is about the picture, not the bot)
       while (B.run() && B.run().cleared < 1 && n++ < 30) { if (B.state() === "aim") { B.flat(); B.drop(); } B.settle(); B.tick(200); if (B.state() === "last") document.querySelector("#contBtn").click(); }
       const cleared = B.run().cleared; B.run().lives = 1; B.S().cleared = false; B.finish(); await new Promise((r) => setTimeout(r, 400));
       const res = B.save().results[Object.keys(B.save().results)[0]], c = document.createElement("canvas"); c.width = 400; c.height = 300;
