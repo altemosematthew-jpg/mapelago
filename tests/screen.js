@@ -98,8 +98,8 @@ const GAMES = [
 // games that must pass all three; a game joins this list in the release that fixes it
 const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning", "country", "stamps", "fathoms"];
 
-// known slow starts, still to fix (the smaller map): they do not count as regressions yet
-const SLOW = ["crossings", "reckoning"];
+// known slow starts that do not count as regressions yet (none now)
+const SLOW = [];
 
 (async () => {
   const srv = await start({ gzip: true }), b = await chromium.launch(), rows = [], only = process.argv[2];
