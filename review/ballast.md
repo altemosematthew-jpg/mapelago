@@ -78,3 +78,11 @@ A test bot plays plainly: each piece laid flat, dropped in the middle or alterna
 ## Found on the way
 The map data gives id 036 to both Australia and the Ashmore and Cartier Islands. Code that took the last match drew
 Ashmore. `shapes.js` (Bigger country?) and Crossings now take the first, Australia.
+
+## Crew and colours (0.15.55)
+- Flags fill a piece once it is named (or the name skipped) in the Daily and practice; straight away where there is no question (tutorial) or the country was earned first (voyages). flag-icons 7.6.0 (MIT), 193 of 193 codes matched, so none stays plain. Switch in the menu ("Flags: on/off"), remembered.
+- Crew on deck: the turtle watches the piece in hand, ducks when one lands near it, braces while the stack wobbles, hops at "Loaded!", leans out when a country goes overboard; a gull on the left rail flaps; a deckhand crab scuttles.
+- Stowaways: six designs (ship's cat, parrot, crab, rat in a scarf, puffin, monkey), drawn from a few shapes each, chosen by the run's seed and the piece's place in the load, never by the country. They hold on in hand, brace on landing, wave on a wobble, cheer at "Loaded!", and jump clear to the deck when their country goes overboard. Switch in the menu.
+- Pieces squash a little on landing, shiver while the stack wobbles, and a lost piece makes a splash and a ripple. All drawing only: the physics, scores and bot numbers are unchanged. Still under reduced motion.
+- 60 fps with eight flagged pieces on a phone profile with the processor slowed four times.
+- Not done: separate wobble and cheer sounds (the existing land, splash and line sounds play); national-animal stowaways (proposal in review/national-animals.md).

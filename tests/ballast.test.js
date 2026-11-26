@@ -362,6 +362,23 @@ module.exports = async function ({ b, U, page, check }) {
     check(r.dropOff, "ballast A: Drop is off when nothing is left to load");
     await ctx.close();
   }
+  // O: flags, crew and stowaways are cosmetic: a flag only once the country is named, riders chosen by place not country, both switchable
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
+    const r = await p.evaluate(async () => {
+      const B = __ballast, o = {}, wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      B.startDaily(); await wait(100); B.drop(); B.tick(150); const q = B.pieces()[0]; o.shownBefore = !!q.mxShow;
+      document.querySelector("#skipName").click(); o.shownAfter = !!q.mxShow;
+      o.sameRider = B.stowFor(0) === B.stowFor(0) && typeof B.stowFor(0) === "number";
+      const h0 = B.height(); B.tick(30); B.home(); await wait(100);
+      document.querySelector("#flagBtn").click(); document.querySelector("#stowBtn").click();
+      o.saved = JSON.parse(localStorage.getItem("dailycity:ballast:v1")).look; o.btns = [document.querySelector("#flagBtn").textContent, document.querySelector("#stowBtn").textContent];
+      return o;
+    });
+    check(!r.shownBefore && r.shownAfter, "ballast O: a piece shows its flag only once it has been named (or the name skipped)", JSON.stringify(r));
+    check(r.sameRider && r.saved && r.saved.flags === false && r.saved.stow === false && r.btns[0] === "Flags: off" && r.btns[1] === "Stowaways: off", "ballast O: the menu switches flags and stowaways off and remembers it", JSON.stringify(r));
+    await ctx.close();
+  }
   // offline after a first load
   {
     const ctx = await b.newContext({ viewport: { width: 390, height: 844 } }); const p = await ctx.newPage(); const errs = []; p.on("pageerror", (e) => errs.push(e.message));
