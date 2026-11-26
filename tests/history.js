@@ -36,7 +36,13 @@ function dataChecks() {
   check(D.D.every((d) => d.length === 8), "history: every day has eight questions");
   const usedF = new Set(), usedQ = new Set();
   D.D.forEach((d) => d.forEach((it) => { factsOf(it).forEach((f) => usedF.add(f)); if (it[0] === "m") usedQ.add(it[1]); }));
-  check(usedF.size === F.length && usedQ.size === Q.length, "history: every fact and question is used", `${usedF.size}/${F.length}, ${usedQ.size}/${Q.length}`);
+  // engineering works (bridges, tunnels, dams, roads, railways, inland canals) stopped being asked at No. 19; every other fact is used
+  const OFF = /Bridge|Tunnel|\bDam\b|railway|Highway|Seaway|Erie Canal|Rideau Canal|larger locks|New Suez/, onTheme = F.filter((f) => !OFF.test(f[1])).length;
+  check(usedF.size >= onTheme && usedQ.size === Q.length, "history: every fact on the theme, and every question, is used", `${usedF.size}/${F.length} (${onTheme} on the theme), ${usedQ.size}/${Q.length}`);
+  // from No. 19: no country is the subject of two questions in one day, and no engineering works
+  { const qf = (it) => it[0] === "m" ? Q[it[1]][3] : it[0] === "t" ? [it[1]] : it[0] === "o" ? it.slice(1, 4) : [it[1], it[2]];
+    const bad = []; for (let n = 19; n <= D.days; n++) { const seen = {}; D.D[n - 1].forEach((it) => { const fs = qf(it); if (fs.some((f) => OFF.test(F[f][1]))) bad.push(n + ": off-theme"); new Set(fs.map((f) => D.pc[f])).forEach((c) => { if (seen[c]) bad.push(n + ": " + D.T[c] + " twice"); seen[c] = 1; }); }); }
+    check(!bad.length, "history: from No. 19 no country is asked twice in a day and no engineering works are asked", bad.slice(0, 5).join("; ")); }
 
   // 2. every question traces to a line of Block A or Block B
   const bad = [];

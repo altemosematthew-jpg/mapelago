@@ -193,6 +193,21 @@
   }
   function untilNext() { var d = new Date(), m = Math.max(1, Math.ceil((new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1) - d) / 60000)); return Math.floor(m / 60) + "h " + (m % 60) + "m"; }
   // the line every finish screen carries
+  // every result card: this game's personal best and how today compares with yesterday (scores kept as each finish is seen,
+  // and read from the game's own saves where they carry a score)
+  function scoreBook(me) {
+    var key = "mx:scores:" + me.id, book = {}; try { book = JSON.parse(localStorage.getItem(key) || "{}") || {}; } catch (e) {}
+    var save = {}; try { save = JSON.parse(localStorage.getItem(me.key) || "{}") || {}; } catch (e) {}
+    Object.keys(save.results || {}).forEach(function (d) { var r = save.results[d], v = r && (r.score != null ? r.score : r.total != null ? r.total : null); if (typeof v === "number" && book[d] == null) book[d] = v; });
+    return { book: book, save: function () { try { localStorage.setItem(key, JSON.stringify(book)); } catch (e) {} } };
+  }
+  function bestText(me, shareEl) {
+    var mine = ownResult(shareEl && shareEl.textContent); if (!mine || !me) return "";
+    var sb = scoreBook(me); sb.book[mine.n] = mine.score; sb.save();
+    var all = Object.keys(sb.book).map(function (d) { return sb.book[d]; }), best = Math.max.apply(null, all), y = sb.book[mine.n - 1];
+    var u = UNIT[me.id] || function (n) { return Number(n).toLocaleString("en-US") + " points"; }, vs = y == null ? "" : mine.score > y ? " Beat yesterday's " + u(y) + "." : mine.score === y ? " Same as yesterday." : " Yesterday: " + u(y) + ".";
+    return (mine.score >= best && all.length > 1 ? "A new personal best." : "Your best: " + u(best) + ".") + vs;
+  }
   function dailyText() {
     var st = siteStreak();
     return (st.today ? "Played today: day " + st.cur + " of your Mapelago streak." : st.cur ? "Your Mapelago streak: " + st.cur + (st.cur === 1 ? " day." : " days.") : "Finish any game to start a streak.") + " Next puzzles in " + untilNext() + ".";
@@ -207,11 +222,11 @@
     if (done && !done.hidden) { box = done.querySelector(".panel") || done; after = box.querySelector(".row2"); }
     else if (end && !end.hidden) { box = document.getElementById("endBody"); after = box && box.querySelector(".also"); }
     if (!box) return;
-    var p = box.querySelector(".mx-daily"), t = dailyText();
+    var bt = bestText(here(), document.getElementById("shareText") || document.querySelector("#endBody .share")), p = box.querySelector(".mx-daily"), t = dailyText() + (bt ? " " + bt : "");
     if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
     if (p.textContent !== t) p.textContent = t;
   }
-  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel };
+  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay };
 
   var CSS = '.mx-risk{display:block;margin:0 0 10px;line-height:1.45;padding:8px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000);font-size:14px;font-weight:600}'
     + '.mx-risk a{color:inherit;font-weight:800}'
@@ -783,7 +798,10 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove();
+    // the day's level in words on the games whose own dial is not set yet (from No. 19)
+    var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
+    setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');

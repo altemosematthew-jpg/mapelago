@@ -539,10 +539,49 @@ for _ in range(3000):
         single[n][i1], single[m][i2] = (k, x), o
 assert not conflicts(), conflicts()[:5]
 
+# 5a+. From No. NEW_FROM (19): no country is the main subject of two questions on one day, and engineering works
+# (bridges, tunnels, dams, roads, railways, inland canals) are no longer asked: the game is about how the map changed.
+# Earlier days stay exactly as they were: only cycle positions from NEW_FROM on are touched, and only after the
+# swaps above, so their results are unchanged.
+NEW_FROM = 19
+orig_single = {p: list(v) for p, v in single.items()}
+OFF_RE = re.compile(r"Bridge|Tunnel|\bDam\b|railway|Highway|Seaway|Erie Canal|Rideau Canal|larger locks|New Suez")
+OFF = {f["id"] for f in facts if OFF_RE.search(f["text"])}
+def main_c(i): return facts[i]["cs"][0]
+def item_cs(k, x): return {main_c(f) for f in fact_ids(k, x)}
+def item_off(k, x): return any(f in OFF for f in fact_ids(k, x))
+def clashes(p):
+    seen, bad = set(), 0
+    for k, x in single[p]:
+        if item_off(k, x): continue
+        cs = item_cs(k, x)
+        if cs & seen: bad += 1
+        seen |= cs
+    return bad
+sw2 = random.Random(SEED + 11)
+for _ in range(4000):
+    todo = [p for p in range(NEW_FROM, CYCLE + 1) if clashes(p)]
+    if not todo: break
+    p = sw2.choice(todo); seen = set(); hit = None
+    for it in single[p]:
+        if item_off(*it): continue
+        if item_cs(*it) & seen: hit = it; break
+        seen |= item_cs(*it)
+    k, x = hit; qs = list(range(NEW_FROM, CYCLE + 1)); sw2.shuffle(qs)
+    for q in qs:
+        cand = [it for it in single[q] if it[0] == k and it != hit]
+        if not cand or q == p: continue
+        o = sw2.choice(cand); i1, i2 = single[p].index(hit), single[q].index(o)
+        before = clashes(p) + clashes(q)
+        single[p][i1], single[q][i2] = o, hit
+        if clashes(p) + clashes(q) < before and not conflicts(): break
+        single[p][i1], single[q][i2] = hit, o
+left_clash = sum(1 for p in range(NEW_FROM, CYCLE + 1) if clashes(p))
+
 # 5b. assemble each day: kinds in a varied order, difficulty rising through the round, pairs and orders chosen fresh.
 last_used = {}           # fact id -> days it appears (all H days)
 for n in range(1, H + 1):
-    for k, x in single[(n - 1) % CYCLE + 1]:
+    for k, x in orig_single[(n - 1) % CYCLE + 1]:   # as before NEW_FROM, so the days before it come out the same
         for f in fact_ids(k, x): last_used.setdefault(f, []).append(n)
 used_pairs, used_triples = set(), set()
 relax = collections.Counter()
@@ -552,8 +591,10 @@ days = []
 def cyc(a, b): d = abs(a - b) % H; return min(d, H - d)
 
 
+CT = set()   # the main countries already in today's round (from No. NEW_FROM)
 def free(f, n, today, rest=FACT_REST):
     if f["id"] in today or related[f["id"]] & today: return False
+    if n >= NEW_FROM and (f["id"] in OFF or f["cs"][0] in CT): return False
     return all(cyc(n, m) >= rest for m in last_used.get(f["id"], []))
 
 
@@ -629,9 +670,24 @@ def options(q, d, r):
 
 
 for n in range(1, H + 1):
+    if n == NEW_FROM:   # from here on, the rests count the rearranged single-fact questions
+        for m in range(NEW_FROM, H + 1):
+            for k, x in orig_single[(m - 1) % CYCLE + 1]:
+                for f in fact_ids(k, x): last_used[f].remove(m)
+            for k, x in single[(m - 1) % CYCLE + 1]:
+                for f in fact_ids(k, x): last_used.setdefault(f, []).append(m)
     r = random.Random(SEED * 1000 + n)
     wd = weekday(n)
     singles = single[(n - 1) % CYCLE + 1]
+    if n >= NEW_FROM:   # an engineering work, or a second question about a country already asked, gives way to a fresh pair
+        keep, seen_c = [], set()
+        for it in singles:
+            if item_off(*it) or item_cs(*it) & seen_c: continue
+            keep.append(it); seen_c |= item_cs(*it)
+        singles = keep
+    CT.clear()
+    if n >= NEW_FROM:
+        for it in singles: CT.update(item_cs(*it))
     n_order = per_day(n, round(R_ORDER * H), H)
     n_gap = per_day(n, round(R_GAP * H), H)
     n_pair = PER_DAY - len(singles) - n_order - n_gap
@@ -669,6 +725,7 @@ for n in range(1, H + 1):
                 opts, ans = options(obj, d, r); item = ["m", obj["id"], opts, ans]
         for f in qfacts(item):
             today.add(f)
+            if n >= NEW_FROM: CT.add(main_c(f))
             if k in ("w", "o", "g"): last_used.setdefault(f, []).append(n)
         day.append(item)
     days.append(day)

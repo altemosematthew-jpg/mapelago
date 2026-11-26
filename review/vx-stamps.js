@@ -59,6 +59,11 @@
   }
   // The day's questions: two per category (a first try and a second chance). The original six carry on along their
   // own no-repeat order from where the old schedule left off; the new ones start their own.
+  var fameRank = null;
+  function obscurity(c) {
+    if (!fameRank) { fameRank = {}; H.T.slice().sort(function (a, b) { return b.fame - a.fame; }).forEach(function (x, i, all) { fameRank[x.cc] = i / (all.length - 1); }); }
+    return c && fameRank[c.cc] != null ? fameRank[c.cc] : 0.5;
+  }
   function deal(t, setCats) {
     var day = cats(t);
     setCats(day.cats.slice());
@@ -76,6 +81,7 @@
           q = H.Wa[cat](H.sa(seed + 7919 * v), H.T, pool[i]);
         }
         if (cat === "size") q.ask = "Which of these countries is the largest by area?";
+        q.hard = obscurity(pool[i]); // 0 for the best-known country, 1 for the least known
         return q;
       });
     });

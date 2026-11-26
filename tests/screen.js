@@ -136,7 +136,7 @@ const SLOW = [];
     row.A = (await first(p, g)).why;
     const m = async (state, must) => {
       if (/^finish/.test(state)) { row.D = await p.evaluate((H) => { const why = [], on = (e) => { if (!e) return false; const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= H; };
-        const d = [...document.querySelectorAll(".mx-daily")].find(on); if (!d) why.push("no daily line on screen"); else { if (!/Played today: day \d+ of your Mapelago streak\./.test(d.textContent)) why.push("no shared streak"); if (!/Next puzzles in \d+h \d+m\./.test(d.textContent)) why.push("no time to the next puzzles"); }
+        const d = [...document.querySelectorAll(".mx-daily")].find(on); if (!d) why.push("no daily line on screen"); else { if (!/Played today: day \d+ of your Mapelago streak\./.test(d.textContent)) why.push("no shared streak"); if (!/Next puzzles in \d+h \d+m\./.test(d.textContent)) why.push("no time to the next puzzles"); if (!/Your best: |A new personal best\./.test(d.textContent)) why.push("no personal best"); }
         const n = [...document.querySelectorAll("#done a.act, #endBody a.act")].find((a) => /^Play .+ next$|^All done today/.test(a.textContent.trim()) && on(a)); if (!n) why.push("no next-game button on screen"); else if (!/\.html$|^\.\/$|^games\/$/.test(n.getAttribute("href"))) why.push("next-game link looks wrong");
         return why; }, H); }
       const r = await measure(p, g.area, must); if (r.bot > H || r.wide > W) row.B.push(`${state}: ${r.wide > W ? "wider than the screen" : "ends at " + r.bot + " (" + r.who + ")"}`); row.states = (row.states || 0) + 1; };
@@ -159,7 +159,7 @@ const SLOW = [];
   const table = (title, f, skip) => { console.log("\n" + title); let ok = 0; rows.forEach((r) => { const [pass, note] = f(r); if (pass) ok++; else if (MUST.includes(r.g.id) && !(skip || []).includes(r.g.id)) bad++; console.log("  " + pad(r.g.name, 17) + (pass ? "pass  " : "FAIL  ") + note); }); console.log(`  ${ok} of ${rows.length} pass`); };
   table("A. First move", (r) => [!r.A.length, r.A.join("; ")]);
   table("B. One screen (375x667)", (r) => [!r.B.length, r.B.length ? r.B.join("; ") : r.states + " states"]);
-  table("D. Daily habit on the finish screen (shared streak, time to the next puzzles, next game in one tap)", (r) => [!r.D.length, r.D.join("; ")]);
+  table("D. Daily habit on the finish screen (shared streak, time to the next puzzles, personal best, next game in one tap)", (r) => [!r.D.length, r.D.join("; ")]);
   table("R. Feedback within 100 ms of the first action", (r) => [r.R >= 0 && r.R < 100, r.R < 0 ? "could not act" : r.R === 999 ? "nothing changed" : r.R + " ms"]);
   table("F. Ready on slow 4G", (r) => [r.F < 2000, (r.F / 1000).toFixed(1) + " s"], SLOW);
   rows.forEach((r) => { if (r.errs.length) { bad++; console.log("  ERROR in " + r.g.name + ": " + r.errs.join("; ")); } });
