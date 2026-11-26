@@ -155,6 +155,9 @@
   }
   function siteText(sst) { return sst.today ? "Played today: " + sst.doneToday + " of " + sst.total + " games. Day " + sst.cur + " of your streak." : sst.cur ? "Your streak is " + sst.cur + (sst.cur === 1 ? " day" : " days") + ": finish any game today to keep it." : "Finish any game today to start your streak."; }
   function dailyLine() {
+    // a game was just finished: the list of today's games is drawn again, so no card still says "You're here" or "last game left"
+    var sec0 = document.querySelector(".mx-today"), app0 = document.querySelector(".app");
+    if (sec0 && app0 && sec0.getAttribute("data-sig") !== info().map(function (x) { return x.doneToday ? 1 : 0; }).join("")) { sec0.parentNode.removeChild(sec0); today_games(app0); }
     var top = document.querySelector(".mx-site"); if (top) { var tx = siteText(siteStreak()); if (top.textContent !== tx) top.textContent = tx; }
     var done = document.getElementById("done"), end = document.getElementById("endModal"), box = null, after = null;
     if (done && !done.hidden) { box = done.querySelector(".panel") || done; after = box.querySelector(".row2"); }
@@ -483,6 +486,7 @@
       };
     }
     var foot = app.querySelector("footer");
+    sec.setAttribute("data-sig", all.map(function (x) { return x.doneToday ? 1 : 0; }).join(""));
     if (foot && foot.parentNode === app) app.insertBefore(sec, foot); else app.appendChild(sec);
   }
 

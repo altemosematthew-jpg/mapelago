@@ -69,7 +69,7 @@
   function regionOf(s) { return /America/.test(s.r) ? "Americas" : s.r === "Europe and Asia" ? "Asia" : s.r; }
   function longness(s) { var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; s.p.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }); var w = x1 - x0, h = y1 - y0; return Math.max(w, h) / Math.max(1, Math.min(w, h)); }
   function genLevel(seed, n, attempt) {
-    var r = rng(seed * 7919 + n * 104729 + (attempt || 0) * 31), order = shuffle(GEN_REGIONS.slice(0, 5), rng(seed * 13 + 5));
+    var r = rng(seed * 7919 + n * 104729), order /* a retry is the same level: same cargo, same line */ = shuffle(GEN_REGIONS.slice(0, 5), rng(seed * 13 + 5));
     var region = n % 6 === 0 ? "World" : order[(n - 1) % 5];
     var pool = SHAPES.filter(function (s) { return s.a >= 15000 && (region === "World" || regionOf(s) === region); });
     var count = Math.min(10, 4 + Math.floor(n * 0.6));
@@ -99,7 +99,7 @@
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [
     R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country, let go to drop it, and hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
-    R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap a country to turn it, and lay the long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
+    R("t2", "Tutorial", "2 of 5: Turn", ["PL", "IT", "GB"], { tip: "Tap a country to turn it, and lay the long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
     R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "After you place a country, name it for bonus points; a wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
     R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right, so build a little to the left.", name: "pick", wind: 1, lineKm: 600, endAtLine: true, tut: 4 }),
     R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck, so keep the stack low and in the middle.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
@@ -229,8 +229,8 @@
   var asked = null; // { s, answer: null | true | false, body }
   function lastCall() { // the load is over: one last chance to name the final country, then Continue
     hover = null;
-    if (!asked || asked.answer !== null || L.name === "none" || L.name === "earn") { finish(); return; }
-    state = "last"; $("#dropBtn").hidden = true; $("#contBtn").hidden = false; renderHud();
+    if (asked && asked.answer === null && L.name !== "none" && L.name !== "earn") markName(false, true); // naming never holds up the load
+    finish();
   }
   function cont() { if (state !== "last") return; if (asked && asked.answer === null) markName(false, true); $("#contBtn").hidden = true; $("#dropBtn").hidden = false; finish(); }
   function next() {
@@ -282,7 +282,7 @@
   function overboard(b) { return b.position.y > DECK_Y + WATER + 16 || Math.abs(b.position.x) > VW; } // lost only when it's in the water
   function settled() { return pieces.every(function (b) { return b.mxGone || b.isSleeping || (b.speed < 0.1 && b.angularSpeed < 0.008); }); }
   function heightKm() { return Math.max(0, Math.round((DECK_Y - stackTop(true)) / S.k)); }
-  function need() { return L.climb ? Math.ceil(L.list.length / 2) : L.tut ? 2 : 1; } // in the climb the line only counts once half the cargo is aboard
+  function need() { var n = L.list.length; return Math.min(n, Math.max(3, Math.ceil(n * (L.climb || L.tut ? 0.5 : 0.6)))); } // the line only counts once at least three pieces (half the cargo; most of it on a voyage) are aboard
   function endLevel(ok) {
     if (S.judged) return;
     S.judged = true; S.cleared = ok; S.height = heightKm(); hover = null;
@@ -290,6 +290,7 @@
   }
 
   function step(dt) {
+    if (S.judged && S.cleared) { cheerT += dt; if (cheerT > 900 && state === "cheer") lastCall(); return; } // "Loaded!": the stack stays exactly as it stood
     time += dt;
     // swell rocks the deck; with reduced motion it sits at a fixed tilt instead
     var sw = L.swell * Math.PI / 180, ang = reduce ? sw * 0.6 : sw * Math.sin(time / 1300);
@@ -302,7 +303,7 @@
     });
     M.Engine.update(engine, dt);
     pieces.forEach(function (b) {
-      if (!b.mxGone && overboard(b)) { b.mxGone = true; M.Composite.remove(world, b); S.lost.push(b.mxCC); SFX.splash(); toast((b.mxShow ? byCC[b.mxCC].n : "A country") + " went overboard." + (L.tut ? "" : S.lost.length > L.spare ? "" : " " + (L.spare - S.lost.length) + " more may be lost.")); renderHud(); }
+      if (!b.mxGone && overboard(b)) { b.mxGone = true; M.Composite.remove(world, b); S.lost.push(b.mxCC); SFX.splash(); if (asked && asked.body === b && asked.answer === null) { asked = null; renderName(); $("#nameQ").textContent = "That one went overboard: nothing to name."; } toast((b.mxShow ? byCC[b.mxCC].n : "A country") + " went overboard." + (L.tut ? "" : S.lost.length > L.spare ? "" : " " + (L.spare - S.lost.length) + " more may be lost.")); renderHud(); }
     });
     if (state === "cheer") { cheerT += dt; if (cheerT > 900) lastCall(); return; }
     if (S.judged) return;
@@ -341,6 +342,7 @@
   function fit() {
     var play = $("#play"); if (!play || play.hidden) return;
     cv.style.height = "";
+    if (window.matchMedia && matchMedia("(min-width: 900px)").matches) { cv.style.height = Math.max(360, Math.min(640, Math.floor(window.innerHeight - (play.getBoundingClientRect().top + window.scrollY) - 28))) + "px"; return; }
     var rest = play.getBoundingClientRect().height - cv.getBoundingClientRect().height, top = play.getBoundingClientRect().top + window.scrollY;
     cv.style.height = Math.max(220, Math.min(640, Math.floor(window.innerHeight - top - rest - 6))) + "px";
   }
@@ -437,6 +439,7 @@
     cx.textAlign = "center"; cx.fillStyle = ink;
     if (cleared) { var pulse = reduce ? 1 : 1 + 0.12 * Math.sin(cheerT / 90); cx.font = "800 " + 30 * k * pulse + "px " + font; cx.fillStyle = accent; cx.fillText("Loaded!", W / 2, Y(lineY) - 22 * k); }
     else if (holdT > 0) { cx.font = "800 " + 24 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Hold " + Math.max(0, (HOLD - holdT) / 1000).toFixed(1), W / 2, Y(lineY) - 22 * k); }
+    else if (S.height >= L.lineKm && S.i < need() && !S.judged) { cx.font = "800 " + 15 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Load " + (need() - S.i) + " more before the line counts", W / 2, Y(lineY) - 22 * k); } // why it hasn't cleared
     cx.textAlign = "left";
     // the next country, small, in the corner
     var ni = S.i + (hover || state === "fall" ? 1 : 0), nx = L.list[ni] && byCC[L.list[ni]];
@@ -455,9 +458,10 @@
   function renderName() {
     var box = $("#nameBox");
     box.classList.remove("right", "wrong"); $("#nameSay").textContent = "";
-    if (!asked) { $("#nameQ").textContent = "Place a country, then name it for +" + nameBonus() + "."; $("#nameOpts").hidden = true; $("#nameType").hidden = true; return; }
+    $("#skipName").hidden = !asked;
+    if (!asked) { $("#nameQ").textContent = "Place a country, then name it for +" + nameBonus() + "."; $("#nameOpts").hidden = true; $("#nameOpts").innerHTML = ""; $("#nameType").hidden = true; return; }
     var s = asked.s;
-    $("#nameQ").textContent = "Which country did you just place? (+" + nameBonus() + ")";
+    $("#nameQ").textContent = "Which country was that? +" + nameBonus();
     $("#nameSay").textContent = "";
     if (L.name === "pick") {
       $("#nameType").hidden = true; $("#nameOpts").hidden = false;
@@ -467,14 +471,14 @@
       var opts = shuffle([s].concat(shuffle(same, r).slice(0, 3)), r);
       $("#nameOpts").innerHTML = opts.map(function (o) { return '<button type="button" class="opt" data-cc="' + o.cc + '">' + o.n + "</button>"; }).join("");
     } else {
-      $("#nameOpts").hidden = true; $("#nameType").hidden = false;
+      $("#nameOpts").hidden = true; $("#nameOpts").innerHTML = ""; $("#nameType").hidden = false;
       $("#nin").value = ""; $("#nin").disabled = false; $("#nsugs").innerHTML = "";
     }
     box.classList.remove("right", "wrong");
   }
   function markName(ok, skipped) {
     if (!asked || asked.answer !== null) return;
-    asked.answer = ok; S.named.push(ok ? 1 : 0); if (asked.body) asked.body.mxShow = true;
+    asked.answer = ok; S.named.push(ok ? 1 : 0); $("#skipName").hidden = true; if (asked.body) asked.body.mxShow = true;
     var s = asked.s, box = $("#nameBox");
     box.classList.add(ok ? "right" : "wrong");
     $("#nameSay").textContent = ok ? "Right: " + s.n + ". +" + nameBonus() : skipped ? "Unnamed: that was " + s.n + "." : "It's " + s.n + ".";
@@ -491,9 +495,9 @@
     var kinds = ["shape"]; if (s.c) kinds.push("capital"); if (s.nb && s.nb.length) kinds.push("neighbour"); if (CONT.indexOf(s.r) >= 0) kinds.push("continent");
     var kind = kinds[Math.floor(r() * kinds.length)], others = SHAPES.filter(function (x) { return x.cc !== s.cc && x.a > 2000; }), q;
     if (kind === "shape") { var same = others.filter(function (x) { return x.r === s.r; }); q = { ask: "Which country is this?", right: s.n, opts: shuffle(same.length >= 3 ? same : others, r).slice(0, 3).map(function (x) { return x.n; }), why: "This is " + s.n + "." }; }
-    else if (kind === "capital") { var caps = shuffle(others.filter(function (x) { return x.c && x.c !== s.c && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.c; }); q = { ask: "What is the capital of " + s.n + "?", right: s.c, opts: caps, why: "The capital of " + s.n + " is " + s.c + "." }; }
-    else if (kind === "continent") { q = { ask: "Which continent is " + s.n + " in?", right: s.r, opts: shuffle(CONT.filter(function (c) { return c !== s.r; }), r).slice(0, 3), why: s.n + " is in " + s.r + "." }; }
-    else { var nbr = byCC[s.nb[Math.floor(r() * s.nb.length)]], not = shuffle(others.filter(function (x) { return s.nb.indexOf(x.cc) < 0 && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.n; }); q = { ask: "Which of these borders " + s.n + "?", right: nbr.n, opts: not, why: nbr.n + " borders " + s.n + "." }; }
+    else if (kind === "capital") { var caps = shuffle(others.filter(function (x) { return x.c && x.c !== s.c && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.c; }); q = { ask: "What is the capital of this country?", right: s.c, opts: caps, why: "The capital of " + s.n + " is " + s.c + "." }; }
+    else if (kind === "continent") { q = { ask: "Which continent is this country in?", right: s.r, opts: shuffle(CONT.filter(function (c) { return c !== s.r; }), r).slice(0, 3), why: s.n + " is in " + s.r + "." }; }
+    else { var nbr = byCC[s.nb[Math.floor(r() * s.nb.length)]], not = shuffle(others.filter(function (x) { return s.nb.indexOf(x.cc) < 0 && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.n; }); q = { ask: "Which of these borders this country?", right: nbr.n, opts: not, why: nbr.n + " borders " + s.n + "." }; }
     if (q.opts.length < 3) return earnQuestion(s, function () { return 0; }); // fall back to the outline question
     q.kind = kind; q.all = shuffle([q.right].concat(q.opts), r);
     return q;
@@ -519,7 +523,7 @@
 
   // a name is worth 10 points in a Daily or practice run (where the levels are the score) and 100 on a voyage
   function nameBonus() { return RUN ? 10 : 100; }
-  function answer(cc) { if (!asked || asked.answer !== null || (state !== "aim" && state !== "last")) return; markName(cc === asked.s.cc); if (state === "last") setTimeout(function () { if (state === "last") finish(); }, 700); }
+  function answer(cc) { if (!asked || asked.answer !== null || S.over) return; markName(cc === asked.s.cc); }
 
   // ---------- HUD, end ----------
   function named() { return S.named.reduce(function (a, b) { return a + b; }, 0); }
@@ -528,7 +532,8 @@
     $("#hPieces").textContent = Math.max(0, L.list.length - S.i - (state === "fall" ? 1 : 0));
     $("#hHeight").textContent = fmt(S.height) + " of " + fmt(L.lineKm);
     $("#hNamed").textContent = named();
-    $("#hLost").textContent = L.tut ? S.lost.length : S.lost.length + " of " + L.spare;
+    $("#hLost").textContent = L.tut ? S.lost.length : S.lost.length > L.spare ? S.lost.length + ": one too many" : S.lost.length + " of " + L.spare;
+    var more = need() - S.i; $("#hNeed").textContent = S.judged ? "" : more > 0 ? "load " + more + " more" : "hold above the line";
   }
   function stars() {
     if (!S.cleared) return 0;
@@ -556,7 +561,9 @@
     $("#retryBtn").hidden = false; $("#retryBtn").textContent = "Try this voyage again";
     showDone();
   }
+  function clearToast() { clearTimeout(tT); $("#toast").classList.remove("show"); $("#toast").textContent = ""; }
   function showDone() {
+    clearToast();
     $("#play").hidden = true; $("#done").hidden = false; renderChart();
     setTimeout(function () { var t = $("#doneTitle"); t.setAttribute("tabindex", "-1"); t.focus(); }, 30);
   }
@@ -571,7 +578,7 @@
       setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
     }
     if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
-    else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast("Below the line. " + r.lives + (r.lives === 1 ? " life" : " lives") + " left: a fresh cargo for level " + r.lvl + "."); }
+    else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast("Below the line. " + r.lives + (r.lives === 1 ? " life" : " lives") + " left: the same cargo again for level " + r.lvl + "."); }
     if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt, pic: r.pic }; store(); }
     if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
     endRun();
@@ -657,7 +664,7 @@
   function startPractice() { RUN = newRun("practice", Math.floor(Math.random() * 1e9)); start(genLevel(RUN.seed, 1, 0)); }
   function startTutorial() { RUN = newRun("tut", 0); start(TUTORIAL[0]); }
   function home() {
-    stop(); RUN = null; $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
+    stop(); RUN = null; clearToast(); $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
     var r = save.results[dayNo], d = $("#dailyBtn");
     d.disabled = !!r; d.textContent = r ? "Daily Ballast done: " + r.lvl + (r.lvl === 1 ? " level" : " levels") + " cleared" : save.run && save.run.day === dayNo ? "Carry on today's Daily Ballast (level " + save.run.lvl + ")" : "Play today's Daily Ballast";
     $("#dailyNote").hidden = false;
@@ -725,7 +732,7 @@
     $("#cwBtn").onclick = function () { turn(1); };
     $("#helpBtn").onclick = function () { var d = $("#helpDlg"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); };
     $("#helpClose").onclick = function () { var d = $("#helpDlg"); if (d.close) d.close(); else d.removeAttribute("open"); };
-    $("#dropBtn").onclick = drop; $("#contBtn").onclick = cont;
+    $("#dropBtn").onclick = drop; $("#contBtn").onclick = cont; $("#skipName").onclick = function () { if (asked && asked.answer === null) markName(false, true); };
     window.addEventListener("keydown", function (e) {
       if (/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
       if (state === "last" && (e.key === " " || e.key === "Enter") && !onLiveButton(e)) { cont(); e.preventDefault(); return; }
@@ -777,7 +784,7 @@
       // run the physics (no frames needed) until the dropped piece has landed and any hold countdown or final judging is over
       settle: function () { for (var n = 0; n < 1500 && !S.over && (state === "fall" || state === "wait" || state === "cheer" || holdT > 0); n++) step(1000 / 60); return state; },
       earn: function (right) { if (state === "earn") earn(right === false ? earnQ.all.findIndex(function (o) { return o !== earnQ.right; }) : earnQ.all.indexOf(earnQ.right)); }, earnQ: function () { return earnQ; }, hold: function () { return holdT; }, zoom: function () { return zoom; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);
