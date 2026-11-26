@@ -148,4 +148,24 @@ module.exports = async function ({ b, U, page, check }) {
       "dead reckoning: a landmark round shows its kind, then its clue and where it is", JSON.stringify([lm, ask, fact]));
     await ctx.close();
   }
+  // scorecard P0: the distance in play equals the summary; the keyboard readout gives no coordinates; the frame leaves sea either side
+  {
+    const { ctx, p } = await page(b, U + "dead-reckoning.html#day-12", { wait: 800 });
+    const shown = [];
+    for (let i = 0; i < 5; i++) {
+      await p.evaluate((i) => { const x = __dr.P[__dr.daily(12)[i]]; __dr.tapAt(x.lat + 1.23456 + i * 3.3337, x.lon - 2.34567 * (i + 1)); }, i);
+      if (i === 0) { await p.focus("#map"); await p.keyboard.press("ArrowRight"); shown.hint = await p.textContent("#mapHint"); }
+      await p.click("#lockBtn"); await p.waitForTimeout(80); shown.push((await p.textContent("#km")).match(/[\d,.]+ km/)[0]); await p.click("#nextBtn");
+    }
+    await p.waitForTimeout(300);
+    const recap = await p.evaluate(() => [...document.querySelectorAll("#recap li")].map((l) => (l.textContent.match(/[\d,.]+ km/) || [""])[0]));
+    const vb = (await p.getAttribute("#map", "viewBox")).split(" ").map(Number);
+    check(shown.length === 5 && shown.every((k, i) => k === recap[i]), "dead reckoning P0: the distance shown after a pin is the same number as in the summary", JSON.stringify([shown, recap]));
+    check(/^Pin placed\. Enter locks it in\.$/.test(shown.hint) && !/\d/.test(shown.hint), "dead reckoning P0: the keyboard readout says the pin is placed, with no coordinates", shown.hint);
+    await ctx.close();
+    const w = await page(b, U + "dead-reckoning.html#day-12", { wait: 800, ctx: { viewport: { width: 500, height: 667 } } });
+    const v2 = (await w.p.getAttribute("#map", "viewBox")).split(" ").map(Number);
+    check(v2[0] <= -6 && v2[0] + v2[2] >= 366, "dead reckoning P0: the opening view leaves sea either side, so New Zealand is not cut by the frame", JSON.stringify(v2));
+    await w.ctx.close();
+  }
 };

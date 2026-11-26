@@ -1180,7 +1180,7 @@ async function page(b, url, opts = {}) {
           for (let d = 14; d < 40 && !shape; d++) shape = VXV.deal(H.xa, H.dt, d, H.yn).find((x) => x.kind === "shape") || null;
           const cv = document.createElement("canvas"); VXV.alt(shape, cv, H.xa);
           return { kind: q.kind, role: c.getAttribute("role"), label: c.getAttribute("aria-label"), shape: cv.getAttribute("aria-label"), answer: shape.options[shape.answer] }; });
-        check(alt.kind === "mark" && alt.role === "img" && /^A globe with a mark at about \d+° (north|south), \d+° (east|west)\.$/.test(alt.label) && /^The outline of a country in [A-Za-z ]+, .+ square kilometres\.$/.test(alt.shape) && !alt.shape.includes(alt.answer),
+        check(alt.kind === "mark" && alt.role === "img" && /^A globe with a mark (near the equator|in the (northern|southern) tropics or subtropics|in the middle latitudes of the (north|south)|in the far (north|south)), in the (eastern|western) hemisphere\.$/.test(alt.label) && !/\d/.test(alt.label) && /^The outline of a country in [A-Za-z ]+, .+ square kilometres\.$/.test(alt.shape) && !alt.shape.includes(alt.answer),
           "vx review: the globe and outline pictures have a text alternative that doesn't give the answer away", JSON.stringify(alt));
         const a0 = await p.evaluate(() => __voy.S().qs[0].answer);
         await p.click("#spy"); await p.waitForTimeout(200);
