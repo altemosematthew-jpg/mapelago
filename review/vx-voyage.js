@@ -211,8 +211,7 @@
     if (q.show.cid != null) {
       var c = (table || []).filter(function (x) { return x.cid === q.show.cid; })[0];
       var size = c ? Number(c.area.toPrecision(2)).toLocaleString("en-US") : "";
-      text = c ? "The outline of a country in " + c.continent + (c.coast === "landlocked" ? ", with no sea coast" : c.coast === "island" ? ", an island country" : ", with a sea coast") +
-        ", covering about " + size + " square kilometres." : "The outline of a country.";
+      text = "The outline of a country, shown on its own."; // nothing more: its continent, coast or size would narrow the answer
     } else { // a description a sighted player could give at a glance: no coordinates, which could be looked up
       var la = Math.abs(q.show.lat), band = la < 12 ? "near the equator" : la < 35 ? "in the " + (q.show.lat >= 0 ? "northern" : "southern") + " tropics or subtropics" : la < 55 ? "in the middle latitudes of the " + (q.show.lat >= 0 ? "north" : "south") : "in the far " + (q.show.lat >= 0 ? "north" : "south");
       text = "A globe with a mark " + band + ", in the " + (q.show.lon >= 0 ? "eastern" : "western") + " hemisphere.";

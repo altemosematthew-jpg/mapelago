@@ -20,7 +20,7 @@
   var LEVELS = [
     R("eu1", "Europe", "Calm harbour", ["FR", "ES", "DE", "IT", "GB", "PL"]),
     R("eu2", "Europe", "Middle sea", ["PT", "IE", "AT", "CZ", "HU", "GR", "BG"]),
-    R("eu3", "Europe", "Low countries", ["NL", "BE", "CH", "DK", "SK", "HR", "RS", "LT"], { swell: 2 }),
+    R("eu3", "Europe", "Narrow decks", ["NL", "BE", "CH", "DK", "SK", "HR", "RS", "LT"], { swell: 2 }),
     R("eu4", "Europe", "Long coasts", ["NO", "SE", "FI", "IT", "HR", "GR"], { wind: 1 }),
     R("eu5", "Europe", "Balkan squall", ["AL", "MK", "ME", "SI", "MD", "EE", "LV", "BA"], { name: "type", swell: 3, wind: 1, deck: 200 }),
     R("af1", "Africa", "Gulf of Guinea", ["NG", "KE", "ET", "EG", "ZA", "TZ"]),
@@ -228,7 +228,7 @@
     $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
     $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
     $("#nameBox").hidden = L.name === "none"; $("#nameBox").dataset.mode = L.name === "type" ? "type" : "pick";
-    asked = null; dropping = null; $("#dropBtn").hidden = false; $("#contBtn").hidden = true;
+    asked = null; dropping = null; $("#dropBtn").hidden = false; $("#dropBtn").disabled = false; $("#contBtn").hidden = true;
     $("#play").hidden = false; $("#done").hidden = true; $("#chart").hidden = true;
     resize();
     next();
@@ -259,7 +259,8 @@
   }
   function vhUnits() { return cv.width ? cv.height / cv.width * VW : VH; }
   function viewTop() { return DECK_Y + 70 - vhUnits() / zoom; }
-  function stackTop(resting) { var top = DECK_Y; pieces.forEach(function (b) { if (!b.mxGone && (!resting || b.speed < 0.8)) top = Math.min(top, b.bounds.min.y); }); return top; }
+  function stackTop(resting) { var top = DECK_Y; pieces.forEach(function (b) { if (b.mxGone || (resting && (b.speed >= 0.8 || (b === lastBody && state === "fall") || b.position.y > DECK_Y + 20))) return; top = Math.min(top, b.bounds.min.y); }); return top; }
+  function aboard() { return pieces.filter(function (b) { return !b.mxGone; }).length - (state === "fall" && lastBody && !lastBody.mxGone ? 1 : 0); } // pieces on the ship, not counting one still falling
   // a new piece waits just above the stack (not at the top of the view), so a plain drop is gentle on any screen size
   function homeY() { return Math.max(viewTop() + halfHeight(hover) + 6, stackTop() - 34 - halfHeight(hover)); }
   function hoverPos() { return { x: hover.x, y: hover.y == null ? homeY() : hover.y }; }
@@ -331,17 +332,17 @@
       if (fallT > 250 && (!lastBody || lastBody.mxGone || lastBody.speed < 0.9 || fallT > 1600)) {
         if (lastBody && !lastBody.mxGone) SFX.land();
         S.i++;
-        if (L.name !== "none" && L.name !== "earn") { asked = { s: dropping, answer: null, body: lastBody }; renderName(); }
-        $("#dropBtn").disabled = false;
+        if (L.name !== "none" && L.name !== "earn" && lastBody && !lastBody.mxGone) { asked = { s: dropping, answer: null, body: lastBody }; renderName(); }
+        $("#dropBtn").disabled = S.i >= L.list.length; // nothing left to load: Drop is off
         next();
       }
     }
     var h = heightKm(); S.height = h;
-    if (S.lost.length > L.spare) { endLevel(false); return; }
+    if (S.lost.length > L.spare) { S.cause = "overboard"; endLevel(false); return; }
     // the goal: the stack must stand above the line for two seconds
-    if (h >= L.lineKm && S.i >= need() && state !== "fall") holdT += dt; else if (h < L.lineKm || state !== "fall") holdT = 0;
+    if (h >= L.lineKm && aboard() >= need() && state !== "fall") holdT += dt; else if (h < L.lineKm || state !== "fall") holdT = 0;
     if (holdT >= HOLD) { endLevel(true); return; }
-    if (state === "wait") { stillT = settled() ? stillT + dt : 0; if (stillT > 1200 && h < L.lineKm) { endLevel(false); return; } }
+    if (state === "wait") { stillT = settled() ? stillT + dt : 0; if (stillT > 1200 && (h < L.lineKm || aboard() < need())) { if (h >= L.lineKm) S.cause = "overboard"; /* all loaded and settled: below the line, or too few left aboard */ endLevel(false); return; } }
     if ((time / (1000 / 60) | 0) % 6 === 0) renderHud();
   }
   var fpsNow = 60;
@@ -457,7 +458,7 @@
     cx.textAlign = "center"; cx.fillStyle = ink;
     if (cleared) { var pulse = reduce ? 1 : 1 + 0.12 * Math.sin(cheerT / 90); cx.font = "800 " + 30 * k * pulse + "px " + font; cx.fillStyle = accent; cx.fillText("Loaded!", W / 2, Y(lineY) - 22 * k); }
     else if (holdT > 0) { cx.font = "800 " + 24 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Hold " + Math.max(0, (HOLD - holdT) / 1000).toFixed(1), W / 2, Y(lineY) - 22 * k); }
-    else if (S.height >= L.lineKm && S.i < need() && !S.judged) { cx.font = "800 " + 15 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Load " + (need() - S.i) + " more before the line counts", W / 2, Y(lineY) - 22 * k); } // why it hasn't cleared
+    else if (S.height >= L.lineKm && aboard() < need() && !S.judged) { cx.font = "800 " + 15 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Load " + (need() - aboard()) + " more before the line counts", W / 2, Y(lineY) - 22 * k); } // why it hasn't cleared
     cx.textAlign = "left";
     // the next country, small, in the corner
     var ni = S.i + (hover || state === "fall" ? 1 : 0), nx = L.list[ni] && byCC[L.list[ni]];
@@ -499,7 +500,8 @@
     asked.answer = ok; S.named.push(ok ? 1 : 0); $("#skipName").hidden = true; if (asked.body) asked.body.mxShow = true;
     var s = asked.s, box = $("#nameBox");
     box.classList.add(ok ? "right" : "wrong");
-    $("#nameSay").textContent = ok ? "Right: " + s.n + ". +" + nameBonus() : skipped ? "Unnamed: that was " + s.n + "." : "It's " + s.n + ".";
+    var tn = (/^(United |Netherlands|Philippines|Bahamas|Gambia|Maldives|Comoros|Seychelles|Central African|Dominican|Czech|Solomon|Marshall|Democratic Republic|Republic of)/.test(s.n) ? "the " : "") + s.n;
+    $("#nameSay").textContent = ok ? "Right: " + tn + ". +" + nameBonus() : skipped ? "Unnamed: that was " + tn + "." : "It was " + tn + ".";
     Array.prototype.forEach.call(document.querySelectorAll("#nameOpts .opt"), function (b) { b.disabled = true; if (b.dataset.cc === s.cc) b.classList.add("is"); });
     $("#nin").disabled = true;
     if (!skipped) (ok ? SFX.right : SFX.wrong)();
@@ -510,7 +512,7 @@
   // of the size, in its place. Kinds: which country is this outline; its capital; its continent; one of its neighbours.
   var CONT = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"];
   function earnQuestion(s, r) {
-    var kinds = ["shape"]; if (s.c) kinds.push("capital"); if (s.nb && s.nb.length) kinds.push("neighbour"); if (CONT.indexOf(s.r) >= 0) kinds.push("continent");
+    var kinds = ["shape"]; if (s.c) kinds.push("capital"); if (s.nb && s.nb.length) kinds.push("neighbour"); if (CONT.indexOf(s.r) >= 0 && L && L.list.some(function (cc) { return byCC[cc] && byCC[cc].r !== s.r; })) kinds.push("continent");
     var kind = kinds[Math.floor(r() * kinds.length)], others = SHAPES.filter(function (x) { return x.cc !== s.cc && x.a > 2000; }), q;
     if (kind === "shape") { var same = others.filter(function (x) { return x.r === s.r; }); q = { ask: "Which country is this?", right: s.n, opts: shuffle(same.length >= 3 ? same : others, r).slice(0, 3).map(function (x) { return x.n; }), why: "This is " + s.n + "." }; }
     else if (kind === "capital") { var caps = shuffle(others.filter(function (x) { return x.c && x.c !== s.c && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.c; }); q = { ask: "What is the capital of this country?", right: s.c, opts: caps, why: "The capital of " + s.n + " is " + s.c + "." }; }
@@ -551,7 +553,7 @@
     $("#hHeight").textContent = fmt(S.height) + " of " + fmt(L.lineKm);
     $("#hNamed").textContent = named();
     $("#hLost").textContent = L.tut ? S.lost.length : S.lost.length > L.spare ? S.lost.length + ": one too many" : S.lost.length + " of " + L.spare;
-    var more = need() - S.i; $("#hNeed").textContent = S.judged ? "" : more > 0 ? "load " + more + " more" : "hold above the line";
+    var more = need() - aboard(); $("#hNeed").textContent = S.judged ? "" : more > 0 ? "load " + more + " more" : S.height >= L.lineKm ? "hold above the line" : "build up to the line";
   }
   function stars() {
     if (!S.cleared) return 0;
@@ -580,6 +582,7 @@
     showDone();
   }
   function clearToast() { clearTimeout(tT); $("#toast").classList.remove("show"); $("#toast").textContent = ""; }
+  function nextVoyage() { var i = LEVELS.indexOf(L); if (LEVELS[i + 1]) start(LEVELS[i + 1]); }
   function showDone() {
     clearToast();
     $("#play").hidden = true; $("#done").hidden = false; renderChart();
@@ -592,11 +595,18 @@
     r.named += named(); r.lost += S.lost.length;
     if (r.mode === "tut") {
       if (ok) { SFX.line(); r.lvl++; } else { SFX.fail(); toast("Not quite: try that one again."); }
-      if (r.lvl > TUTORIAL.length) { save.tut = 1; store(); RUN = null; toast("That's the tutorial. Here is today's Daily Ballast."); startDaily(); return; }
+      if (r.lvl > TUTORIAL.length) {
+        save.tut = 1; store(); RUN = null;
+        $("#doneTitle").textContent = "That's the tutorial."; $("#doneStars").hidden = true; $("#bigScore").textContent = "5"; $("#bigUnit").textContent = "of 5 lessons";
+        $("#doneLine").textContent = "You can drag, turn, name, and load against wind and swell."; $("#doneWhy").textContent = "Today's Daily Ballast is next: one run, three lives.";
+        $("#shareText").hidden = $("#shareBtn").hidden = true; $("#retryBtn").hidden = true;
+        var nl = $("#nextLvl"); nl.hidden = false; nl.textContent = "Play today's Daily Ballast"; nl.onclick = function () { nl.onclick = nextVoyage; startDaily(); };
+        showDone(); return;
+      }
       setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
     }
     if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
-    else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast("Below the line. " + r.lives + (r.lives === 1 ? " life" : " lives") + " left: the same cargo again for level " + r.lvl + "."); }
+    else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast((S.cause === "overboard" ? "Too many overboard. " : "Below the line. ") + r.lives + (r.lives === 1 ? " life" : " lives") + " left: the same cargo again for level " + r.lvl + "."); }
     if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt, pic: r.pic }; store(); }
     if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
     endRun();
@@ -780,9 +790,10 @@
       try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); }
     };
     $("#retryBtn").onclick = function () { if (LEVELS.indexOf(L) >= 0) start(L); else startPractice(); };
-    $("#nextLvl").onclick = function () { var i = LEVELS.indexOf(L); if (LEVELS[i + 1]) start(LEVELS[i + 1]); };
+    $("#nextLvl").onclick = nextVoyage;
     $("#skipTut").hidden = true;
-    $("#chartBtn").onclick = $("#chartBtn2").onclick = home;
+    $("#chartBtn2").onclick = home;
+    $("#chartBtn").onclick = function () { if (RUN && RUN.mode !== "tut" && L && !S.over && (S.i > 0 || RUN.lvl > 1) && !window.confirm(RUN.mode === "daily" ? "Leave this load? Your Daily run waits for you at level " + RUN.lvl + ", but this load starts again." : "Leave this run? It won't be saved.")) return; home(); };
     $("#dailyBtn").onclick = startDaily;
     $("#practiceBtn").onclick = startPractice; if ($("#captainBtn")) $("#captainBtn").onclick = startCaptain;
     $("#tutBtn").onclick = startTutorial;
