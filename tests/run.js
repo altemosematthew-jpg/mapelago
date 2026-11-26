@@ -1205,6 +1205,15 @@ async function page(b, url, opts = {}) {
       check(a[0] === "50 100 150* 250 350 500* 650 800 900 1,000" && a[1] === "[[true,50],[true,100],[true,150]]", "voyage: No. 18 keeps the old ladder and choices", a.join(" "));
       check(c[0] === "200* 400 600* 680 750 810* 870 920* 960 1,000" && c[1] === "[[false,200],[true,400],[false,600]]", "voyage: from No. 19 the ladder pays early, and a harbor sails straight on (the choice is asked only when points are at risk)", c.join(" "));
     }
+    // ---- Stamps from No. 19: one question a wedge, and the wheel goes from the best-known subject to the most obscure
+    {
+      const run = async (day) => { const t = await page(b, U + "stamps.html?s=" + day + "#day-" + day, { storage: { "dailycity:stamps:v1": "{}" }, wait: 600 }); await t.p.waitForFunction(() => window.__stamp); const seen = [];
+        for (let i = 0; i < 3; i++) { await t.p.evaluate(() => document.querySelector("#spin").click()); await t.p.waitForTimeout(200); await t.p.evaluate(() => document.querySelector("#wheelbox").click()); await t.p.waitForFunction(() => !document.querySelector("#quiz").hidden && __stamp.S().cur, null, { timeout: 12000 }); await t.p.waitForTimeout(250);
+          seen.push(await t.p.evaluate(() => { const c = __stamp.S().cur, q = __stamp.S().q[c.cat][c.tries], bt = [...document.querySelectorAll("#qopts .opt")]; bt[(c.answer + 1) % bt.length].click(); return [c.cat, c.tries, q.hard]; })); await t.p.waitForTimeout(450); await t.p.evaluate(() => { const n = document.querySelector("#qnext"); if (n && !n.hidden) n.click(); }); await t.p.waitForTimeout(350); }
+        await t.ctx.close(); return seen; };
+      const c = await run(19);
+      check(new Set(c.map((x) => x[0])).size === 3 && c.every((x) => x[1] === 0) && c[0][2] <= c[1][2] && c[1][2] <= c[2][2], "stamps: from No. 19 a miss closes the wedge (three misses, three different wedges) and the wheel goes from best-known to most obscure", JSON.stringify(c));
+    }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });

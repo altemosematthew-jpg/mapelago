@@ -70,3 +70,8 @@ Sunday is "medium" in the two Bigger games; it has no special round there.
 - At a harbor nothing is at risk, so the sail-or-anchor question is no longer asked there; between harbors it is, and sailing risks the unbanked points.
 - Same simple player as before (83 / 63 / 41% right by thirds): reaches island 3 in 57% of voyages, so the median is 600 of 1,000 (was 150). 26% wreck before island 3 and keep 200; 16% score nothing.
 - The questions were already ordered from the best-known subject to the most obscure; that is unchanged.
+
+## Stamps from No. 19 (0.15.47)
+- One question a wedge (the second chance is gone), and the wheel takes the wedges from the day's best-known subject to its most obscure.
+- Simple player (certain on the best-known country, a one-in-four guess on the least known), forty days: right by spin 84, 76, 67, 59, 51, 39%; median 4 of 6; six of six in 6% of rounds (was 57%).
+- Side effect: each wedge uses one question a day instead of two, so its pool lasts about twice as long before a question returns.
