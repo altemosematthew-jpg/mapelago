@@ -342,7 +342,7 @@
     // the goal: the stack must stand above the line for two seconds
     if (h >= L.lineKm && aboard() >= need() && state !== "fall") holdT += dt; else if (h < L.lineKm || state !== "fall") holdT = 0;
     if (holdT >= HOLD) { endLevel(true); return; }
-    if (state === "wait") { stillT = settled() ? stillT + dt : 0; if (stillT > 1200 && h < L.lineKm) { endLevel(false); return; } }
+    if (state === "wait") { stillT = settled() ? stillT + dt : 0; if (stillT > 1200 && (h < L.lineKm || aboard() < need())) { if (h >= L.lineKm) S.cause = "overboard"; /* all loaded and settled: below the line, or too few left aboard */ endLevel(false); return; } }
     if ((time / (1000 / 60) | 0) % 6 === 0) renderHud();
   }
   var fpsNow = 60;
@@ -500,7 +500,8 @@
     asked.answer = ok; S.named.push(ok ? 1 : 0); $("#skipName").hidden = true; if (asked.body) asked.body.mxShow = true;
     var s = asked.s, box = $("#nameBox");
     box.classList.add(ok ? "right" : "wrong");
-    $("#nameSay").textContent = ok ? "Right: " + s.n + ". +" + nameBonus() : skipped ? "Unnamed: that was " + s.n + "." : "It's " + s.n + ".";
+    var tn = (/^(United |Netherlands|Philippines|Bahamas|Gambia|Maldives|Comoros|Seychelles|Central African|Dominican|Czech|Solomon|Marshall|Democratic Republic|Republic of)/.test(s.n) ? "the " : "") + s.n;
+    $("#nameSay").textContent = ok ? "Right: " + tn + ". +" + nameBonus() : skipped ? "Unnamed: that was " + tn + "." : "It was " + tn + ".";
     Array.prototype.forEach.call(document.querySelectorAll("#nameOpts .opt"), function (b) { b.disabled = true; if (b.dataset.cc === s.cc) b.classList.add("is"); });
     $("#nin").disabled = true;
     if (!skipped) (ok ? SFX.right : SFX.wrong)();
