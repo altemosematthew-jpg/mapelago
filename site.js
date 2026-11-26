@@ -798,7 +798,10 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove();
+    // the day's level in words on the games whose own dial is not set yet (from No. 19)
+    var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
+    setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');

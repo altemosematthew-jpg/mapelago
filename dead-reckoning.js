@@ -26,7 +26,9 @@
     return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
   }
   // 0 km = 100, 250 km = 80, 1,000 km = 40, 2,500 km = 10, 5,000 km = 1
-  function points(d) { return Math.round(100 * Math.exp(-d / K)); }
+  // the weekly arc (from No. 19): the same places, scored more generously on Monday and more strictly on Saturday
+  function arcF() { return N >= 19 && window.MXS && MXS.weekLevel ? MXS.weekLevel(N).f : 1; }
+  function points(d) { return Math.round(100 * Math.exp(-d / (K * arcF()))); }
   function total(rounds) { return Math.round(rounds.reduce(function (s, r, i) { return s + WEIGHTS[i] * r; }, 0)); }
   function bearing(a, b) {
     var y = Math.sin((b.lon - a.lon) * RAD) * Math.cos(b.lat * RAD);

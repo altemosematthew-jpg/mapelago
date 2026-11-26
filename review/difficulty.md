@@ -75,3 +75,8 @@ Sunday is "medium" in the two Bigger games; it has no special round there.
 - One question a wedge (the second chance is gone), and the wheel takes the wedges from the day's best-known subject to its most obscure.
 - Simple player (certain on the best-known country, a one-in-four guess on the least known), forty days: right by spin 84, 76, 67, 59, 51, 39%; median 4 of 6; six of six in 6% of rounds (was 57%).
 - Side effect: each wedge uses one question a day instead of two, so its pool lasts about twice as long before a question returns.
+
+## Weekly arc on the other five (0.15.50, from No. 19)
+- Voyage: harbors at 1, 3, 5, 6 and 8 on Monday and Tuesday; 1, 3, 6 and 8 midweek and Sunday; 1, 3 and 6 on Friday and Saturday.
+- Dead Reckoning: the same places; the distance a pin may be off for the same points is 30% more on Monday, 20% less on Saturday.
+- Mystery country, Fathoms, Stamps: the day's level in words only. A real dial needs their schedules reworked (Mystery country's cycle, Fathoms' deck, Stamps' wedges), so it waits for new content.
