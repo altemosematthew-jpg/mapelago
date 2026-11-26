@@ -378,6 +378,7 @@
   function startPractice() {
     mode = "practice"; practice = { n: 0, sum: 0, place: P[Math.floor(Math.random() * P.length)] };
     $("#done").hidden = true; $("#ask").hidden = false; $("#practiceBox").hidden = false;
+    $("#lede").textContent = "Practice: tap the blank map where you think each random place is."; var nm = $("#num"); if (nm) nm.textContent = "Practice · not saved";
     $("#practiceSay").textContent = "Endless random places. Nothing here counts: today's result, streak and stats stay as they are.";
     revealed = false; answerShown = null; pin = null; fit(); applyView(); showAsk();
     svg.focus({ preventScroll: true });

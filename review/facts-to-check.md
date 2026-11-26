@@ -70,3 +70,11 @@ Items 3, 4 and 5 in the table above (Saudi Arabia, Netherlands, Pakistan) are se
 - **Item 7, Canada and Denmark:** each now lists the other as a land neighbour (Hans Island), so nothing says either "borders only one country". Crossings still keeps the pair out of its daily routes.
 - **Item 8, South Africa's highest point:** shown as "Mafadi (Ntheledi)" in Voyage and Dead Reckoning.
 - **Still open:** items 1, 2 and 9 (city populations) and item 10 (Ankara) wait on Matthew.
+
+## From scorecard 2 (live 0.15.45)
+| Where | Our value | Grader | Sure? | Note |
+|---|---|---|---|---|
+| Chile area | 737k km2 (map) | 756,102 (UN) | High | Fixed by the UN areas from No. 17. |
+| Saudi Arabia area | 1.93M km2 (map) | 2,206,714 (UN) | High | Fixed by the UN areas from No. 17. |
+| Kampala population | about 1.4 million (city proper) | larger | Medium | Same cause as items 1 and 2: one population definition for the cities list is with Duet. |
+| Tianjin clue "Temperate, inland" | the city centre is about 50 km from the Bohai coast | coastal | Medium | Our clue reads the city's point, not the municipality, which reaches the sea. Recommend "coastal" for cities whose municipality touches the coast; needs Matthew's rule. |
