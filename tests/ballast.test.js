@@ -35,13 +35,13 @@ module.exports = async function ({ b, U, page, check }) {
       const regs = new Set([1, 2, 3, 4, 5, 6].map((n) => B.gen(20, n, 0).region));
       const ids = new Set(B.LEVELS.map((l) => l.id)), regions = {}; B.LEVELS.forEach((l) => (regions[l.region] = (regions[l.region] || 0) + 1));
       return { n: S.length, small: S.filter((s) => s.p.length < 4).length, au: by.AU.a, ratio: by.RU.a / by.FR.a,
-        same: g(20, 4, 0) === g(20, 4, 0), day: g(20, 4, 0) !== g(21, 4, 0), retry: g(20, 4, 0) !== g(20, 4, 1),
+        same: g(20, 4, 0) === g(20, 4, 0), day: g(20, 4, 0) !== g(21, 4, 0), retry: g(20, 4, 0) === g(20, 4, 1),
         counts: lv.map((l) => l.list.length), swell: lv.map((l) => l.swell), wind: lv.map((l) => l.wind), names: lv.map((l) => l.name), regs: regs.size,
         levels: B.LEVELS.length, ids: ids.size, regions, unknown: B.LEVELS.flatMap((l) => l.list).concat(B.TUTORIAL.flatMap((l) => l.list)).filter((cc) => !by[cc]), tut: B.TUTORIAL.length };
     });
     check(r.n === 193 && r.small === 0 && r.au > 7e6, "ballast: 193 country outlines, Australia is the continent (not Ashmore)", JSON.stringify([r.n, r.small, r.au]));
     check(r.ratio > 25 && r.ratio < 36, "ballast: sizes are in true proportion (Russia is about 30 Frances)", String(r.ratio));
-    check(r.same && r.day && r.retry, "ballast generator: the same seed and level give the same cargo; another day or a retry gives another");
+    check(r.same && r.day && r.retry, "ballast generator: the same seed and level give the same cargo (a retry too); another day gives another");
     const up = (a) => a.every((x, i) => !i || x >= a[i - 1]);
     check(up(r.counts) && r.counts[0] < r.counts[4] && up(r.swell) && up(r.wind) && r.swell[0] === 0 && r.wind[4] > 0 && r.names[0] === "pick" && r.names[4] === "type" && r.regs >= 5, "ballast generator: levels get harder (more pieces, swell, wind, typed names) and change region", JSON.stringify(r));
     const gen = await p.evaluate(() => { const B = __ballast, S = window.MX_BALLAST, by = Object.fromEntries(S.map((s) => [s.cc, s])); const rank = Object.fromEntries(S.slice().sort((a, c) => c.f - a.f).map((s, i) => [s.cc, i])); let easy = 0, tot = 0, base = 0, lv = 0;
@@ -101,7 +101,7 @@ module.exports = async function ({ b, U, page, check }) {
     check(let0 && Math.abs(let0[0] - held[0][0]) < 3, `ballast ${tag}: letting go drops the piece from where it was held`, JSON.stringify([let0, held[0]]));
     await p.waitForFunction(() => __ballast.state() !== "fall", null, { timeout: 20000 });
     const post = await p.evaluate(() => [__ballast.pieces().length, __ballast.state(), __ballast.asked() === __ballast.L().list[0], document.querySelector("#nameQ").textContent, __ballast.S().lost.length]);
-    check(post[0] === 1 && post[1] === "aim" && post[2] && /just place.*\(\+10\)/.test(post[3]) && post[4] === 0, `ballast ${tag}: the piece lands and stays aboard; the next is in hand at once and the name is asked about the one just placed (+10)`, JSON.stringify(post));
+    check(post[0] === 1 && post[1] === "aim" && post[2] && /Which country was that\? \+10/.test(post[3]) && post[4] === 0, `ballast ${tag}: the piece lands and stays aboard; the next is in hand at once and the name is asked about the one just placed (+10)`, JSON.stringify(post));
     await p.click("#nameOpts .opt >> nth=0");
     check(/Right|It's/.test(await p.textContent("#nameSay")), `ballast ${tag}: tapping a name choice answers`);
     await p.keyboard.press(" ");
@@ -122,7 +122,7 @@ module.exports = async function ({ b, U, page, check }) {
       return { share, leak: names.filter((n) => share.includes(n)), res: sv.results[20], stats: sv.stats, run: sv.run, info: MXS.info().find((s) => s.game.id === "ballast"), title: document.querySelector("#doneTitle").textContent };
     });
     check(r.res && r.res.lvl >= 1 && r.res.score === r.res.lvl * 100 + r.res.named * 10 && (r.res.marks.match(/\u{1F7E5}/gu) || []).length === 3 && !r.run, `ballast ${tag}: three failed loads end the run; score = 100 a level + 10 a name`, JSON.stringify(r.res));
-    check(/^Mapelago Ballast No\. 20 \u{1F422} [\d,]+ points\n/u.test(r.share) && /Cleared \d+ level/.test(r.share) && !r.leak.length && /#b-bl-20-0-\d+$/.test(r.share.trim()), "ballast: the share shows the levels cleared and squares, has a beat-my-score link, and names no country", r.share);
+    check(/^Mapelago Ballast No\. 20 \u{1F422} [\d,]+ points\n/u.test(r.share) && /Loaded \d+ level/.test(r.share) && /^[\u{1F4E6}\u{1F30A}]+$/mu.test(r.share) && !r.leak.length && /#b-bl-20-0-\d+$/.test(r.share.trim()), "ballast: the share shows the levels cleared and squares, has a beat-my-score link, and names no country", r.share);
     check(r.info && r.info.played === 1 && r.stats.best === r.res.lvl && r.stats.runs === 1, "ballast: the daily counts in Your streaks; personal best and runs are kept", JSON.stringify(r.stats));
     await p.reload(); await p.waitForTimeout(700);
     const home = await p.evaluate(() => ({ chart: !document.querySelector("#chart").hidden, btn: document.querySelector("#dailyBtn").disabled, note: document.querySelector("#dailyNote").textContent, share: document.querySelector("#homeShareText").textContent, best: JSON.parse(localStorage.getItem("dailycity:ballast:v1")).stats.best }));
@@ -168,7 +168,7 @@ module.exports = async function ({ b, U, page, check }) {
       out.easy = B.TUTORIAL.slice(0, 3).concat([B.gen(20, 1, 0), B.gen(20, 2, 0), B.gen(21, 1, 0)]).map((l) => { B.start(l); let n = 0; while (B.state() === "aim" && n++ < 12) { B.drop(); B.settle(); } return [l.id, B.S().lost.length, B.S().cleared]; });
       // the hold: over the line is not enough; it has to stand for two seconds
       const lv = B.gen(20, 1, 0); B.start(lv); let n = 0, first = null;
-      while (B.state() === "aim" && n++ < 12) { B.drop(); for (let i = 0; i < 400 && B.state() === "fall"; i++) B.tick(1); if (first === null && B.height() >= lv.lineKm && B.S().i >= 2) { B.tick(60); first = [B.hold() > 800 && B.hold() < 2000, B.S().cleared]; B.tick(90); first.push(B.S().cleared); } }
+      while (B.state() === "aim" && n++ < 12) { B.drop(); for (let i = 0; i < 400 && B.state() === "fall"; i++) B.tick(1); if (first === null && B.height() >= lv.lineKm && B.S().i >= B.needs()) { B.tick(60); first = [B.hold() > 800 && B.hold() < 2000, B.S().cleared]; B.tick(90); first.push(B.S().cleared); } }
       out.hold = first;
       // the loss limit: the third country in the sea ends the load
       const l2 = B.gen(20, 3, 0); l2.lineKm = 1e9; B.start(l2); out.spare = l2.spare; n = 0;
@@ -258,6 +258,89 @@ module.exports = async function ({ b, U, page, check }) {
     check(r.n >= 480 && r.worst <= 1.6, "ballast daily: from No. 15 the first two levels hold only compact countries", `${r.n} pieces, longest ${r.worst.toFixed(2)}`);
     check(r.same[0] === "AOMAETEG" && r.same[1] === "ARPYPECO", "ballast daily: Nos. 13 and 14 keep the cargo they had", r.same.join(" "));
     await ctx.close();
+  }
+  // today's cargo: the last stack that stood is kept as outlines only, drawn on the home screen and on the share image
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
+    const r = await p.evaluate(async () => {
+      const B = __ballast; let n = 0;
+      while (B.run() && B.run().cleared < 1 && n++ < 30) { if (B.state() === "aim") { B.flat(); B.drop(); } B.settle(); B.tick(200); if (B.state() === "last") document.querySelector("#contBtn").click(); }
+      const cleared = B.run().cleared; B.run().lives = 1; B.S().cleared = false; B.finish(); await new Promise((r) => setTimeout(r, 400));
+      const res = B.save().results[Object.keys(B.save().results)[0]], c = document.createElement("canvas"); c.width = 400; c.height = 300;
+      const drew = window.MX_SHARE_ART(c.getContext("2d"), { x: 0, y: 0, w: 400, h: 300 }), px = c.getContext("2d").getImageData(0, 0, 400, 300).data; let ink = 0; for (let i = 3; i < px.length; i += 4) if (px[i]) ink++;
+      document.querySelector("#chartBtn2").click(); await new Promise((r) => setTimeout(r, 200));
+      return { cleared, pic: res.pic && res.pic.p.length, names: /[A-Za-z]{3}/.test(JSON.stringify(res.pic || {}).replace(/"[dp]"/g, "")), drew, ink, fig: !document.querySelector("#cargoFig").hidden, share: document.querySelector("#homeShareText").textContent };
+    });
+    check(r.cleared >= 1 && r.pic >= 1 && !r.names, "ballast cargo: the stack that stood is saved as outlines, with no country names", JSON.stringify(r));
+    check(r.drew === true && r.ink > 2000 && r.fig, "ballast cargo: it is drawn on the share image and shown as today's cargo on the home screen", JSON.stringify([r.drew, r.ink, r.fig]));
+    check(/^\u{1F4E6}+\u{1F30A}*$/mu.test(r.share) && /Loaded \d+ level/.test(r.share) && /mapelago\.com\/ballast\.html#b-bl-/.test(r.share.trim().split("\n").pop()), "ballast share: crates for loaded levels, waves for lost loads, the link last", r.share);
+    await ctx.close();
+  }
+  // the ship reacts to its load (drawing only), and Sunday's Captain's run is an extra that leaves the Daily alone
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, clock: new Date("2026-11-29T12:00:00"), ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
+    const r = await p.evaluate(async () => {
+      const B = __ballast, o = {};
+      B.start(B.TUTORIAL[0]); for (let i = 0; i < 5; i++) B.move(1); B.drop(); B.settle(); const at = () => { const q = B.pieces()[0]; return [q.position.x, q.position.y, q.angle].join(","); }, h0 = B.height(), y0 = at();
+      for (let i = 0; i < 300; i++) B.draw(); o.list = B.list(); o.same = B.height() === h0 && at() === y0;
+      o.sun = [B.sunday(16), B.sunday(13), B.sunday(2)];
+      B.home(); await new Promise((r) => setTimeout(r, 100)); const cb = document.querySelector("#captainBtn"); o.btn = !!cb.offsetParent && !cb.disabled;
+      cb.click(); await new Promise((r) => setTimeout(r, 200)); o.mode = B.run().mode; o.sea = [B.L().swell, B.L().wind, document.querySelector("#lvlTitle").textContent];
+      B.run().lives = 1; B.S().cleared = false; B.finish(); await new Promise((r) => setTimeout(r, 300));
+      const sv = B.save(); o.captain = sv.captain && Object.keys(sv.captain); o.daily = Object.keys(sv.results).length; o.share = !document.querySelector("#shareBtn").hidden;
+      B.home(); await new Promise((r) => setTimeout(r, 100)); o.after = [cb.disabled, cb.textContent, document.querySelector("#dailyBtn").disabled];
+      return o;
+    });
+    check(r.list[0] > 0.002 && r.list[1] > 0.5 && r.same, "ballast ship: it sits lower and lists toward the heavy side, and the physics is untouched", JSON.stringify([r.list, r.same]));
+    check(r.sun[0] && !r.sun[1] && r.sun[2] && r.btn && r.mode === "captain" && r.sea[0] > 0 && r.sea[1] > 0 && /Captain's run · Level 1/.test(r.sea[2]), "ballast Captain's run: offered on Sundays, level 1 already has swell and wind", JSON.stringify([r.sun, r.btn, r.mode, r.sea]));
+    check(JSON.stringify(r.captain) === '["16"]' && r.daily === 0 && !r.share && r.after[0] && /done/.test(r.after[1]) && !r.after[2], "ballast Captain's run: one a Sunday, saved apart, the Daily Ballast is still there to play", JSON.stringify([r.captain, r.daily, r.share, r.after]));
+    await ctx.close();
+    const t = await page(b, U + "ballast.html", { storage: SEEN, clock: new Date("2026-11-26T12:00:00"), wait: 500 });
+    const thu = await t.p.evaluate(async () => { __ballast.home(); await new Promise((r) => setTimeout(r, 100)); return !!document.querySelector("#captainBtn").offsetParent; });
+    check(!thu, "ballast Captain's run: not offered on other days");
+    await t.ctx.close();
+  }
+  // scorecard P0: the nine Ballast bugs, each pinned
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, clock: new Date("2026-12-03T12:00:00"), ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
+    const r = await p.evaluate(async () => {
+      const B = __ballast, o = {}, wait = (ms) => new Promise((r) => setTimeout(r, ms)), txt = (q) => document.querySelector(q).textContent;
+      // 1. three overboard ends the load at once, nothing waits on a name, the counter never reads "3 of 2"
+      const sink = () => { B.drop(); B.tick(20); const q = B.pieces()[B.pieces().length - 1]; Matter.Body.setPosition(q, { x: 0, y: 3000 }); B.tick(30); };
+      B.startDaily(); await wait(100); for (let i = 0; i < 3 && B.state() === "aim"; i++) sink();
+      o.lost = [B.S().lost.length, B.S().judged, B.S().cleared, B.state(), txt("#hLost"), B.run() && B.run().lives];
+      await wait(1100);
+      // 3. the retry is the same level: same cargo, same line
+      const a1 = B.L(); o.retry = [B.gen(20, 3, 0).lineKm, B.gen(20, 3, 1).lineKm, B.gen(20, 3, 2).lineKm, B.gen(20, 3, 0).list.join(""), B.gen(20, 3, 2).list.join("")];
+      // 6. at least three pieces before the line counts, on every kind of level
+      o.need = [B.TUTORIAL.map((l) => { B.start(l); return B.needs(); }), [1, 2, 3, 6, 9].map((n) => { B.start(B.gen(20, n, 0)); return [B.needs(), B.L().list.length]; }), B.LEVELS.map((l) => { B.start(l); return [B.needs(), l.list.length]; })];
+      // 2. above the line with too few aboard: no clear, and the screen says why; a cleared stack is frozen
+      B.start(B.gen(20, 1, 0)); B.drop(); B.settle(); B.L().lineKm = 10; B.tick(200); o.early = [B.S().judged, B.height() >= 10, txt("#hNeed")];
+      B.drop(); B.settle(); B.drop(); B.settle(); B.tick(200); const at = () => B.pieces().map((q) => q.position.y.toFixed(2)).join(","), y0 = at(); B.tick(60); o.frozen = [B.S().cleared, at() === y0, B.state()];
+      // 4/5. naming never blocks, the skip is labelled, and the choices never sit above the typed field
+      B.startDaily(); await wait(100); B.drop(); B.tick(150); o.skip = [!document.querySelector("#skipName").hidden, txt("#skipName")]; document.querySelector("#skipName").click(); o.skipped = document.querySelector("#skipName").hidden;
+      B.start(B.gen(20, 4, 0)); B.drop(); B.tick(150); const had = document.querySelectorAll("#nameOpts .opt").length; B.start(B.gen(20, 5, 0)); B.drop(); B.tick(150);
+      o.stale = [had, getComputedStyle(document.querySelector("#nameOpts")).display, document.querySelectorAll("#nameOpts .opt").length, !document.querySelector("#nameType").hidden];
+      // 8. a voyage question never names the country it earns
+      o.named = []; B.LEVELS.forEach((l, li) => l.list.forEach((cc, i) => { const s = MX_BALLAST.find((x) => x.cc === cc), q = B.earnQ(s, li * 100 + i); if (q.ask.includes(s.n)) o.named.push(q.ask); }));
+      // 7. no stale message once the run is over
+      B.startDaily(); await wait(100); B.run().lives = 1; sink(); sink(); sink(); await wait(400);
+      o.toast = [document.querySelector("#toast").classList.contains("show"), txt("#toast")];
+      return o;
+    });
+    check(r.lost[0] === 3 && r.lost[1] && !r.lost[2] && r.lost[3] !== "last" && !/3 of 2/.test(r.lost[4]), "ballast P0: the third country overboard ends the load at once; nothing waits on a name; no '3 of 2'", JSON.stringify(r.lost));
+    check(r.retry[0] === r.retry[1] && r.retry[1] === r.retry[2] && r.retry[3] === r.retry[4], "ballast P0: a retry is the same level, the same cargo and the same load line", JSON.stringify(r.retry));
+    check(r.need[0].every((n) => n >= 3) && r.need[1].every((x) => x[0] >= Math.min(3, x[1])) && r.need[2].every((x) => x[0] >= 3 && x[0] >= x[1] * 0.6), "ballast P0: every level needs at least three pieces aboard, and a voyage most of its cargo", JSON.stringify(r.need).slice(0, 300));
+    check(!r.early[0] && r.early[1] && /load \d more/.test(r.early[2]) && r.frozen[0] && r.frozen[1], "ballast P0: above the line with too few aboard doesn't clear and says why; a cleared stack stays as it stood", JSON.stringify([r.early, r.frozen]));
+    check(r.skip[0] && r.skip[1] === "Skip naming" && r.skipped, "ballast P0: the skip is labelled Skip naming and never holds up the load", JSON.stringify([r.skip, r.skipped]));
+    check(r.stale[0] === 4 && r.stale[1] === "none" && r.stale[2] === 0 && r.stale[3], "ballast P0: the name choices are gone when the typed field appears", JSON.stringify(r.stale));
+    check(!r.named.length, "ballast P0: a voyage question never names the country being earned", r.named.slice(0, 3).join(" | "));
+    check(!r.toast[0] && !r.toast[1], "ballast P0: no stale message on the result", JSON.stringify(r.toast));
+    await ctx.close();
+    const d = await page(b, U + "ballast.html", { storage: SEEN, desktop: true, wait: 700 });
+    const wide = await d.p.evaluate(() => { const s = document.querySelector("#stage").getBoundingClientRect(), c = document.querySelector(".ctrl").getBoundingClientRect(); return [Math.round(s.width), c.left > s.right, c.top < s.bottom, document.documentElement.scrollWidth <= innerWidth]; });
+    check(wide[0] > 440 && wide[1] && wide[2] && wide[3], "ballast P0 desktop: the sea sits beside the controls in two columns", JSON.stringify(wide));
+    await d.ctx.close();
   }
   // offline after a first load
   {

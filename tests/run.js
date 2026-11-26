@@ -378,7 +378,7 @@ async function page(b, url, opts = {}) {
         check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
         // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
         const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
-        check(sh.share.startsWith("Mystery country No. 12, ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        check(sh.share.startsWith("Mapelago No. 12 \u00B7 mystery country ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
         await ctx.close();
       }
       for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
@@ -412,7 +412,7 @@ async function page(b, url, opts = {}) {
         check(a.num === "No. 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
         await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
         const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
-        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mystery country No. 5 (archive)"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
+        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mapelago No. 5 (archive) \u00B7 mystery country"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
         check(!p.errs.length, "review: Past countries, no errors", p.errs.join("; "));
         await ctx.close();
       }
@@ -1150,6 +1150,15 @@ async function page(b, url, opts = {}) {
       check(after.save === before.save && after.share === before.share && after.info === before.info && !(await p.isVisible(panel)) && (await p.isVisible("#done")),
         `vx: ${f} practice never touches the daily save, streaks, stats or share text`, JSON.stringify([before, after]));
       check(!p.errs.length, `vx: ${f} practice: no errors`, p.errs.join("; "));
+      await ctx.close();
+    }
+    // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
+    {
+      const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });
+      const { ctx, p } = await page(b, U + "fathoms.html", { clock: new Date("2026-11-25T12:00:00"), storage: { "dailycity:fathoms:v1": JSON.stringify(day([3, 4, 5, 6])), "dailycity:voyage:v1": JSON.stringify(day([7, 8, 9])), "dailycity:stamps:v1": JSON.stringify(day([11, 12])) } });
+      const r = await p.evaluate(() => { const s = MXS.siteStreak(); return { cur: s.cur, best: s.best, today: s.today, done: s.doneToday, total: s.total, frozen: s.frozen, until: MXS.untilNext() }; });
+      // days 3 to 9 in a row earn a freeze at seven; day 10 is missed and covered; days 11 and 12 follow; today is No. 12
+      check(r.cur === 9 && r.today && r.done === 1 && r.total === 11 && JSON.stringify(r.frozen) === "[10]" && r.until === "12h 0m", "site streak: any game counts for the day, a freeze covers a gap, and the next puzzles are 12h 0m away at noon", JSON.stringify(r));
       await ctx.close();
     }
     // ---- vx review fixes (hands-on review of live 0.15.2). No. 12 and 13 keep their answers and scoring (golden.json). ----

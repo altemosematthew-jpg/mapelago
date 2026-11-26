@@ -69,7 +69,7 @@
   function regionOf(s) { return /America/.test(s.r) ? "Americas" : s.r === "Europe and Asia" ? "Asia" : s.r; }
   function longness(s) { var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; s.p.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }); var w = x1 - x0, h = y1 - y0; return Math.max(w, h) / Math.max(1, Math.min(w, h)); }
   function genLevel(seed, n, attempt) {
-    var r = rng(seed * 7919 + n * 104729 + (attempt || 0) * 31), order = shuffle(GEN_REGIONS.slice(0, 5), rng(seed * 13 + 5));
+    var r = rng(seed * 7919 + n * 104729), order /* a retry is the same level: same cargo, same line */ = shuffle(GEN_REGIONS.slice(0, 5), rng(seed * 13 + 5));
     var region = n % 6 === 0 ? "World" : order[(n - 1) % 5];
     var pool = SHAPES.filter(function (s) { return s.a >= 15000 && (region === "World" || regionOf(s) === region); });
     var count = Math.min(10, 4 + Math.floor(n * 0.6));
@@ -99,7 +99,7 @@
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [
     R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country, let go to drop it, and hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
-    R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap a country to turn it, and lay the long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
+    R("t2", "Tutorial", "2 of 5: Turn", ["PL", "IT", "GB"], { tip: "Tap a country to turn it, and lay the long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
     R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "After you place a country, name it for bonus points; a wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
     R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right, so build a little to the left.", name: "pick", wind: 1, lineKm: 600, endAtLine: true, tut: 4 }),
     R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck, so keep the stack low and in the middle.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
@@ -157,7 +157,7 @@
   // ---------- the world ----------
   // World units: the view is 360 wide and 520 tall at zoom 1; the deck top is y = 0 and the sea starts at y = 26.
   var VW = 360, VH = 520, WATER = 26, DECK_Y = 0, HOLD = 2000;
-  var cv = $("#sea"), cx = cv.getContext("2d"), touched = false;
+  var cv = $("#sea"), cx = cv.getContext("2d"), touched = false, listA = 0, sinkV = 0;
   var dropping = null, engine, world, ship, pieces, hover, L, S, raf = 0, last = 0, acc = 0, time = 0, state = "idle";
   var zoom = 1, holdT = 0, fallT = 0, stillT = 0, cheerT = 0, lastBody = null;
 
@@ -205,8 +205,8 @@
     M.Composite.add(world, ship);
     L.lineKm = L.lineKm || Math.round((BOT[L.id] || estimateLine(L)) * L.line);
     if (L.spare == null) L.spare = L.tut ? 99 : 2; // how many countries may be lost to the sea before the load fails
-    zoom = 1; holdT = 0; time = 0; stillT = 0; cheerT = 0; lastBody = null;
-    $("#lvlTitle").textContent = RUN && RUN.mode === "daily" ? "Daily Ballast · Level " + RUN.lvl : RUN && RUN.mode === "practice" ? "Practice · Level " + RUN.lvl : L.title;
+    zoom = 1; holdT = 0; time = 0; stillT = 0; cheerT = 0; lastBody = null; listA = 0; sinkV = 0;
+    $("#lvlTitle").textContent = RUN && RUN.mode === "daily" ? "Daily Ballast · Level " + RUN.lvl : RUN && RUN.mode === "practice" ? "Practice · Level " + RUN.lvl : RUN && RUN.mode === "captain" ? "Captain's run · Level " + RUN.lvl : L.title;
     $("#lvlMeta").textContent = (RUN && RUN.mode !== "tut" ? "♥".repeat(RUN.lives) + "♡".repeat(3 - RUN.lives) + " · " : "") + L.region + " · " + L.list.length + " countries" + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
     $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
     $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
@@ -229,8 +229,8 @@
   var asked = null; // { s, answer: null | true | false, body }
   function lastCall() { // the load is over: one last chance to name the final country, then Continue
     hover = null;
-    if (!asked || asked.answer !== null || L.name === "none" || L.name === "earn") { finish(); return; }
-    state = "last"; $("#dropBtn").hidden = true; $("#contBtn").hidden = false; renderHud();
+    if (asked && asked.answer === null && L.name !== "none" && L.name !== "earn") markName(false, true); // naming never holds up the load
+    finish();
   }
   function cont() { if (state !== "last") return; if (asked && asked.answer === null) markName(false, true); $("#contBtn").hidden = true; $("#dropBtn").hidden = false; finish(); }
   function next() {
@@ -282,7 +282,7 @@
   function overboard(b) { return b.position.y > DECK_Y + WATER + 16 || Math.abs(b.position.x) > VW; } // lost only when it's in the water
   function settled() { return pieces.every(function (b) { return b.mxGone || b.isSleeping || (b.speed < 0.1 && b.angularSpeed < 0.008); }); }
   function heightKm() { return Math.max(0, Math.round((DECK_Y - stackTop(true)) / S.k)); }
-  function need() { return L.climb ? Math.ceil(L.list.length / 2) : L.tut ? 2 : 1; } // in the climb the line only counts once half the cargo is aboard
+  function need() { var n = L.list.length; return Math.min(n, Math.max(3, Math.ceil(n * (L.climb || L.tut ? 0.5 : 0.6)))); } // the line only counts once at least three pieces (half the cargo; most of it on a voyage) are aboard
   function endLevel(ok) {
     if (S.judged) return;
     S.judged = true; S.cleared = ok; S.height = heightKm(); hover = null;
@@ -290,6 +290,7 @@
   }
 
   function step(dt) {
+    if (S.judged && S.cleared) { cheerT += dt; if (cheerT > 900 && state === "cheer") lastCall(); return; } // "Loaded!": the stack stays exactly as it stood
     time += dt;
     // swell rocks the deck; with reduced motion it sits at a fixed tilt instead
     var sw = L.swell * Math.PI / 180, ang = reduce ? sw * 0.6 : sw * Math.sin(time / 1300);
@@ -302,7 +303,7 @@
     });
     M.Engine.update(engine, dt);
     pieces.forEach(function (b) {
-      if (!b.mxGone && overboard(b)) { b.mxGone = true; M.Composite.remove(world, b); S.lost.push(b.mxCC); SFX.splash(); toast((b.mxShow ? byCC[b.mxCC].n : "A country") + " went overboard." + (L.tut ? "" : S.lost.length > L.spare ? "" : " " + (L.spare - S.lost.length) + " more may be lost.")); renderHud(); }
+      if (!b.mxGone && overboard(b)) { b.mxGone = true; M.Composite.remove(world, b); S.lost.push(b.mxCC); SFX.splash(); if (asked && asked.body === b && asked.answer === null) { asked = null; renderName(); $("#nameQ").textContent = "That one went overboard: nothing to name."; } toast((b.mxShow ? byCC[b.mxCC].n : "A country") + " went overboard." + (L.tut ? "" : S.lost.length > L.spare ? "" : " " + (L.spare - S.lost.length) + " more may be lost.")); renderHud(); }
     });
     if (state === "cheer") { cheerT += dt; if (cheerT > 900) lastCall(); return; }
     if (S.judged) return;
@@ -341,6 +342,7 @@
   function fit() {
     var play = $("#play"); if (!play || play.hidden) return;
     cv.style.height = "";
+    if (window.matchMedia && matchMedia("(min-width: 900px)").matches) { cv.style.height = Math.max(360, Math.min(640, Math.floor(window.innerHeight - (play.getBoundingClientRect().top + window.scrollY) - 28))) + "px"; return; }
     var rest = play.getBoundingClientRect().height - cv.getBoundingClientRect().height, top = play.getBoundingClientRect().top + window.scrollY;
     cv.style.height = Math.max(220, Math.min(640, Math.floor(window.innerHeight - top - rest - 6))) + "px";
   }
@@ -359,12 +361,21 @@
     var vh = H / k, top = DECK_Y + 70 - vh / zoom; // the canvas may be shorter than 520 units on small screens
     var X = function (x) { return (x * zoom + VW / 2) * k; }, Y = function (y) { return (y - top) * zoom * k; }, kz = k * zoom;
     cx.setTransform(1, 0, 0, 1, 0, 0);
+    // The ship reacts to its load: it sits lower as the stack grows and lists toward the heavy side. This is drawing only
+    // (the ship, its load line and the stack move together), so the physics and every score stay exactly as they were.
+    var ld = Math.max(0, Math.min(1.2, S.height / L.lineKm)), mass = 0, mx = 0;
+    pieces.forEach(function (b) { if (!b.mxGone && b.speed < 1.5) { mass += b.mass; mx += b.mass * b.position.x; } });
+    var lean = mass ? Math.max(-1, Math.min(1, 3 * mx / mass / (deckW() / 2))) : 0, ease = reduce ? 1 : 0.04;
+    listA += (0.035 * lean * Math.min(1, ld * 1.2) - listA) * ease; sinkV += (5 * ld - sinkV) * ease;
+    var pvx = X(0), pvy = Y(WATER), ca = Math.cos(listA), sa = Math.sin(listA);
+    var shipFrame = function () { cx.setTransform(ca, sa, -sa, ca, pvx - pvx * ca + pvy * sa, pvy - pvx * sa - pvy * ca + sinkV * kz); }, seaFrame = function () { cx.setTransform(1, 0, 0, 1, 0, 0); };
     cx.fillStyle = css("--sea", "#ffffff"); cx.fillRect(0, 0, W, H);
     cx.strokeStyle = css("--grat", "#c9e1ec"); cx.lineWidth = 1;
     for (var gx = -VW; gx <= VW; gx += 30) { cx.beginPath(); cx.moveTo(X(gx), 0); cx.lineTo(X(gx), H); cx.stroke(); }
     for (var gy = Math.ceil(top / 30) * 30; gy < top + vh / zoom; gy += 30) { cx.beginPath(); cx.moveTo(0, Y(gy)); cx.lineTo(W, Y(gy)); cx.stroke(); }
     var font = css("--font", "sans-serif"), ink = css("--ink", "#000"), accent = css("--accent", "#b4237d");
     // the load line: dashed until the stack is over it, then solid while it holds
+    shipFrame();
     var over = S.height >= L.lineKm && S.i >= need(), cleared = S.judged && S.cleared;
     cx.strokeStyle = accent; cx.lineWidth = (over || cleared ? 3.5 : 2) * k / 1.5;
     cx.setLineDash(over || cleared ? [] : [8 * k / 2, 6 * k / 2]);
@@ -372,10 +383,12 @@
     cx.fillStyle = accent; cx.font = "800 " + 12 * k + "px " + font;
     cx.fillText("Load line · " + fmt(L.lineKm) + " km", 6 * k, Y(lineY) - 5 * k);
     // the sea
+    seaFrame();
     var wave = reduce ? 0 : 3 * Math.sin(time / 600);
     cx.fillStyle = css("--tint-2", "#a9d3e8");
     cx.beginPath(); cx.moveTo(0, Y(WATER + wave)); for (var sx = -VW; sx <= VW; sx += 20) cx.lineTo(X(sx), Y(WATER + wave + (reduce ? 0 : 2.5 * Math.sin(sx / 30 + time / 500)))); cx.lineTo(W, H); cx.lineTo(0, H); cx.closePath(); cx.fill();
     // the ship
+    shipFrame();
     var dk = ship.parts[1]; cx.save(); cx.translate(X(dk.position.x), Y(dk.position.y)); cx.rotate(ship.angle);
     var dw = deckW() * kz, u = kz;
     cx.fillStyle = "#8a5a2b"; cx.strokeStyle = ink; cx.lineWidth = 2 * k / 1.2;
@@ -422,9 +435,11 @@
     cx.fillStyle = accent; cx.fillRect(gx0, Y(DECK_Y) - gh * frac, 8 * k, gh * frac);
     // a tick and the figure at the stack's highest point, so the reading and the drawing can be compared at a glance
     if (S.height > 0 && !cleared) { var ty = Y(DECK_Y - S.height * S.k); cx.strokeStyle = ink; cx.lineWidth = 1.5 * k / 1.2; cx.beginPath(); cx.moveTo(gx0 - 26 * k, ty); cx.lineTo(gx0 + 8 * k, ty); cx.stroke(); cx.fillStyle = ink; cx.font = "700 " + 10 * k + "px " + font; cx.textAlign = "right"; cx.fillText(fmt(S.height) + " km", gx0 - 2 * k, ty - 3 * k); }
+    seaFrame();
     cx.textAlign = "center"; cx.fillStyle = ink;
     if (cleared) { var pulse = reduce ? 1 : 1 + 0.12 * Math.sin(cheerT / 90); cx.font = "800 " + 30 * k * pulse + "px " + font; cx.fillStyle = accent; cx.fillText("Loaded!", W / 2, Y(lineY) - 22 * k); }
     else if (holdT > 0) { cx.font = "800 " + 24 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Hold " + Math.max(0, (HOLD - holdT) / 1000).toFixed(1), W / 2, Y(lineY) - 22 * k); }
+    else if (S.height >= L.lineKm && S.i < need() && !S.judged) { cx.font = "800 " + 15 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Load " + (need() - S.i) + " more before the line counts", W / 2, Y(lineY) - 22 * k); } // why it hasn't cleared
     cx.textAlign = "left";
     // the next country, small, in the corner
     var ni = S.i + (hover || state === "fall" ? 1 : 0), nx = L.list[ni] && byCC[L.list[ni]];
@@ -443,9 +458,10 @@
   function renderName() {
     var box = $("#nameBox");
     box.classList.remove("right", "wrong"); $("#nameSay").textContent = "";
-    if (!asked) { $("#nameQ").textContent = "Place a country, then name it for +" + nameBonus() + "."; $("#nameOpts").hidden = true; $("#nameType").hidden = true; return; }
+    $("#skipName").hidden = !asked;
+    if (!asked) { $("#nameQ").textContent = "Place a country, then name it for +" + nameBonus() + "."; $("#nameOpts").hidden = true; $("#nameOpts").innerHTML = ""; $("#nameType").hidden = true; return; }
     var s = asked.s;
-    $("#nameQ").textContent = "Which country did you just place? (+" + nameBonus() + ")";
+    $("#nameQ").textContent = "Which country was that? +" + nameBonus();
     $("#nameSay").textContent = "";
     if (L.name === "pick") {
       $("#nameType").hidden = true; $("#nameOpts").hidden = false;
@@ -455,14 +471,14 @@
       var opts = shuffle([s].concat(shuffle(same, r).slice(0, 3)), r);
       $("#nameOpts").innerHTML = opts.map(function (o) { return '<button type="button" class="opt" data-cc="' + o.cc + '">' + o.n + "</button>"; }).join("");
     } else {
-      $("#nameOpts").hidden = true; $("#nameType").hidden = false;
+      $("#nameOpts").hidden = true; $("#nameOpts").innerHTML = ""; $("#nameType").hidden = false;
       $("#nin").value = ""; $("#nin").disabled = false; $("#nsugs").innerHTML = "";
     }
     box.classList.remove("right", "wrong");
   }
   function markName(ok, skipped) {
     if (!asked || asked.answer !== null) return;
-    asked.answer = ok; S.named.push(ok ? 1 : 0); if (asked.body) asked.body.mxShow = true;
+    asked.answer = ok; S.named.push(ok ? 1 : 0); $("#skipName").hidden = true; if (asked.body) asked.body.mxShow = true;
     var s = asked.s, box = $("#nameBox");
     box.classList.add(ok ? "right" : "wrong");
     $("#nameSay").textContent = ok ? "Right: " + s.n + ". +" + nameBonus() : skipped ? "Unnamed: that was " + s.n + "." : "It's " + s.n + ".";
@@ -479,9 +495,9 @@
     var kinds = ["shape"]; if (s.c) kinds.push("capital"); if (s.nb && s.nb.length) kinds.push("neighbour"); if (CONT.indexOf(s.r) >= 0) kinds.push("continent");
     var kind = kinds[Math.floor(r() * kinds.length)], others = SHAPES.filter(function (x) { return x.cc !== s.cc && x.a > 2000; }), q;
     if (kind === "shape") { var same = others.filter(function (x) { return x.r === s.r; }); q = { ask: "Which country is this?", right: s.n, opts: shuffle(same.length >= 3 ? same : others, r).slice(0, 3).map(function (x) { return x.n; }), why: "This is " + s.n + "." }; }
-    else if (kind === "capital") { var caps = shuffle(others.filter(function (x) { return x.c && x.c !== s.c && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.c; }); q = { ask: "What is the capital of " + s.n + "?", right: s.c, opts: caps, why: "The capital of " + s.n + " is " + s.c + "." }; }
-    else if (kind === "continent") { q = { ask: "Which continent is " + s.n + " in?", right: s.r, opts: shuffle(CONT.filter(function (c) { return c !== s.r; }), r).slice(0, 3), why: s.n + " is in " + s.r + "." }; }
-    else { var nbr = byCC[s.nb[Math.floor(r() * s.nb.length)]], not = shuffle(others.filter(function (x) { return s.nb.indexOf(x.cc) < 0 && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.n; }); q = { ask: "Which of these borders " + s.n + "?", right: nbr.n, opts: not, why: nbr.n + " borders " + s.n + "." }; }
+    else if (kind === "capital") { var caps = shuffle(others.filter(function (x) { return x.c && x.c !== s.c && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.c; }); q = { ask: "What is the capital of this country?", right: s.c, opts: caps, why: "The capital of " + s.n + " is " + s.c + "." }; }
+    else if (kind === "continent") { q = { ask: "Which continent is this country in?", right: s.r, opts: shuffle(CONT.filter(function (c) { return c !== s.r; }), r).slice(0, 3), why: s.n + " is in " + s.r + "." }; }
+    else { var nbr = byCC[s.nb[Math.floor(r() * s.nb.length)]], not = shuffle(others.filter(function (x) { return s.nb.indexOf(x.cc) < 0 && x.r === s.r; }), r).slice(0, 3).map(function (x) { return x.n; }); q = { ask: "Which of these borders this country?", right: nbr.n, opts: not, why: nbr.n + " borders " + s.n + "." }; }
     if (q.opts.length < 3) return earnQuestion(s, function () { return 0; }); // fall back to the outline question
     q.kind = kind; q.all = shuffle([q.right].concat(q.opts), r);
     return q;
@@ -507,7 +523,7 @@
 
   // a name is worth 10 points in a Daily or practice run (where the levels are the score) and 100 on a voyage
   function nameBonus() { return RUN ? 10 : 100; }
-  function answer(cc) { if (!asked || asked.answer !== null || (state !== "aim" && state !== "last")) return; markName(cc === asked.s.cc); if (state === "last") setTimeout(function () { if (state === "last") finish(); }, 700); }
+  function answer(cc) { if (!asked || asked.answer !== null || S.over) return; markName(cc === asked.s.cc); }
 
   // ---------- HUD, end ----------
   function named() { return S.named.reduce(function (a, b) { return a + b; }, 0); }
@@ -516,7 +532,8 @@
     $("#hPieces").textContent = Math.max(0, L.list.length - S.i - (state === "fall" ? 1 : 0));
     $("#hHeight").textContent = fmt(S.height) + " of " + fmt(L.lineKm);
     $("#hNamed").textContent = named();
-    $("#hLost").textContent = L.tut ? S.lost.length : S.lost.length + " of " + L.spare;
+    $("#hLost").textContent = L.tut ? S.lost.length : S.lost.length > L.spare ? S.lost.length + ": one too many" : S.lost.length + " of " + L.spare;
+    var more = need() - S.i; $("#hNeed").textContent = S.judged ? "" : more > 0 ? "load " + more + " more" : "hold above the line";
   }
   function stars() {
     if (!S.cleared) return 0;
@@ -544,13 +561,16 @@
     $("#retryBtn").hidden = false; $("#retryBtn").textContent = "Try this voyage again";
     showDone();
   }
+  function clearToast() { clearTimeout(tT); $("#toast").classList.remove("show"); $("#toast").textContent = ""; }
   function showDone() {
+    clearToast();
     $("#play").hidden = true; $("#done").hidden = false; renderChart();
     setTimeout(function () { var t = $("#doneTitle"); t.setAttribute("tabindex", "-1"); t.focus(); }, 30);
   }
   // one level of a run (daily, practice or tutorial) has ended
   function runStep() {
     var ok = S.cleared, r = RUN;
+    if (r.mode !== "tut" && (ok || !r.pic)) r.pic = stackShot(); // the picture of the day: the last stack that stood
     r.named += named(); r.lost += S.lost.length;
     if (r.mode === "tut") {
       if (ok) { SFX.line(); r.lvl++; } else { SFX.fail(); toast("Not quite: try that one again."); }
@@ -558,27 +578,31 @@
       setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
     }
     if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
-    else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast("Below the line. " + r.lives + (r.lives === 1 ? " life" : " lives") + " left: a fresh cargo for level " + r.lvl + "."); }
-    if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt }; store(); }
-    if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(genLevel(r.seed, r.lvl, r.attempt)); }, 900); return; }
+    else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast("Below the line. " + r.lives + (r.lives === 1 ? " life" : " lives") + " left: the same cargo again for level " + r.lvl + "."); }
+    if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt, pic: r.pic }; store(); }
+    if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
     endRun();
   }
   function endRun() {
     var r = RUN, pts = runPoints(r), reached = r.cleared + 1, st = save.stats;
     if (r.mode === "daily") {
       if (!save.results[dayNo]) {
-        save.results[dayNo] = { score: pts, lvl: r.cleared, named: r.named, lost: r.lost, marks: r.marks.join("") };
+        save.results[dayNo] = { score: pts, lvl: r.cleared, named: r.named, lost: r.lost, marks: r.marks.join(""), pic: r.pic };
+        Object.keys(save.results).forEach(function (d) { if (+d < dayNo - 13 && save.results[d]) delete save.results[d].pic; }); // keep two weeks of pictures
         st.runs = (st.runs || 0) + 1; st.sum = (st.sum || 0) + r.cleared; st.best = Math.max(st.best || 0, r.cleared);
       }
       delete save.run;
+    } else if (r.mode === "captain") {
+      save.captain = save.captain || {}; if (!save.captain[dayNo]) save.captain[dayNo] = { lvl: r.cleared, score: pts };
+      st.bestCaptain = Math.max(st.bestCaptain || 0, r.cleared);
     } else st.bestPractice = Math.max(st.bestPractice || 0, r.cleared);
     store();
     var res = r.mode === "daily" ? save.results[dayNo] : { score: pts, lvl: r.cleared, named: r.named, marks: r.marks.join("") };
-    $("#doneTitle").textContent = r.mode === "daily" ? "The stack gave out on level " + (res.lvl + 1) + "." : "Practice over on level " + reached + ".";
+    $("#doneTitle").textContent = r.mode === "daily" ? "The stack gave out on level " + (res.lvl + 1) + "." : r.mode === "captain" ? "Captain's run over on level " + reached + "." : "Practice over on level " + reached + ".";
     $("#doneStars").hidden = true;
     $("#bigScore").textContent = res.lvl; $("#bigUnit").textContent = res.lvl === 1 ? "level cleared" : "levels cleared";
     $("#doneLine").textContent = fmt(res.score) + " points: " + res.lvl + " × 100 for the levels + " + res.named + " × 10 for the names.";
-    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " Next climb in " + untilMidnight() + ". Endless practice and the voyages are open any time." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
+    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " Next climb in " + untilMidnight() + ". Endless practice and the voyages are open any time." : r.mode === "captain" ? "The Captain's run is a Sunday extra on a harder sea: it never changes your Daily Ballast or your streak. Your best: " + (st.bestCaptain || 0) + " levels. Back next Sunday." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
     var share = $("#shareText"), sb = $("#shareBtn");
     share.hidden = sb.hidden = r.mode !== "daily";
     if (r.mode === "daily") share.textContent = shareText(dayNo, res);
@@ -586,27 +610,69 @@
     RUN = null;
     showDone();
   }
+  // ---------- today's cargo: the stack as a small picture (outlines only, no names) ----------
+  function stackShot() {
+    var out = [];
+    pieces.forEach(function (b) {
+      if (b.mxGone || b.position.y > DECK_Y + 40) return;
+      var c = Math.cos(b.angle), s = Math.sin(b.angle), row = [];
+      b.mxOutline.forEach(function (v) { row.push(Math.round(b.position.x + v.x * c - v.y * s), Math.round(b.position.y + v.x * s + v.y * c - DECK_Y)); });
+      out.push(row);
+    });
+    return { d: Math.round(deckW()), p: out };
+  }
+  function drawShot(c2, pic, x, y, w, h) {
+    if (!pic || !pic.p) return false;
+    var x0 = -pic.d / 2 - 14, x1 = pic.d / 2 + 14, y0 = -20, y1 = 26;
+    pic.p.forEach(function (row) { for (var i = 0; i < row.length; i += 2) { x0 = Math.min(x0, row[i]); x1 = Math.max(x1, row[i]); y0 = Math.min(y0, row[i + 1]); } });
+    var k = Math.min(w / (x1 - x0), h / (y1 - y0)), ox = x + (w - (x1 - x0) * k) / 2 - x0 * k, oy = y + h - y1 * k;
+    c2.save(); c2.lineJoin = "round"; c2.lineWidth = Math.max(1.5, k * 1.6); c2.strokeStyle = "#000";
+    c2.fillStyle = "#a9d3e8"; c2.fillRect(x, oy + 16 * k, w, h - (oy + 16 * k - y)); // the sea
+    c2.fillStyle = "#8a5a2b"; c2.beginPath(); c2.moveTo(ox + (-pic.d / 2 - 12) * k, oy); c2.lineTo(ox + (pic.d / 2 + 12) * k, oy); c2.lineTo(ox + (pic.d / 2 - 4) * k, oy + 24 * k); c2.lineTo(ox + (-pic.d / 2 + 4) * k, oy + 24 * k); c2.closePath(); c2.fill(); c2.stroke();
+    c2.fillStyle = "#f3d98a";
+    pic.p.forEach(function (row) { c2.beginPath(); for (var i = 0; i < row.length; i += 2) (i ? c2.lineTo : c2.moveTo).call(c2, ox + row[i] * k, oy + row[i + 1] * k); c2.closePath(); c2.fill(); c2.stroke(); });
+    c2.restore(); return true;
+  }
+  // the shared result card draws the stack instead of a row of marks
+  window.MX_SHARE_ART = function (c2, box) { var r = save.results[dayNo]; return !!(r && r.pic) && drawShot(c2, r.pic, box.x, box.y, box.w, box.h); };
+  function cargoPic() {
+    var r = save.results[dayNo], c = $("#cargoPic"), fig = $("#cargoFig"); if (!c || !fig) return;
+    fig.hidden = !(r && r.pic); if (fig.hidden) return;
+    var g = c.getContext("2d"); g.clearRect(0, 0, c.width, c.height); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); drawShot(g, r.pic, 8, 8, c.width - 16, c.height - 16);
+  }
   function statsLine() { var st = save.stats; return st.runs ? "Your best: level " + (st.best || 0) + " cleared. Average over " + st.runs + (st.runs === 1 ? " run: " : " runs: ") + (Math.round((st.sum || 0) / st.runs * 10) / 10) + "." : ""; }
   function shareText(n, res) {
-    var t = "Mapelago Ballast No. " + n + " \u{1F422} " + fmt(res.score) + " points\n" + res.marks + "\nCleared " + res.lvl + (res.lvl === 1 ? " level" : " levels") + " · " + res.named + " named\n" + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.ballast) || "How high can you load it?") + " mapelago.com/ballast.html#c-" + n + "-" + res.score;
+    var t = "Mapelago Ballast No. " + n + " \u{1F422} " + fmt(res.score) + " points\n" + String(res.marks || "").replace(/\u{1F7E9}|\u{1F7E8}/gu, "\u{1F4E6}").replace(/\u{1F7E5}/gu, "\u{1F30A}") + "\nLoaded " + res.lvl + (res.lvl === 1 ? " level" : " levels") + " · named " + res.named + (res.named === 1 ? " country" : " countries") + "\n" + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.ballast) || "How high can you load it?") + " mapelago.com/ballast.html#c-" + n + "-" + res.score;
     return window.MXS && MXS.beat ? MXS.beat.upgrade(t) : t;
   }
   function startDaily() {
     if (save.results[dayNo]) { home(); return; }
     var sv = save.run && save.run.day === dayNo ? save.run : null;
     RUN = newRun("daily", dayNo);
-    if (sv) { RUN.lvl = sv.lvl; RUN.lives = sv.lives; RUN.cleared = sv.cleared; RUN.named = sv.named; RUN.lost = sv.lost; RUN.marks = sv.marks || []; RUN.attempt = sv.attempt || 0; }
+    if (sv) { RUN.lvl = sv.lvl; RUN.lives = sv.lives; RUN.cleared = sv.cleared; RUN.named = sv.named; RUN.lost = sv.lost; RUN.marks = sv.marks || []; RUN.attempt = sv.attempt || 0; RUN.pic = sv.pic || null; }
     start(genLevel(RUN.seed, RUN.lvl, RUN.attempt));
+  }
+  // The Captain's run: on Sundays, one extra run on a harder sea (the Daily's level 5 is its level 1: swell and wind
+  // from the first load). It has its own result and best; the Daily Ballast, its score and the streak are untouched.
+  var CAPTAIN = 4;
+  function isSunday(n) { return new Date(EPOCH + (n - 1) * 864e5).getUTCDay() === 0; }
+  function runLevel(r) { return genLevel(r.seed, r.lvl + (r.mode === "captain" ? CAPTAIN : 0), r.attempt); }
+  function startCaptain() {
+    if (!isSunday(dayNo) || (save.captain && save.captain[dayNo])) { home(); return; }
+    RUN = newRun("captain", dayNo * 7 + 3); start(runLevel(RUN));
   }
   function startPractice() { RUN = newRun("practice", Math.floor(Math.random() * 1e9)); start(genLevel(RUN.seed, 1, 0)); }
   function startTutorial() { RUN = newRun("tut", 0); start(TUTORIAL[0]); }
   function home() {
-    stop(); RUN = null; $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
+    stop(); RUN = null; clearToast(); $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
     var r = save.results[dayNo], d = $("#dailyBtn");
     d.disabled = !!r; d.textContent = r ? "Daily Ballast done: " + r.lvl + (r.lvl === 1 ? " level" : " levels") + " cleared" : save.run && save.run.day === dayNo ? "Carry on today's Daily Ballast (level " + save.run.lvl + ")" : "Play today's Daily Ballast";
     $("#dailyNote").hidden = false;
     $("#dailyNote").textContent = (r ? "Next climb in " + untilMidnight() + ". " : cargoPreview(dayNo) + " ") + statsLine();
     $("#homeShare").hidden = !r; if (r) $("#homeShareText").textContent = shareText(dayNo, r);
+    cargoPic();
+    var cb = $("#captainBtn"), cr = save.captain && save.captain[dayNo];
+    if (cb) { cb.hidden = !isSunday(dayNo); cb.disabled = !!cr; cb.textContent = cr ? "Captain's run done: " + cr.lvl + (cr.lvl === 1 ? " level" : " levels") + " on the harder sea" : "Sunday's Captain's run: a harder sea"; }
   }
 
   // ---------- the level chart ----------
@@ -666,7 +732,7 @@
     $("#cwBtn").onclick = function () { turn(1); };
     $("#helpBtn").onclick = function () { var d = $("#helpDlg"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); };
     $("#helpClose").onclick = function () { var d = $("#helpDlg"); if (d.close) d.close(); else d.removeAttribute("open"); };
-    $("#dropBtn").onclick = drop; $("#contBtn").onclick = cont;
+    $("#dropBtn").onclick = drop; $("#contBtn").onclick = cont; $("#skipName").onclick = function () { if (asked && asked.answer === null) markName(false, true); };
     window.addEventListener("keydown", function (e) {
       if (/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
       if (state === "last" && (e.key === " " || e.key === "Enter") && !onLiveButton(e)) { cont(); e.preventDefault(); return; }
@@ -700,7 +766,7 @@
     $("#skipTut").hidden = true;
     $("#chartBtn").onclick = $("#chartBtn2").onclick = home;
     $("#dailyBtn").onclick = startDaily;
-    $("#practiceBtn").onclick = startPractice;
+    $("#practiceBtn").onclick = startPractice; if ($("#captainBtn")) $("#captainBtn").onclick = startCaptain;
     $("#tutBtn").onclick = startTutorial;
     $("#skipTut").onclick = function () { save.tut = 1; store(); RUN = null; startDaily(); };
     $("#homeShareBtn").onclick = async function () { var t = $("#homeShareText").textContent, b = this; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); } };
@@ -718,7 +784,7 @@
       // run the physics (no frames needed) until the dropped piece has landed and any hold countdown or final judging is over
       settle: function () { for (var n = 0; n < 1500 && !S.over && (state === "fall" || state === "wait" || state === "cheer" || holdT > 0); n++) step(1000 / 60); return state; },
       earn: function (right) { if (state === "earn") earn(right === false ? earnQ.all.findIndex(function (o) { return o !== earnQ.right; }) : earnQ.all.indexOf(earnQ.right)); }, earnQ: function () { return earnQ; }, hold: function () { return holdT; }, zoom: function () { return zoom; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);

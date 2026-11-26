@@ -427,6 +427,11 @@ a.act{text-decoration:none}
 .lvbtn.done{background:var(--tint)}.lvbtn:disabled{opacity:.5}
 .tipline{margin:0 0 6px;padding:6px 10px;line-height:1.25;border:var(--bw) solid var(--line);border-left:6px solid var(--accent);border-radius:var(--r);background:var(--paper);color:var(--ink);font-weight:700;font-size:14.5px}.tipline[hidden],#homeShare[hidden]{display:none}
 #done .panel{padding:10px 14px}#done h2{font-size:21px;line-height:1.15;margin:0 0 4px}#done .score{margin:2px 0 4px}#done .score b{font-size:40px}#done p{margin:0 0 6px}#done .share{padding:8px 10px;font-size:13px;line-height:1.3;margin:0 0 8px}#done .row2{margin:0 0 6px;gap:8px}#done .row2 .act{min-height:46px;font-size:15px}#done .note{font-size:12.5px;line-height:1.3}
+#captainBtn[hidden],#nameOpts[hidden],#nameType[hidden],#skipName[hidden]{display:none}
+.nq{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.nq #nameQ{flex:1;min-width:0}#skipName{flex:none;padding:0;font-size:13px}.hneed{font-weight:800;color:var(--accent-ink)}
+/* desktop: the sea on the left, everything else beside it */
+@media (min-width:900px){.app{max-width:960px}#play{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,1fr);gap:0 24px;align-items:start;align-content:start}#play>*{grid-column:2}#play>#stage{grid-column:1;grid-row:1 / span 9;margin:0}#chart,#done{max-width:560px;margin-left:auto;margin-right:auto}}
+#cargoFig{margin:0 0 10px;text-align:center}#cargoFig[hidden]{display:none}#cargoPic{width:160px;height:110px;border:var(--bw) solid var(--line);border-radius:var(--r);background:#fff}#cargoFig figcaption{font-size:13px;font-weight:700;color:var(--ground-ink-2)}
 #doneStars{font-size:34px;color:var(--accent-ink);letter-spacing:4px;margin:6px 0}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -442,10 +447,10 @@ a.act{text-decoration:none}
     <div class="lvhead"><h2 id="lvlTitle"></h2><span class="hbtns"><button class="linkbtn" id="skipTut" type="button" hidden>Skip</button><button class="linkbtn" id="helpBtn" type="button" aria-label="How to play">?</button><button class="linkbtn" id="chartBtn" type="button">Menu</button></span></div>
     <p id="lvlMeta"></p>
     <p id="tip" class="tipline" hidden></p>
-    <p class="hud" aria-label="This load"><span>Stack <b id="hHeight">0</b> km</span><span><b id="hPieces"></b> to load</span><span>Lost <b id="hLost">0</b></span><span><b id="hNamed">0</b> right</span></p>
+    <p class="hud" aria-label="This load"><span>Stack <b id="hHeight">0</b> km</span><span><b id="hPieces"></b> to load</span><span>Lost <b id="hLost">0</b></span><span><b id="hNamed">0</b> right</span><span id="hNeed" class="hneed"></span></p>
     <div id="stage"><canvas id="sea" role="img" aria-label="The ship's deck, the stack of countries and the load line. Press and drag to move the country in hand; let go to drop it; tap to turn it."></canvas></div>
     <section id="nameBox" class="panel" aria-label="Question">
-      <p id="nameQ"></p>
+      <div class="nq"><p id="nameQ"></p><button class="linkbtn" id="skipName" type="button" hidden>Skip naming</button></div>
       <div id="nameOpts"></div>
       <div id="nameType" hidden>
         <label class="sr" for="nin">Country name</label>
@@ -472,6 +477,8 @@ a.act{text-decoration:none}
       <li>After you place a country, name it for bonus points. A wrong guess costs nothing and never holds up the next piece.</li>
       <li>Wind pushes the stack sideways; the swell rocks the deck. Build low and against the wind.</li>
       <li>You may lose two countries overboard; the third ends the load. A Daily run has three lives.</li>
+      <li>The ship sits lower as you load it and lists toward the heavy side.</li>
+      <li>On Sundays there is a Captain's run: one extra run on a harder sea, apart from your Daily and your streak.</li>
     </ul>
     <p><button class="act" id="helpClose" type="button">Got it</button></p>
   </dialog>
@@ -494,7 +501,9 @@ a.act{text-decoration:none}
   <section id="chart" hidden aria-labelledby="chartH">
     <p class="lede">Load real countries onto the ship and hold the stack above the load line.</p>
     <p><button class="act" id="dailyBtn" type="button">Play today's Daily Ballast</button></p>
+    <figure id="cargoFig" hidden><canvas id="cargoPic" width="320" height="220" role="img" aria-label="Today's cargo: the outline of your stack on the deck"></canvas><figcaption>Today's cargo</figcaption></figure>
     <div id="homeShare" hidden><pre class="share" id="homeShareText"></pre><p><button class="act plain" id="homeShareBtn" type="button">Copy result</button></p></div>
+    <p><button class="act plain" id="captainBtn" type="button" hidden>Sunday's Captain's run: a harder sea</button></p>
     <p class="row2"><button class="act plain" id="practiceBtn" type="button">Endless practice</button><button class="act plain" id="tutBtn" type="button">Tutorial</button></p>
     <p class="note">Daily Ballast is one run a day, the same cargo for everyone: level 1 is easy, every level after is harder, and you have three lives. Practice is the same climb with a random cargo and doesn't count for your streak.</p>
     <div class="lvhead"><h2 id="chartH">Voyages</h2><span id="chartStars" class="note"></span></div>
@@ -531,13 +540,13 @@ a.act{text-decoration:none}
   <noscript><p class="note">This game needs JavaScript to run. Turn it on in your browser settings, then reload this page.</p></noscript>
 </div>
 <div id="toast" role="status"></div>
-<script src="copy.js?v=0.15.33"></script>
-<script src="site.js?v=0.15.33"></script>
-<script src="vendor/matter.min.js?v=0.15.33"></script>
-<script src="vendor/decomp.min.js?v=0.15.33"></script>
-<script src="ballast-data.js?v=0.15.33"></script>
+<script src="copy.js?v=0.15.37"></script>
+<script src="site.js?v=0.15.37"></script>
+<script src="vendor/matter.min.js?v=0.15.37"></script>
+<script src="vendor/decomp.min.js?v=0.15.37"></script>
+<script src="ballast-data.js?v=0.15.37"></script>
 <script>window.MX_TURTLE_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"38\" height=\"38\" aria-hidden=\"true\">\n  \n  <g fill=\"#9fc98b\" stroke=\"#000000\" stroke-width=\"2.2\" stroke-linejoin=\"round\">\n    <path d=\"M45.5 24h9v12h-9z\"/>\n    <path d=\"M50 8c6 0 9.5 5 9.5 10.5S56 28 50 28s-9.5-4-9.5-9.5S44 8 50 8z\"/>\n    <path d=\"M32 41C21 30 9 30 8.5 37.5c-.4 5.6 9 10 23.5 12z\"/>\n    <path d=\"M68 41c11-11 23-11 23.5-3.5.4 5.6-9 10-23.5 12z\"/>\n    <path d=\"M35 73c-9 4-16 11-12 15 4.5 3.8 12-3 17-10z\"/>\n    <path d=\"M65 73c9 4 16 11 12 15-4.5 3.8-12-3-17-10z\"/>\n    <path d=\"M46.5 80 50 91l3.5-11z\"/>\n  </g>\n  <circle cx=\"46\" cy=\"16.5\" r=\"1.8\" fill=\"#000000\"/><circle cx=\"54\" cy=\"16.5\" r=\"1.8\" fill=\"#000000\"/>\n  <rect x=\"29\" y=\"34\" width=\"42\" height=\"43\" rx=\"15\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"2.4\"/>\n  <rect x=\"34.2\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#dcedf5\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"55.800000000000004\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#a9d3e8\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"34.2\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#9fc98b\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#b4237d\" stroke=\"#000000\" stroke-width=\"1.4\"/><path d=\"M50.4 58.9c-.7-1.4-3-3.3-3-5.2a3 3 0 0 1 6 0c0 1.9-2.3 3.8-3 5.2z\" fill=\"#ffffff\"/><circle cx=\"50.4\" cy=\"53.8\" r=\"1\" fill=\"#b4237d\"/><rect x=\"55.800000000000004\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#f3d98a\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"34.2\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#a9d3e8\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#dcedf5\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"55.800000000000004\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"1.4\"/>\n</svg>";window.MX_BALLAST_BOT={"eu1":2054,"eu2":871,"eu3":536,"eu4":1974,"eu5":436,"af1":2617,"af2":1441,"af3":2406,"af4":847,"af5":3209,"as1":5251,"as2":1886,"as3":2329,"as4":666,"as5":1265,"am1":3095,"am2":878,"am3":4869,"am4":1871,"am5":578,"oc1":3493,"oc2":232,"oc3":1303,"wo1":4325,"wo2":1103,"wo3":2438,"wo4":3200,"wo5":1261,"wo6":9487,"wo7":1488};</script>
-<script src="ballast.js?v=0.15.33"></script>
-<script src="analytics.js?v=0.15.33" defer></script>
+<script src="ballast.js?v=0.15.37"></script>
+<script src="analytics.js?v=0.15.37" defer></script>
 </body>
 </html>

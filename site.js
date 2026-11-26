@@ -141,7 +141,33 @@
       return s;
     });
   }
-  window.MXS = { streak: streak, info: info, today: today, games: GAMES };
+  // One streak for the whole site: a day counts when any game was finished that day (freezes work as they do per game).
+  function siteStreak() {
+    var all = info(), now = today(), days = {}, n = 0;
+    all.forEach(function (s) { Object.keys(s.res).forEach(function (d) { if (+d > 0 && s.res[d]) days[d] = 1; }); if (s.doneToday) n++; });
+    var st = streak(days, now); st.today = !!days[now]; st.doneToday = n; st.total = all.length; return st;
+  }
+  function untilNext() { var d = new Date(), m = Math.max(1, Math.ceil((new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1) - d) / 60000)); return Math.floor(m / 60) + "h " + (m % 60) + "m"; }
+  // the line every finish screen carries
+  function dailyText() {
+    var st = siteStreak();
+    return (st.today ? "Played today: day " + st.cur + " of your Mapelago streak." : st.cur ? "Your Mapelago streak: " + st.cur + (st.cur === 1 ? " day." : " days.") : "Finish any game to start a streak.") + " Next puzzles in " + untilNext() + ".";
+  }
+  function siteText(sst) { return sst.today ? "Played today: " + sst.doneToday + " of " + sst.total + " games. Day " + sst.cur + " of your streak." : sst.cur ? "Your streak is " + sst.cur + (sst.cur === 1 ? " day" : " days") + ": finish any game today to keep it." : "Finish any game today to start your streak."; }
+  function dailyLine() {
+    // a game was just finished: the list of today's games is drawn again, so no card still says "You're here" or "last game left"
+    var sec0 = document.querySelector(".mx-today"), app0 = document.querySelector(".app");
+    if (sec0 && app0 && sec0.getAttribute("data-sig") !== info().map(function (x) { return x.doneToday ? 1 : 0; }).join("")) { sec0.parentNode.removeChild(sec0); today_games(app0); }
+    var top = document.querySelector(".mx-site"); if (top) { var tx = siteText(siteStreak()); if (top.textContent !== tx) top.textContent = tx; }
+    var done = document.getElementById("done"), end = document.getElementById("endModal"), box = null, after = null;
+    if (done && !done.hidden) { box = done.querySelector(".panel") || done; after = box.querySelector(".row2"); }
+    else if (end && !end.hidden) { box = document.getElementById("endBody"); after = box && box.querySelector(".also"); }
+    if (!box) return;
+    var p = box.querySelector(".mx-daily"), t = dailyText();
+    if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
+    if (p.textContent !== t) p.textContent = t;
+  }
+  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext };
 
   var CSS = '.mx-risk{display:block;margin:0 0 10px;line-height:1.45;padding:8px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000);font-size:14px;font-weight:600}'
     + '.mx-risk a{color:inherit;font-weight:800}'
@@ -157,7 +183,7 @@
     + '.mxs textarea{width:100%;min-height:76px;box-sizing:border-box;font:12px ui-monospace,monospace;border:1.5px solid var(--line,#000);border-radius:8px;padding:6px}'
     + '.mxs .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.mxs .btns button{min-height:44px;padding:0 14px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r-btn,12px);background:var(--paper,#fff);color:inherit;font:inherit;font-weight:800;cursor:pointer}'
     + '.mxs .btns .go{background:var(--accent,#b4237d);color:var(--on-accent,#fff)}'
-    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}'
+    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}.mx-daily{margin:6px 0;font-size:13.5px;font-weight:700;line-height:1.3}#done .panel>.mx-daily,#endBody>.mx-daily{order:4}#done:has(.mx-daily) .panel>.next,#endBody:has(.mx-daily)>.next{display:none}.mx-site{font-weight:700}'
     + '@keyframes mxFirst{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 5px var(--accent,#b4237d)}}.mx-fresh [data-first]{animation:mxFirst 1.6s ease-in-out infinite;border-radius:var(--r-btn,12px)}@media (prefers-reduced-motion:reduce){.mx-fresh [data-first]{animation:none;box-shadow:0 0 0 4px var(--accent,#b4237d)}}'
     + '.mx-today{grid-column:1/-1;margin:36px 0 0}.mx-today h2{margin:0 0 10px;font-size:20px}'
     + '.mx-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}'
@@ -303,10 +329,13 @@
     if (/points$/.test(score)) { x.font = "600 46px " + font; x.fillStyle = "#3d4a52"; x.fillText("points", 116, 590); }
     // marks as shapes, so they read the same on every phone
     var marks = Array.from(lines[1] || "").filter(function (ch) { return /\S/.test(ch) && ch !== "️"; }), size = Math.min(110, Math.floor((W - 220) / Math.max(1, marks.length)) - 12);
+    // a game can draw its own picture in place of the marks (Ballast: the outline of the stack)
+    var art = false; try { art = !!(window.MX_SHARE_ART && window.MX_SHARE_ART(x, { x: 110, y: 640, w: W - 220, h: 380 })); } catch (e) { art = false; }
+    if (art) marks = [];
     marks.forEach(function (m, i) {
       var px = 110 + i * (size + 12), py = 680;
       x.lineWidth = 5; x.strokeStyle = "#000"; x.setLineDash([]);
-      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8", "\u{1F4A1}": "#f3d98a" }[m];
+      var fill = { "✅": "#b4237d", "\u{1F7E6}": "#2c7bb6", "\u{1F7E8}": "#f3d98a", "⬜": "#ffffff", "⚓": "#a9d3e8", "\u{1F4A1}": "#f3d98a", "\u{1F97E}": "#b4237d", "\u{1F9ED}": "#f3d98a", "\u{1F30A}": "#a9d3e8", "\u{1F419}": "#2c7bb6", "\u{1F41F}": "#f3d98a" }[m];
       if (m === "❌") { x.setLineDash([12, 8]); x.strokeRect(px, py, size, size); x.setLineDash([]); x.beginPath(); x.moveTo(px + size * .28, py + size * .28); x.lineTo(px + size * .72, py + size * .72); x.moveTo(px + size * .72, py + size * .28); x.lineTo(px + size * .28, py + size * .72); x.stroke(); return; }
       x.fillStyle = fill || MXFILL[m] || "#ffffff"; x.fillRect(px, py, size, size); x.strokeRect(px, py, size, size); // MXFILL: Logbook's heat marks
       if (m === "✅") { x.strokeStyle = "#fff"; x.lineWidth = 8; x.beginPath(); x.moveTo(px + size * .25, py + size * .52); x.lineTo(px + size * .43, py + size * .7); x.lineTo(px + size * .76, py + size * .3); x.stroke(); }
@@ -441,6 +470,10 @@
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
       return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
     }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">' + (meLeft ? "This is the last game left today." : "Every game done today. See you tomorrow.") + '</p>');
+    // the shared streak, under the heading
+    var sst = siteStreak(), sp = document.createElement("p"); sp.className = "mx-next mx-site";
+    sp.textContent = siteText(sst);
+    sec.insertBefore(sp, sec.querySelector(".mx-cards"));
     var tt = todayText();
     if (tt.n >= 2) {
       var share = document.createElement("p"); share.className = "mx-next";
@@ -453,6 +486,7 @@
       };
     }
     var foot = app.querySelector("footer");
+    sec.setAttribute("data-sig", all.map(function (x) { return x.doneToday ? 1 : 0; }).join(""));
     if (foot && foot.parentNode === app) app.insertBefore(sec, foot); else app.appendChild(sec);
   }
 
@@ -623,7 +657,7 @@
     new MutationObserver(function () {
       if (pending) return; pending = true;
       setTimeout(function () {
-        pending = false; upgradeShown(); nextButtons();
+        pending = false; upgradeShown(); nextButtons(); dailyLine();
         var done = document.getElementById("done"), end = document.getElementById("endModal");
         if (done && !done.hidden) compareInto(done, document.getElementById("shareText"));
         if (end && !end.hidden) compareInto(document.getElementById("endBody"), document.querySelector("#endBody .share"));
@@ -683,5 +717,6 @@
       nav.parentNode.insertBefore(b, nav.nextSibling);
     }
   }
+  setInterval(function () { if (document.querySelector(".mx-daily, .mx-site")) dailyLine(); }, 30000);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount); else mount();
 })();
