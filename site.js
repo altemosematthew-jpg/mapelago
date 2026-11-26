@@ -695,6 +695,40 @@
     el.addEventListener("pointerdown", done, true); el.addEventListener("keydown", done, true);
   }
 
+  // Sound on every game: a page whose game has no sound button of its own gets the shared one (the same on/off setting
+  // as everywhere else) and three small sounds: a tap on any game button, a rise for a right answer or a finished
+  // round, a low note for a wrong answer.
+  var SND_ON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>';
+  var SND_OFF = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+  function soundOff() { try { return localStorage.getItem("dailycity:sound") === "off"; } catch (e) { return false; } }
+  var actx = null;
+  function tone(f, len, vol, type, to) {
+    if (soundOff()) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume();
+      var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+      o.type = type || "sine"; o.frequency.setValueAtTime(f, t); if (to) o.frequency.exponentialRampToValueAtTime(to, t + len);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + len + 0.02);
+    } catch (e) {}
+  }
+  var SFX = { tap: function () { tone(520, 0.05, 0.05, "triangle"); }, right: function () { tone(523, 0.12, 0.08, "sine", 784); }, wrong: function () { tone(196, 0.18, 0.07, "sawtooth", 147); }, win: function () { tone(523, 0.1, 0.08); setTimeout(function () { tone(659, 0.1, 0.08); }, 110); setTimeout(function () { tone(784, 0.2, 0.09); }, 220); } };
+  function soundButton() {
+    var top = document.querySelector("header.top"), app = document.querySelector(".app"); if (!top || !app || !here()) return;
+    if (document.querySelector('#soundBtn, #mxSound, header.top [aria-label^="Sound"], header.top [aria-label*="sound"]')) return; // the game has its own
+    var tools = top.querySelector(".tools"); if (!tools) { tools = document.createElement("div"); tools.className = "tools"; top.appendChild(tools); }
+    var b = document.createElement("button"); b.type = "button"; b.className = "tool"; b.id = "mxSound";
+    var draw = function () { var off = soundOff(); b.innerHTML = off ? SND_OFF : SND_ON; b.setAttribute("aria-pressed", off ? "true" : "false"); b.setAttribute("aria-label", off ? "Sound is off. Turn sound on" : "Sound is on. Turn sound off"); };
+    b.onclick = function () { try { if (soundOff()) localStorage.removeItem("dailycity:sound"); else localStorage.setItem("dailycity:sound", "off"); } catch (e) {} draw(); SFX.tap(); };
+    draw(); tools.insertBefore(b, tools.firstChild);
+    app.addEventListener("click", function (e) { var t = e.target.closest("button, .opt, .pick"); if (t && t !== b && !t.closest("header, footer, .mx-today")) SFX.tap(); }, true);
+    var lastAt = 0, mark = function (el) {
+      if (!el.classList || Date.now() - lastAt < 150) return; var c = " " + el.className + " ";
+      if (/ (right|correct|good|win) /.test(c)) { lastAt = Date.now(); SFX.right(); } else if (/ (wrong|bad|miss|lost) /.test(c)) { lastAt = Date.now(); SFX.wrong(); }
+    };
+    new MutationObserver(function (ms) { ms.forEach(function (m) { if (m.type === "attributes" && m.attributeName === "class") mark(m.target); else if (m.type === "attributes" && m.target.id === "done" && !m.target.hidden) SFX.win(); }); }).observe(app, { subtree: true, attributes: true, attributeFilter: ["class", "hidden"] });
+  }
+
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
@@ -705,7 +739,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove();
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); setTimeout(soundButton, 900); // after any game has added its own
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');

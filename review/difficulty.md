@@ -18,7 +18,23 @@ Target: inside a round, about 90%, 65% and 35% right by thirds; a median score o
 
 **Ballast (Daily).** The test bot, 36 runs: levels 1-4 cleared every time, 5-6 about 85%, 7-9 about 60%, a quarter or less past level 10. Dials in order: more pieces and a higher line, then swell from level 3, wind from level 4, typed names from level 5, long shapes from level 7.
 
-## Not measured yet (no bot)
+## Simple bots for the other games (one run each; every figure depends on the stated player)
+
+| Game | The simple player | Right by thirds | Median score | Standard 5 (median 60-80%) | Standard 6 (ramp) |
+|---|---|---|---|---|---|
+| Voyage | Uses the game's own hardness figure for each question (0.14 on island 1 rising to 0.89 on island 10): certain at 0, a one-in-four guess at 1. | 83 / 63 / 41% | 150 of 1,000, whether it anchors after island 3, 5, 6, 8 or never | Fail, from the hard side: 15% of the maximum. Where it anchors hardly changes the result (mean 138 to 153), which is the grader's "the choice is meaningless". | Pass: the ramp is already there. |
+| Stamps | Knows 70% of questions, every wedge alike. | flat | 6 of 6 in 57% of rounds: two tries a wedge stamp it 91% of the time | Fail: the median is the maximum. | Fail: no ramp. |
+| Fathoms | Names an answer of average fame from the list. | from No. 20 the lists shrink through the day (26 answers down to 6 on No. 20) | not simulated: depth depends on which answer, not on right or wrong | Not graded | Pass from No. 20 |
+| Dead Reckoning | - | five difficulty tiers, one per round, easiest first | not simulated: needs a model of how far off a guess lands | Not graded | Pass by construction |
+| Logbook | - | question kinds harden through the round; a level per weekday in the data | not simulated | Not graded | Pass by construction |
+| Crossings | - | one puzzle a day; par (the shortest route) sets the difficulty, named by weekday | not simulated | Not graded | Weekly arc: pass |
+| Mystery city, Mystery country | Simulated when the scoring was set (`review/scoring.md`). | clue by clue | see that file | Not re-run | Weekly arc on the city: pass |
+
+## For Matthew to decide (scoring changes, so not made here)
+- **Voyage:** the points ladder, not the questions, is the problem. Either flatten the hardness of islands 4 to 7 or pay more for the early islands, so a typical player banks 600 to 800; and make anchoring matter (for example, lose half of what is above the last harbor rather than all of it).
+- **Stamps:** score first-try stamps only (out of 6), keep the second try as a consolation mark; and order the wedges from the best-known subject to the most obscure.
+
+## Structure of each game (for reference)
 
 | Game | Ramp inside the round | Weekly arc | What I expect |
 |---|---|---|---|
