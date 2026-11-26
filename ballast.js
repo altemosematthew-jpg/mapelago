@@ -215,6 +215,7 @@
     $("#play").hidden = false; $("#done").hidden = true; $("#chart").hidden = true;
     resize();
     next();
+    fit(); resize(); // again now that the readouts are filled in
     if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); }
   }
   function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; if (engine) M.Engine.clear(engine); engine = null; }

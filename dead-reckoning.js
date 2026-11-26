@@ -175,12 +175,12 @@
   // the whole world, fitted to the box
   function fit() {
     var b = box(), asp = b.w / b.h;
-    if (asp > 360 / 170) { view.h = 170; view.w = 170 * asp; } else { view.w = 360; view.h = 360 / asp; }
+    if (asp > 360 / 170) { view.h = 170; view.w = 170 * asp; } else { view.w = 376; view.h = 376 / asp; } // a little sea either side, so New Zealand and Alaska are not cut by the frame
     view.x = 180 - view.w / 2; view.y = 78 - view.h / 2; // centred a little north, where the places are
   }
   function clampView() {
     var b = box(), asp = b.w / b.h, minW = 4;
-    var maxW = Math.max(360, 180 * asp);
+    var maxW = Math.max(376, 180 * asp);
     view.w = Math.max(minW, Math.min(maxW, view.w)); view.h = view.w / asp;
     var cx = view.x + view.w / 2, cy = view.y + view.h / 2;
     cx = Math.max(0, Math.min(360, cx)); cy = Math.max(0, Math.min(180, cy));
@@ -282,7 +282,7 @@
     var step = (e.shiftKey ? 48 : 12) * unit(), c = pin ? toXY(pin.lat, pin.lon) : [view.x + view.w / 2, view.y + view.h / 2];
     var nx = Math.max(view.x + 2 * unit(), Math.min(view.x + view.w - 2 * unit(), c[0] + k[0] * step)), ny = Math.max(view.y + 2 * unit(), Math.min(view.y + view.h - 2 * unit(), c[1] + k[1] * step));
     place([nx, ny]);
-    var ll = pin; $("#mapHint").textContent = "Pin at " + Math.abs(ll.lat).toFixed(1) + "° " + (ll.lat >= 0 ? "N" : "S") + ", " + Math.abs(ll.lon).toFixed(1) + "° " + (ll.lon >= 0 ? "E" : "W") + ". Enter locks it in.";
+    $("#mapHint").textContent = "Pin placed. Enter locks it in."; // no coordinates: they would let you aim by numbers
   });
 
   // ---------- rounds ----------
@@ -310,6 +310,7 @@
   }
   function lock() {
     if (!pin || revealed) return;
+    pin = { lat: +pin.lat.toFixed(3), lon: +pin.lon.toFixed(3) }; // the pin as it is saved, so the distance shown now and in the summary are the same number
     var t = target(), d = km(pin, t), s = points(d), br = bearing(pin, t);
     revealed = true; answerShown = t;
     if (mode === "daily") {

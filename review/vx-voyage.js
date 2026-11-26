@@ -213,7 +213,10 @@
       var size = c ? Number(c.area.toPrecision(2)).toLocaleString("en-US") : "";
       text = c ? "The outline of a country in " + c.continent + (c.coast === "landlocked" ? ", with no sea coast" : c.coast === "island" ? ", an island country" : ", with a sea coast") +
         ", covering about " + size + " square kilometres." : "The outline of a country.";
-    } else text = "A globe with a mark at about " + d(q.show.lat, "north", "south") + ", " + d(q.show.lon, "east", "west") + ".";
+    } else { // a description a sighted player could give at a glance: no coordinates, which could be looked up
+      var la = Math.abs(q.show.lat), band = la < 12 ? "near the equator" : la < 35 ? "in the " + (q.show.lat >= 0 ? "northern" : "southern") + " tropics or subtropics" : la < 55 ? "in the middle latitudes of the " + (q.show.lat >= 0 ? "north" : "south") : "in the far " + (q.show.lat >= 0 ? "north" : "south");
+      text = "A globe with a mark " + band + ", in the " + (q.show.lon >= 0 ? "eastern" : "western") + " hemisphere.";
+    }
     cv.setAttribute("role", "img"); cv.setAttribute("aria-label", text);
   }
   function ui(C, safe) {

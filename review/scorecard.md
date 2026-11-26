@@ -34,3 +34,24 @@ One share format across all games (brand, puzzle number, a grid that varies with
 
 ## Front door
 The grader's pick for new visitors is Dead Reckoning (understood in under 10 seconds). Home page not to be changed yet; Matthew decides.
+
+## Status (updated as items are fixed)
+
+| Item | Status |
+|---|---|
+| Ballast 1-9 | Fixed in 0.15.37, each with a test. Item 2: the readout, the line and the clear rule already shared one state; what was missing was the reason a tall stack hadn't cleared (too few pieces aboard), now shown, and a cleared stack is frozen so "Loaded!" can't show a fallen stack. |
+| Fathoms: Tuvalu | Accepted from No. 20 (3 Dec), the start number set when Tuvalu was added. The all-193 answer test is P2. |
+| Fathoms: "<-yours", typing appends | Not reproduced on the current build (the answer list was rebuilt in 0.15.2x). |
+| Mystery country: 8 or 6 per move, Quick mode | The text describes the rules that start at No. 14 (27 Nov): 6 a move and Quick mode. They agree from that day; no change made. |
+| Mystery city: clues under the pin bar | Fixed in 0.15.25 (one screen). |
+| Dead Reckoning: New Zealand clipped, coordinates readout, 1 km difference | Fixed in 0.15.38, each with a test. |
+| Voyage: globe alt text | Fixed in 0.15.38 (a description in words, no coordinates). |
+| Voyage: sailing on is free; no explanation after an answer | Open: a scoring change, so it goes with difficulty (P3) and a start number. |
+| Voyage: Greece outline has no islands | Open (P7): the outlines draw the main landmass only. |
+| Logbook: same icon for 100 and 75; next question marked now early | Fixed in 0.15.38 with a test. |
+| Logbook: stray tick | Not found; needs the grader's screenshot. |
+| Logbook: a country asked twice in one day | Open: goes with never-the-same-twice (P3). |
+| Sound button on all eleven | Open: goes with standard 9 (P4). |
+| Copy: "the size of Philippines", Côte d'Ivoire | Fixed in 0.15.38. |
+| Stale "You're here ... last game left" | Fixed in 0.15.37 (Today's games redraws when a game is finished). |
+| P3 too easy, P4 facts, P5 sharing | Open: P3, P2 and P5 of the work order. |

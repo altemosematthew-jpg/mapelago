@@ -1152,6 +1152,16 @@ async function page(b, url, opts = {}) {
       check(!p.errs.length, `vx: ${f} practice: no errors`, p.errs.join("; "));
       await ctx.close();
     }
+    // ---- standard 8: Fathoms knows every UN member by the name in the country pack (or an alternate name that leads to it)
+    {
+      const names = fs.readFileSync(path.join(__dirname, "..", "data", "countries.txt"), "utf8").split("\n").filter((l) => l.includes("|") && !l.startsWith("#") && !/non-member/.test(l.split("|")[0])).map((l) => l.split("|")[0].trim());
+      const { ctx, p } = await page(b, U + "fathoms.html#day-20", { desktop: true });
+      await p.waitForFunction(() => window.__fath);
+      const miss = [];
+      for (const n of names) { await p.fill("#fin", n); await p.waitForTimeout(10); if (!(await p.evaluate(() => document.querySelectorAll("#sugs .sug").length))) miss.push(n); }
+      check(names.length === 193 && !miss.length, "fathoms: all 193 UN members can be typed and are offered (from No. 20, Tuvalu included)", names.length + " names; missing: " + miss.join(", "));
+      await ctx.close();
+    }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });
@@ -1180,7 +1190,7 @@ async function page(b, url, opts = {}) {
           for (let d = 14; d < 40 && !shape; d++) shape = VXV.deal(H.xa, H.dt, d, H.yn).find((x) => x.kind === "shape") || null;
           const cv = document.createElement("canvas"); VXV.alt(shape, cv, H.xa);
           return { kind: q.kind, role: c.getAttribute("role"), label: c.getAttribute("aria-label"), shape: cv.getAttribute("aria-label"), answer: shape.options[shape.answer] }; });
-        check(alt.kind === "mark" && alt.role === "img" && /^A globe with a mark at about \d+° (north|south), \d+° (east|west)\.$/.test(alt.label) && /^The outline of a country in [A-Za-z ]+, .+ square kilometres\.$/.test(alt.shape) && !alt.shape.includes(alt.answer),
+        check(alt.kind === "mark" && alt.role === "img" && /^A globe with a mark (near the equator|in the (northern|southern) tropics or subtropics|in the middle latitudes of the (north|south)|in the far (north|south)), in the (eastern|western) hemisphere\.$/.test(alt.label) && !/\d/.test(alt.label) && /^The outline of a country in [A-Za-z ]+, .+ square kilometres\.$/.test(alt.shape) && !alt.shape.includes(alt.answer),
           "vx review: the globe and outline pictures have a text alternative that doesn't give the answer away", JSON.stringify(alt));
         const a0 = await p.evaluate(() => __voy.S().qs[0].answer);
         await p.click("#spy"); await p.waitForTimeout(200);

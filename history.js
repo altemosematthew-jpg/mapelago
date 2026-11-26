@@ -7,6 +7,8 @@
   var KEY = "dailycity:history:v1";     // the save, shared with streaks, "Today's games" and the save code
   var PAGE = "history.html";
   var D = window.MX_HIST;
+  // the source lists spell it without the accent; it is shown as it should be
+  try { D = JSON.parse(JSON.stringify(D).replace(/Cote d'Ivoire/g, "C\u00f4te d'Ivoire")); } catch (e) {}
   if (!D) return;
   var F = D.F, Q = D.Q, T = D.T;        // facts [year, text, source], multiple-choice questions, answer labels
   var $ = function (s) { return document.querySelector(s); };
@@ -94,7 +96,8 @@
       if (d1 <= 5) return { done: true, right: true, pts: b1.p1, mark: b1.e, diff: d1, tries: 1, b: b1 };
       if (g.length < 2) return { done: false, first: b1, d1: d1, dir: q.ans > g[0] ? 1 : -1 };
       var d2 = Math.abs(g[1] - q.ans), b2 = band(d2);
-      return { done: true, right: d2 <= 5, pts: b2.p2, mark: b2.e, diff: d2, tries: 2, b: b2, first: b1 };
+      // a second try is marked one step cooler than its band, so 100 (first try, bang on) and 75 (second try) never share a mark
+      return { done: true, right: d2 <= 5, pts: b2.p2, mark: BANDS[Math.min(BANDS.length - 1, BANDS.indexOf(b2) + 1)].e, diff: d2, tries: 2, b: b2, first: b1 };
     }
     if (a.p == null) return { done: false };
     var r = a.p === q.ans;
@@ -137,6 +140,7 @@
   function drawDots() {
     if (MODE === "practice") return practiceTally();
     var c = cur();
+    if (typeof shown === "number" && shown < c && shown >= 0 && !$("#qnext").hidden) c = -1; // still reading the answer: the next question is not "now" yet
     $("#dots").innerHTML = QS.map(function (q, i) {
       var j = judge(i);
       var label = "Question " + (i + 1) + ": " + (j.done ? (j.right ? "right" : "not right") + ", " + j.pts + " points" : i === c ? "now" : "to come");

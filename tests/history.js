@@ -170,6 +170,26 @@ function spoilerFree(share, day) {
       check(ok && !p.errs.length, `history: loads cleanly, ${desktop ? "desktop" : "phone 375 px"}, nothing wider than the screen`, p.errs.join("; "));
       await ctx.close();
     }
+    // scorecard P0: a second-try bang-on (75) is not marked like a first-try one (100); the next dot is not "now" while the answer is on screen
+    {
+      const { ctx, p } = await open(b, `${U}history.html#day-9`);
+      let seen = null;
+      for (let i = 0; i < 8 && !seen; i++) {
+        const q = await p.evaluate((i) => ({ k: __hist.QS[i].k, r: __hist.right(i), lo: __hist.QS[i].lo, hi: __hist.QS[i].hi }), i);
+        if (q.k === "t") {
+          const ans = q.r.g[0]; await setSlider(p, ans - q.lo > q.hi - ans ? q.lo : q.hi); await p.tap("#qnext"); await p.waitForTimeout(80); await setSlider(p, ans); await p.tap("#qnext"); await p.waitForTimeout(120);
+          seen = await p.evaluate((i) => ({ pts: __hist.judge(i).pts, mark: __hist.judge(i).mark, now: [...document.querySelectorAll("#dots li")].map((l) => l.className).indexOf("now") }), i);
+        } else {
+          if (q.k === "g") { await setSlider(p, q.r.g[0]); await p.tap("#qnext"); }
+          else if (q.k === "o") { for (const j of q.r.p) await p.tap(`#qbody .opt[data-k="${j}"]`); await p.tap("#qnext"); }
+          else await p.tap(`#qbody .opt[data-k="${q.r.p}"]`);
+          await p.waitForTimeout(80); await p.tap("#qnext"); await p.waitForTimeout(80);
+        }
+      }
+      check(!!seen, "history P0: found a day that opens with a year question to test on");
+      if (seen) check(seen.pts === 75 && seen.mark !== "\u{1F3AF}" && seen.now === -1, "history P0: 75 points is not marked like 100, and no dot says now while the answer is showing", JSON.stringify(seen));
+      await ctx.close();
+    }
     // 6. a full round by touch on a phone: right and wrong answers, every kind, saves and shares
     for (const day of [2, 9, 15]) {
       const { ctx, p } = await open(b, `${U}history.html#day-${day}`);
