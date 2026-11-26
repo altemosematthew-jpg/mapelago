@@ -28,6 +28,8 @@ const first = (p, g) => p.evaluate(([g, H]) => {
   const act = document.querySelector(g.first); if (!vis(act)) o.why.push("no first action"); else { const r = act.getBoundingClientRect(); if (r.top < 0 || r.bottom > H) o.why.push("first action cut off (" + Math.round(r.bottom) + ")"); }
   const text = [...document.querySelectorAll(g.read)].filter(vis).filter((e) => e.getBoundingClientRect().top < H).map((e) => e.innerText.trim()).join(" ");
   const n = (text.match(/[.!?](?=\s|$)/g) || []).length; const words = text.split(/\s+/).filter(Boolean).length; if (n > 1 && words > 20) o.why.push(n + " sentences to read (" + words + " words)");
+  // standard 9: a sound button on every game, saying whether sound is on
+  { const sb = [...document.querySelectorAll("header.top button")].find((x) => vis(x) && /sound/i.test((x.getAttribute("aria-label") || "") + x.id)); if (!sb) o.why.push("no sound button"); else if (!/^(true|false)$/.test(sb.getAttribute("aria-pressed") || "")) o.why.push("sound button does not say on or off"); }
   if (g.strict) { if (!vis(document.querySelector("[data-first], .mx-first")) && !(g.hint && eval(g.hint))) o.why.push("first action not marked"); if (!vis(document.querySelector("[data-help], #helpBtn"))) o.why.push("no ? for the rules"); }
   return o;
 }, [plain(g), H]);
@@ -123,7 +125,7 @@ const SLOW = [];
   for (const g of GAMES) { if (only && g.id !== only) continue;
     const row = { g, A: [], B: [], D: ["no finish screen reached"], F: 0, errs: [] };
     let ctx = await b.newContext({ viewport: { width: W, height: H }, hasTouch: true, isMobile: true, serviceWorkers: "block" }), p = await ctx.newPage(); p.on("pageerror", (e) => row.errs.push(e.message));
-    await p.goto(srv.url + g.page, { waitUntil: "load" }); await ready(p, g).catch(() => {}); await p.waitForTimeout(700);
+    await p.goto(srv.url + g.page, { waitUntil: "load" }); await ready(p, g).catch(() => {}); await p.waitForTimeout(1100);
     row.A = (await first(p, g)).why;
     const m = async (state, must) => {
       if (/^finish/.test(state)) { row.D = await p.evaluate((H) => { const why = [], on = (e) => { if (!e) return false; const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= H; };

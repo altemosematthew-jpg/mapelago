@@ -19,3 +19,48 @@ Nothing below has been changed in the data. "Sure" is how sure I am that our val
 - Items 1, 2 and 9 are one problem: the cities list uses mixed or narrow population figures and has gaps.
 - Items 3, 4 and 5 are one problem: country areas are measured from the map, not sourced.
 - Both feed standard 8 (never wrong) and the close pairs that standard 6 asks for. They are listed in `review/content-needed.md`.
+
+## Sourced areas (27 Nov): differences of more than 10% from the old figure
+The UN figure is in use from No. 17 for every row. The old figures were measured from the map outlines, which misses small islands and lagoons and, for a few countries, draws a different territory. South Sudan's old figure (624) was simply wrong.
+
+| Country | Old (map) | UN 2023 | Change | Why |
+|---|---|---|---|---|
+| Bahamas | 12,657 | 13,940 | +10% | not explained by a note: the old figure was measured from the map outline |
+| Bahrain | 544 | 778 | +43% | not explained by a note: the old figure was measured from the map outline |
+| Barbados | 388 | 431 | +11% | not explained by a note: the old figure was measured from the map outline |
+| Cabo Verde | 3,587 | 4,033 | +12% | not explained by a note: the old figure was measured from the map outline |
+| Comoros | 1,582 | 2,235 | +41% | not explained by a note: the old figure was measured from the map outline |
+| Cyprus | 5,710 | 9,251 | +62% | the whole island |
+| France | 635,066 | 551,500 | -13% | metropolitan France only |
+| Grenada | 288 | 345 | +20% | not explained by a note: the old figure was measured from the map outline |
+| Guinea-Bissau | 32,044 | 36,125 | +13% | not explained by a note: the old figure was measured from the map outline |
+| Kiribati | 941 | 726 | -23% | land area only |
+| Liberia | 95,648 | 111,369 | +16% | not explained by a note: the old figure was measured from the map outline |
+| Liechtenstein | 138 | 160 | +16% | not explained by a note: the old figure was measured from the map outline |
+| Maldives | 67 | 300 | +348% | not explained by a note: the old figure was measured from the map outline |
+| Malta | 276 | 315 | +14% | not explained by a note: the old figure was measured from the map outline |
+| Marshall Islands | 236 | 181 | -23% | not explained by a note: the old figure was measured from the map outline |
+| Micronesia | 524 | 702 | +34% | not explained by a note: the old figure was measured from the map outline |
+| Monaco | 12 | 2 | -83% | not explained by a note: the old figure was measured from the map outline |
+| Morocco | 582,379 | 446,550 | -23% | excludes Western Sahara |
+| Nauru | 28 | 21 | -25% | not explained by a note: the old figure was measured from the map outline |
+| Netherlands | 37,132 | 41,543 | +12% | the European part only |
+| Norway | 384,265 | 323,772 | -16% | excludes Svalbard and Jan Mayen |
+| Palau | 343 | 459 | +34% | not explained by a note: the old figure was measured from the map outline |
+| Saint Kitts and Nevis | 234 | 261 | +12% | not explained by a note: the old figure was measured from the map outline |
+| Saint Lucia | 552 | 616 | +12% | not explained by a note: the old figure was measured from the map outline |
+| Saint Vincent and the Grenadines | 312 | 389 | +25% | not explained by a note: the old figure was measured from the map outline |
+| San Marino | 70 | 61 | -13% | not explained by a note: the old figure was measured from the map outline |
+| Saudi Arabia | 1,925,876 | 2,206,714 | +15% | not explained by a note: the old figure was measured from the map outline |
+| Serbia | 77,482 | 88,444 | +14% | appears to include Kosovo |
+| Seychelles | 172 | 457 | +166% | not explained by a note: the old figure was measured from the map outline |
+| Singapore | 484 | 734 | +52% | not explained by a note: the old figure was measured from the map outline |
+| Solomon Islands | 25,732 | 28,896 | +12% | not explained by a note: the old figure was measured from the map outline |
+| Somalia | 473,624 | 637,657 | +35% | not explained by a note: the old figure was measured from the map outline |
+| Suriname | 145,559 | 163,820 | +13% | not explained by a note: the old figure was measured from the map outline |
+| Tonga | 431 | 747 | +73% | not explained by a note: the old figure was measured from the map outline |
+| Vatican City | 1 | 0 | -56% | not explained by a note: the old figure was measured from the map outline |
+| Yemen | 454,140 | 527,968 | +16% | not explained by a note: the old figure was measured from the map outline |
+| South Sudan | 624 | 658,841 | - | the old figure was an error |
+
+Items 3, 4 and 5 in the table above (Saudi Arabia, Netherlands, Pakistan) are settled by this source from No. 17.
