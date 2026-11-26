@@ -378,7 +378,7 @@ async function page(b, url, opts = {}) {
         check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
         // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
         const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
-        check(sh.share.startsWith("Mapelago No. 12 \u00B7 mystery country ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        check(sh.share.startsWith("Mapelago Mystery country No. 12 \u{1F422} ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
         await ctx.close();
       }
       for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
@@ -412,7 +412,7 @@ async function page(b, url, opts = {}) {
         check(a.num === "No. 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
         await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
         const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
-        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mapelago No. 5 (archive) \u00B7 mystery country"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
+        check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mapelago Mystery country No. 5 (archive) \u{1F422}"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
         check(!p.errs.length, "review: Past countries, no errors", p.errs.join("; "));
         await ctx.close();
       }
@@ -1213,6 +1213,14 @@ async function page(b, url, opts = {}) {
         await t.ctx.close(); return seen; };
       const c = await run(19);
       check(new Set(c.map((x) => x[0])).size === 3 && c.every((x) => x[1] === 0) && c[0][2] <= c[1][2] && c[1][2] <= c[2][2], "stamps: from No. 19 a miss closes the wedge (three misses, three different wedges) and the wheel goes from best-known to most obscure", JSON.stringify(c));
+    }
+    // ---- every result card: personal best and "beat yesterday", from the game's own saves
+    {
+      const { ctx, p } = await page(b, U + "crossings.html#day-20", { storage: { "dailycity:crossings:v1": JSON.stringify({ results: { 18: { score: 900 }, 19: { score: 400 } } }) }, wait: 800 });
+      await p.evaluate(() => { for (let i = 0; i < 12 && !__cross.G().over; i++) __cross.hint(); }); await p.waitForTimeout(1500);
+      const t = await p.evaluate(() => document.querySelector(".mx-daily").textContent);
+      check(/Your best: 900 points\. Beat yesterday's 400 points\./.test(t), "result card: personal best and beat yesterday", t);
+      await ctx.close();
     }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
