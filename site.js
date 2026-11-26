@@ -150,7 +150,21 @@
   var AREA_FLAG = { AR: 1, CN: 1, DK: 1, FR: 1, IN: 1, MA: 1, NO: 1, PK: 1, RS: 1, UA: 1, US: 1 };
   function puzzleDay() { var m = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && /#day-(\d+)/.exec(location.hash); return m ? +m[1] : today(); }
   // a game's country table passes through here: from No. 17 every country gets its sourced area
+  // Three corrections (from No. 18; see review/facts-to-check.md): Botswana's official language is English (Setswana is
+  // the national language); Canada and Denmark share a land border on Hans Island (2022); South Africa's highest
+  // point is shown by its usual name, Mafadi, with the Sotho name the country pack uses.
+  var FIX_FROM = 18, MAFADI = "Mafadi (Ntheledi)";
+  function fixNames(o) { // the fact tables Voyage and Dead Reckoning carry beside the country table
+    try { var z = o && o["South Africa"]; if (!z) return o; if (Array.isArray(z)) z.forEach(function (v, i) { if (typeof v === "string") z[i] = v.replace(/^Ntheledi/, MAFADI); }); else Object.keys(z).forEach(function (k) { if (z[k] === "Ntheledi") z[k] = MAFADI; }); } catch (e) {}
+    return o;
+  }
+  if (puzzleDay() >= FIX_FROM) ["VXPACK", "DR_COUNTRIES"].forEach(function (name) { var val = fixNames(window[name]); try { Object.defineProperty(window, name, { configurable: true, enumerable: true, get: function () { return val; }, set: function (v) { val = fixNames(v); } }); } catch (e) {} });
   window.MXA = function (table) {
+    if (puzzleDay() >= FIX_FROM) table.forEach(function (c) {
+      if (c.cc === "BW" && c.langs) c.langs = ["English"];
+      if (c.cc === "CA" && c.next && c.next.indexOf("DK") < 0) c.next = c.next.concat("DK");
+      if (c.cc === "DK" && c.next && c.next.indexOf("CA") < 0) c.next = c.next.concat("CA");
+    });
     if (puzzleDay() < AREA_FROM) return table;
     window.MXA.byCid = {};
     table.forEach(function (c) { window.MXA.byCid[c.cid] = c; var a = MXAREA[c.cc]; if (!a) return; if (AREA_FLAG[c.cc] && c.area) c.szr = [Math.min(a, c.area), Math.max(a, c.area)]; c.area = a; c.sourced = 1; });

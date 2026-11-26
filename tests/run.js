@@ -1185,6 +1185,15 @@ async function page(b, url, opts = {}) {
         check(!before && JSON.stringify(after) === "[2206714,41543,658841,0,true,false,true,false]", f + ": the sourced areas start at No. 17; within 2% is never compared; France (two definitions) is not set against Ukraine but is against Germany", JSON.stringify([before, after]));
       }
     }
+    // ---- three corrections from No. 18: Botswana's official language, the Canada-Denmark border, Mafadi's name
+    {
+      const at = async (f, day, fn) => { const t = await page(b, U + f + "?f=" + day + "#day-" + day, { desktop: true }); await t.p.waitForTimeout(300); const r = await t.p.evaluate(fn); await t.ctx.close(); return JSON.stringify(r); };
+      const tbl = () => { const T = (window.MXA && MXA.byCid) || {}; return T[72] ? [T[72].langs, T[124].next.includes("DK"), T[208].next.includes("CA")] : null; };
+      const v17 = await at("voyage.html", 17, tbl), v18 = await at("voyage.html", 18, tbl), f18 = await at("fathoms.html", 18, tbl), s18 = await at("stamps.html", 18, tbl);
+      const p17 = await at("voyage.html", 17, () => VXPACK["South Africa"].p), p18 = await at("voyage.html", 18, () => VXPACK["South Africa"].p), d18 = await at("dead-reckoning.html", 18, () => DR_COUNTRIES["South Africa"][2]);
+      const want = '[["English"],true,true]';
+      check(v17 === '[["English","Tswana"],false,false]' && v18 === want && f18 === want && s18 === want && p17 === '"Ntheledi"' && p18 === '"Mafadi (Ntheledi)"' && /^"Mafadi \(Ntheledi\), 3450"$/.test(d18), "facts from No. 18: Botswana English only, Canada and Denmark border each other, Mafadi (Ntheledi); No. 17 unchanged", [v17, v18, f18, s18, p17, p18, d18].join(" "));
+    }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });

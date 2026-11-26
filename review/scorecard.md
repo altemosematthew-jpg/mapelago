@@ -55,3 +55,29 @@ The grader's pick for new visitors is Dead Reckoning (understood in under 10 sec
 | Copy: "the size of Philippines", Côte d'Ivoire | Fixed in 0.15.38. |
 | Stale "You're here ... last game left" | Fixed in 0.15.37 (Today's games redraws when a game is finished). |
 | P3 too easy, P4 facts, P5 sharing | Open: P3, P2 and P5 of the work order. |
+
+## Line by line at 0.15.45
+| Item | Now |
+|---|---|
+| Ballast 1 to 9 | fixed |
+| Fathoms: Tuvalu | fixed (from No. 20; typeable everywhere now) |
+| Fathoms: "<-yours", typing appends | not reproduced |
+| Mystery country: 8 or 6 a move, Quick mode | fixed (the rules the text describes began at No. 14) |
+| Mystery city: clues under the pin bar | fixed |
+| Dead Reckoning: New Zealand, coordinates, 1 km | fixed |
+| Voyage: alt text | fixed |
+| Voyage: no explanation after an answer | partly (the fact is added where the question has one) |
+| Voyage: sailing on is free | open (scoring decision) |
+| Voyage: Greece's islands | open (showing small islands would also pull far territories into other outlines) |
+| Logbook: 100 and 75 icon, now dot | fixed |
+| Logbook: stray tick | open (not found) |
+| Logbook: a country asked twice in a day | open (needs the schedule rebuilt from the source blocks) |
+| Sound button on all eleven | fixed |
+| Copy sweep | fixed |
+| Too easy: Bigger city?, Bigger country? | fixed |
+| Too easy: Stamps, Voyage | open (scoring decision) |
+| Facts: areas | fixed (UN source from No. 17) |
+| Facts: Botswana, Canada-Denmark, Mafadi | fixed (from No. 18) |
+| Facts: city populations, Burundi, Ankara | open (Matthew) |
+| One share format, beat yesterday, per-game streak | partly (shared look and site streak done; "beat yesterday" not) |
+| Mystery country cycle rule | confirmed by Matthew |
