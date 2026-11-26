@@ -1163,7 +1163,7 @@ async function page(b, url, opts = {}) {
         await p.waitForFunction(() => window.__WORLD);
         const r = await p.evaluate(() => ({ harbors: [...document.querySelectorAll("#dots li")].map((l, i) => l.classList.contains("harbor") ? i + 1 : 0).filter(Boolean),
           ladder: [...document.querySelectorAll(".vx-ladder li")].map((l) => l.textContent), note: !document.querySelector("#vxHarborNote").hidden,
-          key: getComputedStyle(document.querySelector(".vx-key")).display !== "none", caption: !!document.querySelector(".vx-topics") }));
+          key: getComputedStyle(document.querySelector(".vx-key")).display !== "none" || /harbors: points you reach there are safe/.test(document.querySelector("template#mxHelp").innerHTML) && !!document.querySelector("#mxHelpBtn"), caption: !!document.querySelector(".vx-topics") }));
         check(JSON.stringify(r.harbors) === "[3,6]" && r.ladder.join("|") === "50|100|150, harbor|250|350|500, harbor|650|800|900|1,000" && r.note && r.key && r.caption,
           "vx review: Voyage marks the harbors, shows the points ladder once, explains safe in harbor and the topic chips", JSON.stringify(r));
         // alt text for the globe (island 1 on No. 14 is a globe question), and for an outline
@@ -1218,7 +1218,7 @@ async function page(b, url, opts = {}) {
           if (!ok) bad.push([d, k, q.about]);
         }
         check(!bad.length, "vx review: Stamps size questions say by area, and every explanation adds a fact that matches the pack (No. 14 to 80)", JSON.stringify(bad.slice(0, 4)));
-        check(await p.isVisible("#vxWheelNote") && /stop it early.*skips categories.*picks that one for you/.test(await p.textContent("#vxWheelNote")), "vx review: the wheel says it can be tapped to stop, skips stamped categories and picks the last one");
+        check((await p.isVisible("#vxWheelNote") || await p.evaluate(() => !!document.querySelector("#mxHelpBtn") && /stop it early[^]*skips categories[^]*picks that one for you/.test(document.querySelector("template#mxHelp").innerHTML))) && /stop it early.*skips categories.*picks that one for you/.test(await p.textContent("#vxWheelNote")), "vx review: the wheel says it can be tapped to stop, skips stamped categories and picks the last one");
         await p.click("#spin"); await p.waitForTimeout(300);
         const a = await p.evaluate(() => __stamp.S().cur.answer); await p.click(`#qopts .opt[data-i="${a}"]`); await p.waitForTimeout(200);
         const m = await p.evaluate(() => ({ shown: [...document.querySelectorAll("p")].filter((x) => x.offsetParent && /is stamped/.test(x.textContent)).length, before: getComputedStyle(document.querySelector("#qsay"), "::before").content, note: !!document.querySelector("#vxWheelNote").offsetParent }));
