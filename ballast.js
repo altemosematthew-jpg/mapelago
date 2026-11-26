@@ -1,0 +1,554 @@
+"use strict";
+// Ballast: stack countries on a ship's deck. Real outlines at true relative scale within a round,
+// 2D physics (matter-js, in vendor/), name each country before you drop it for bonus points.
+// Two modes: Daily Ballast (same pieces for everyone, one go a day) and Voyages (levels by region, 1-3 stars).
+(function () {
+  var M = window.Matter, SHAPES = window.MX_BALLAST;
+  M.Common.setDecomp(window.decomp);
+  var $ = function (s) { return document.querySelector(s); };
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var KEY = "dailycity:ballast:v1";
+  var byCC = {}; SHAPES.forEach(function (s) { byCC[s.cc] = s; });
+  function fmt(n) { return Number(n).toLocaleString("en-US"); }
+  function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function shuffle(a, r) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // ---------- levels ----------
+  // deck: deck width in view units (the view is 360 wide); swell: rocking in degrees; wind: push to the side;
+  // name: "pick" (four choices) or "type"; line: the load line as a share of the height the test bot reached.
+  var R = function (id, region, title, list, o) { return Object.assign({ id: id, region: region, title: title, list: list, deck: 230, swell: 0, wind: 0, name: "pick" }, o || {}); };
+  var LEVELS = [
+    R("eu1", "Europe", "Calm harbour", ["FR", "ES", "DE", "IT", "GB", "PL"]),
+    R("eu2", "Europe", "Middle sea", ["PT", "IE", "AT", "CZ", "HU", "GR", "BG"]),
+    R("eu3", "Europe", "Low countries", ["NL", "BE", "CH", "DK", "SK", "HR", "RS", "LT"], { swell: 2 }),
+    R("eu4", "Europe", "Long coasts", ["NO", "SE", "FI", "IT", "HR", "GR"], { wind: 1 }),
+    R("eu5", "Europe", "Balkan squall", ["AL", "MK", "ME", "SI", "MD", "EE", "LV", "BA"], { name: "type", swell: 3, wind: 1, deck: 200 }),
+    R("af1", "Africa", "Gulf of Guinea", ["NG", "KE", "ET", "EG", "ZA", "TZ"]),
+    R("af2", "Africa", "West wind", ["GH", "CI", "SN", "CM", "UG", "ZM", "ZW"], { wind: 1 }),
+    R("af3", "Africa", "Cape rollers", ["SO", "MG", "MZ", "NA", "BW", "AO"], { swell: 3 }),
+    R("af4", "Africa", "Small parcels", ["MW", "BJ", "TG", "RW", "BI", "ER", "SL", "LR"], { name: "type", wind: 1 }),
+    R("af5", "Africa", "Sahara cargo", ["LY", "SD", "TD", "NE", "ML", "MR", "CD"], { name: "type", swell: 3, deck: 190 }),
+    R("as1", "Asia", "Silk road", ["CN", "IN", "KZ", "MN", "IR", "SA"]),
+    R("as2", "Asia", "Monsoon", ["VN", "TH", "MM", "LA", "KH", "MY", "JP"], { swell: 2 }),
+    R("as3", "Asia", "High passes", ["TR", "IQ", "SY", "AF", "PK", "UZ", "TM"], { wind: 1 }),
+    R("as4", "Asia", "Mountain kingdoms", ["JO", "AE", "AZ", "GE", "LK", "BD", "NP", "TJ"], { name: "type", wind: 2 }),
+    R("as5", "Asia", "Typhoon season", ["VN", "JP", "KR", "KP", "BT", "PH", "KG", "OM"], { name: "type", swell: 4, wind: 1, deck: 190 }),
+    R("am1", "Americas", "Andes freight", ["MX", "CO", "PE", "BO", "VE", "AR"]),
+    R("am2", "Americas", "Isthmus", ["GT", "HN", "NI", "CU", "PA", "CR", "EC"], { swell: 2 }),
+    R("am3", "Americas", "Giants", ["BR", "AR", "US", "CA", "MX"], { wind: 1, deck: 250 }),
+    R("am4", "Americas", "Long and thin", ["CL", "UY", "PY", "EC", "GY", "SR", "PE"], { name: "type", wind: 2 }),
+    R("am5", "Americas", "Caribbean chop", ["JM", "HT", "DO", "BZ", "SV", "CR", "PA"], { name: "type", swell: 4, deck: 190 }),
+    R("oc1", "Oceania", "Southern cross", ["AU", "PG", "NZ", "ID", "MY", "PH"]),
+    R("oc2", "Oceania", "Island hopping", ["FJ", "VU", "SB", "WS", "TO", "TL", "BN"], { name: "type", swell: 3 }),
+    R("oc3", "Oceania", "Roaring forties", ["NZ", "PG", "JP", "PH", "MY", "TL", "FJ"], { name: "type", swell: 3, wind: 2, deck: 200 }),
+    R("wo1", "World", "Famous outlines", ["IT", "GB", "JP", "EG", "IN", "BR", "AU"]),
+    R("wo2", "World", "Odd shapes", ["CL", "NO", "VN", "IT", "PA", "MW", "GM"], { wind: 1 }),
+    R("wo3", "World", "Same size, far apart", ["FR", "TH", "KE", "UA", "MG", "CM", "PG"], { name: "type", swell: 2, wind: 1 }),
+    R("wo4", "World", "Square-ish", ["EG", "LY", "CO", "MN", "TD", "NE"], { name: "type", swell: 3, wind: 1 }),
+    R("wo5", "World", "Big seas", ["CL", "NO", "IT", "VN", "MY", "NZ", "PH", "CR"], { name: "type", swell: 4, wind: 2, deck: 180 }),
+    R("wo6", "World", "Grand tour", ["RU", "CA", "CN", "US", "BR", "AU", "IN", "AR"], { name: "type", swell: 2, wind: 1, deck: 260 }),
+    R("wo7", "World", "Captain's test", ["NO", "CL", "IT", "GB", "JP", "CU", "NZ", "PA", "MW"], { name: "type", swell: 5, wind: 2, deck: 170 })
+  ];
+  var REGIONS = ["Europe", "Africa", "Asia", "Americas", "Oceania", "World"];
+  // The load line rises through each region: the first voyage asks for 80% of the test bot's stack, the fifth 120%;
+  // the World voyages run from 90% to 130%.
+  (function () { var seen = {}; LEVELS.forEach(function (l) { var i = seen[l.region] = (seen[l.region] || 0) + 1; l.line = l.region === "World" ? [0.9, 0.95, 1, 1.05, 1.1, 1.2, 1.3][i - 1] : [0.8, 0.9, 1, 1.1, 1.2][i - 1]; }); })();
+  // Stack heights (km) a simple test bot reached on each voyage (its second-best of four plain strategies).
+  // A voyage's load line is that height times the voyage's "line" share; see review/ballast.md.
+  var BOT = window.MX_BALLAST_BOT || {};
+
+  // ---------- the daily ---------
+  var EPOCH = Date.UTC(2026, 10, 14);
+  function today() { return window.MXS ? MXS.today() : Math.round((Date.now() - EPOCH) / 864e5) + 1; }
+  // ---------- the level generator: one seed and a difficulty number make a level ----------
+  // Used by the Daily climb (seed = the date), Endless practice (a random seed) and nothing else.
+  // n = 1 is easy; every step adds a little: more pieces, bigger pieces for the deck, a higher load line,
+  // then swell, then wind, then long awkward shapes, and typed names from level 5.
+  var GEN_REGIONS = ["Europe", "Africa", "Asia", "Americas", "Oceania", "World"];
+  function regionOf(s) { return /America/.test(s.r) ? "Americas" : s.r === "Europe and Asia" ? "Asia" : s.r; }
+  function longness(s) { var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; s.p.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }); var w = x1 - x0, h = y1 - y0; return Math.max(w, h) / Math.max(1, Math.min(w, h)); }
+  function genLevel(seed, n, attempt) {
+    var r = rng(seed * 7919 + n * 104729 + (attempt || 0) * 31), order = shuffle(GEN_REGIONS.slice(0, 5), rng(seed * 13 + 5));
+    var region = n % 6 === 0 ? "World" : order[(n - 1) % 5];
+    var pool = SHAPES.filter(function (s) { return s.a >= 15000 && (region === "World" || regionOf(s) === region); });
+    var count = Math.min(10, 4 + Math.floor(n * 0.6));
+    // pieces of similar size, around a random anchor
+    var anchor = pool[Math.floor(r() * pool.length)], near = pool.filter(function (s) { return s.a >= anchor.a / 6 && s.a <= anchor.a * 3; });
+    if (near.length < count) near = pool.slice().sort(function (a, b) { return Math.abs(Math.log(a.a / anchor.a)) - Math.abs(Math.log(b.a / anchor.a)); }).slice(0, Math.max(count, 8));
+    // from level 7, long thin countries are favoured
+    var picks = shuffle(near, r);
+    if (n >= 7) picks.sort(function (a, b) { return (longness(b) > 2 ? 1 : 0) - (longness(a) > 2 ? 1 : 0); });
+    picks = shuffle(picks.slice(0, count), r);
+    var lv = R("g" + n, region, "Level " + n, picks.map(function (s) { return s.cc; }), {
+      deck: Math.max(170, 236 - 5 * n), big: Math.min(0.62, 0.4 + 0.016 * n),
+      swell: n < 3 ? 0 : Math.min(5, Math.floor((n - 1) / 2)), wind: n < 4 ? 0 : Math.min(3, Math.floor((n - 1) / 3)),
+      name: n >= 5 ? "type" : "pick", climb: n, endAtLine: true
+    });
+    var est = 0; lv.list.forEach(function (cc) { est += Math.sqrt(byCC[cc].a); });
+    lv.lineKm = Math.round(est * 0.27 * Math.min(2.2, 0.8 + 0.09 * n));
+    return lv;
+  }
+  // the five tutorial levels, shown once: each teaches one thing on one screen
+  var TUTORIAL = [
+    R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country over the deck, then press Drop. Stack past the dashed load line.", name: "none", line: 0, lineKm: 700, endAtLine: true, tut: 1 }),
+    R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap the play area to turn a country (or use the round arrows, or Q and E). Lay long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
+    R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "Name each country before you drop it for bonus points (10 each in a run). A wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
+    R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right. Build a little to the left.", name: "pick", wind: 2, lineKm: 600, endAtLine: true, tut: 4 }),
+    R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck. Keep the stack low and in the middle. Three lives a run: a failed load costs one.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
+  ];
+  var RUN = null; // { mode: "daily" | "practice" | "tut", seed, lvl, lives, cleared, named, lost, marks: [], attempt }
+  function newRun(mode, seed) { return { mode: mode, seed: seed, lvl: 1, lives: 3, cleared: 0, named: 0, lost: 0, marks: [], attempt: 0 }; }
+  function runPoints(r) { return r.cleared * 100 + r.named * 10; }
+  function cargoPreview(seed) { var l = genLevel(seed, 1); return "Today's cargo starts in " + (l.region === "World" ? "every corner of the world" : l.region === "Americas" ? "the Americas" : l.region) + "."; }
+
+  // ---------- save ----------
+  var save = (function () { try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && typeof s === "object") return s; } catch (e) {} return {}; })();
+  save.results = save.results && typeof save.results === "object" ? save.results : {};
+  save.levels = save.levels && typeof save.levels === "object" ? save.levels : {};
+  save.stats = save.stats && typeof save.stats === "object" ? save.stats : {}; // { best, bestPractice, runs, sum }
+  function store() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
+
+  // ---------- sound (shared mute with the other games) ----------
+  var muted = (function () { try { return localStorage.getItem("dailycity:sound") === "off"; } catch (e) { return false; } })(), ac = null;
+  function note(f, t0, len, vol, type, to) {
+    if (muted) return;
+    try {
+      if (!ac) { var A = window.AudioContext || window.webkitAudioContext; if (!A) return; ac = new A(); }
+      if (ac.state === "suspended") ac.resume();
+      var t = ac.currentTime + t0, o = ac.createOscillator(), g = ac.createGain();
+      o.type = type || "triangle"; o.frequency.setValueAtTime(f, t); if (to) o.frequency.exponentialRampToValueAtTime(to, t + len);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime((vol || 0.4) * 0.16, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + len + 0.05);
+    } catch (e) {}
+  }
+  var SFX = {
+    drop: function () { note(220, 0, 0.12, 0.35, "sine", 140); },
+    land: function () { note(110, 0, 0.08, 0.3, "sine"); },
+    right: function () { note(659, 0, 0.1); note(880, 0.08, 0.16); },
+    wrong: function () { note(196, 0, 0.18, 0.35, "sine"); },
+    splash: function () { note(500, 0, 0.3, 0.25, "sine", 90); },
+    line: function () { [523, 659, 784, 1047].forEach(function (f, i) { note(f, i * 0.1, i === 3 ? 0.4 : 0.12, 0.45); }); },
+    fail: function () { [392, 330, 262].forEach(function (f, i) { note(f, i * 0.15, 0.24, 0.35, "sine"); }); }
+  };
+  var ICON_ON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+  var ICON_OFF = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+  function drawMute() { var b = $("#soundBtn"); b.innerHTML = muted ? ICON_OFF : ICON_ON; b.setAttribute("aria-pressed", muted ? "true" : "false"); b.setAttribute("aria-label", muted ? "Sound is off. Turn sound on" : "Sound is on. Turn sound off"); }
+
+  // ---------- names (for the naming bonus) ----------
+  var ALIAS = { US: ["usa", "united states of america", "america"], GB: ["uk", "britain", "great britain"], TR: ["turkey", "turkiye"], CZ: ["czech republic"], MM: ["burma"], CI: ["cote d'ivoire", "ivory coast"], CD: ["dr congo", "drc", "democratic republic of the congo"], CG: ["congo", "republic of the congo"], NL: ["holland"], KR: ["korea", "south korea"], KP: ["north korea"], AE: ["uae"], TL: ["east timor", "timor-leste"], MK: ["macedonia"], SZ: ["swaziland"], CV: ["cape verde"] };
+  function norm(x) { return String(x).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[’'`.\-]/g, " ").replace(/\bthe\b/g, " ").replace(/\bsaint\b/g, "st").replace(/\s+/g, " ").trim(); }
+  var NAMES = []; SHAPES.forEach(function (s) { NAMES.push([norm(s.n), s.cc]); (ALIAS[s.cc] || []).forEach(function (a) { NAMES.push([norm(a), s.cc]); }); });
+  function suggest(t) {
+    var n = norm(t); if (!n) return [];
+    var seen = {}, out = [];
+    NAMES.forEach(function (x) { if (!seen[x[1]] && (x[0].indexOf(n) === 0 || x[0].indexOf(" " + n) >= 0)) { seen[x[1]] = 1; out.push(x[1]); } });
+    return out.sort(function (a, b) { return (norm(byCC[a].n).indexOf(n) === 0 ? 0 : 1) - (norm(byCC[b].n).indexOf(n) === 0 ? 0 : 1) || (byCC[a].n < byCC[b].n ? -1 : 1); }).slice(0, 5);
+  }
+  function exact(t) { var n = norm(t), hit = NAMES.filter(function (x) { return x[0] === n; })[0]; return hit ? hit[1] : null; }
+
+  // ---------- the world ----------
+  var VW = 360, VH = 400;           // view size in world units; the canvas is scaled to fit
+  var DECK_Y = 0;                    // top of the deck
+  var cv = $("#sea"), cx = cv.getContext("2d");
+  var engine, world, ship, rails, pieces, current, hover, L, S, camY = 0, raf = 0, last = 0, acc = 0, time = 0, settleT = 0, state = "idle", ttl = 0;
+
+  function scaleFor(list, deck, share) {
+    // one km-to-unit scale for the whole round: the biggest piece is ~45% of the deck wide
+    var big = 0; list.forEach(function (cc) { var s = byCC[cc]; big = Math.max(big, s.u * 100); });
+    return deck * (share || 0.45) / big;
+  }
+  function localOutline(s, k) { return s.p.map(function (q) { return { x: q[0] * s.u * k, y: q[1] * s.u * k }; }); }
+  function makeBody(s, k, x, y, ang) {
+    var out = localOutline(s, k);
+    var opt = { friction: 1, frictionStatic: 3, frictionAir: 0.045, restitution: 0, density: 0.0015, slop: 0.03 };
+    // keep even small convex parts (the library drops parts under 10 square units by default)
+    var b = M.Bodies.fromVertices(0, 0, [out], opt, true, 0.01, 0.05);
+    if (!b) b = M.Bodies.fromVertices(0, 0, [M.Vertices.hull(out.map(function (v) { return { x: v.x, y: v.y }; }))], opt);
+    // keep the outline lined up with the body (the library recentres it on the centre of mass)
+    var bx = [Infinity, Infinity, -Infinity, -Infinity];
+    (b.parts.length > 1 ? b.parts.slice(1) : [b]).forEach(function (p) { p.vertices.forEach(function (v) { bx[0] = Math.min(bx[0], v.x); bx[1] = Math.min(bx[1], v.y); bx[2] = Math.max(bx[2], v.x); bx[3] = Math.max(bx[3], v.y); }); });
+    var ob = [Infinity, Infinity, -Infinity, -Infinity]; out.forEach(function (v) { ob[0] = Math.min(ob[0], v.x); ob[1] = Math.min(ob[1], v.y); ob[2] = Math.max(ob[2], v.x); ob[3] = Math.max(ob[3], v.y); });
+    var dx = (bx[0] + bx[2]) / 2 - (ob[0] + ob[2]) / 2 - b.position.x, dy = (bx[1] + bx[3]) / 2 - (ob[1] + ob[3]) / 2 - b.position.y;
+    b.mxOutline = out.map(function (v) { return { x: v.x + dx, y: v.y + dy }; });
+    M.Body.setPosition(b, { x: x, y: y }); M.Body.setAngle(b, ang || 0);
+    b.mxCC = s.cc;
+    return b;
+  }
+  function halfHeight(s, k, ang) { var o = localOutline(s, k), c = Math.cos(ang), sn = Math.sin(ang), m = 0; o.forEach(function (v) { m = Math.max(m, Math.abs(v.x * sn + v.y * c)); }); return m; }
+
+  function start(level) {
+    stop();
+    L = level;
+    S = { i: 0, k: scaleFor(L.list, L.deck, L.big), named: [], lost: [], kept: [], score: 0, over: false, won: false, height: 0, peak: 0 };
+    engine = M.Engine.create({ gravity: { x: 0, y: 1, scale: 0.0007 }, positionIterations: 10, velocityIterations: 8, enableSleeping: !L.swell && !L.wind });
+    world = engine.world; pieces = [];
+    ship = M.Bodies.rectangle(0, DECK_Y + 7, L.deck, 14, { isStatic: true, friction: 1, frictionStatic: 1.4, label: "deck" });
+    // low rails at both ends of the deck, as on a real ship (they hold a piece that slides, not one that topples)
+    var railH = 10;
+    rails = [-1, 1].map(function (sd) { return M.Bodies.rectangle(sd * (L.deck / 2 - 3), DECK_Y - railH / 2, 6, railH, { isStatic: true, friction: 1, label: "rail" }); });
+    ship = M.Body.create({ parts: [ship].concat(rails), isStatic: true, friction: 1, frictionStatic: 3 });
+    M.Composite.add(world, ship);
+    // the load line, in km above the deck
+    L.lineKm = L.lineKm || Math.round((BOT[L.id] || estimateLine(L)) * L.line);
+    camY = null; time = 0;
+    $("#lvlTitle").textContent = L.title;
+    $("#lvlTitle").textContent = RUN && RUN.mode === "daily" ? "Daily Ballast · Level " + RUN.lvl : RUN && RUN.mode === "practice" ? "Practice · Level " + RUN.lvl : L.title;
+    $("#lvlMeta").textContent = (RUN && RUN.mode !== "tut" ? "\u2665".repeat(RUN.lives) + "\u2661".repeat(3 - RUN.lives) + " · " : "") + L.region + " · " + L.list.length + " countries · load line " + fmt(L.lineKm) + " km" + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
+    $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
+    $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
+    $("#nameBox").hidden = L.name === "none";
+    $("#play").hidden = false; $("#done").hidden = true; $("#chart").hidden = true;
+    next();
+    if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); }
+  }
+  function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; if (engine) M.Engine.clear(engine); engine = null; }
+  function estimateLine(level) {
+    // no measured value (the daily): the test bot's stacks reach about a quarter of the pieces' summed square-root areas
+    var k = 0; level.list.forEach(function (cc) { k += Math.sqrt(byCC[cc].a); }); return k * 0.27;
+  }
+
+  // ---------- one piece at a time ----------
+  function next() {
+    if (S.i >= L.list.length) { finish(); return; }
+    var s = byCC[L.list[S.i]];
+    hover = { s: s, x: 0, ang: 0, named: null, answer: null };
+    renderName(); renderHud(); state = "aim";
+    $("#dropBtn").disabled = false;
+  }
+  function stackTop() { var top = DECK_Y; pieces.forEach(function (b) { if (!b.mxGone) top = Math.min(top, b.bounds.min.y); }); return top; }
+  function hoverY() { var h = halfHeight(hover.s, S.k, hover.ang); return Math.min(stackTop(), DECK_Y) - 14 - h; }
+  function drop() {
+    if (state !== "aim") return;
+    var b = makeBody(hover.s, S.k, hover.x, hoverY(), hover.ang);
+    pieces.push(b); M.Composite.add(world, b);
+    S.kept.push(hover.s.cc);
+    state = "fall"; settleT = 0; ttl = 0;
+    $("#dropBtn").disabled = true;
+    SFX.drop();
+    if (hover.answer === null && L.name !== "none") markName(false, true);
+  }
+  function overboard(b) { return b.position.y > DECK_Y + 140 || Math.abs(b.position.x) > VW; }
+  function settled() { return pieces.every(function (b) { return b.mxGone || b.isSleeping || (b.speed < 0.1 && b.angularSpeed < 0.008); }); }
+  function heightKm() { return Math.max(0, Math.round((DECK_Y - stackTop()) / S.k)); }
+
+  function step(dt) {
+    time += dt;
+    // swell rocks the deck; with reduced motion it sits at a fixed tilt instead
+    var sw = L.swell * Math.PI / 180, ang = reduce ? sw * 0.6 : sw * Math.sin(time / 1300);
+    M.Body.setAngle(ship, ang, true);
+    if (L.wind) {
+      var w = L.wind * 0.00009 * (0.6 + 0.4 * Math.sin(time / 2100) + (reduce ? 0 : 0.3 * Math.sin(time / 370)));
+      pieces.forEach(function (b) { if (!b.mxGone && !b.isSleeping) M.Body.applyForce(b, b.position, { x: b.mass * w, y: 0 }); });
+    }
+    M.Engine.update(engine, dt);
+    pieces.forEach(function (b) {
+      if (!b.mxGone && overboard(b)) { b.mxGone = true; M.Composite.remove(world, b); S.lost.push(b.mxCC); SFX.splash(); toast(byCC[b.mxCC].n + " went overboard."); }
+    });
+    if (state === "fall") {
+      ttl += dt;
+      settleT = settled() ? settleT + dt : 0;
+      if (settleT > 450 || ttl > 6000) {
+        S.height = heightKm(); S.peak = Math.max(S.peak, S.height);
+        SFX.land(); S.i++;
+        if (S.height >= L.lineKm && L.endAtLine !== false) { finish(); return; }
+        next();
+      }
+      renderHud();
+    }
+  }
+  var fpsNow = 60;
+  function loop(now) {
+    raf = requestAnimationFrame(loop);
+    var dt = Math.min(64, now - last); last = now;
+    if (dt > 0) fpsNow += (1000 / dt - fpsNow) * 0.05;
+    if (engine && !S.over) { acc += dt; while (acc >= 1000 / 60) { step(1000 / 60); acc -= 1000 / 60; if (S.over) break; } }
+    draw();
+  }
+
+  // ---------- drawing ----------
+  var css = function (v, d) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || d; };
+  var turtleImg = new Image(); turtleImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(window.MX_TURTLE_SVG || "");
+  function resize() {
+    var w = cv.clientWidth || 360, dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(w * dpr); cv.height = Math.round(w * VH / VW * dpr);
+  }
+  function draw() {
+    if (!L) return;
+    var k = cv.width / VW, W = cv.width, H = cv.height;
+    // camera: keep the stack top and the hovering piece in view
+    // the view's top edge (world y): the ship sits near the bottom until the stack grows, then the view climbs with it
+    var lift = hover && state === "aim" ? hoverY() - halfHeight(hover.s, S.k, hover.ang) - 30 : stackTop() - 180;
+    var want = Math.min(DECK_Y - (VH - 70), lift);
+    camY = camY === null ? want : camY + (want - camY) * (reduce ? 1 : 0.08);
+    var top = camY;
+    var X = function (x) { return (x + VW / 2) * k; }, Y = function (y) { return (y - top) * k; };
+    cx.setTransform(1, 0, 0, 1, 0, 0);
+    cx.fillStyle = css("--sea", "#ffffff"); cx.fillRect(0, 0, W, H);
+    // chart grid
+    cx.strokeStyle = css("--grat", "#c9e1ec"); cx.lineWidth = 1;
+    for (var gx = 0; gx <= VW; gx += 30) { cx.beginPath(); cx.moveTo(gx * k, 0); cx.lineTo(gx * k, H); cx.stroke(); }
+    for (var gy = Math.ceil(top / 30) * 30; gy < top + VH; gy += 30) { cx.beginPath(); cx.moveTo(0, Y(gy)); cx.lineTo(W, Y(gy)); cx.stroke(); }
+    // the load line
+    var ly = DECK_Y - L.lineKm * S.k;
+    cx.setLineDash([8 * k / 2, 6 * k / 2]); cx.strokeStyle = css("--accent", "#b4237d"); cx.lineWidth = 2 * k / 1.5;
+    cx.beginPath(); cx.moveTo(0, Y(ly)); cx.lineTo(W, Y(ly)); cx.stroke(); cx.setLineDash([]);
+    cx.fillStyle = css("--accent", "#b4237d"); cx.font = "800 " + 12 * k + "px " + css("--font", "sans-serif");
+    cx.fillText("Load line · " + fmt(L.lineKm) + " km", 6 * k, Y(ly) - 5 * k);
+    // the sea
+    var sea = DECK_Y + 26, wave = reduce ? 0 : 3 * Math.sin(time / 600);
+    cx.fillStyle = css("--tint-2", "#a9d3e8");
+    cx.beginPath(); cx.moveTo(0, Y(sea + wave)); for (var sx = 0; sx <= VW; sx += 20) cx.lineTo(X(sx - VW / 2), Y(sea + wave + (reduce ? 0 : 2.5 * Math.sin(sx / 30 + time / 500)))); cx.lineTo(W, H); cx.lineTo(0, H); cx.closePath(); cx.fill();
+    // the ship
+    var dk = ship.parts[1]; cx.save(); cx.translate(X(dk.position.x), Y(dk.position.y)); cx.rotate(ship.angle);
+    var dw = L.deck * k;
+    cx.fillStyle = "#8a5a2b"; cx.strokeStyle = css("--ink", "#000"); cx.lineWidth = 2 * k / 1.2;
+    cx.beginPath(); cx.moveTo(-dw / 2 - 10 * k, -7 * k); cx.lineTo(dw / 2 + 16 * k, -7 * k); cx.lineTo(dw / 2 - 6 * k, 30 * k); cx.lineTo(-dw / 2 + 4 * k, 30 * k); cx.closePath(); cx.fill(); cx.stroke();
+    cx.fillStyle = "#c08a50"; cx.fillRect(-dw / 2, -7 * k, dw, 6 * k); cx.strokeRect(-dw / 2, -7 * k, dw, 6 * k);
+    [-1, 1].forEach(function (sd) { cx.fillRect(sd * (dw / 2 - 3 * k) - 3 * k, -17 * k, 6 * k, 10 * k); cx.strokeRect(sd * (dw / 2 - 3 * k) - 3 * k, -17 * k, 6 * k, 10 * k); });
+    if (turtleImg.complete && turtleImg.naturalWidth) cx.drawImage(turtleImg, dw / 2 + 2 * k, -34 * k, 26 * k, 26 * k);
+    cx.restore();
+    // the stack
+    pieces.forEach(function (b) { if (!b.mxGone) shape(b.mxOutline, b.position.x, b.position.y, b.angle, false); });
+    // the piece in hand, with a drop guide
+    if (state === "aim" && hover) {
+      var hy = hoverY(), o = localOutline(hover.s, S.k);
+      cx.strokeStyle = css("--muted", "#6b777e"); cx.setLineDash([3 * k, 4 * k]); cx.lineWidth = 1;
+      cx.beginPath(); cx.moveTo(X(hover.x), Y(hy)); cx.lineTo(X(hover.x), Y(DECK_Y)); cx.stroke(); cx.setLineDash([]);
+      shape(o, hover.x, hy, hover.ang, true);
+    }
+    function shape(out, px, py, a, live) {
+      cx.save(); cx.translate(X(px), Y(py)); cx.rotate(a);
+      cx.beginPath(); out.forEach(function (v, i) { (i ? cx.lineTo : cx.moveTo).call(cx, v.x * k, v.y * k); }); cx.closePath();
+      cx.fillStyle = live ? css("--accent", "#b4237d") : css("--land", "#f3d98a"); cx.globalAlpha = live ? 0.85 : 1; cx.fill(); cx.globalAlpha = 1;
+      cx.lineJoin = "round"; cx.strokeStyle = css("--ink", "#000"); cx.lineWidth = 1.6 * k / 1.2; cx.stroke();
+      cx.restore();
+    }
+  }
+
+  // ---------- naming ----------
+  function renderName() {
+    var box = $("#nameBox"), s = hover.s;
+    $("#nameQ").textContent = "Which country is this? (+" + nameBonus() + ")";
+    $("#nameSay").textContent = "";
+    if (L.name === "pick") {
+      $("#nameType").hidden = true; $("#nameOpts").hidden = false;
+      var r = rng(((RUN && RUN.seed) || 7) * 131 + S.i * 17 + s.cc.charCodeAt(0) + (L.climb || 0) * 7);
+      var same = SHAPES.filter(function (x) { return x.cc !== s.cc && (x.r === s.r) && x.a > 2000; });
+      if (same.length < 3) same = SHAPES.filter(function (x) { return x.cc !== s.cc && x.a > 2000; });
+      var opts = shuffle([s].concat(shuffle(same, r).slice(0, 3)), r);
+      $("#nameOpts").innerHTML = opts.map(function (o) { return '<button type="button" class="opt" data-cc="' + o.cc + '">' + o.n + "</button>"; }).join("");
+    } else {
+      $("#nameOpts").hidden = true; $("#nameType").hidden = false;
+      $("#nin").value = ""; $("#nin").disabled = false; $("#nsugs").innerHTML = "";
+    }
+    box.classList.remove("right", "wrong");
+  }
+  function markName(ok, skipped) {
+    if (hover.answer !== null) return;
+    hover.answer = ok; S.named.push(ok ? 1 : 0);
+    var s = hover.s, box = $("#nameBox");
+    box.classList.add(ok ? "right" : "wrong");
+    $("#nameSay").textContent = ok ? "Right: " + s.n + ". +" + nameBonus() : skipped ? "Dropped unnamed: it was " + s.n + "." : "It's " + s.n + ".";
+    Array.prototype.forEach.call(document.querySelectorAll("#nameOpts .opt"), function (b) { b.disabled = true; if (b.dataset.cc === s.cc) b.classList.add("is"); });
+    $("#nin").disabled = true;
+    if (!skipped) (ok ? SFX.right : SFX.wrong)();
+    renderHud();
+  }
+  // a name is worth 10 points in a Daily or practice run (where the levels are the score) and 100 on a voyage
+  function nameBonus() { return RUN ? 10 : 100; }
+  function answer(cc) { if (state !== "aim" || hover.answer !== null) return; markName(cc === hover.s.cc); }
+
+  // ---------- HUD, end ----------
+  function named() { return S.named.reduce(function (a, b) { return a + b; }, 0); }
+  function points() { return heightKm() + 100 * named(); }
+  function renderHud() {
+    $("#hPieces").textContent = Math.max(0, L.list.length - S.i);
+    $("#hHeight").textContent = fmt(state === "fall" ? heightKm() : S.height);
+    $("#hNamed").textContent = named();
+    $("#hLost").textContent = S.lost.length;
+  }
+  function stars() {
+    if (S.height < L.lineKm) return 0;
+    return 1 + (S.lost.length === 0 ? 1 : 0) + (named() === L.list.length ? 1 : 0);
+  }
+  function finish() {
+    S.over = true; state = "done";
+    S.height = heightKm();
+    if (RUN) { runStep(); return; }
+    // a voyage
+    var st = stars(), pts = S.height + 100 * named();
+    if (st) SFX.line(); else SFX.fail();
+    turtle(st ? "swim" : "peek");
+    var prev = save.levels[L.id] || { stars: 0, best: 0 };
+    save.levels[L.id] = { stars: Math.max(prev.stars, st), best: Math.max(prev.best, pts) }; store();
+    $("#doneTitle").textContent = st ? (st === 3 ? "Three stars. A perfect load." : "Loaded to the line.") : "Below the line this time.";
+    $("#doneStars").hidden = false; $("#doneStars").textContent = "★".repeat(st) + "☆".repeat(3 - st);
+    $("#doneStars").setAttribute("aria-label", st + " of 3 stars");
+    $("#bigScore").textContent = fmt(pts); $("#bigUnit").textContent = "points";
+    $("#doneLine").textContent = "Stack " + fmt(S.height) + " km (load line " + fmt(L.lineKm) + " km) · " + named() + " of " + L.list.length + " named · " + S.lost.length + " overboard.";
+    $("#doneWhy").textContent = "Stars: reach the line; nothing overboard; every country named.";
+    $("#shareText").hidden = true; $("#shareBtn").hidden = true;
+    var idx = LEVELS.indexOf(L), nx = LEVELS[idx + 1];
+    $("#nextLvl").hidden = !(st && nx); if (nx) $("#nextLvl").textContent = "Next voyage: " + nx.title;
+    $("#retryBtn").hidden = false; $("#retryBtn").textContent = "Try this voyage again";
+    showDone();
+  }
+  function showDone() {
+    $("#play").hidden = true; $("#done").hidden = false; renderChart();
+    setTimeout(function () { var t = $("#doneTitle"); t.setAttribute("tabindex", "-1"); t.focus(); }, 30);
+  }
+  // one level of a run (daily, practice or tutorial) has ended
+  function runStep() {
+    var ok = S.height >= L.lineKm, r = RUN;
+    r.named += named(); r.lost += S.lost.length;
+    if (r.mode === "tut") {
+      if (ok) { SFX.line(); r.lvl++; } else { SFX.fail(); toast("Not quite: try that one again."); }
+      if (r.lvl > TUTORIAL.length) { save.tut = 1; store(); RUN = null; toast("That's the tutorial. Here is today's Daily Ballast."); startDaily(); return; }
+      setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
+    }
+    if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
+    else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast("Below the line. " + r.lives + (r.lives === 1 ? " life" : " lives") + " left: a fresh cargo for level " + r.lvl + "."); }
+    if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt }; store(); }
+    if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(genLevel(r.seed, r.lvl, r.attempt)); }, 900); return; }
+    endRun();
+  }
+  function endRun() {
+    var r = RUN, pts = runPoints(r), reached = r.cleared + 1, st = save.stats;
+    if (r.mode === "daily") {
+      if (!save.results[dayNo]) {
+        save.results[dayNo] = { score: pts, lvl: r.cleared, named: r.named, lost: r.lost, marks: r.marks.join("") };
+        st.runs = (st.runs || 0) + 1; st.sum = (st.sum || 0) + r.cleared; st.best = Math.max(st.best || 0, r.cleared);
+      }
+      delete save.run;
+    } else st.bestPractice = Math.max(st.bestPractice || 0, r.cleared);
+    store();
+    var res = r.mode === "daily" ? save.results[dayNo] : { score: pts, lvl: r.cleared, named: r.named, marks: r.marks.join("") };
+    $("#doneTitle").textContent = r.mode === "daily" ? "The stack gave out on level " + (res.lvl + 1) + "." : "Practice over on level " + reached + ".";
+    $("#doneStars").hidden = true;
+    $("#bigScore").textContent = res.lvl; $("#bigUnit").textContent = res.lvl === 1 ? "level cleared" : "levels cleared";
+    $("#doneLine").textContent = fmt(res.score) + " points: " + res.lvl + " × 100 for the levels + " + res.named + " × 10 for the names.";
+    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " A new run arrives at midnight; Endless practice and the voyages are open any time." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
+    var share = $("#shareText"), sb = $("#shareBtn");
+    share.hidden = sb.hidden = r.mode !== "daily";
+    if (r.mode === "daily") share.textContent = shareText(dayNo, res);
+    $("#nextLvl").hidden = true; $("#retryBtn").hidden = r.mode !== "practice"; $("#retryBtn").textContent = "Another practice run";
+    RUN = null;
+    showDone();
+  }
+  function statsLine() { var st = save.stats; return st.runs ? "Your best: level " + (st.best || 0) + " cleared. Average over " + st.runs + (st.runs === 1 ? " run: " : " runs: ") + (Math.round((st.sum || 0) / st.runs * 10) / 10) + "." : ""; }
+  function shareText(n, res) {
+    var t = "Mapelago Ballast No. " + n + " \u{1F422} " + fmt(res.score) + " points\n" + res.marks + "\nCleared " + res.lvl + (res.lvl === 1 ? " level" : " levels") + " · " + res.named + " named\n" + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.ballast) || "How high can you load it?") + " mapelago.com/ballast.html#c-" + n + "-" + res.score;
+    return window.MXS && MXS.beat ? MXS.beat.upgrade(t) : t;
+  }
+  function startDaily() {
+    if (save.results[dayNo]) { home(); return; }
+    var sv = save.run && save.run.day === dayNo ? save.run : null;
+    RUN = newRun("daily", dayNo);
+    if (sv) { RUN.lvl = sv.lvl; RUN.lives = sv.lives; RUN.cleared = sv.cleared; RUN.named = sv.named; RUN.lost = sv.lost; RUN.marks = sv.marks || []; RUN.attempt = sv.attempt || 0; }
+    start(genLevel(RUN.seed, RUN.lvl, RUN.attempt));
+  }
+  function startPractice() { RUN = newRun("practice", Math.floor(Math.random() * 1e9)); start(genLevel(RUN.seed, 1, 0)); }
+  function startTutorial() { RUN = newRun("tut", 0); start(TUTORIAL[0]); }
+  function home() {
+    stop(); RUN = null; $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
+    var r = save.results[dayNo], d = $("#dailyBtn");
+    d.disabled = !!r; d.textContent = r ? "Daily Ballast done: " + r.lvl + (r.lvl === 1 ? " level" : " levels") + " cleared" : save.run && save.run.day === dayNo ? "Carry on today's Daily Ballast (level " + save.run.lvl + ")" : "Play today's Daily Ballast";
+    $("#dailyNote").hidden = false;
+    $("#dailyNote").textContent = (r ? "New cargo at midnight. " : cargoPreview(dayNo) + " ") + statsLine();
+    $("#homeShare").hidden = !r; if (r) $("#homeShareText").textContent = shareText(dayNo, r);
+  }
+
+  // ---------- the level chart ----------
+  function unlocked(i) { if (i === 0) return true; var p = LEVELS[i - 1]; return !!(save.levels[p.id] && save.levels[p.id].stars) || LEVELS[i].id.slice(-1) === "1"; }
+  function renderChart() {
+    var total = 0;
+    $("#chartList").innerHTML = REGIONS.map(function (rg) {
+      return '<li class="region"><h3>' + rg + '</h3><ol class="lv">' + LEVELS.map(function (l, i) {
+        if (l.region !== rg) return "";
+        var s = (save.levels[l.id] || {}).stars || 0, open = unlocked(i); total += s;
+        return '<li><button type="button" class="lvbtn' + (s ? " done" : "") + '" data-i="' + i + '"' + (open ? "" : " disabled") + ' aria-label="' + l.title + (open ? ", " + s + " of 3 stars" : ", locked") + '"><b>' + (LEVELS.filter(function (x, j) { return x.region === rg && j <= i; }).length) + "</b><span>" + l.title + '</span><i aria-hidden="true">' + (open ? "★".repeat(s) + "☆".repeat(3 - s) : "\u{1F512}") + "</i></button></li>";
+      }).join("") + "</ol></li>";
+    }).join("");
+    $("#chartStars").textContent = total + " of " + LEVELS.length * 3 + " stars";
+  }
+
+  // ---------- turtle and toast ----------
+  function turtle(move) {
+    var t = $("#logoMascot svg"); if (!t || reduce || !t.animate) return;
+    if (move === "swim") t.animate([{ transform: "translate(0,0) rotate(0)" }, { transform: "translate(6px,-5px) rotate(8deg)" }, { transform: "translate(-6px,-5px) rotate(-8deg)" }, { transform: "translate(0,0)" }], { duration: 700, iterations: 3 });
+    if (move === "peek") t.animate([{ transform: "translateY(0)" }, { transform: "translateY(7px) scale(.94)" }, { transform: "translateY(0)" }], { duration: 650 });
+  }
+  var tT = 0;
+  function toast(t) { var el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(tT); tT = setTimeout(function () { el.classList.remove("show"); }, 1800); }
+
+  // ---------- input ----------
+  function move(dx) { if (state === "aim") hover.x = Math.max(-VW / 2 + 10, Math.min(VW / 2 - 10, hover.x + dx)); }
+  function turn(d) { if (state === "aim") hover.ang += d * Math.PI / 12; }
+  function init() {
+    $("#logoMascot").innerHTML = window.MX_TURTLE_SVG;
+    drawMute();
+    $("#soundBtn").onclick = function () { muted = !muted; try { localStorage.setItem("dailycity:sound", muted ? "off" : "on"); } catch (e) {} drawMute(); if (!muted) SFX.right(); };
+    resize(); window.addEventListener("resize", resize);
+    // drag to move; a tap (no drag) turns the piece
+    var down = null;
+    cv.addEventListener("pointerdown", function (e) { down = { x: e.clientX, hx: hover ? hover.x : 0, moved: false }; try { cv.setPointerCapture(e.pointerId); } catch (x) {} });
+    cv.addEventListener("pointermove", function (e) { if (!down || state !== "aim") return; var dx = (e.clientX - down.x) * VW / cv.clientWidth; if (Math.abs(dx) > 4) down.moved = true; hover.x = Math.max(-VW / 2 + 10, Math.min(VW / 2 - 10, down.hx + dx)); });
+    cv.addEventListener("pointerup", function () { if (down && !down.moved) turn(2); down = null; });
+    $("#leftBtn").onclick = function () { move(-12); };
+    $("#rightBtn").onclick = function () { move(12); };
+    $("#ccwBtn").onclick = function () { turn(-1); };
+    $("#cwBtn").onclick = function () { turn(1); };
+    $("#dropBtn").onclick = drop;
+    window.addEventListener("keydown", function (e) {
+      if (state !== "aim" || /^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
+      if (e.key === "ArrowLeft") { move(e.shiftKey ? -3 : -8); e.preventDefault(); }
+      else if (e.key === "ArrowRight") { move(e.shiftKey ? 3 : 8); e.preventDefault(); }
+      else if (e.key === "q" || e.key === "Q" || e.key === "ArrowUp") { turn(-1); e.preventDefault(); }
+      else if (e.key === "e" || e.key === "E") { turn(1); e.preventDefault(); }
+      else if (e.key === " " || e.key === "ArrowDown") { drop(); e.preventDefault(); }
+    });
+    $("#nameOpts").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) answer(b.dataset.cc); });
+    var sel = 0, opts = [];
+    function showSugs() { opts = suggest($("#nin").value); sel = 0; $("#nsugs").innerHTML = opts.map(function (cc, i) { return '<li role="option" aria-selected="' + (i === sel) + '"><button type="button" class="sug' + (i === sel ? " on" : "") + '" data-cc="' + cc + '" tabindex="-1">' + byCC[cc].n + "</button></li>"; }).join(""); }
+    $("#nin").addEventListener("input", showSugs);
+    $("#nin").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); var cc = exact($("#nin").value) || opts[sel]; if (cc) { answer(cc); $("#nsugs").innerHTML = ""; } }
+      else if (e.key === "ArrowDown" && opts.length) { sel = (sel + 1) % opts.length; showSugsMark(); e.preventDefault(); }
+      else if (e.key === "ArrowUp" && opts.length) { sel = (sel - 1 + opts.length) % opts.length; showSugsMark(); e.preventDefault(); }
+    });
+    function showSugsMark() { Array.prototype.forEach.call($("#nsugs").children, function (li, i) { li.setAttribute("aria-selected", i === sel); li.firstChild.classList.toggle("on", i === sel); }); }
+    $("#nsugs").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { answer(b.dataset.cc); $("#nsugs").innerHTML = ""; } });
+    $("#shareBtn").onclick = async function () {
+      var t = $("#shareText").textContent, b = this;
+      try { if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) { await navigator.share({ text: t }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); }
+    };
+    $("#retryBtn").onclick = function () { if (LEVELS.indexOf(L) >= 0) start(L); else startPractice(); };
+    $("#nextLvl").onclick = function () { var i = LEVELS.indexOf(L); if (LEVELS[i + 1]) start(LEVELS[i + 1]); };
+    $("#skipTut").hidden = true;
+    $("#chartBtn").onclick = $("#chartBtn2").onclick = home;
+    $("#dailyBtn").onclick = startDaily;
+    $("#practiceBtn").onclick = startPractice;
+    $("#tutBtn").onclick = startTutorial;
+    $("#skipTut").onclick = function () { save.tut = 1; store(); RUN = null; startDaily(); };
+    $("#homeShareBtn").onclick = async function () { var t = $("#homeShareText").textContent, b = this; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); } };
+    // a new day while the page is open: offer it, never interrupt a run
+    setInterval(function () { if (today() !== dayNo && !dm) { $("#fresh").hidden = false; } }, 30000);
+    $("#chartList").addEventListener("click", function (e) { var b = e.target.closest("button[data-i]"); if (b && !b.disabled) { RUN = null; start(LEVELS[+b.dataset.i]); } });
+    renderChart();
+    // first visit: the tutorial; then today's run, unless it's already played
+    if (!save.tut && !Object.keys(save.results).length && !Object.keys(save.levels).length) startTutorial();
+    else if (save.results[dayNo]) home();
+    else startDaily();
+    if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__ballast = {
+      // test bot helpers: lay the piece flat, and run the physics until it settles, without waiting for frames
+      flat: function () { var best = 0, bh = Infinity, o = localOutline(hover.s, S.k); for (var i = 0; i < 24; i++) { var a = i * Math.PI / 12, c = Math.cos(a), sn = Math.sin(a), lo = 0, hi = 0; o.forEach(function (v) { var y = v.x * sn + v.y * c; lo = Math.max(lo, y); hi = Math.min(hi, y); }); var h = lo * 2 + (lo - hi) * 0.3; if (h < bh) { bh = h; best = a; } } hover.ang = best; },
+      settle: function () { for (var n = 0; n < 900 && state === "fall" && !S.over; n++) step(1000 / 60); return state; },
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang] : null; }, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, save: function () { return save; } };
+  }
+  var dayNo = today();
+  var dm = /^#day-(\d+)$/.exec(location.hash);
+  if (dm && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) dayNo = Number(dm[1]);
+  init();
+  if (location.protocol !== "file:" && "serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
+})();

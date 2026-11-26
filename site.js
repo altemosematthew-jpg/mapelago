@@ -359,7 +359,8 @@
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
         id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
         id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") :
-        id === "crossings" ? (r.score != null ? r.score : "✓") : id === "reckoning" ? (r.total != null ? r.total : "✓") : "✓";
+        id === "crossings" ? (r.score != null ? r.score : "✓") : id === "reckoning" ? (r.total != null ? r.total : "✓") :
+        id === "ballast" ? (r.score != null ? Number(r.score).toLocaleString("en-US") : "✓") : "✓";
       parts.push(s.game.icon + " " + v);
     });
     return { n: parts.length, text: "Mapelago today, No. " + t + " \u{1F422}\n" + parts.join(" · ") + "\nmapelago.com/games/" };
@@ -491,6 +492,11 @@
   GAMES.push({ id: "reckoning", name: "Dead Reckoning", key: "dailycity:reckoning:v1", url: "dead-reckoning.html", icon: "\u{1F4CD}", about: "Tap five places on a blank map. Closer scores more." });
   UNIT.reckoning = function (n) { return Number(n).toLocaleString("en-US") + " of 1,000"; };
   // ---------- Dead Reckoning: end ----------
+  // ---------- Ballast ----------
+  // Only the Daily Ballast counts for streaks and "Today's games"; the voyages (levels) keep their stars in the same save.
+  GAMES.push({ id: "ballast", name: "Ballast", key: "dailycity:ballast:v1", url: "ballast.html", icon: "\u{1F6A2}", about: "Load a ship with real countries. Name them for bonus points." });
+  UNIT.ballast = function (n) { return Number(n).toLocaleString("en-US") + " points"; };
+  // ---------- Ballast: end ----------
 
   // The first game not yet played today, in menu order, leaving out the one you're on.
   function nextUp(all, me) { return (all || info()).filter(function (s) { return !s.doneToday && (!me || s.game.id !== me.id); })[0]; }
@@ -522,7 +528,8 @@
     voyage: { code: "vy", max: 1000, modes: 1 }, fathoms: { code: "fa", max: 7000, modes: 1 },
     stamps: { code: "st", max: 6, modes: 1 }, crossings: { code: "cr", max: 1000, modes: 1 },
     history: { code: "lb", max: 800, modes: 1 },
-    reckoning: { code: "dr", max: 1000, modes: 1 }
+    reckoning: { code: "dr", max: 1000, modes: 1 },
+    ballast: { code: "bl", max: 60000, modes: 1 }
   };
   function gameByCode(c) { var id = Object.keys(BEAT).filter(function (k) { return BEAT[k].code === c; })[0]; return id ? GAMES.filter(function (g) { return g.id === id; })[0] : null; }
   function gameByPage(page) { return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(page); })[0]; }

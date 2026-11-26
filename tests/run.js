@@ -41,7 +41,7 @@ async function page(b, url, opts = {}) {
   const b = await chromium.launch();
   try {
     // 1. every page loads cleanly at phone and desktop size
-    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
+    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "ballast.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
       for (const desktop of [false, true]) {
         const { ctx, p } = await page(b, U + f, { desktop, wait: 800 });
         check(!p.errs.length, `loads cleanly: /${f} ${desktop ? "desktop" : "phone"}`, p.errs.join("; "));
@@ -51,9 +51,9 @@ async function page(b, url, opts = {}) {
     // 1b. a release bumps the cache and every script address together, so returning players get it on their next visit
     {
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8"), v = /const C = "mapelago-([^"]+)"/.exec(sw)[1];
-      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "privacy/index.html", "shapes.js", "sw.js"]) {
+      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "ballast.html", "privacy/index.html", "shapes.js", "sw.js"]) {
         const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
-        const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/)?(?:site|extras|shapes|world|copy|analytics|history|history-data)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
+        const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/|vendor\/)?(?:matter\.min|decomp\.min|ballast|ballast-data|site|extras|shapes|world|copy|analytics|history|history-data)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
         check(tags.length > 0 && tags.every((t) => t === "?v=" + v), `script addresses carry the cache version ${v}: ${f}`, tags.join(" "));
       }
       check(fs.readFileSync(path.join(__dirname, "../CNAME"), "utf8").trim() === "mapelago.com", "CNAME still says mapelago.com");
@@ -220,7 +220,7 @@ async function page(b, url, opts = {}) {
       check(/Each move costs 6 points/.test(t) && !/costs 8 points/.test(t), "hints page: city moves cost 6");
       await ctx.close();
       const ab = fs.readFileSync(path.join(__dirname, "../about/index.html"), "utf8");
-      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings", "Logbook", "Dead Reckoning"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Ten games a day/.test(ab), "about page: names all ten daily games");
+      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings", "Logbook", "Dead Reckoning", "Ballast"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Eleven games a day/.test(ab), "about page: names all eleven daily games");
     }
     // ---- end mx-country-rules ----
 
@@ -897,6 +897,18 @@ async function page(b, url, opts = {}) {
       const r = await p.evaluate(() => __fath.S());
       check(at >= 0 && r.picks[at] === "TV" && r.total > 0, "fathoms: Tuvalu is accepted as a right answer", JSON.stringify([at, r.picks, r.total]));
       await ctx.close();
+      // review fixes: the whole answer list with a reason for each depth, "the" before names that take it, San Marino's capital
+      {
+        const f = await page(b, U + "fathoms.html#day-20", { storage: { "dailycity:fathoms:v1": '{"results":{},"game":null}' }, wait: 600 });
+        const first = await f.p.evaluate(() => __fath.S().prompts[0].answers.length);
+        await f.p.click("#fpass"); await f.p.waitForTimeout(300);
+        const list = await f.p.evaluate(() => ({ vis: document.querySelector("#allAns").getBoundingClientRect().height > 40, head: (document.querySelector("#allAns .allhead") || {}).textContent, rows: document.querySelectorAll("#allAns li:not(.allhead)").length, why: [...document.querySelectorAll("#allAns small")].map((x) => x.textContent), depth: [...document.querySelectorAll("#allAns li:not(.allhead) b")].map((x) => Number(x.textContent.replace(/,/g, ""))) }));
+        check(list.vis && /deepest first/.test(list.head) && list.rows === first && list.depth.every((x, i) => !i || x <= list.depth[i - 1]), "fathoms: after a prompt every right answer is listed, deepest first", JSON.stringify([list.rows, first]));
+        check(list.why.length === first && list.why.every((w) => /largest city about [\d.,]+( million)?$|no city big enough/.test(w)), "fathoms: each answer says why it is that deep", list.why.slice(0, 3).join(" | "));
+        const t = await f.p.evaluate(() => [__fath.the("Name a country that borders Democratic Republic of the Congo."), __fath.the("Name a country that covers more land than United Kingdom."), __fath.the("Name a country that borders Chad."), __fath.cap("SM")]);
+        check(t[0] === "Name a country that borders the Democratic Republic of the Congo." && / than the United Kingdom\./.test(t[1]) && t[2] === "Name a country that borders Chad." && t[3] === "San Marino", "fathoms: 'borders the Democratic Republic of the Congo'; San Marino's capital is San Marino", JSON.stringify(t));
+        await f.ctx.close();
+      }
       const o = await page(b, U + "fathoms.html#day-19", { wait: 600 });
       check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 20 are dealt exactly as before");
       await o.ctx.close();
@@ -931,13 +943,13 @@ async function page(b, url, opts = {}) {
       await ctx.close();
     }
 
-    // 22. the app manifest and the home page's search data know all ten games
+    // 22. the app manifest and the home page's search data know all eleven games
     {
       const m = JSON.parse(fs.readFileSync(path.join(__dirname, "../manifest.webmanifest"), "utf8"));
       const ok = (m.shortcuts || []).every((x) => fs.existsSync(path.join(__dirname, "..", x.url === "./" ? "index.html" : x.url.endsWith("/") ? x.url + "index.html" : x.url)));
       check(ok && m.shortcuts.length >= 3, "manifest: shortcuts point at real pages");
       const home = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
-      check(/Ten free daily geography games[^"]*Dead Reckoning/.test(home), "home page search data lists all ten games");
+      check(/Eleven free daily geography games[^"]*Dead Reckoning/.test(home), "home page search data lists all eleven games");
     }
 
     // 23. Crossings speaks in countries: par is the countries between, and the result shows one shortest route
@@ -965,7 +977,7 @@ async function page(b, url, opts = {}) {
       check(/^Mapelago release \d+\.\d+\.\d+$/.test(await p.textContent(".mx-ver")), "the footer names the release");
       await ctx.close();
       // with every other game done and this one not, it doesn't say everything is done
-      const all = {}; for (const k of ["dailycity:v2", "dailycity:country:v1", "dailycity:bigger:v1", "dailycity:bigcountry:v1", "dailycity:voyage:v1", "dailycity:fathoms:v1", "dailycity:stamps:v1", "dailycity:history:v1", "dailycity:reckoning:v1"]) all[k] = done();
+      const all = {}; for (const k of ["dailycity:v2", "dailycity:country:v1", "dailycity:bigger:v1", "dailycity:bigcountry:v1", "dailycity:voyage:v1", "dailycity:fathoms:v1", "dailycity:stamps:v1", "dailycity:history:v1", "dailycity:reckoning:v1", "dailycity:ballast:v1"]) all[k] = done();
       const q = await page(b, U + "crossings.html", { storage: all, wait: 600 });
       const line = await q.p.evaluate(() => [...document.querySelectorAll(".mx-next")].map((e) => e.textContent).join(" "));
       check(!/Every game done/.test(line) && /last game left/.test(line), "today's games: not 'every game done' while this one is unplayed", line);
@@ -1175,6 +1187,8 @@ async function page(b, url, opts = {}) {
     // ---- vx end ----
     // Dead Reckoning (tests/dead-reckoning.test.js)
     await require("./dead-reckoning.test.js")({ b, U, page, check });
+    // Ballast (tests/ballast.test.js)
+    await require("./ballast.test.js")({ b, U, page, check });
   } finally { await b.close(); srv.close(); }
   console.log(`\n${passed} passed, ${failed.length} failed`);
   failed.forEach((f) => console.log("  FAIL " + f));

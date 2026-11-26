@@ -9,7 +9,8 @@ window.MXCOPY = {
   "fathoms": "How deep can you go? I skipped the obvious answers.",
   "stamps": "Can you fill all six in fewer spins than me?",
   "crossings": "Can you cross it in par?",
-  "history": "How close to the year can you get?"
+  "history": "How close to the year can you get?",
+  "ballast": "How high can you load it?"
  },
  "cards": {
   "city": "Guess the city: slide tiles for clues, then pin it on the map.",
@@ -20,10 +21,11 @@ window.MXCOPY = {
   "fathoms": "Name a country that fits. Less obvious answers go deeper.",
   "stamps": "Spin the wheel, answer the question, stamp all six.",
   "crossings": "Name the countries between two others, border by border.",
-  "history": "Eight questions on the world map since 1800. Get warmer."
+  "history": "Eight questions on the world map since 1800. Get warmer.",
+  "ballast": "Load a ship with real countries. Name them for bonus points."
  },
  "home": {
   "headline": "A little geography, every day",
-  "line": "Nine free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for."
+  "line": "Eleven free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for."
  }
 };
