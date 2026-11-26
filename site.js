@@ -150,7 +150,21 @@
   var AREA_FLAG = { AR: 1, CN: 1, DK: 1, FR: 1, IN: 1, MA: 1, NO: 1, PK: 1, RS: 1, UA: 1, US: 1 };
   function puzzleDay() { var m = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && /#day-(\d+)/.exec(location.hash); return m ? +m[1] : today(); }
   // a game's country table passes through here: from No. 17 every country gets its sourced area
+  // Three corrections (from No. 18; see review/facts-to-check.md): Botswana's official language is English (Setswana is
+  // the national language); Canada and Denmark share a land border on Hans Island (2022); South Africa's highest
+  // point is shown by its usual name, Mafadi, with the Sotho name the country pack uses.
+  var FIX_FROM = 18, MAFADI = "Mafadi (Ntheledi)";
+  function fixNames(o) { // the fact tables Voyage and Dead Reckoning carry beside the country table
+    try { var z = o && o["South Africa"]; if (!z) return o; if (Array.isArray(z)) z.forEach(function (v, i) { if (typeof v === "string") z[i] = v.replace(/^Ntheledi/, MAFADI); }); else Object.keys(z).forEach(function (k) { if (z[k] === "Ntheledi") z[k] = MAFADI; }); } catch (e) {}
+    return o;
+  }
+  if (puzzleDay() >= FIX_FROM) ["VXPACK", "DR_COUNTRIES"].forEach(function (name) { var val = fixNames(window[name]); try { Object.defineProperty(window, name, { configurable: true, enumerable: true, get: function () { return val; }, set: function (v) { val = fixNames(v); } }); } catch (e) {} });
   window.MXA = function (table) {
+    if (puzzleDay() >= FIX_FROM) table.forEach(function (c) {
+      if (c.cc === "BW" && c.langs) c.langs = ["English"];
+      if (c.cc === "CA" && c.next && c.next.indexOf("DK") < 0) c.next = c.next.concat("DK");
+      if (c.cc === "DK" && c.next && c.next.indexOf("CA") < 0) c.next = c.next.concat("CA");
+    });
     if (puzzleDay() < AREA_FROM) return table;
     window.MXA.byCid = {};
     table.forEach(function (c) { window.MXA.byCid[c.cid] = c; var a = MXAREA[c.cc]; if (!a) return; if (AREA_FLAG[c.cc] && c.area) c.szr = [Math.min(a, c.area), Math.max(a, c.area)]; c.area = a; c.sourced = 1; });
@@ -164,6 +178,12 @@
     return (x.szr || y.szr) ? !(hi(x, a) * 1.02 < lo(y, b) || hi(y, b) * 1.02 < lo(x, a)) : false;
   };
   window.MXAREA = MXAREA;
+
+  // ---------- the weekly arc ----------
+  // No. 1 was a Saturday. Monday is the gentlest day and Saturday the hardest; f scales a game's one difficulty dial
+  // (above 1 is easier). A game that follows the arc sets window.MX_ARC and its header says the day's level in words.
+  function weekLevel(n) { return [["Sun", "medium", 1], ["Mon", "gentlest", 1.3], ["Tue", "easy", 1.2], ["Wed", "fairly easy", 1.1], ["Thu", "medium", 1], ["Fri", "hard", 0.9], ["Sat", "hardest", 0.8]].map(function (w) { return { day: w[0], word: w[1], f: w[2] }; })[(6 + n - 1) % 7]; }
+  function arcLabel() { var a = window.MX_ARC, n = document.getElementById("num"); if (a && n && n.textContent && n.textContent.indexOf(a.word) < 0 && /No\. \d+/.test(n.textContent)) n.textContent = n.textContent.replace(/(No\. \d+)/, "$1 \u00b7 " + a.day + " \u00b7 " + a.word); }
 
   // One streak for the whole site: a day counts when any game was finished that day (freezes work as they do per game).
   function siteStreak() {
@@ -191,7 +211,7 @@
     if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
     if (p.textContent !== t) p.textContent = t;
   }
-  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext };
+  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel };
 
   var CSS = '.mx-risk{display:block;margin:0 0 10px;line-height:1.45;padding:8px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000);font-size:14px;font-weight:600}'
     + '.mx-risk a{color:inherit;font-weight:800}'
@@ -763,7 +783,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); setTimeout(soundButton, 900); // after any game has added its own
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');

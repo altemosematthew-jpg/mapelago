@@ -64,3 +64,9 @@ The UN figure is in use from No. 17 for every row. The old figures were measured
 | South Sudan | 624 | 658,841 | - | the old figure was an error |
 
 Items 3, 4 and 5 in the table above (Saudi Arabia, Netherlands, Pakistan) are settled by this source from No. 17.
+
+## Applied (0.15.45, from No. 18)
+- **Item 6, Botswana:** official language shown as English only.
+- **Item 7, Canada and Denmark:** each now lists the other as a land neighbour (Hans Island), so nothing says either "borders only one country". Crossings still keeps the pair out of its daily routes.
+- **Item 8, South Africa's highest point:** shown as "Mafadi (Ntheledi)" in Voyage and Dead Reckoning.
+- **Still open:** items 1, 2 and 9 (city populations) and item 10 (Ankara) wait on Matthew.

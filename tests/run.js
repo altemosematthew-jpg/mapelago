@@ -688,10 +688,10 @@ async function page(b, url, opts = {}) {
         for (let d = 14; d <= 44; d++) {
           await q.p.goto(U + "bigger-country.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
           const x = await q.p.evaluate((d) => { const P = __big.S().pairs, A = MxBC.areas; return { bad: P.flat().filter((c) => (d >= 17 ? MXA.byCid[c.cid].area : A[c.cid]) !== c.pop).map((c) => c.name).concat(d >= 17 && P.some((t) => MXAclose(t[0], t[1])) ? ["a pair too close to call"] : []), morocco: P.flat().some((c) => c.name === "Morocco"), last: P.slice(8).map((t) => Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)) }; }, d);
-          seen.wrong.push(...x.bad); if (x.morocco) seen.morocco++; if (d < 17 ? x.last.some((v) => v > 1.2 || v < 1.04) : (x.last[1] > 1.2 || x.last[1] < 1.1 || x.last[0] > 1.29 || x.last[0] < 1.1)) seen.wide.push(d + ":" + x.last.map((v) => v.toFixed(2))); seen.n++;
+          seen.wrong.push(...x.bad); if (x.morocco) seen.morocco++; if (d < 17 ? x.last.some((v) => v > 1.2 || v < 1.04) : (x.last[1] > 1.27 || x.last[1] < 1.1 || x.last[0] > 1.37 || x.last[0] < 1.1)) seen.wide.push(d + ":" + x.last.map((v) => v.toFixed(2))); seen.n++;
         }
         check(!seen.wrong.length && !seen.morocco, "bigcountry: every area is sourced (CIA World Factbook for Nos. 14-16, the UN Demographic Yearbook from No. 17), Morocco left out, no pair too close to call", JSON.stringify(seen.wrong.slice(0, 5)));
-        check(!seen.wide.length && seen.n === 31, "bigcountry: the last two pairs are close (within 20% to No. 16; from No. 17 the ninth within 29% and the last within 10-20%)", seen.wide.join(" "));
+        check(!seen.wide.length && seen.n === 31, "bigcountry: the last two pairs are close (within 20% to No. 16; from No. 17 the ninth within 37% and the last within 10-27%, by weekday)", seen.wide.join(" "));
         await q.p.goto(U + "bigger-country.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
         check((await q.p.evaluate(() => __big.S().pairs[0][0].pop)) === 2322794, "bigcountry: No. 12 keeps the figures it was played with");
         check(!q.p.errs.length, "bigcountry official areas: no errors", q.p.errs.join("; "));
@@ -1184,6 +1184,15 @@ async function page(b, url, opts = {}) {
         const after = await c.p.evaluate(() => { const T = MXA.byCid; return [T[682].area, T[528].area, T[728].area, T[729].sourced || 0, MXAclose({ area: 100 }, { area: 101.5 }), MXAclose({ area: 100 }, { area: 103 }), MXAclose(T[250], T[804]), MXAclose(T[250], T[276])]; }); await c.ctx.close();
         check(!before && JSON.stringify(after) === "[2206714,41543,658841,0,true,false,true,false]", f + ": the sourced areas start at No. 17; within 2% is never compared; France (two definitions) is not set against Ukraine but is against Germany", JSON.stringify([before, after]));
       }
+    }
+    // ---- three corrections from No. 18: Botswana's official language, the Canada-Denmark border, Mafadi's name
+    {
+      const at = async (f, day, fn) => { const t = await page(b, U + f + "?f=" + day + "#day-" + day, { desktop: true }); await t.p.waitForTimeout(300); const r = await t.p.evaluate(fn); await t.ctx.close(); return JSON.stringify(r); };
+      const tbl = () => { const T = (window.MXA && MXA.byCid) || {}; return T[72] ? [T[72].langs, T[124].next.includes("DK"), T[208].next.includes("CA")] : null; };
+      const v17 = await at("voyage.html", 17, tbl), v18 = await at("voyage.html", 18, tbl), f18 = await at("fathoms.html", 18, tbl), s18 = await at("stamps.html", 18, tbl);
+      const p17 = await at("voyage.html", 17, () => VXPACK["South Africa"].p), p18 = await at("voyage.html", 18, () => VXPACK["South Africa"].p), d18 = await at("dead-reckoning.html", 18, () => DR_COUNTRIES["South Africa"][2]);
+      const want = '[["English"],true,true]';
+      check(v17 === '[["English","Tswana"],false,false]' && v18 === want && f18 === want && s18 === want && p17 === '"Ntheledi"' && p18 === '"Mafadi (Ntheledi)"' && /^"Mafadi \(Ntheledi\), 3450"$/.test(d18), "facts from No. 18: Botswana English only, Canada and Denmark border each other, Mafadi (Ntheledi); No. 17 unchanged", [v17, v18, f18, s18, p17, p18, d18].join(" "));
     }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
