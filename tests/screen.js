@@ -122,7 +122,7 @@ const ACT = {
   voyage: "document.querySelector('#opts button').click()", crossings: "(function(){var P=__cross.P();for(var i=0;i<60;i++)if(i!==P.from&&i!==P.to){__cross.guess(i);break}})()",
   reckoning: "__dr.tapAt(10, 10)", stamps: "document.querySelector('#spin').click()", fathoms: "document.querySelector('#fpass').click()",
 };
-const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning", "country", "stamps", "fathoms"];
+const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning", "country", "stamps", "fathoms", "daily"];
 
 // known slow starts that do not count as regressions yet (none now)
 const SLOW = [];
