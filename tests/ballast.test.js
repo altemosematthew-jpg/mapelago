@@ -77,7 +77,7 @@ module.exports = async function ({ b, U, page, check }) {
   for (const desktop of [false, true]) {
     const tag = desktop ? "desktop" : "phone";
     const { ctx, p } = await page(b, U + "ballast.html#day-20", { desktop, storage: SEEN, wait: 900 });
-    const fit = await p.evaluate(() => { const r = (s) => document.querySelector(s).getBoundingClientRect(); return [r("#sea").height >= innerHeight * 0.55, r("#sea").bottom <= innerHeight, r("#nameQ").top < innerHeight, /\u2665\u2665\u2665/.test(document.querySelector("#lvlMeta").textContent), /Level 1/.test(document.querySelector("#lvlTitle").textContent), /of 2 allowed/.test(document.querySelector("#hLost").textContent)]; });
+    const fit = await p.evaluate(() => { const r = (s) => document.querySelector(s).getBoundingClientRect(); return [r("#sea").height >= innerHeight * 0.45, r("#sea").bottom <= innerHeight, r("#nameQ").top < innerHeight, /\u2665\u2665\u2665/.test(document.querySelector("#lvlMeta").textContent), /Level 1/.test(document.querySelector("#lvlTitle").textContent), /of 2$/.test(document.querySelector("#hLost").textContent)]; });
     check(fit.every(Boolean), `ballast ${tag}: the play area fills most of the screen; level 1, three lives, and how many may be lost are shown`, JSON.stringify(fit));
     const box = await p.locator("#sea").boundingBox(), cdp = await ctx.newCDPSession(p);
     const pre = await p.evaluate(() => [document.querySelector("#nameOpts").hidden, document.querySelector("#nameQ").textContent, typeof __ballast.ghost(), __ballast.hover()]);

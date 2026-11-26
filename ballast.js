@@ -98,11 +98,11 @@
   }
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [
-    R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Press and drag the country: it follows your finger. Let go to drop it. Hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
-    R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap without dragging to turn a country 15 degrees (or Q and E). Lay long ones flat, then drag and let go.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
-    R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "After you place a country, name it for bonus points (10 each in a run). It never holds up the next piece, and a wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
-    R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right. Build a little to the left.", name: "pick", wind: 1, lineKm: 600, endAtLine: true, tut: 4 }),
-    R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck. Keep the stack low and in the middle. Three lives a run: a failed load costs one.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
+    R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country, let go to drop it, and hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
+    R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap a country to turn it, and lay the long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
+    R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "After you place a country, name it for bonus points; a wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
+    R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right, so build a little to the left.", name: "pick", wind: 1, lineKm: 600, endAtLine: true, tut: 4 }),
+    R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck, so keep the stack low and in the middle.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
   ];
   var RUN = null; // { mode: "daily" | "practice" | "tut", seed, lvl, lives, cleared, named, lost, marks: [], attempt }
   function newRun(mode, seed) { return { mode: mode, seed: seed, lvl: 1, lives: 3, cleared: 0, named: 0, lost: 0, marks: [], attempt: 0 }; }
@@ -157,7 +157,7 @@
   // ---------- the world ----------
   // World units: the view is 360 wide and 520 tall at zoom 1; the deck top is y = 0 and the sea starts at y = 26.
   var VW = 360, VH = 520, WATER = 26, DECK_Y = 0, HOLD = 2000;
-  var cv = $("#sea"), cx = cv.getContext("2d");
+  var cv = $("#sea"), cx = cv.getContext("2d"), touched = false;
   var dropping = null, engine, world, ship, pieces, hover, L, S, raf = 0, last = 0, acc = 0, time = 0, state = "idle";
   var zoom = 1, holdT = 0, fallT = 0, stillT = 0, cheerT = 0, lastBody = null;
 
@@ -232,7 +232,7 @@
     if (!asked || asked.answer !== null || L.name === "none" || L.name === "earn") { finish(); return; }
     state = "last"; $("#dropBtn").hidden = true; $("#contBtn").hidden = false; renderHud();
   }
-  function cont() { if (state !== "last") return; if (asked && asked.answer === null) markName(false, true); finish(); }
+  function cont() { if (state !== "last") return; if (asked && asked.answer === null) markName(false, true); $("#contBtn").hidden = true; $("#dropBtn").hidden = false; finish(); }
   function next() {
     if (S.i >= L.list.length) { hover = null; state = "wait"; renderHud(); return; } // all aboard: the stack must hold, or settle below the line
     hover = { s: byCC[L.list[S.i]], x: 0, y: null, ang: 0, crate: false };
@@ -266,6 +266,7 @@
     if (hover.y != null) { var g = landY(), lo = viewTop() + halfHeight(hover) + 2; hover.y = Math.max(lo, g == null ? hover.y : Math.min(hover.y, g - 1)); }
   }
   function drop() {
+    touched = true;
     if (state !== "aim" || !hover) return;
     clampHover();
     var at = hoverPos(), b = makeBody(hover.s, S.k, at.x, at.y, hover.ang, hover.crate);
@@ -336,7 +337,15 @@
   // ---------- drawing ----------
   var css = function (v, d) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || d; };
   var turtleImg = new Image(); turtleImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(window.MX_TURTLE_SVG || "");
+  // the whole game on one screen: the sea takes whatever height the rest of the play area leaves
+  function fit() {
+    var play = $("#play"); if (!play || play.hidden) return;
+    cv.style.height = "";
+    var rest = play.getBoundingClientRect().height - cv.getBoundingClientRect().height, top = play.getBoundingClientRect().top + window.scrollY;
+    cv.style.height = Math.max(220, Math.min(640, Math.floor(window.innerHeight - top - rest - 6))) + "px";
+  }
   function resize() {
+    fit();
     var w = cv.clientWidth || 360, hgt = cv.clientHeight || 520, dpr = Math.min(2, window.devicePixelRatio || 1);
     cv.width = Math.round(w * dpr); cv.height = Math.round(hgt * dpr);
   }
@@ -398,6 +407,11 @@
         cx.strokeStyle = css("--muted", "#6b777e"); cx.setLineDash([3 * k, 4 * k]); cx.lineWidth = 1;
         cx.beginPath(); cx.moveTo(X(at.x), Y(at.y)); cx.lineTo(X(at.x), Y(gy)); cx.stroke(); cx.setLineDash([]);
         shape(o, at.x, gy, hover.ang, accent, 0.25);
+      }
+      if (state === "aim" && L.tut === 1 && S.i === 0 && !touched) { // first visit: show what to grab
+        var pulse = reduce ? 0.5 : 0.5 + 0.5 * Math.sin(time * 5), rad = (Math.max(halfWidth(hover), halfHeight(hover)) + 8 + 5 * pulse) * zoom * k;
+        cx.strokeStyle = accent; cx.lineWidth = 3 * k; cx.setLineDash([6 * k, 5 * k]); cx.beginPath(); cx.arc(X(at.x), Y(at.y), rad, 0, 6.2832); cx.stroke(); cx.setLineDash([]);
+        cx.font = "800 " + 13 * k + "px " + font; cx.textAlign = "center"; cx.fillStyle = ink; cx.fillText("Drag me, then let go", X(at.x), Y(at.y) - rad - 6 * k); cx.textAlign = "left";
       }
       shape(o, at.x, at.y, hover.ang, state === "earn" ? css("--muted", "#6b777e") : hover.crate ? "#d9c7a3" : accent, state === "earn" ? 0.55 : 0.9);
     }
@@ -502,7 +516,7 @@
     $("#hPieces").textContent = Math.max(0, L.list.length - S.i - (state === "fall" ? 1 : 0));
     $("#hHeight").textContent = fmt(S.height) + " of " + fmt(L.lineKm);
     $("#hNamed").textContent = named();
-    $("#hLost").textContent = L.tut ? S.lost.length : S.lost.length + " of " + L.spare + " allowed";
+    $("#hLost").textContent = L.tut ? S.lost.length : S.lost.length + " of " + L.spare;
   }
   function stars() {
     if (!S.cleared) return 0;
@@ -627,11 +641,12 @@
     $("#logoMascot").innerHTML = window.MX_TURTLE_SVG;
     drawMute();
     $("#soundBtn").onclick = function () { muted = !muted; try { localStorage.setItem("dailycity:sound", muted ? "off" : "on"); } catch (e) {} drawMute(); if (!muted) SFX.right(); };
-    resize(); window.addEventListener("resize", resize);
+    resize(); window.addEventListener("resize", function () { if (document.activeElement !== $("#nin")) resize(); });
     // Direct handling: press anywhere and drag, and the country follows the finger one for one, in both directions;
     // let go and it drops from exactly there. A tap or click without a drag turns it 15 degrees.
     var grab = null;
     cv.addEventListener("pointerdown", function (e) {
+      touched = true;
       if (state !== "aim" || !hover) return;
       var at = hoverPos(); grab = { id: e.pointerId, px: e.clientX, py: e.clientY, hx: at.x, hy: at.y, moved: false };
       try { cv.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault();
@@ -649,6 +664,8 @@
     $("#rightBtn").onclick = function () { move(10); };
     $("#ccwBtn").onclick = function () { turn(-1); };
     $("#cwBtn").onclick = function () { turn(1); };
+    $("#helpBtn").onclick = function () { var d = $("#helpDlg"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); };
+    $("#helpClose").onclick = function () { var d = $("#helpDlg"); if (d.close) d.close(); else d.removeAttribute("open"); };
     $("#dropBtn").onclick = drop; $("#contBtn").onclick = cont;
     window.addEventListener("keydown", function (e) {
       if (/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
@@ -701,7 +718,7 @@
       // run the physics (no frames needed) until the dropped piece has landed and any hold countdown or final judging is over
       settle: function () { for (var n = 0; n < 1500 && !S.over && (state === "fall" || state === "wait" || state === "cheer" || holdT > 0); n++) step(1000 / 60); return state; },
       earn: function (right) { if (state === "earn") earn(right === false ? earnQ.all.findIndex(function (o) { return o !== earnQ.right; }) : earnQ.all.indexOf(earnQ.right)); }, earnQ: function () { return earnQ; }, hold: function () { return holdT; }, zoom: function () { return zoom; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);

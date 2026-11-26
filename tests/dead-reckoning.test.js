@@ -77,7 +77,7 @@ module.exports = async function ({ b, U, page, check }) {
       await p.mouse.click(bb.x + bb.width * (0.3 + i * 0.1), bb.y + bb.height * 0.45);
       await p.click("#lockBtn"); await p.waitForTimeout(60); await p.click("#nextBtn");
     }
-    const after = await p.evaluate(() => ({ save: localStorage.getItem("dailycity:reckoning:v1"), stats: JSON.stringify(__dr.stats()), keys: Object.keys(localStorage).filter((k) => /reckon/.test(k)) }));
+    const after = await p.evaluate(() => ({ save: localStorage.getItem("dailycity:reckoning:v1"), stats: JSON.stringify(__dr.stats()), keys: Object.keys(localStorage).filter((k) => /reckon/.test(k) && !/^mx:seen:/.test(k)) }));
     check(after.save === save1 && after.stats === statsBefore && after.keys.length === 1, "dead reckoning: practice never touches the daily result, streak or stats", JSON.stringify(after.keys));
     await p.click("#backBtn"); await p.waitForTimeout(100);
     check((await p.textContent("#shareText")) === share, "dead reckoning: back from practice, today's result is unchanged");

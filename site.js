@@ -157,6 +157,8 @@
     + '.mxs textarea{width:100%;min-height:76px;box-sizing:border-box;font:12px ui-monospace,monospace;border:1.5px solid var(--line,#000);border-radius:8px;padding:6px}'
     + '.mxs .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.mxs .btns button{min-height:44px;padding:0 14px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r-btn,12px);background:var(--paper,#fff);color:inherit;font:inherit;font-weight:800;cursor:pointer}'
     + '.mxs .btns .go{background:var(--accent,#b4237d);color:var(--on-accent,#fff)}'
+    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}'
+    + '@keyframes mxFirst{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 5px var(--accent,#b4237d)}}.mx-fresh [data-first]{animation:mxFirst 1.6s ease-in-out infinite;border-radius:var(--r-btn,12px)}@media (prefers-reduced-motion:reduce){.mx-fresh [data-first]{animation:none;box-shadow:0 0 0 4px var(--accent,#b4237d)}}'
     + '.mx-today{grid-column:1/-1;margin:36px 0 0}.mx-today h2{margin:0 0 10px;font-size:20px}'
     + '.mx-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}'
     + '.mx-card a{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;align-items:start;height:100%;box-sizing:border-box;padding:10px 12px;min-height:44px;border:var(--bw,2px) solid var(--line,#000);border-bottom-width:var(--lip,6px);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);text-decoration:none}'
@@ -631,6 +633,34 @@
 
   window.MXS.beat = { parse: parseBeat, upgrade: upgrade };
 
+  // The rules behind a "?": a page that carries <template id="mxHelp"> gets a ? button in its header, which opens
+  // those rules in a dialog. The opening screen then needs only one sentence.
+  function helpButton() {
+    var t = document.querySelector("template#mxHelp"), top = document.querySelector("header.top");
+    if (!t || !top || document.querySelector("#mxHelpBtn")) return;
+    var tools = top.querySelector(".tools");
+    if (!tools) { tools = document.createElement("div"); tools.className = "tools"; top.appendChild(tools); }
+    var b = document.createElement("button"); b.type = "button"; b.className = "tool"; b.id = "mxHelpBtn"; b.setAttribute("data-help", ""); b.setAttribute("aria-label", "How to play"); b.textContent = "?";
+    tools.appendChild(b);
+    var d = document.createElement("dialog"); d.className = "mx-help"; d.setAttribute("aria-label", "How to play");
+    d.appendChild(t.content.cloneNode(true));
+    var c = document.createElement("button"); c.type = "button"; c.className = "act"; c.textContent = "Got it"; d.appendChild(c);
+    document.body.appendChild(d);
+    b.onclick = function () { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); };
+    c.onclick = function () { if (d.close) d.close(); else d.removeAttribute("open"); };
+    d.addEventListener("click", function (e) { if (e.target === d && d.close) d.close(); });
+  }
+
+  // First visit to a game: its first action (marked data-first in the page) pulses until it is used once.
+  function firstMove() {
+    var el = document.querySelector("[data-first]"), key = "mx:seen:" + location.pathname.replace(/.*\//, "").replace(/\.html$/, "");
+    if (!el) return;
+    try { if (localStorage.getItem(key)) return; } catch (e) { return; }
+    document.documentElement.classList.add("mx-fresh");
+    var done = function () { document.documentElement.classList.remove("mx-fresh"); try { localStorage.setItem(key, "1"); } catch (e) {} el.removeEventListener("pointerdown", done, true); el.removeEventListener("keydown", done, true); };
+    el.addEventListener("pointerdown", done, true); el.addEventListener("keydown", done, true);
+  }
+
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
@@ -641,7 +671,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine();
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove();
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');
