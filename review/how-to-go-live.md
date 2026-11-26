@@ -23,7 +23,7 @@ Merge with a merge commit, so rollback is one command:
 GitHub Pages rebuilds in a minute or two. Its CDN can serve the old page for up to about 10 minutes after that.
 
 ## Who sees the new version, and when
-- Pages always come fresh from the network, and every script address carries the release version (`site.js?v=0.15.50`), so a returning player gets the whole new version on their **first visit** after the CDN refreshes. The old offline cache (`mapelago-0.15.0`) is deleted on that visit.
+- Pages always come fresh from the network, and every script address carries the release version (`site.js?v=0.15.51`), so a returning player gets the whole new version on their **first visit** after the CDN refreshes. The old offline cache (`mapelago-0.15.0`) is deleted on that visit.
 - A tab left open from before keeps the old version until it's reloaded. The games reload themselves at the next midnight when the tab is idle.
 - Offline players keep the old saved copy until they're next online.
 - Because one visit is enough, there is no "new version, tap to refresh" notice.

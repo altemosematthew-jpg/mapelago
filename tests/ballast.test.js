@@ -62,9 +62,10 @@ module.exports = async function ({ b, U, page, check }) {
     let seen = new Set();
     for (let g = 0; g < 200; g++) {
       const st = await p.evaluate(() => { const B = __ballast, r = B.run(); if (!r || r.mode !== "tut") return ["out", r && r.mode]; if (B.state() !== "aim") return ["wait"]; const id = B.L().id; B.flat(); B.drop(); B.settle(); if (B.asked()) B.answer(B.asked()); if (B.state() === "last") B.cont(); return ["ok", id]; });
+      if (st[0] === "out" && !st[1] && !seen.fin) { seen.fin = await p.evaluate(() => !document.querySelector("#done").hidden && document.querySelector("#doneTitle").textContent); await p.click("#nextLvl"); await p.waitForTimeout(300); continue; }
       if (st[0] === "out") { seen.mode = st[1]; break; } if (st[0] === "ok") seen.add(st[1]); else await p.waitForTimeout(150);
     }
-    check(seen.size === 5 && seen.mode === "daily", "ballast: the five tutorial levels lead into today's Daily Ballast", JSON.stringify([[...seen], seen.mode]));
+    check(seen.size === 5 && seen.mode === "daily" && seen.fin === "That's the tutorial.", "ballast: the five tutorial levels end on a finish screen that leads into today's Daily Ballast", JSON.stringify([[...seen], seen.mode, seen.fin]));
     await p.reload(); await p.waitForTimeout(700);
     check((await p.evaluate(() => __ballast.run().mode)) === "daily", "ballast: the tutorial isn't shown again");
     await ctx.close();
@@ -341,6 +342,25 @@ module.exports = async function ({ b, U, page, check }) {
     const wide = await d.p.evaluate(() => { const s = document.querySelector("#stage").getBoundingClientRect(), c = document.querySelector(".ctrl").getBoundingClientRect(); return [Math.round(s.width), c.left > s.right, c.top < s.bottom, document.documentElement.scrollWidth <= innerWidth]; });
     check(wide[0] > 440 && wide[1] && wide[2] && wide[3], "ballast P0 desktop: the sea sits beside the controls in two columns", JSON.stringify(wide));
     await d.ctx.close();
+  }
+  // scorecard 2, A: readouts from the real stack, the real cause, nothing asked about a lost piece, Drop off at the end, a tutorial finish
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
+    const r = await p.evaluate(async () => {
+      const B = __ballast, o = {}, wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      B.start(B.gen(20, 2, 0)); B.drop(); o.falling = [B.state(), B.height()]; B.settle(); B.tick(30);
+      B.L().lineKm = 99999; B.tick(10); o.need = document.querySelector("#hNeed").textContent;
+      const sink = () => { B.drop(); B.tick(20); const q = B.pieces()[B.pieces().length - 1]; Matter.Body.setPosition(q, { x: 0, y: 3000 }); B.tick(60); };
+      B.startDaily(); await wait(100); sink(); o.asked = document.querySelectorAll("#nameOpts .opt").length; sink(); sink(); await wait(50); o.toast = document.querySelector("#toast").textContent;
+      B.start(B.gen(20, 1, 0)); B.L().lineKm = 99999; for (let i = 0; i < 12 && B.state() === "aim"; i++) { B.drop(); B.settle(); B.tick(20); } o.dropOff = document.querySelector("#dropBtn").disabled || document.querySelector("#dropBtn").hidden;
+      o.cont = B.TUTORIAL.length;
+      return o;
+    });
+    check(r.falling[0] === "fall" && r.falling[1] === 0, "ballast A: the piece still falling is not counted in the stack height", JSON.stringify(r.falling));
+    check(/build up to the line|load \d more/.test(r.need) && !/hold above/.test(r.need), "ballast A: 'hold above the line' only when the stack is above it", r.need);
+    check(r.asked === 0 && /^Too many overboard\./.test(r.toast), "ballast A: never asked to name a lost piece; three overboard says so", JSON.stringify(r));
+    check(r.dropOff, "ballast A: Drop is off when nothing is left to load");
+    await ctx.close();
   }
   // offline after a first load
   {
