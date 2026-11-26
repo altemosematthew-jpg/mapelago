@@ -69,6 +69,12 @@
       out[cat] = idx.map(function (i, k) {
         var seed = t * 8191 + ci * 313 + k * 17 + 3;
         var q = j >= 0 ? H.Wa[cat](H.sa(seed), H.T, pool[i]) : fromFamily(cat, pool[i], V.rng(seed));
+        // sourced areas (from No. 17): never a size question whose largest two could be argued either way
+        if (cat === "size" && window.MXAclose) for (var v = 1; v < 30; v++) {
+          var os = q.options.map(function (o) { return country(o); }), big = os[q.answer];
+          if (!big || !os.some(function (o, x) { return o && x !== q.answer && MXAclose(big, o); })) break;
+          q = H.Wa[cat](H.sa(seed + 7919 * v), H.T, pool[i]);
+        }
         if (cat === "size") q.ask = "Which of these countries is the largest by area?";
         return q;
       });

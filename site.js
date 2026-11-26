@@ -141,6 +141,30 @@
       return s;
     });
   }
+  // ---------- sourced country areas (in use from No. 17) ----------
+  // Source for every figure: UN Statistics Division, Demographic Yearbook 2023, Table 3, surface area in km2
+  // (see review/areas-sourced.md). Sudan, Kosovo and Taiwan are not in the source and keep their earlier figure.
+  var AREA_FROM = 17, MXAREA = {};
+  "AF=652864;AL=28748;DZ=2381741;AD=468;AO=1246700;AG=442;AR=2796427;AM=29743;AU=7692024;AT=83878;AZ=86600;BS=13940;BH=778;BD=148460;BB=431;BY=207600;BE=30528;BZ=22965;BJ=114763;BT=38394;BO=1098581;BA=51209;BW=577852;BR=8510417;BN=5765;BG=110372;BF=272969;BI=27834;CV=4033;KH=181035;CM=475650;CA=9984670;CF=622984;TD=1284000;CL=756102;CN=9600000;CO=1141748;KM=2235;CR=51100;HR=56594;CU=109884;CY=9251;CZ=78871;CI=322462;CD=2345410;DK=42947;DJ=23200;DM=750;DO=48671;EC=257215;EG=1002000;SV=21041;GQ=28051;ER=121144;EE=45399;SZ=17363;ET=1104300;FJ=18272;FI=336884;FR=551500;GA=267668;GM=11295;GE=69700;DE=357581;GH=238537;GR=131957;GD=345;GT=108889;GN=245836;GW=36125;GY=214969;HT=27750;HN=112492;HU=93025;IS=103000;IN=3287263;ID=1892410;IR=1630848;IQ=435052;IE=69825;IL=22072;IT=302068;JM=10991;JP=377930;JO=89318;KZ=2724910;KE=591958;KI=726;KW=17818;KG=199949;LA=236800;LV=64594;LB=10452;LS=30355;LR=111369;LY=1676198;LI=160;LT=65286;LU=2586;MG=587041;MW=117726;MY=330621;MV=300;ML=1240192;MT=315;MH=181;MR=1030700;MU=1979;MX=1964375;FM=702;MD=33847;MC=2;MN=1564116;ME=13888;MA=446550;MZ=799380;MM=676577;NA=825229;NR=21;NP=147181;NL=41543;NZ=268107;NI=130374;NE=1267000;NG=923768;KP=120538;MK=25713;NO=323772;OM=309980;PK=796096;PW=459;PS=6020;PA=75320;PG=462840;PY=406752;PE=1285216;PH=300000;PL=312679;PT=92225;QA=11637;CG=342000;RO=238398;RU=17098246;RW=26338;KN=261;LC=616;VC=389;WS=2842;SM=61;SA=2206714;SN=196712;RS=88444;SC=457;SL=72300;SG=734;SK=49035;SI=20273;SB=28896;SO=637657;ZA=1221037;KR=100444;SS=658841;ES=506009;LK=65610;SR=163820;SE=438574;CH=41291;SY=185180;ST=964;TJ=141400;TZ=947303;TH=513140;TL=14954;TG=56785;TO=747;TT=5127;TN=163610;TM=488100;TV=26;TR=783562;UG=241550;UA=603500;AE=71024;GB=244376;US=9833517;UY=173626;UZ=448969;VU=12189;VA=0.44;VE=929690;VN=331345;YE=527968;ZM=752612;ZW=390757".split(";").forEach(function (x) { var kv = x.split("="); MXAREA[kv[0]] = +kv[1]; });
+  // where the source's definition differs from the other common one, a comparison that could flip is never asked
+  var AREA_FLAG = { AR: 1, CN: 1, DK: 1, FR: 1, IN: 1, MA: 1, NO: 1, PK: 1, RS: 1, UA: 1, US: 1 };
+  function puzzleDay() { var m = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && /#day-(\d+)/.exec(location.hash); return m ? +m[1] : today(); }
+  // a game's country table passes through here: from No. 17 every country gets its sourced area
+  window.MXA = function (table) {
+    if (puzzleDay() < AREA_FROM) return table;
+    window.MXA.byCid = {};
+    table.forEach(function (c) { window.MXA.byCid[c.cid] = c; var a = MXAREA[c.cc]; if (!a) return; if (AREA_FLAG[c.cc] && c.area) c.szr = [Math.min(a, c.area), Math.max(a, c.area)]; c.area = a; c.sourced = 1; });
+    return table;
+  };
+  // true when two countries must not be compared: within 2% of each other, or one has two definitions and the answer could flip
+  window.MXAclose = function (x, y) {
+    var a = x.area || x.pop, b = y.area || y.pop, r = Math.max(a, b) / Math.min(a, b);
+    if (r < 1.02) return true;
+    var lo = function (c, v) { return c.szr ? c.szr[0] : v; }, hi = function (c, v) { return c.szr ? c.szr[1] : v; };
+    return (x.szr || y.szr) ? !(hi(x, a) * 1.02 < lo(y, b) || hi(y, b) * 1.02 < lo(x, a)) : false;
+  };
+  window.MXAREA = MXAREA;
+
   // One streak for the whole site: a day counts when any game was finished that day (freezes work as they do per game).
   function siteStreak() {
     var all = info(), now = today(), days = {}, n = 0;

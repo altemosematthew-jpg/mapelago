@@ -687,10 +687,10 @@ async function page(b, url, opts = {}) {
         const q = await page(b, U + "bigger-country.html#day-14", { storage: fresh });
         for (let d = 14; d <= 44; d++) {
           await q.p.goto(U + "bigger-country.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
-          const x = await q.p.evaluate(() => { const P = __big.S().pairs, A = MxBC.areas; return { bad: P.flat().filter((c) => A[c.cid] !== c.pop).map((c) => c.name), morocco: P.flat().some((c) => c.name === "Morocco"), last: P.slice(8).map((t) => Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)) }; });
+          const x = await q.p.evaluate((d) => { const P = __big.S().pairs, A = MxBC.areas; return { bad: P.flat().filter((c) => (d >= 17 ? MXA.byCid[c.cid].area : A[c.cid]) !== c.pop).map((c) => c.name).concat(d >= 17 && P.some((t) => MXAclose(t[0], t[1])) ? ["a pair too close to call"] : []), morocco: P.flat().some((c) => c.name === "Morocco"), last: P.slice(8).map((t) => Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)) }; }, d);
           seen.wrong.push(...x.bad); if (x.morocco) seen.morocco++; if (d < 17 ? x.last.some((v) => v > 1.2 || v < 1.04) : (x.last[1] > 1.2 || x.last[1] < 1.1 || x.last[0] > 1.29 || x.last[0] < 1.1)) seen.wide.push(d + ":" + x.last.map((v) => v.toFixed(2))); seen.n++;
         }
-        check(!seen.wrong.length && !seen.morocco, "bigcountry: from No. 14 every area is the official total (CIA World Factbook), Morocco left out", JSON.stringify(seen.wrong.slice(0, 5)));
+        check(!seen.wrong.length && !seen.morocco, "bigcountry: every area is sourced (CIA World Factbook for Nos. 14-16, the UN Demographic Yearbook from No. 17), Morocco left out, no pair too close to call", JSON.stringify(seen.wrong.slice(0, 5)));
         check(!seen.wide.length && seen.n === 31, "bigcountry: the last two pairs are close (within 20% to No. 16; from No. 17 the ninth within 29% and the last within 10-20%)", seen.wide.join(" "));
         await q.p.goto(U + "bigger-country.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
         check((await q.p.evaluate(() => __big.S().pairs[0][0].pop)) === 2322794, "bigcountry: No. 12 keeps the figures it was played with");
@@ -1173,6 +1173,16 @@ async function page(b, url, opts = {}) {
         const gone = []; for (const n of names) { await t.p.fill(input, n); await t.p.waitForTimeout(8); if (!(await t.p.evaluate((q) => document.querySelectorAll(q).length, sug))) gone.push(n); }
         check(!gone.length, file + ": all 193 UN members can be typed (Tuvalu included)", gone.join(", "));
         await t.ctx.close();
+      }
+    }
+    // ---- sourced areas: in use from No. 17, never before; pairs within 2%, or that could flip under another definition, are never compared
+    {
+      for (const f of ["fathoms.html", "stamps.html", "voyage.html", "country.html"]) {
+        const a = await page(b, U + f + "?a=16#day-16", { desktop: true }); await a.p.waitForTimeout(300);
+        const before = await a.p.evaluate(() => !!(window.MXA && MXA.byCid)); await a.ctx.close();
+        const c = await page(b, U + f + "?a=17#day-17", { desktop: true }); await c.p.waitForTimeout(300);
+        const after = await c.p.evaluate(() => { const T = MXA.byCid; return [T[682].area, T[528].area, T[728].area, T[729].sourced || 0, MXAclose({ area: 100 }, { area: 101.5 }), MXAclose({ area: 100 }, { area: 103 }), MXAclose(T[250], T[804]), MXAclose(T[250], T[276])]; }); await c.ctx.close();
+        check(!before && JSON.stringify(after) === "[2206714,41543,658841,0,true,false,true,false]", f + ": the sourced areas start at No. 17; within 2% is never compared; France (two definitions) is not set against Ukraine but is against Germany", JSON.stringify([before, after]));
       }
     }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
