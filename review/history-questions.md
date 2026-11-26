@@ -15,11 +15,11 @@ Written by `review/history/build.py` from `review/history/block-a.txt`, `block-b
 | "What was this city called?" questions | 350 |
 | Days before any question repeats | 414 (the slider, name, from-whom and capital questions each run through their whole bank once in 414 days; a pair or order of events is never repeated in the 828-day schedule) |
 | Shipped schedule | No. 1 to No. 828, then it starts again from No. 1 |
-| Shortest gap before the same fact appears again, in a different question | 21 days |
-| Average gap before a fact appears again | 61 days |
-| Facts used at least once | 833 of 833 |
+| Shortest gap before the same fact appears again, in a different question | 15 days |
+| Average gap before a fact appears again | 59 days |
+| Facts used at least once | 803 of 833 |
 
-Kinds per day on average over a cycle: how many years apart 0.60, multiple choice 1.97, put in order 1.59, when was it 1.93, which came first or later 1.91.
+Kinds per day on average over a cycle: how many years apart 0.60, multiple choice 1.97, put in order 1.60, when was it 1.83, which came first or later 2.00.
 
 ## Rules applied
 
