@@ -1239,6 +1239,36 @@ async function page(b, url, opts = {}) {
       check(!before && after && /^Map: .+/.test(after[0]) && after[1], "answer map: none before the answer; after it, the answer country is drawn highlighted", JSON.stringify([before, after]));
       await t.ctx.close();
     }
+    // ---- content pack 1: Fathoms families and Dead Reckoning places from No. 22, never before
+    {
+      const f = async (d) => { const t = await page(b, U + "fathoms.html?p=" + d + "#day-" + d, { desktop: true, wait: 400 }); const r = await t.p.evaluate(() => [window.MxPools && 1, __fath.S().prompts.map((x) => x.kind)]); await t.ctx.close(); return r[1]; };
+      let seen = 0; for (let d = 22; d < 40; d++) if ((await f(d)).includes("pack")) seen++;
+      const before = (await f(21)).includes("pack");
+      const t = await page(b, U + "dead-reckoning.html", { desktop: true, wait: 500 });
+      const dr = await t.p.evaluate(() => { let pre = 0, post = 0; for (let n = 14; n < 22; n++) pre += __dr.daily(n).filter((i) => __dr.P[i].pack).length; for (let n = 22; n < 50; n++) post += __dr.daily(n).filter((i) => __dr.P[i].pack).length; const one = __dr.P.find((p) => p.pack && p.name === "Karlu Karlu"); return [pre, post, one && one.wiki, __dr.P.filter((p) => p.pack).length]; });
+      await t.ctx.close();
+      check(!before && seen >= 3, "content pack 1: Fathoms deals the new families from No. 22 only", seen + " of 18 days");
+      check(dr[0] === 0 && dr[1] >= 20 && dr[2] === "Karlu_Karlu_/_Devils_Marbles_Conservation_Reserve" && dr[3] === 340, "content pack 1: Dead Reckoning's 340 new places appear from No. 22, each with its Wikipedia page", JSON.stringify(dr));
+    }
+    // ---- Q: Daily Voyage plays four legs to one score out of 100, the same on every load, and shares spoiler-free
+    {
+      const play = async () => { const t = await page(b, U + "daily.html#day-23", { storage: { "dailycity:dailyvoyage:v1": "{}" }, wait: 900 }); await t.p.waitForFunction(() => window.__dv);
+        const legs = await t.p.evaluate(() => JSON.stringify(__dv.LEGS.map((l) => l.ask)));
+        for (let i = 0; i < 4; i++) {
+          const k = await t.p.evaluate(() => __dv.LEGS[__dv.G().at].kind);
+          if (k === "pin") { const bx = await t.p.locator("#pinmap").boundingBox(); await t.p.mouse.click(bx.x + bx.width / 2, bx.y + bx.height / 2); await t.p.click("#lock"); }
+          else if (k === "deep") { await t.p.fill("#din", await t.p.evaluate(() => { const L = __dv.LEGS[3]; return document.querySelector('#dlist option[value]') && [...document.querySelectorAll("#dlist option")].map((o) => o.value).find((v) => true) ; })); await t.p.click("#dgo"); }
+          else await t.p.click("#leg .opt");
+          if (k === "cross" && !(await t.p.isVisible("#next"))) await t.p.click("#leg .opt:not([disabled])");
+          await t.p.waitForTimeout(150); await t.p.click("#next");
+        }
+        await t.p.waitForTimeout(300);
+        const r = await t.p.evaluate(() => ({ done: !document.querySelector("#done").hidden, share: document.querySelector("#shareText").textContent, total: __dv.total(), saved: __dv.save().results[23] }));
+        await t.ctx.close(); return [legs, r, t.p.errs]; };
+      const a = await play(), c = await play();
+      check(a[0] === c[0] && JSON.parse(a[0]).length === 4, "daily voyage: the same four legs on every load", a[0].slice(0, 200));
+      check(a[1].done && a[1].saved && a[1].saved.score === a[1].total && a[1].total >= 0 && a[1].total <= 100 && /^Mapelago Daily Voyage No\. 23 \u{1F422} \d+ of 100\n[\u2693\u{1F9ED}\u{1F30A}]{4}\nFour stops, one voyage\. mapelago\.com\/daily\.html$/u.test(a[1].share) && !a[2].length, "daily voyage: four legs to one score out of 100, saved, and a spoiler-free share", JSON.stringify(a[1]) + a[2].join(";"));
+    }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });
