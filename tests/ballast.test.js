@@ -264,7 +264,7 @@ module.exports = async function ({ b, U, page, check }) {
   {
     const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
     const r = await p.evaluate(async () => {
-      const B = __ballast; let n = 0;
+      const B = __ballast; let n = 0; B.L().lineKm = Math.min(B.L().lineKm, 60); // a low line, so the first load always clears (the test is about the picture, not the bot)
       while (B.run() && B.run().cleared < 1 && n++ < 30) { if (B.state() === "aim") { B.flat(); B.drop(); } B.settle(); B.tick(200); if (B.state() === "last") document.querySelector("#contBtn").click(); }
       const cleared = B.run().cleared; B.run().lives = 1; B.S().cleared = false; B.finish(); await new Promise((r) => setTimeout(r, 400));
       const res = B.save().results[Object.keys(B.save().results)[0]], c = document.createElement("canvas"); c.width = 400; c.height = 300;
@@ -360,6 +360,23 @@ module.exports = async function ({ b, U, page, check }) {
     check(/build up to the line|load \d more/.test(r.need) && !/hold above/.test(r.need), "ballast A: 'hold above the line' only when the stack is above it", r.need);
     check(r.asked === 0 && /^Too many overboard\./.test(r.toast), "ballast A: never asked to name a lost piece; three overboard says so", JSON.stringify(r));
     check(r.dropOff, "ballast A: Drop is off when nothing is left to load");
+    await ctx.close();
+  }
+  // O: flags, crew and stowaways are cosmetic: a flag only once the country is named, riders chosen by place not country, both switchable
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
+    const r = await p.evaluate(async () => {
+      const B = __ballast, o = {}, wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      B.startDaily(); await wait(100); B.drop(); B.tick(150); const q = B.pieces()[0]; o.shownBefore = !!q.mxShow;
+      document.querySelector("#skipName").click(); o.shownAfter = !!q.mxShow;
+      o.sameRider = B.stowFor(0) === B.stowFor(0) && typeof B.stowFor(0) === "number";
+      const h0 = B.height(); B.tick(30); B.home(); await wait(100);
+      document.querySelector("#flagBtn").click(); document.querySelector("#stowBtn").click();
+      o.saved = JSON.parse(localStorage.getItem("dailycity:ballast:v1")).look; o.btns = [document.querySelector("#flagBtn").textContent, document.querySelector("#stowBtn").textContent];
+      return o;
+    });
+    check(!r.shownBefore && r.shownAfter, "ballast O: a piece shows its flag only once it has been named (or the name skipped)", JSON.stringify(r));
+    check(r.sameRider && r.saved && r.saved.flags === false && r.saved.stow === false && r.btns[0] === "Flags: off" && r.btns[1] === "Stowaways: off", "ballast O: the menu switches flags and stowaways off and remembers it", JSON.stringify(r));
     await ctx.close();
   }
   // offline after a first load

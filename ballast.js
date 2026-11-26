@@ -222,7 +222,7 @@
     M.Composite.add(world, ship);
     L.lineKm = L.lineKm || Math.round((BOT[L.id] || estimateLine(L)) * L.line);
     if (L.spare == null) L.spare = L.tut ? 99 : 2; // how many countries may be lost to the sea before the load fails
-    zoom = 1; holdT = 0; time = 0; stillT = 0; cheerT = 0; lastBody = null; listA = 0; sinkV = 0;
+    zoom = 1; holdT = 0; time = 0; stillT = 0; cheerT = 0; lastBody = null; listA = 0; sinkV = 0; ripples = []; deckStow = []; crew.s = "watch";
     $("#lvlTitle").textContent = RUN && RUN.mode === "daily" ? "Daily Ballast · Level " + RUN.lvl : RUN && RUN.mode === "practice" ? "Practice · Level " + RUN.lvl : RUN && RUN.mode === "captain" ? "Captain's run · Level " + RUN.lvl : L.title;
     $("#lvlMeta").textContent = (RUN && RUN.mode !== "tut" ? "♥".repeat(RUN.lives) + "♡".repeat(3 - RUN.lives) + " · " : "") + L.region + " · " + L.list.length + " countries" + (L.arc ? " · " + L.arc.day + ", " + L.arc.word : "") + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
     $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
@@ -289,7 +289,7 @@
     if (state !== "aim" || !hover) return;
     clampHover();
     var at = hoverPos(), b = makeBody(hover.s, S.k, at.x, at.y, hover.ang, hover.crate);
-    pieces.push(b); M.Composite.add(world, b); lastBody = b;
+    pieces.push(b); M.Composite.add(world, b); lastBody = b; b.mxStow = stowFor(S.i);
     b.mxShow = L.name === "earn" || L.name === "none";      // its name shows once it's named (or straight away where there's no question to spoil)
     S.kept.push(hover.s.cc);
     if (asked && asked.answer === null && L.name !== "none") markName(false, true); // the earlier question lapses
@@ -305,7 +305,7 @@
   function endLevel(ok) {
     if (S.judged) return;
     S.judged = true; S.cleared = ok; S.height = heightKm(); hover = null;
-    if (ok) { SFX.line(); turtle("swim"); state = "cheer"; cheerT = 0; } else lastCall();
+    if (ok) { SFX.line(); turtle("swim"); crewDo("cheer"); state = "cheer"; cheerT = 0; } else lastCall();
   }
 
   function step(dt) {
@@ -322,7 +322,9 @@
     });
     M.Engine.update(engine, dt);
     pieces.forEach(function (b) {
-      if (!b.mxGone && overboard(b)) { b.mxGone = true; M.Composite.remove(world, b); S.lost.push(b.mxCC); SFX.splash(); if (asked && asked.body === b && asked.answer === null) { asked = null; renderName(); $("#nameQ").textContent = "That one went overboard: nothing to name."; } toast((b.mxShow ? byCC[b.mxCC].n : "A country") + " went overboard." + (L.tut ? "" : S.lost.length > L.spare ? "" : " " + (L.spare - S.lost.length) + " more may be lost.")); renderHud(); }
+      if (!b.mxGone && overboard(b)) { b.mxGone = true; M.Composite.remove(world, b); S.lost.push(b.mxCC); SFX.splash();
+        ripples.push({ x: Math.max(-VW / 2, Math.min(VW / 2, b.position.x)), t: time }); crewDo("look", b.position.x < 0 ? -1 : 1);
+        if (b.mxStow != null) deckStow.push({ id: b.mxStow, x0: b.position.x, y0: Math.min(b.position.y, DECK_Y), x1: Math.max(-deckW() / 2 + 14, Math.min(deckW() / 2 - 40, b.position.x * 0.6)), t: time }); /* it jumps clear, to the deck */ if (asked && asked.body === b && asked.answer === null) { asked = null; renderName(); $("#nameQ").textContent = "That one went overboard: nothing to name."; } toast((b.mxShow ? byCC[b.mxCC].n : "A country") + " went overboard." + (L.tut ? "" : S.lost.length > L.spare ? "" : " " + (L.spare - S.lost.length) + " more may be lost.")); renderHud(); }
     });
     if (state === "cheer") { cheerT += dt; if (cheerT > 900) lastCall(); return; }
     if (S.judged) return;
@@ -330,7 +332,7 @@
       fallT += dt;
       // the piece has landed once it slows (or hits the water): thud, then the next piece is yours at once
       if (fallT > 250 && (!lastBody || lastBody.mxGone || lastBody.speed < 0.9 || fallT > 1600)) {
-        if (lastBody && !lastBody.mxGone) SFX.land();
+        if (lastBody && !lastBody.mxGone) { SFX.land(); lastBody.mxLand = time; if (lastBody.position.x > deckW() / 5) crewDo("duck"); }
         S.i++;
         if (L.name !== "none" && L.name !== "earn" && lastBody && !lastBody.mxGone) { asked = { s: dropping, answer: null, body: lastBody }; renderName(); }
         $("#dropBtn").disabled = S.i >= L.list.length; // nothing left to load: Drop is off
@@ -356,6 +358,32 @@
 
   // ---------- drawing ----------
   var css = function (v, d) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || d; };
+  // ---------- character (cosmetic only: nothing here touches the physics, the scores or the bot numbers) ----------
+  // Flags fill a piece once it is named or placed (so a flag never gives away a name still to be asked); stowaways ride
+  // on top of the pieces and jump clear to the deck when their country goes overboard; the crew react. No faces on
+  // the countries. Flags: flag-icons (MIT), only where its code matches ours. Both can be switched off in the menu.
+  save.look = save.look && typeof save.look === "object" ? save.look : { flags: true, stow: true };
+  var FLAG = {}, ripples = [], deckStow = [], crew = { s: "watch", t: 0, side: 1 }, wobbling = false;
+  function flagImg(cc) { if (!FLAG[cc]) { var im = new Image(); im.src = "ballast/flags/" + cc.toLowerCase() + ".svg"; FLAG[cc] = im; } return FLAG[cc]; }
+  function crewDo(s, side) { if (reduce) return; crew.s = s; crew.t = time; crew.side = side || 1; }
+  // which stowaway rides a piece: from the day (or run) and the piece's place in the load, never from the country
+  function stowFor(i) { var seed = (RUN ? RUN.seed : 7) * 31 + (RUN ? RUN.lvl : 0) * 7 + i * 13; return ((seed % 6) + 6) % 6; }
+  var STOW = ["ship's cat", "parrot", "crab", "rat in a scarf", "puffin", "monkey"];
+  function drawStow(g, id, x, y, s, pose, t) {
+    var hop = !reduce && pose === "cheer" ? Math.abs(Math.sin(t / 120)) * 4 * s : 0, wob = !reduce && pose === "wobble" ? Math.sin(t / 60) * 0.5 : 0;
+    g.save(); g.translate(x, y - hop); g.rotate(wob * 0.2); g.lineWidth = 1.2 * s; g.strokeStyle = "#000"; g.lineJoin = "round";
+    var body = ["#8d8d8d", "#3fa34d", "#d9472b", "#9a8f86", "#222", "#8b5a2b"][id], E = function (cx2, cy, rx, ry, f) { g.beginPath(); g.ellipse(cx2 * s, cy * s, rx * s, ry * s, 0, 0, 6.2832); g.fillStyle = f; g.fill(); g.stroke(); };
+    // arms first, behind the body: up to hold on or cheer, wide to brace, waving to keep balance
+    var arm = pose === "hold" || pose === "cheer" ? -1.2 : pose === "brace" ? 0.2 : -0.4 + wob;
+    g.beginPath(); g.moveTo(-3 * s, -6 * s); g.lineTo(-7 * s, (-6 + 6 * arm) * s); g.moveTo(3 * s, -6 * s); g.lineTo(7 * s, (-6 + 6 * (pose === "wobble" ? -arm : arm)) * s); g.lineWidth = 1.6 * s; g.stroke(); g.lineWidth = 1.2 * s;
+    if (id === 0) { E(0, -5, 4, 5, body); E(0, -12, 3.4, 3, body); g.beginPath(); g.moveTo(-3 * s, -14 * s); g.lineTo(-2 * s, -17 * s); g.lineTo(-0.5 * s, -14.5 * s); g.moveTo(3 * s, -14 * s); g.lineTo(2 * s, -17 * s); g.lineTo(0.5 * s, -14.5 * s); g.fillStyle = body; g.fill(); g.stroke(); g.beginPath(); g.moveTo(4 * s, -2 * s); g.quadraticCurveTo(9 * s, -4 * s, 8 * s, -10 * s); g.stroke(); }
+    if (id === 1) { E(0, -6, 3.6, 6, body); E(0, -13, 3, 3, "#d9472b"); g.beginPath(); g.moveTo(2.6 * s, -13 * s); g.lineTo(5.5 * s, -12 * s); g.lineTo(2.6 * s, -11 * s); g.fillStyle = "#f3d98a"; g.fill(); g.stroke(); }
+    if (id === 2) { E(0, -3.5, 5.5, 3.5, body); E(-6.5, -9, 1.8, 1.8, body); E(6.5, -9, 1.8, 1.8, body); }
+    if (id === 3) { E(0, -5, 4, 5, body); E(0, -12, 3, 3, body); E(-2.6, -14.5, 1.4, 1.4, "#f0b8c0"); E(2.6, -14.5, 1.4, 1.4, "#f0b8c0"); g.fillStyle = "#b4237d"; g.fillRect(-3.5 * s, -9.6 * s, 7 * s, 2.2 * s); g.strokeRect(-3.5 * s, -9.6 * s, 7 * s, 2.2 * s); g.beginPath(); g.moveTo(4 * s, -1 * s); g.quadraticCurveTo(10 * s, 0, 9 * s, -6 * s); g.stroke(); }
+    if (id === 4) { E(0, -6, 4, 6, body); E(0.8, -5, 2.4, 4, "#fff"); E(0, -13, 3, 3, body); g.beginPath(); g.moveTo(2.6 * s, -13.6 * s); g.lineTo(6 * s, -12.6 * s); g.lineTo(2.6 * s, -11.4 * s); g.fillStyle = "#e06a00"; g.fill(); g.stroke(); }
+    if (id === 5) { E(0, -5, 4, 5, body); E(0, -12, 3.4, 3.2, body); E(0.6, -11.6, 2.2, 2, "#e8c9a0"); g.beginPath(); g.moveTo(-4 * s, -2 * s); g.quadraticCurveTo(-11 * s, -2 * s, -9 * s, -9 * s); g.stroke(); }
+    g.restore();
+  }
   var turtleImg = new Image(); turtleImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(window.MX_TURTLE_SVG || "");
   // the whole game on one screen: the sea takes whatever height the rest of the play area leaves
   function fit() {
@@ -414,7 +442,29 @@
     cx.beginPath(); cx.moveTo(-dw / 2 - 10 * u, -7 * u); cx.lineTo(dw / 2 + 16 * u, -7 * u); cx.lineTo(dw / 2 - 6 * u, 34 * u); cx.lineTo(-dw / 2 + 4 * u, 34 * u); cx.closePath(); cx.fill(); cx.stroke();
     cx.fillStyle = "#c08a50"; cx.fillRect(-dw / 2, -7 * u, dw, 6 * u); cx.strokeRect(-dw / 2, -7 * u, dw, 6 * u);
     [-1, 1].forEach(function (sd) { cx.fillRect(sd * (dw / 2 - 3 * u) - 3 * u, -23 * u, 6 * u, 16 * u); cx.strokeRect(sd * (dw / 2 - 3 * u) - 3 * u, -23 * u, 6 * u, 16 * u); });
-    if (turtleImg.complete && turtleImg.naturalWidth) cx.drawImage(turtleImg, dw / 2 + 2 * u, -36 * u, 28 * u, 28 * u);
+    var ct = time - crew.t, cs = crew.s; if (cs !== "watch" && ct > (cs === "cheer" ? 1400 : 700)) { crew.s = cs = "watch"; }
+    if (turtleImg.complete && turtleImg.naturalWidth) {
+      cx.save(); cx.translate(dw / 2 + 16 * u, -8 * u);
+      if (cs === "duck") cx.scale(1.08, 0.72); // ducks as a piece lands close by
+      else if (cs === "wince") { cx.translate(Math.sin(time / 30) * 1.5 * u, 0); cx.scale(0.94, 0.9); } // braces while the stack wobbles
+      else if (cs === "cheer") cx.translate(0, -Math.abs(Math.sin(ct / 140)) * 10 * u); // hops at "Loaded!"
+      else if (cs === "look") { cx.rotate(crew.side * 0.35); cx.translate(crew.side * 4 * u, 0); } // leans out to look overboard
+      else if (hover) cx.rotate(Math.max(-0.2, Math.min(0.2, (hover.x - dw / 2 / kz) / 400))); // watches the piece in hand
+      cx.drawImage(turtleImg, -14 * u, -28 * u, 28 * u, 28 * u); cx.restore();
+    }
+    // a gull on the left rail
+    var flap = cs === "cheer" || cs === "look" || wobbling ? Math.sin(time / 70) : 0.2;
+    cx.save(); cx.translate(-dw / 2 + 3 * u, -25 * u); cx.lineWidth = 1.2 * u; cx.strokeStyle = ink;
+    cx.beginPath(); cx.ellipse(0, -5 * u, 6 * u, 4 * u, 0, 0, 6.2832); cx.fillStyle = "#fff"; cx.fill(); cx.stroke();
+    cx.beginPath(); cx.arc(4.5 * u, -9 * u, 2.6 * u, 0, 6.2832); cx.fill(); cx.stroke();
+    cx.beginPath(); cx.moveTo(6.8 * u, -9.5 * u); cx.lineTo(10 * u, -8.8 * u); cx.lineTo(6.8 * u, -8 * u); cx.fillStyle = "#e0a000"; cx.fill(); cx.stroke();
+    cx.beginPath(); cx.moveTo(-2 * u, -6 * u); cx.lineTo(-9 * u, (-6 - 7 * flap) * u); cx.lineTo(2 * u, -4 * u); cx.fillStyle = "#b8c2c8"; cx.fill(); cx.stroke(); cx.restore();
+    // and a deckhand crab that scuttles when something happens
+    var scut = cs !== "watch" && !reduce ? Math.sin(time / 50) * 4 : 0;
+    cx.save(); cx.translate(-dw / 2 + 30 * u + scut * u, -7 * u); cx.lineWidth = 1.2 * u; cx.strokeStyle = ink; cx.fillStyle = "#d9472b";
+    cx.beginPath(); cx.arc(0, 0, 5 * u, Math.PI, 0); cx.closePath(); cx.fill(); cx.stroke();
+    [-1, 1].forEach(function (sd) { cx.beginPath(); cx.arc(sd * 7 * u, (-5 - (cs === "cheer" ? 3 : 0)) * u, 1.8 * u, 0, 6.2832); cx.fill(); cx.stroke(); });
+    cx.restore();
     cx.restore();
     function shape(out, px, py, a, fill, alpha) {
       cx.save(); cx.translate(X(px), Y(py)); cx.rotate(a);
@@ -430,7 +480,33 @@
     }
     // the stack, each country named once it has been named (or placed, where there's no question to spoil)
     var land = css("--land", "#f3d98a");
-    pieces.forEach(function (b) { if (!b.mxGone) shape(b.mxOutline, b.position.x, b.position.y, b.angle, b.mxCrate ? "#d9c7a3" : land); });
+    var cleared2 = S.judged && S.cleared;
+    wobbling = false; pieces.forEach(function (b) { if (!b.mxGone && !(b === lastBody && state === "fall") && b.speed > 0.6) wobbling = true; });
+    if (wobbling && crew.s === "watch" && !cleared2) crewDo("wince");
+    var shiv = !reduce && wobbling && !cleared2 ? 0.6 : 0;
+    pieces.forEach(function (b) {
+      if (b.mxGone) return;
+      var jx = shiv ? Math.sin(time / 23 + b.id) * shiv : 0, sq = !reduce && b.mxLand != null && time - b.mxLand < 220 ? 1 - (time - b.mxLand) / 220 : 0;
+      var im = save.look.flags && b.mxShow && !b.mxCrate ? flagImg(b.mxCC) : null;
+      cx.save(); cx.translate(X(b.position.x + jx), Y(b.position.y)); cx.rotate(b.angle); if (sq) cx.scale(1 + 0.07 * sq, 1 - 0.07 * sq);
+      cx.beginPath(); b.mxOutline.forEach(function (v, i) { (i ? cx.lineTo : cx.moveTo).call(cx, v.x * kz, v.y * kz); }); cx.closePath();
+      if (im && im.complete && im.naturalWidth) {
+        var bx = b.mxBox || (b.mxBox = b.mxOutline.reduce(function (m, v) { return [Math.min(m[0], v.x), Math.min(m[1], v.y), Math.max(m[2], v.x), Math.max(m[3], v.y)]; }, [1e9, 1e9, -1e9, -1e9]));
+        var bw = (bx[2] - bx[0]) * kz, bh = (bx[3] - bx[1]) * kz, f = Math.max(bw / 4, bh / 3);
+        cx.save(); cx.clip(); cx.drawImage(im, bx[0] * kz + bw / 2 - 2 * f, bx[1] * kz + bh / 2 - 1.5 * f, 4 * f, 3 * f); cx.restore();
+      } else { cx.fillStyle = b.mxCrate ? "#d9c7a3" : land; cx.fill(); }
+      cx.lineJoin = "round"; cx.strokeStyle = ink; cx.lineWidth = (im ? 2.2 : 1.6) * k / 1.2; cx.stroke(); cx.restore();
+    });
+    if (save.look.stow) {
+      pieces.forEach(function (b) {
+        if (b.mxGone || b.mxStow == null) return;
+        var pose = b === lastBody && state === "fall" ? "hold" : cleared2 ? "cheer" : b.mxLand != null && time - b.mxLand < 400 ? "brace" : wobbling ? "wobble" : "stand";
+        drawStow(cx, b.mxStow, X(b.position.x), Y(b.bounds.min.y) + 1, kz * 0.9, pose, time);
+      });
+      deckStow.forEach(function (d) { var f = reduce ? 1 : Math.min(1, (time - d.t) / 600), x = d.x0 + (d.x1 - d.x0) * f, y = d.y0 + (DECK_Y - 2 - d.y0) * f - (reduce ? 0 : Math.sin(f * Math.PI) * 40); drawStow(cx, d.id, X(x), Y(y), kz * 0.9, f < 1 ? "hold" : cleared2 ? "cheer" : "stand", time); });
+    }
+    ripples = ripples.filter(function (r) { return time - r.t < 800; });
+    ripples.forEach(function (r) { var f = (time - r.t) / 800; cx.strokeStyle = ink; cx.globalAlpha = 1 - f; cx.lineWidth = 1.5; cx.beginPath(); cx.ellipse(X(r.x), Y(WATER), (6 + 30 * f) * kz, (2 + 8 * f) * kz, 0, 0, 6.2832); cx.stroke(); if (!reduce && f < 0.4) { cx.fillStyle = "#a9d3e8"; for (var dI = -2; dI <= 2; dI++) { cx.beginPath(); cx.arc(X(r.x + dI * 6), Y(WATER - 24 * Math.sin(f * 7.85) - Math.abs(dI) * -3), 2.2 * kz, 0, 6.2832); cx.fill(); } } cx.globalAlpha = 1; });
     pieces.forEach(function (b) { if (!b.mxGone && b.mxShow) label(b.mxCrate ? "crate" : byCC[b.mxCC].n, b.position.x, b.position.y); });
     // the piece in hand, its landing ghost and a guide down to it
     if (hover && (state === "aim" || state === "earn")) {
@@ -446,6 +522,7 @@
         cx.font = "800 " + 13 * k + "px " + font; cx.textAlign = "center"; cx.fillStyle = ink; cx.fillText("Drag me, then let go", X(at.x), Y(at.y) - rad - 6 * k); cx.textAlign = "left";
       }
       shape(o, at.x, at.y, hover.ang, state === "earn" ? css("--muted", "#6b777e") : hover.crate ? "#d9c7a3" : accent, state === "earn" ? 0.55 : 0.9);
+      if (save.look.stow && state === "aim") drawStow(cx, stowFor(S.i), X(at.x), Y(at.y - halfHeight(hover)) + 1, kz * 0.9, "hold", time);
     }
     // read-outs: the stack against the line, the hold countdown, the finish
     var gx0 = W - 14 * k, gh = Y(DECK_Y) - Y(lineY), frac = Math.max(0, Math.min(1, S.height / L.lineKm));
@@ -795,6 +872,8 @@
     $("#chartBtn2").onclick = home;
     $("#chartBtn").onclick = function () { if (RUN && RUN.mode !== "tut" && L && !S.over && (S.i > 0 || RUN.lvl > 1) && !window.confirm(RUN.mode === "daily" ? "Leave this load? Your Daily run waits for you at level " + RUN.lvl + ", but this load starts again." : "Leave this run? It won't be saved.")) return; home(); };
     $("#dailyBtn").onclick = startDaily;
+    var lookBtns = function () { $("#flagBtn").textContent = "Flags: " + (save.look.flags ? "on" : "off"); $("#flagBtn").setAttribute("aria-pressed", save.look.flags ? "true" : "false"); $("#stowBtn").textContent = "Stowaways: " + (save.look.stow ? "on" : "off"); $("#stowBtn").setAttribute("aria-pressed", save.look.stow ? "true" : "false"); };
+    if ($("#flagBtn")) { lookBtns(); $("#flagBtn").onclick = function () { save.look.flags = !save.look.flags; store(); lookBtns(); }; $("#stowBtn").onclick = function () { save.look.stow = !save.look.stow; store(); lookBtns(); }; }
     $("#practiceBtn").onclick = startPractice; if ($("#captainBtn")) $("#captainBtn").onclick = startCaptain;
     $("#tutBtn").onclick = startTutorial;
     $("#skipTut").onclick = function () { save.tut = 1; store(); RUN = null; startDaily(); };
@@ -813,7 +892,7 @@
       // run the physics (no frames needed) until the dropped piece has landed and any hold countdown or final judging is over
       settle: function () { for (var n = 0; n < 1500 && !S.over && (state === "fall" || state === "wait" || state === "cheer" || holdT > 0); n++) step(1000 / 60); return state; },
       earn: function (right) { if (state === "earn") earn(right === false ? earnQ.all.findIndex(function (o) { return o !== earnQ.right; }) : earnQ.all.indexOf(earnQ.right)); }, earnQ: function () { return earnQ; }, hold: function () { return holdT; }, zoom: function () { return zoom; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, daily: dailyLevel, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, look: function () { return save.look; }, crew: function () { return [crew.s, deckStow.length, ripples.length, wobbling]; }, stowFor: stowFor, daily: dailyLevel, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);
