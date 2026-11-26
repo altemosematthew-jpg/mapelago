@@ -67,11 +67,15 @@
   // then swell, then wind, then long awkward shapes, and typed names from level 5.
   var GEN_REGIONS = ["Europe", "Africa", "Asia", "Americas", "Oceania", "World"];
   function regionOf(s) { return /America/.test(s.r) ? "Americas" : s.r === "Europe and Asia" ? "Asia" : s.r; }
+  // From No. 17 Oceania sails with Asia: on its own it has only three countries big enough to load, so its cargo never changed.
+  var GEN2 = ["Europe", "Africa", "Asia and Oceania", "Americas"];
+  function region2(s) { var r = regionOf(s); return r === "Asia" || r === "Oceania" ? "Asia and Oceania" : r; }
   function longness(s) { var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; s.p.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }); var w = x1 - x0, h = y1 - y0; return Math.max(w, h) / Math.max(1, Math.min(w, h)); }
-  function genLevel(seed, n, attempt) {
-    var r = rng(seed * 7919 + n * 104729), order /* a retry is the same level: same cargo, same line */ = shuffle(GEN_REGIONS.slice(0, 5), rng(seed * 13 + 5));
-    var region = n % 6 === 0 ? "World" : order[(n - 1) % 5];
-    var pool = SHAPES.filter(function (s) { return s.a >= 15000 && (region === "World" || regionOf(s) === region); });
+  function genLevel(seed, n, attempt, variant) {
+    // a retry is the same level (same cargo, same line); "variant" is how the Daily steps past a cargo an earlier day had
+    var v2 = seed >= 17, r = rng(seed * 7919 + n * 104729 + (variant || 0) * 977), order = shuffle(v2 ? GEN2.slice() : GEN_REGIONS.slice(0, 5), rng(seed * 13 + 5));
+    var region = v2 ? (n % 5 === 0 ? "World" : order[(n - 1) % 4]) : n % 6 === 0 ? "World" : order[(n - 1) % 5];
+    var pool = SHAPES.filter(function (s) { return s.a >= 15000 && (region === "World" || (v2 ? region2(s) : regionOf(s)) === region); });
     var count = Math.min(10, 4 + Math.floor(n * 0.6));
     // the first two levels (the day's first nine pieces) use each region's best-known countries
     // (from No. 15, and in practice) those first pieces are also compact: no long thin countries in the first minute
@@ -96,6 +100,15 @@
     lv.lineKm = Math.round(est * 0.27 * Math.min(2.2, 0.8 + 0.09 * n));
     return lv;
   }
+  // Never the same cargo twice in the Daily (from No. 17): the days are worked through in order and a level whose set of
+  // countries an earlier day (or an earlier level that day) already had takes its next variant. Same result for everyone.
+  var NR = 17, NRL = 12, nrUsed = {}, nrAt = NR - 1, nrPick = {};
+  function dailyVariant(day, n) {
+    if (day < NR || n > NRL) return 0;
+    for (; nrAt < day;) { nrAt++; for (var l = 1; l <= NRL; l++) { for (var v = 0; v < 40; v++) { var k = genLevel(nrAt, l, 0, v).list.slice().sort().join(""); if (!nrUsed[k]) { nrUsed[k] = 1; nrPick[nrAt + ":" + l] = v; break; } } } }
+    return nrPick[day + ":" + n] || 0;
+  }
+  function dailyLevel(day, n) { return genLevel(day, n, 0, dailyVariant(day, n)); }
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [
     R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country, let go to drop it, and hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
@@ -107,7 +120,7 @@
   var RUN = null; // { mode: "daily" | "practice" | "tut", seed, lvl, lives, cleared, named, lost, marks: [], attempt }
   function newRun(mode, seed) { return { mode: mode, seed: seed, lvl: 1, lives: 3, cleared: 0, named: 0, lost: 0, marks: [], attempt: 0 }; }
   function runPoints(r) { return r.cleared * 100 + r.named * 10; }
-  function cargoPreview(seed) { var l = genLevel(seed, 1); return "Today's cargo starts in " + (l.region === "World" ? "every corner of the world" : l.region === "Americas" ? "the Americas" : l.region) + "."; }
+  function cargoPreview(seed) { var l = dailyLevel(seed, 1); return "Today's cargo starts in " + (l.region === "World" ? "every corner of the world" : l.region === "Americas" ? "the Americas" : l.region) + "."; }
 
   // ---------- save ----------
   var save = (function () { try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && typeof s === "object") return s; } catch (e) {} return {}; })();
@@ -145,7 +158,9 @@
   // ---------- names (for the naming bonus) ----------
   var ALIAS = { US: ["usa", "united states of america", "america"], GB: ["uk", "britain", "great britain"], TR: ["turkey", "turkiye"], CZ: ["czech republic"], MM: ["burma"], CI: ["cote d'ivoire", "ivory coast"], CD: ["dr congo", "drc", "democratic republic of the congo"], CG: ["congo", "republic of the congo"], NL: ["holland"], KR: ["korea", "south korea"], KP: ["north korea"], AE: ["uae"], TL: ["east timor", "timor-leste"], MK: ["macedonia"], SZ: ["swaziland"], CV: ["cape verde"] };
   function norm(x) { return String(x).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[’'`.\-]/g, " ").replace(/\bthe\b/g, " ").replace(/\bsaint\b/g, "st").replace(/\s+/g, " ").trim(); }
-  var NAMES = []; SHAPES.forEach(function (s) { NAMES.push([norm(s.n), s.cc]); (ALIAS[s.cc] || []).forEach(function (a) { NAMES.push([norm(a), s.cc]); }); });
+  // Tuvalu has no outline on our map, so it is never a piece, but it is a country and can be typed as a guess
+  if (!byCC.TV) byCC.TV = { cc: "TV", n: "Tuvalu" };
+  var NAMES = [[norm("Tuvalu"), "TV"]]; SHAPES.forEach(function (s) { NAMES.push([norm(s.n), s.cc]); (ALIAS[s.cc] || []).forEach(function (a) { NAMES.push([norm(a), s.cc]); }); });
   function suggest(t) {
     var n = norm(t); if (!n) return [];
     var seen = {}, out = [];
@@ -651,13 +666,13 @@
     var sv = save.run && save.run.day === dayNo ? save.run : null;
     RUN = newRun("daily", dayNo);
     if (sv) { RUN.lvl = sv.lvl; RUN.lives = sv.lives; RUN.cleared = sv.cleared; RUN.named = sv.named; RUN.lost = sv.lost; RUN.marks = sv.marks || []; RUN.attempt = sv.attempt || 0; RUN.pic = sv.pic || null; }
-    start(genLevel(RUN.seed, RUN.lvl, RUN.attempt));
+    start(runLevel(RUN));
   }
   // The Captain's run: on Sundays, one extra run on a harder sea (the Daily's level 5 is its level 1: swell and wind
   // from the first load). It has its own result and best; the Daily Ballast, its score and the streak are untouched.
   var CAPTAIN = 4;
   function isSunday(n) { return new Date(EPOCH + (n - 1) * 864e5).getUTCDay() === 0; }
-  function runLevel(r) { return genLevel(r.seed, r.lvl + (r.mode === "captain" ? CAPTAIN : 0), r.attempt); }
+  function runLevel(r) { return r.mode === "daily" ? dailyLevel(r.seed, r.lvl) : genLevel(r.seed, r.lvl + (r.mode === "captain" ? CAPTAIN : 0), r.attempt); }
   function startCaptain() {
     if (!isSunday(dayNo) || (save.captain && save.captain[dayNo])) { home(); return; }
     RUN = newRun("captain", dayNo * 7 + 3); start(runLevel(RUN));
@@ -785,7 +800,7 @@
       // run the physics (no frames needed) until the dropped piece has landed and any hold countdown or final judging is over
       settle: function () { for (var n = 0; n < 1500 && !S.over && (state === "fall" || state === "wait" || state === "cheer" || holdT > 0); n++) step(1000 / 60); return state; },
       earn: function (right) { if (state === "earn") earn(right === false ? earnQ.all.findIndex(function (o) { return o !== earnQ.right; }) : earnQ.all.indexOf(earnQ.right)); }, earnQ: function () { return earnQ; }, hold: function () { return holdT; }, zoom: function () { return zoom; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, daily: dailyLevel, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);
