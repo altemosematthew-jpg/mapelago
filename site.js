@@ -223,7 +223,7 @@
     if (done && !done.hidden) { box = done.querySelector(".panel") || done; after = box.querySelector(".row2"); }
     else if (end && !end.hidden) { box = document.getElementById("endBody"); after = box && box.querySelector(".also"); }
     if (!box) return;
-    var bt = bestText(here(), document.getElementById("shareText") || document.querySelector("#endBody .share")), p = box.querySelector(".mx-daily"), t = dailyText() + (bt ? " " + bt : "");
+    var bt = bestText(here(), document.getElementById("shareText") || document.querySelector("#endBody .share")), p = box.querySelector(".mx-daily"), t = dailyText() + (bt ? " " + bt : ""), tw = weekLevel(today() + 1); t += " Tomorrow: " + ({ Sun: "Sunday", Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday" })[tw.day] + ", " + tw.word + ".";
     if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
     if (p.textContent !== t) p.textContent = t;
   }
@@ -243,7 +243,7 @@
     + '.mxs textarea{width:100%;min-height:76px;box-sizing:border-box;font:12px ui-monospace,monospace;border:1.5px solid var(--line,#000);border-radius:8px;padding:6px}'
     + '.mxs .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.mxs .btns button{min-height:44px;padding:0 14px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r-btn,12px);background:var(--paper,#fff);color:inherit;font:inherit;font-weight:800;cursor:pointer}'
     + '.mxs .btns .go{background:var(--accent,#b4237d);color:var(--on-accent,#fff)}'
-    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}canvas.mx-mini{display:block;width:100%;height:72px;margin:6px 0;border-radius:10px}canvas.mx-mini[hidden]{display:none}.app:has(canvas.mx-mini:not([hidden])) .wheelbox.asked{display:none}.act[hidden],.linkbtn[hidden],.mx-img[hidden]{display:none!important}.mx-daily{margin:6px 0;font-size:13.5px;font-weight:700;line-height:1.3}#done .panel>.mx-daily,#endBody>.mx-daily{order:4}#done:has(.mx-daily) .panel>.next,#endBody:has(.mx-daily)>.next{display:none}.mx-site{font-weight:700}'
+    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}@keyframes mxPop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}@keyframes mxShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}.mx-pop{animation:mxPop .35s ease-out}.mx-shake{animation:mxShake .4s ease-out}@keyframes mxHand{0%,100%{transform:translate(-50%,6px)}50%{transform:translate(-50%,-4px) scale(.92)}}.mx-hand{position:absolute;z-index:40;font-size:34px;line-height:1;pointer-events:none;transform:translate(-50%,0);animation:mxHand 1.1s ease-in-out infinite}@media (prefers-reduced-motion:reduce){.mx-hand{animation:none}}canvas.mx-mini{display:block;width:100%;height:72px;margin:6px 0;border-radius:10px}canvas.mx-mini[hidden]{display:none}.app:has(canvas.mx-mini:not([hidden])) .wheelbox.asked{display:none}.act[hidden],.linkbtn[hidden],.mx-img[hidden]{display:none!important}.mx-daily{margin:6px 0;font-size:13.5px;font-weight:700;line-height:1.3}#done .panel>.mx-daily,#endBody>.mx-daily{order:4}#done:has(.mx-daily) .panel>.next,#endBody:has(.mx-daily)>.next{display:none}.mx-site{font-weight:700}'
     + '@keyframes mxFirst{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 5px var(--accent,#b4237d)}}.mx-fresh [data-first]{animation:mxFirst 1.6s ease-in-out infinite;border-radius:var(--r-btn,12px)}@media (prefers-reduced-motion:reduce){.mx-fresh [data-first]{animation:none;box-shadow:0 0 0 4px var(--accent,#b4237d)}}'
     + '.mx-today{grid-column:1/-1;margin:36px 0 0}.mx-today h2{margin:0 0 10px;font-size:20px}'
     + '.mx-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}'
@@ -751,7 +751,11 @@
     if (!el) return;
     try { if (localStorage.getItem(key)) return; } catch (e) { return; }
     document.documentElement.classList.add("mx-fresh");
-    var done = function () { document.documentElement.classList.remove("mx-fresh"); try { localStorage.setItem(key, "1"); } catch (e) {} el.removeEventListener("pointerdown", done, true); el.removeEventListener("keydown", done, true); };
+    // a ten-second demo on a first visit: a pointing hand taps the first thing to do (still, with reduced motion)
+    var hand = document.createElement("span"); hand.className = "mx-hand"; hand.setAttribute("aria-hidden", "true"); hand.textContent = "\u{1F446}";
+    var place = function () { var r = el.getBoundingClientRect(); if (!r.width) return; hand.style.left = (r.left + window.scrollX + Math.min(r.width * 0.5, 120)) + "px"; hand.style.top = (r.top + window.scrollY + r.height * 0.55) + "px"; };
+    if (!/^(city|country|ballast|reckoning)$/.test((here() || {}).id || "")) { document.body.appendChild(hand); place(); window.addEventListener("resize", place); setTimeout(function () { hand.remove(); }, 10000); }
+    var done = function () { hand.remove(); document.documentElement.classList.remove("mx-fresh"); try { localStorage.setItem(key, "1"); } catch (e) {} el.removeEventListener("pointerdown", done, true); el.removeEventListener("keydown", done, true); };
     el.addEventListener("pointerdown", done, true); el.addEventListener("keydown", done, true);
   }
 
@@ -834,7 +838,12 @@
       g.setTransform(dpr, 0, 0, dpr, 0, 0); g.fillStyle = col("--sea", "#dcedf5"); g.fillRect(0, 0, w, h); g.lineJoin = "round";
       var path = function (f) { g.beginPath(); f.polys.forEach(function (p) { p.forEach(function (r) { r.forEach(function (q, i) { var s = P(q); if (i) g.lineTo(s[0], s[1]); else g.moveTo(s[0], s[1]); }); g.closePath(); }); }); };
       feats.forEach(function (f) { path(f); g.fillStyle = col("--land", "#f3d98a"); g.fill(); g.strokeStyle = col("--land-line", "#6f5d22"); g.lineWidth = 0.6; g.stroke(); });
-      hi.forEach(function (f) { path(f); g.fillStyle = col("--accent", "#b4237d"); g.fill(); g.strokeStyle = col("--ink", "#000"); g.lineWidth = 1.2; g.stroke(); });
+      hi.forEach(function (f) {
+        path(f); g.fillStyle = col("--accent", "#b4237d"); g.fill(); g.strokeStyle = col("--ink", "#000"); g.lineWidth = 1.2; g.stroke();
+        // a country too small to see gets a marked dot of its own
+        var bx = [1e9, 1e9, -1e9, -1e9]; f.polys.forEach(function (p) { p[0].forEach(function (q) { var v = P(q); bx[0] = Math.min(bx[0], v[0]); bx[1] = Math.min(bx[1], v[1]); bx[2] = Math.max(bx[2], v[0]); bx[3] = Math.max(bx[3], v[1]); }); });
+        if (bx[2] - bx[0] < 8 && bx[3] - bx[1] < 8) { g.beginPath(); g.arc((bx[0] + bx[2]) / 2, (bx[1] + bx[3]) / 2, 6, 0, 6.2832); g.fillStyle = col("--accent", "#b4237d"); g.fill(); g.lineWidth = 1.5; g.stroke(); }
+      });
       g.strokeStyle = col("--ink", "#000"); g.lineWidth = 2; g.strokeRect(1, 1, w - 2, h - 2);
     }
     function show(after, text, label) {
@@ -865,6 +874,18 @@
       .observe(document.querySelector(".app"), { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden", "class"] });
   }
 
+  // Feel: a right answer gives a small pop, a wrong one a short shake, in every game and mode (not with reduced motion)
+  function answerMotion() {
+    var app = document.querySelector(".app"); if (!app || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+    new MutationObserver(function (ms) { ms.forEach(function (m) {
+      var el = m.target, c = " " + (el.className && el.className.baseVal == null ? el.className : "") + " ", was = " " + (m.oldValue || "") + " ";
+      var right = / (right|correct|got) /.test(c) && !/ (right|correct|got) /.test(was), wrong = / (wrong|miss) /.test(c) && !/ (wrong|miss) /.test(was);
+      if (!right && !wrong) return;
+      var k = right ? "mx-pop" : "mx-shake"; el.classList.remove(k); void el.offsetWidth; el.classList.add(k);
+      setTimeout(function () { el.classList.remove(k); }, 600);
+    }); }).observe(app, { subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true });
+  }
+
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
@@ -875,7 +896,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps();
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps(); answerMotion();
     // the day's level in words on the games whose own dial is not set yet (from No. 19)
     var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
     setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
