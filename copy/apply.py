@@ -48,6 +48,18 @@ for gid, g in C['games'].items():
                lambda m: m.group(1) + f'<p>{esc(g["explainer"])}</p>\n<ol class="howto">{steps}</ol>\n', s, count=1, flags=re.S)
 open(p, 'w', encoding='utf8').write(s); print('updated games/index.html')
 
+# How to play: one rules text per game. Each <!-- rules:ID --> block is that game's explainer, with its name linked.
+p = os.path.join(ROOT, 'how-to-play', 'index.html'); s = open(p, encoding='utf8').read()
+for gid, g in C['games'].items():
+    tag = f'<!-- rules:{gid} -->'
+    if tag not in s: continue
+    url = '../' if g['file'] == 'index.html' else '../' + g['file']
+    name = {'bigger': 'Bigger city?', 'bigcountry': 'Bigger country?'}.get(gid, g['title'].split(':')[0])
+    text = esc(g['explainer'])
+    linked = text.replace(esc(name), f'<a href="{url}">{esc(name)}</a>', 1) if esc(name) in text else f'<a href="{url}">{esc(name)}</a>: ' + text
+    s = re.sub(re.escape(tag) + r'.*?<!-- /rules:' + re.escape(gid) + ' -->', lambda m: f'{tag}\n<p>{linked}</p>\n<!-- /rules:{gid} -->', s, count=1, flags=re.S)
+open(p, 'w', encoding='utf8').write(s); print('updated how-to-play/index.html')
+
 # copy.js: read by the games at run time
 data = {'invite': {k: g['invite'] for k, g in C['games'].items()}, 'cards': C['home']['cards'], 'home': {'headline': C['home']['headline'], 'line': C['home']['line']}}
 open(os.path.join(ROOT, 'copy.js'), 'w', encoding='utf8').write(
