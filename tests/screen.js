@@ -78,7 +78,7 @@ const GAMES = [
   { id: "fathoms", name: "Fathoms", page: "fathoms.html", strict: true, first: "#fin", read: ".lede", states: async () => {} },
 ];
 // games that must pass all three; a game joins this list in the release that fixes it
-const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings"];
+const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning"];
 
 // known slow starts, still to fix (the smaller map): they do not count as regressions yet
 const SLOW = ["crossings", "reckoning"];
