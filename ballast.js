@@ -157,7 +157,7 @@
   // ---------- the world ----------
   // World units: the view is 360 wide and 520 tall at zoom 1; the deck top is y = 0 and the sea starts at y = 26.
   var VW = 360, VH = 520, WATER = 26, DECK_Y = 0, HOLD = 2000;
-  var cv = $("#sea"), cx = cv.getContext("2d"), touched = false;
+  var cv = $("#sea"), cx = cv.getContext("2d"), touched = false, listA = 0, sinkV = 0;
   var dropping = null, engine, world, ship, pieces, hover, L, S, raf = 0, last = 0, acc = 0, time = 0, state = "idle";
   var zoom = 1, holdT = 0, fallT = 0, stillT = 0, cheerT = 0, lastBody = null;
 
@@ -205,8 +205,8 @@
     M.Composite.add(world, ship);
     L.lineKm = L.lineKm || Math.round((BOT[L.id] || estimateLine(L)) * L.line);
     if (L.spare == null) L.spare = L.tut ? 99 : 2; // how many countries may be lost to the sea before the load fails
-    zoom = 1; holdT = 0; time = 0; stillT = 0; cheerT = 0; lastBody = null;
-    $("#lvlTitle").textContent = RUN && RUN.mode === "daily" ? "Daily Ballast · Level " + RUN.lvl : RUN && RUN.mode === "practice" ? "Practice · Level " + RUN.lvl : L.title;
+    zoom = 1; holdT = 0; time = 0; stillT = 0; cheerT = 0; lastBody = null; listA = 0; sinkV = 0;
+    $("#lvlTitle").textContent = RUN && RUN.mode === "daily" ? "Daily Ballast · Level " + RUN.lvl : RUN && RUN.mode === "practice" ? "Practice · Level " + RUN.lvl : RUN && RUN.mode === "captain" ? "Captain's run · Level " + RUN.lvl : L.title;
     $("#lvlMeta").textContent = (RUN && RUN.mode !== "tut" ? "♥".repeat(RUN.lives) + "♡".repeat(3 - RUN.lives) + " · " : "") + L.region + " · " + L.list.length + " countries" + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
     $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
     $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
@@ -359,12 +359,21 @@
     var vh = H / k, top = DECK_Y + 70 - vh / zoom; // the canvas may be shorter than 520 units on small screens
     var X = function (x) { return (x * zoom + VW / 2) * k; }, Y = function (y) { return (y - top) * zoom * k; }, kz = k * zoom;
     cx.setTransform(1, 0, 0, 1, 0, 0);
+    // The ship reacts to its load: it sits lower as the stack grows and lists toward the heavy side. This is drawing only
+    // (the ship, its load line and the stack move together), so the physics and every score stay exactly as they were.
+    var ld = Math.max(0, Math.min(1.2, S.height / L.lineKm)), mass = 0, mx = 0;
+    pieces.forEach(function (b) { if (!b.mxGone && b.speed < 1.5) { mass += b.mass; mx += b.mass * b.position.x; } });
+    var lean = mass ? Math.max(-1, Math.min(1, 3 * mx / mass / (deckW() / 2))) : 0, ease = reduce ? 1 : 0.04;
+    listA += (0.035 * lean * Math.min(1, ld * 1.2) - listA) * ease; sinkV += (5 * ld - sinkV) * ease;
+    var pvx = X(0), pvy = Y(WATER), ca = Math.cos(listA), sa = Math.sin(listA);
+    var shipFrame = function () { cx.setTransform(ca, sa, -sa, ca, pvx - pvx * ca + pvy * sa, pvy - pvx * sa - pvy * ca + sinkV * kz); }, seaFrame = function () { cx.setTransform(1, 0, 0, 1, 0, 0); };
     cx.fillStyle = css("--sea", "#ffffff"); cx.fillRect(0, 0, W, H);
     cx.strokeStyle = css("--grat", "#c9e1ec"); cx.lineWidth = 1;
     for (var gx = -VW; gx <= VW; gx += 30) { cx.beginPath(); cx.moveTo(X(gx), 0); cx.lineTo(X(gx), H); cx.stroke(); }
     for (var gy = Math.ceil(top / 30) * 30; gy < top + vh / zoom; gy += 30) { cx.beginPath(); cx.moveTo(0, Y(gy)); cx.lineTo(W, Y(gy)); cx.stroke(); }
     var font = css("--font", "sans-serif"), ink = css("--ink", "#000"), accent = css("--accent", "#b4237d");
     // the load line: dashed until the stack is over it, then solid while it holds
+    shipFrame();
     var over = S.height >= L.lineKm && S.i >= need(), cleared = S.judged && S.cleared;
     cx.strokeStyle = accent; cx.lineWidth = (over || cleared ? 3.5 : 2) * k / 1.5;
     cx.setLineDash(over || cleared ? [] : [8 * k / 2, 6 * k / 2]);
@@ -372,10 +381,12 @@
     cx.fillStyle = accent; cx.font = "800 " + 12 * k + "px " + font;
     cx.fillText("Load line · " + fmt(L.lineKm) + " km", 6 * k, Y(lineY) - 5 * k);
     // the sea
+    seaFrame();
     var wave = reduce ? 0 : 3 * Math.sin(time / 600);
     cx.fillStyle = css("--tint-2", "#a9d3e8");
     cx.beginPath(); cx.moveTo(0, Y(WATER + wave)); for (var sx = -VW; sx <= VW; sx += 20) cx.lineTo(X(sx), Y(WATER + wave + (reduce ? 0 : 2.5 * Math.sin(sx / 30 + time / 500)))); cx.lineTo(W, H); cx.lineTo(0, H); cx.closePath(); cx.fill();
     // the ship
+    shipFrame();
     var dk = ship.parts[1]; cx.save(); cx.translate(X(dk.position.x), Y(dk.position.y)); cx.rotate(ship.angle);
     var dw = deckW() * kz, u = kz;
     cx.fillStyle = "#8a5a2b"; cx.strokeStyle = ink; cx.lineWidth = 2 * k / 1.2;
@@ -422,6 +433,7 @@
     cx.fillStyle = accent; cx.fillRect(gx0, Y(DECK_Y) - gh * frac, 8 * k, gh * frac);
     // a tick and the figure at the stack's highest point, so the reading and the drawing can be compared at a glance
     if (S.height > 0 && !cleared) { var ty = Y(DECK_Y - S.height * S.k); cx.strokeStyle = ink; cx.lineWidth = 1.5 * k / 1.2; cx.beginPath(); cx.moveTo(gx0 - 26 * k, ty); cx.lineTo(gx0 + 8 * k, ty); cx.stroke(); cx.fillStyle = ink; cx.font = "700 " + 10 * k + "px " + font; cx.textAlign = "right"; cx.fillText(fmt(S.height) + " km", gx0 - 2 * k, ty - 3 * k); }
+    seaFrame();
     cx.textAlign = "center"; cx.fillStyle = ink;
     if (cleared) { var pulse = reduce ? 1 : 1 + 0.12 * Math.sin(cheerT / 90); cx.font = "800 " + 30 * k * pulse + "px " + font; cx.fillStyle = accent; cx.fillText("Loaded!", W / 2, Y(lineY) - 22 * k); }
     else if (holdT > 0) { cx.font = "800 " + 24 * k + "px " + font; cx.fillStyle = accent; cx.fillText("Hold " + Math.max(0, (HOLD - holdT) / 1000).toFixed(1), W / 2, Y(lineY) - 22 * k); }
@@ -561,7 +573,7 @@
     if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
     else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast("Below the line. " + r.lives + (r.lives === 1 ? " life" : " lives") + " left: a fresh cargo for level " + r.lvl + "."); }
     if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt, pic: r.pic }; store(); }
-    if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(genLevel(r.seed, r.lvl, r.attempt)); }, 900); return; }
+    if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
     endRun();
   }
   function endRun() {
@@ -573,14 +585,17 @@
         st.runs = (st.runs || 0) + 1; st.sum = (st.sum || 0) + r.cleared; st.best = Math.max(st.best || 0, r.cleared);
       }
       delete save.run;
+    } else if (r.mode === "captain") {
+      save.captain = save.captain || {}; if (!save.captain[dayNo]) save.captain[dayNo] = { lvl: r.cleared, score: pts };
+      st.bestCaptain = Math.max(st.bestCaptain || 0, r.cleared);
     } else st.bestPractice = Math.max(st.bestPractice || 0, r.cleared);
     store();
     var res = r.mode === "daily" ? save.results[dayNo] : { score: pts, lvl: r.cleared, named: r.named, marks: r.marks.join("") };
-    $("#doneTitle").textContent = r.mode === "daily" ? "The stack gave out on level " + (res.lvl + 1) + "." : "Practice over on level " + reached + ".";
+    $("#doneTitle").textContent = r.mode === "daily" ? "The stack gave out on level " + (res.lvl + 1) + "." : r.mode === "captain" ? "Captain's run over on level " + reached + "." : "Practice over on level " + reached + ".";
     $("#doneStars").hidden = true;
     $("#bigScore").textContent = res.lvl; $("#bigUnit").textContent = res.lvl === 1 ? "level cleared" : "levels cleared";
     $("#doneLine").textContent = fmt(res.score) + " points: " + res.lvl + " × 100 for the levels + " + res.named + " × 10 for the names.";
-    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " Next climb in " + untilMidnight() + ". Endless practice and the voyages are open any time." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
+    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " Next climb in " + untilMidnight() + ". Endless practice and the voyages are open any time." : r.mode === "captain" ? "The Captain's run is a Sunday extra on a harder sea: it never changes your Daily Ballast or your streak. Your best: " + (st.bestCaptain || 0) + " levels. Back next Sunday." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
     var share = $("#shareText"), sb = $("#shareBtn");
     share.hidden = sb.hidden = r.mode !== "daily";
     if (r.mode === "daily") share.textContent = shareText(dayNo, res);
@@ -630,6 +645,15 @@
     if (sv) { RUN.lvl = sv.lvl; RUN.lives = sv.lives; RUN.cleared = sv.cleared; RUN.named = sv.named; RUN.lost = sv.lost; RUN.marks = sv.marks || []; RUN.attempt = sv.attempt || 0; RUN.pic = sv.pic || null; }
     start(genLevel(RUN.seed, RUN.lvl, RUN.attempt));
   }
+  // The Captain's run: on Sundays, one extra run on a harder sea (the Daily's level 5 is its level 1: swell and wind
+  // from the first load). It has its own result and best; the Daily Ballast, its score and the streak are untouched.
+  var CAPTAIN = 4;
+  function isSunday(n) { return new Date(EPOCH + (n - 1) * 864e5).getUTCDay() === 0; }
+  function runLevel(r) { return genLevel(r.seed, r.lvl + (r.mode === "captain" ? CAPTAIN : 0), r.attempt); }
+  function startCaptain() {
+    if (!isSunday(dayNo) || (save.captain && save.captain[dayNo])) { home(); return; }
+    RUN = newRun("captain", dayNo * 7 + 3); start(runLevel(RUN));
+  }
   function startPractice() { RUN = newRun("practice", Math.floor(Math.random() * 1e9)); start(genLevel(RUN.seed, 1, 0)); }
   function startTutorial() { RUN = newRun("tut", 0); start(TUTORIAL[0]); }
   function home() {
@@ -640,6 +664,8 @@
     $("#dailyNote").textContent = (r ? "Next climb in " + untilMidnight() + ". " : cargoPreview(dayNo) + " ") + statsLine();
     $("#homeShare").hidden = !r; if (r) $("#homeShareText").textContent = shareText(dayNo, r);
     cargoPic();
+    var cb = $("#captainBtn"), cr = save.captain && save.captain[dayNo];
+    if (cb) { cb.hidden = !isSunday(dayNo); cb.disabled = !!cr; cb.textContent = cr ? "Captain's run done: " + cr.lvl + (cr.lvl === 1 ? " level" : " levels") + " on the harder sea" : "Sunday's Captain's run: a harder sea"; }
   }
 
   // ---------- the level chart ----------
@@ -733,7 +759,7 @@
     $("#skipTut").hidden = true;
     $("#chartBtn").onclick = $("#chartBtn2").onclick = home;
     $("#dailyBtn").onclick = startDaily;
-    $("#practiceBtn").onclick = startPractice;
+    $("#practiceBtn").onclick = startPractice; if ($("#captainBtn")) $("#captainBtn").onclick = startCaptain;
     $("#tutBtn").onclick = startTutorial;
     $("#skipTut").onclick = function () { save.tut = 1; store(); RUN = null; startDaily(); };
     $("#homeShareBtn").onclick = async function () { var t = $("#homeShareText").textContent, b = this; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); } };
@@ -751,7 +777,7 @@
       // run the physics (no frames needed) until the dropped piece has landed and any hold countdown or final judging is over
       settle: function () { for (var n = 0; n < 1500 && !S.over && (state === "fall" || state === "wait" || state === "cheer" || holdT > 0); n++) step(1000 / 60); return state; },
       earn: function (right) { if (state === "earn") earn(right === false ? earnQ.all.findIndex(function (o) { return o !== earnQ.right; }) : earnQ.all.indexOf(earnQ.right)); }, earnQ: function () { return earnQ; }, hold: function () { return holdT; }, zoom: function () { return zoom; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);

@@ -276,6 +276,30 @@ module.exports = async function ({ b, U, page, check }) {
     check(/^\u{1F4E6}+\u{1F30A}*$/mu.test(r.share) && /Loaded \d+ level/.test(r.share) && /mapelago\.com\/ballast\.html#b-bl-/.test(r.share.trim().split("\n").pop()), "ballast share: crates for loaded levels, waves for lost loads, the link last", r.share);
     await ctx.close();
   }
+  // the ship reacts to its load (drawing only), and Sunday's Captain's run is an extra that leaves the Daily alone
+  {
+    const { ctx, p } = await page(b, U + "ballast.html", { storage: SEEN, clock: new Date("2026-11-29T12:00:00"), ctx: { viewport: { width: 375, height: 667 } }, wait: 700 });
+    const r = await p.evaluate(async () => {
+      const B = __ballast, o = {};
+      B.start(B.TUTORIAL[0]); for (let i = 0; i < 5; i++) B.move(1); B.drop(); B.settle(); const at = () => { const q = B.pieces()[0]; return [q.position.x, q.position.y, q.angle].join(","); }, h0 = B.height(), y0 = at();
+      for (let i = 0; i < 300; i++) B.draw(); o.list = B.list(); o.same = B.height() === h0 && at() === y0;
+      o.sun = [B.sunday(16), B.sunday(13), B.sunday(2)];
+      B.home(); await new Promise((r) => setTimeout(r, 100)); const cb = document.querySelector("#captainBtn"); o.btn = !!cb.offsetParent && !cb.disabled;
+      cb.click(); await new Promise((r) => setTimeout(r, 200)); o.mode = B.run().mode; o.sea = [B.L().swell, B.L().wind, document.querySelector("#lvlTitle").textContent];
+      B.run().lives = 1; B.S().cleared = false; B.finish(); await new Promise((r) => setTimeout(r, 300));
+      const sv = B.save(); o.captain = sv.captain && Object.keys(sv.captain); o.daily = Object.keys(sv.results).length; o.share = !document.querySelector("#shareBtn").hidden;
+      B.home(); await new Promise((r) => setTimeout(r, 100)); o.after = [cb.disabled, cb.textContent, document.querySelector("#dailyBtn").disabled];
+      return o;
+    });
+    check(r.list[0] > 0.002 && r.list[1] > 0.5 && r.same, "ballast ship: it sits lower and lists toward the heavy side, and the physics is untouched", JSON.stringify([r.list, r.same]));
+    check(r.sun[0] && !r.sun[1] && r.sun[2] && r.btn && r.mode === "captain" && r.sea[0] > 0 && r.sea[1] > 0 && /Captain's run · Level 1/.test(r.sea[2]), "ballast Captain's run: offered on Sundays, level 1 already has swell and wind", JSON.stringify([r.sun, r.btn, r.mode, r.sea]));
+    check(JSON.stringify(r.captain) === '["16"]' && r.daily === 0 && !r.share && r.after[0] && /done/.test(r.after[1]) && !r.after[2], "ballast Captain's run: one a Sunday, saved apart, the Daily Ballast is still there to play", JSON.stringify([r.captain, r.daily, r.share, r.after]));
+    await ctx.close();
+    const t = await page(b, U + "ballast.html", { storage: SEEN, clock: new Date("2026-11-26T12:00:00"), wait: 500 });
+    const thu = await t.p.evaluate(async () => { __ballast.home(); await new Promise((r) => setTimeout(r, 100)); return !!document.querySelector("#captainBtn").offsetParent; });
+    check(!thu, "ballast Captain's run: not offered on other days");
+    await t.ctx.close();
+  }
   // offline after a first load
   {
     const ctx = await b.newContext({ viewport: { width: 390, height: 844 } }); const p = await ctx.newPage(); const errs = []; p.on("pageerror", (e) => errs.push(e.message));

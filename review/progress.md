@@ -43,3 +43,13 @@ changes start on the day they arrive for rounds not yet started; finished rounds
 - Duet's source lines for the city facts (the Source column is waiting for them).
 - review/ and tests/ stay published: city-facts.md no longer reveals days and golden.json holds fingerprints, but
   removing the folders from the site needs a Jekyll build I couldn't run here (proposal in the 0.15.1 notes).
+
+## Polish pass, 26 Nov (releases 0.15.23 to 0.15.36)
+- **The bar:** on a 375x667 phone, as a first-time visitor, every game opens with one sentence, a marked first move and its rules behind a "?"; the whole game fits one screen in every state through to the result; and it is ready in under 2 seconds on slow 4G. `node tests/screen.js` prints the tables (A first move, B one screen, D daily habit, F speed) and fails if a game slips. All four stand at 11 of 11.
+- **How the phone layouts are applied:** `review/one-screen-patch.py` (safe to re-run; run it after any script that rebuilds a game page). Ballast and Crossings carry theirs in their own build.
+- **Lighter map:** `world-lite.js` (built by `node review/world-lite-build.js` from `world.js`; run it again if `world.js` changes) is used by Crossings and Dead Reckoning.
+- **Share texts:** sea-and-map symbols in place of coloured squares; every text starts "Mapelago ... 🐢" and ends with the link. Ballast shares a picture of the stack (outlines only).
+- **Daily habit:** one streak across the site (`MXS.siteStreak()`: any finished game counts for the day; freezes as before), shown on every finish screen with "Next puzzles in Xh Ym" and the next unplayed game.
+- **Ballast only:** the ship sits lower and lists toward the heavy side (drawing only, so scores and the bot numbers are unchanged); "today's cargo" picture on its home screen; a Captain's run on Sundays (the Daily's level 5 sea from the first load), saved apart from the Daily and the streak. First one: No. 16, Sunday 29 Nov.
+- **Start numbers added:** Ballast's compact first pieces begin at No. 15.
+- **Not done:** a physical (not just drawn) list on hard levels; a share text or friend link for the Captain's run; Stamps still marks a second-try stamp with a yellow square.
