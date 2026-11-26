@@ -149,6 +149,7 @@
     var best = Math.max.apply(null, Object.keys(save.results).map(function (k) { return save.results[k].score; })), y = save.results[N - 1];
     $("#streak").textContent = "Voyage streak: " + st.cur + (st.cur === 1 ? " day" : " days") + ". Your best: " + best + "." + (y ? (res.score > y.score ? " Beat yesterday's " + y.score + "." : " Yesterday: " + y.score + ".") : "") + (window.MXS && MXS.untilNext ? " Next voyage in " + MXS.untilNext() + "." : "");
   }
+  $("#imgBtn").onclick = function () { if (window.MXS && MXS.shareCard) MXS.shareCard(); };
   $("#shareBtn").onclick = function () { var t = shareText(); if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { say("Copied."); $("#shareBtn").textContent = "Copied"; }, function () {}); };
   // visit counting: a start and a finish each load a tiny counted page (mapelago.com only; see analytics.js)
   function ping(what) { if (location.hostname !== "mapelago.com" && location.hostname !== "www.mapelago.com") return; var f = document.createElement("iframe"); f.hidden = true; f.src = "daily-" + what + ".html"; document.body.appendChild(f); }
