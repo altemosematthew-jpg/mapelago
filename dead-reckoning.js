@@ -43,7 +43,7 @@
   // never used again within 60 days, two places on one day are never in the same country, and no place shares
   // a country with that day's Mystery city answer (so neither game gives the other away).
   function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  var sched = [null], last = {};
+  var sched = [null], last = {}, NR = 17;
   function daily(n) {
     while (sched.length <= n) {
       var d = sched.length, r = rng(d * 7919 + 104729), m = (MYST[d - 1] || "|").split("|"), used = {}, pick = [];
@@ -58,7 +58,7 @@
       for (var t = 0; t < 5; t++) {
         if (lmAt[t]) {
           var lp = LPOOLS[lmAt[t].df], LL = lp.length, lk = Math.floor(lmAt[t].k * LL), lc = -1;
-          for (var jj = 0; jj < LL && lc < 0; jj++) { var c = lp[(lk + jj) % LL]; if (last[c] === undefined || d - last[c] > GAP) lc = c; }
+          for (var jj = 0; jj < LL && lc < 0; jj++) { var c = lp[(lk + jj) % LL]; if (last[c] === undefined || d - last[c] > (d >= NR ? Math.max(GAP, LL - 3) : GAP)) lc = c; }
           if (lc < 0) lc = lp[lk];
           last[lc] = d; pick.push(lc); continue;
         }
@@ -66,7 +66,7 @@
         for (var pass = 0; pass < 2 && chosen < 0; pass++)
           for (var j = 0; j < L; j++) {
             var p = P[pool[(k + j) % L]];
-            if (last[p.i] !== undefined && d - last[p.i] <= GAP) continue;
+            if (last[p.i] !== undefined && d - last[p.i] <= (d >= NR ? Math.max(GAP, L - 8) : GAP)) continue; // from No. 17 a place rests until nearly the whole of its pool has had a turn
             if (pass === 0 && (used[p.country] || p.country === m[1] || p.name === m[0])) continue;
             chosen = p.i; break;
           }

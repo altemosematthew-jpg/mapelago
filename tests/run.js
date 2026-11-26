@@ -1161,6 +1161,13 @@ async function page(b, url, opts = {}) {
       for (const n of names) { await p.fill("#fin", n); await p.waitForTimeout(10); if (!(await p.evaluate(() => document.querySelectorAll("#sugs .sug").length))) miss.push(n); }
       check(names.length === 193 && !miss.length, "fathoms: all 193 UN members can be typed and are offered (from No. 20, Tuvalu included)", names.length + " names; missing: " + miss.join(", "));
       await ctx.close();
+      for (const [file, input, sug, prep] of [["crossings.html", "#cin", "#sugs li, #sugs .sug", null], ["ballast.html", "#nin", "#nsugs li", () => { __ballast.start(__ballast.gen(20, 5, 0)); __ballast.drop(); __ballast.tick(150); }]]) {
+        const t = await page(b, U + file, { desktop: true, storage: { "dailycity:ballast:v1": '{"tut":1}' } });
+        await t.p.waitForFunction(() => window.__cross || window.__ballast); if (prep) { await t.p.evaluate(prep); await t.p.waitForTimeout(150); }
+        const gone = []; for (const n of names) { await t.p.fill(input, n); await t.p.waitForTimeout(8); if (!(await t.p.evaluate((q) => document.querySelectorAll(q).length, sug))) gone.push(n); }
+        check(!gone.length, file + ": all 193 UN members can be typed (Tuvalu included)", gone.join(", "));
+        await t.ctx.close();
+      }
     }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
