@@ -23,8 +23,8 @@ module.exports = async function ({ b, U, page, check }) {
       // landmarks: none before No. 14; from then one or two a day, easy in round 1 or 2, medium in 3 or 4, hard in 5
       const SLOT = { 1: [0, 1], 2: [2, 3], 3: [4] }, DROP = ["Christ the Redeemer", "Hollywood Sign", "Golden Gate Bridge", "Hiroshima Peace Memorial", "Pearl Harbor", "Table Mountain", "Robben Island", "Alhambra", "Potala Palace", "Leaning Tower of Pisa"];
       let lmEarly = 0, lmCount = 0, lmSlot = 0, lmDropped = 0; const lmSeen = new Set();
-      days.forEach((five, i) => { const lm = five.map((x, r) => [D.P[x], r]).filter((y) => y[0].lm); if (i + 1 < 14) lmEarly += lm.length; else { if (lm.length < 1 || lm.length > 2) lmCount++; lm.forEach(([q, r]) => { lmSeen.add(q.name); if (!SLOT[q.diff].includes(r)) lmSlot++; if (DROP.includes(q.name)) lmDropped++; }); } });
-      const lmTotal = D.P.filter((x) => x.lm).length;
+      days.forEach((five, i) => { const lm = five.map((x, r) => [D.P[x], r]).filter((y) => y[0].lm); if (i + 1 < 14) lmEarly += lm.length; else { if (lm.length < 1 || lm.length > 2) lmCount++; lm.forEach(([q, r]) => { lmSeen.add(q.name); if (i + 1 < 22 ? !SLOT[q.diff].includes(r) : ![1, 4].includes(r)) lmSlot++; if (DROP.includes(q.name)) lmDropped++; }); } });
+      const lmTotal = D.P.filter((x) => x.lm && !x.pack).length;
       const first13 = []; for (let n = 1; n <= 13; n++) first13.push(D.daily(n).map((x) => D.P[x].name + "|" + D.P[x].country));
       const fame = [1, 2, 3, 4, 5].map((t) => { const ps = D.P.filter((x) => !x.lm && x.tier === t); return ps.reduce((s, x) => s + Math.log10(x.pop * (x.capital ? 5 : 1)), 0) / ps.length; });
       return { curve, perfect, km, repeats, sameCountry, short, tiersOk, fame, lmEarly, lmCount, lmSlot, lmDropped, lmTotal, lmUsed: lmSeen.size, first13, day12: D.daily(12).map((x) => D.P[x].name + "|" + D.P[x].country), pools: D.POOLS.map((x) => x.length) };
@@ -39,7 +39,7 @@ module.exports = async function ({ b, U, page, check }) {
     check(r.pools.every((n) => n > 61), "dead reckoning: every round has more than 60 places", JSON.stringify(r.pools));
     const fp13 = require("crypto").createHash("sha256").update(JSON.stringify(r.first13)).digest("hex").slice(0, 16);
     check(fp13 === "4be94a0b7ccd016d" && r.lmEarly === 0, "dead reckoning: Nos. 1 to 13 unchanged by the landmarks (none before No. 14)", fp13 + " " + r.lmEarly);
-    check(r.lmTotal === 290 && r.lmCount === 0 && r.lmSlot === 0 && r.lmDropped === 0, "dead reckoning: from No. 14 one or two landmarks a day, in rounds that fit their difficulty, none of the ten overlaps", JSON.stringify([r.lmTotal, r.lmCount, r.lmSlot, r.lmDropped]));
+    check(r.lmTotal === 290 && r.lmCount === 0 && r.lmSlot === 0 && r.lmDropped === 0, "dead reckoning: from No. 14 one or two landmarks a day in rounds that fit their difficulty (from No. 22 two, in rounds 2 and 5, by weekday), none of the ten overlaps", JSON.stringify([r.lmTotal, r.lmCount, r.lmSlot, r.lmDropped]));
     check(r.lmUsed > 250, "dead reckoning: the landmarks all get used over two years", String(r.lmUsed));
     await ctx.close();
     // the same number gives the same five on a fresh load, and on a phone

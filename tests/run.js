@@ -1239,6 +1239,17 @@ async function page(b, url, opts = {}) {
       check(!before && after && /^Map: .+/.test(after[0]) && after[1], "answer map: none before the answer; after it, the answer country is drawn highlighted", JSON.stringify([before, after]));
       await t.ctx.close();
     }
+    // ---- content pack 1: Fathoms families and Dead Reckoning places from No. 22, never before
+    {
+      const f = async (d) => { const t = await page(b, U + "fathoms.html?p=" + d + "#day-" + d, { desktop: true, wait: 400 }); const r = await t.p.evaluate(() => [window.MxPools && 1, __fath.S().prompts.map((x) => x.kind)]); await t.ctx.close(); return r[1]; };
+      let seen = 0; for (let d = 22; d < 40; d++) if ((await f(d)).includes("pack")) seen++;
+      const before = (await f(21)).includes("pack");
+      const t = await page(b, U + "dead-reckoning.html", { desktop: true, wait: 500 });
+      const dr = await t.p.evaluate(() => { let pre = 0, post = 0; for (let n = 14; n < 22; n++) pre += __dr.daily(n).filter((i) => __dr.P[i].pack).length; for (let n = 22; n < 50; n++) post += __dr.daily(n).filter((i) => __dr.P[i].pack).length; const one = __dr.P.find((p) => p.pack && p.name === "Karlu Karlu"); return [pre, post, one && one.wiki, __dr.P.filter((p) => p.pack).length]; });
+      await t.ctx.close();
+      check(!before && seen >= 3, "content pack 1: Fathoms deals the new families from No. 22 only", seen + " of 18 days");
+      check(dr[0] === 0 && dr[1] >= 20 && dr[2] === "Karlu_Karlu_/_Devils_Marbles_Conservation_Reserve" && dr[3] === 340, "content pack 1: Dead Reckoning's 340 new places appear from No. 22, each with its Wikipedia page", JSON.stringify(dr));
+    }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });

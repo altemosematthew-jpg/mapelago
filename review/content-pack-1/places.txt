@@ -1,0 +1,392 @@
+Grossglockner|AT|47.0749|12.6953|N|M|Highest mountain in Austria and the highest in the Alps east of the Brenner Pass.|
+Hallstatt|AT|47.5620|13.6490|T|M|Small Upper Austrian town known for salt production dating to prehistoric times.|
+Salzburg|AT|47.8000|13.0450|T|W|Fourth-largest city in Austria, on the Salzach River near the German border.|
+Mostar|BA|43.3436|17.8075|T|M|Fifth-largest city in Bosnia and Herzegovina, on the Neretva River.|
+Antwerp|BE|51.2178|4.4003|T|M|Flemish city on the Scheldt river, which links it to the North Sea.|
+Bruges|BE|51.2089|3.2242|T|W|Sixth most populous Belgian city, with a UNESCO-listed historic centre.|
+Waterloo|BE|50.7175|4.3979|T|W|Lies a short distance south of Brussels and is famous for an 1815 battle.|Waterloo,_Belgium
+Rila Monastery|BG|42.1333|23.3403|L|M|Largest and most famous Eastern Orthodox monastery in Bulgaria, 117 km south of Sofia.|
+Mir Castle|BY|53.4512|26.4730|L|O|16th-century castle in the late Brick Gothic style, in Grodno Oblast.|Mir_Castle_Complex
+Aletsch Glacier|CH|46.4422|8.0772|N|M|Largest glacier in the Alps, about 23 km long as of 2014.|
+Geneva|CH|46.2017|6.1469|T|W|Second-most populous Swiss city and largest in French-speaking Romandy.|
+Interlaken|CH|46.6830|7.8500|T|M|Swiss municipality in Bern canton, a well-known tourist destination in the Bernese Oberland.|
+St. Moritz|CH|46.4972|9.8378|T|M|High Alpine resort at about 1,800 metres in the Engadine region.|
+Zermatt|CH|46.0170|7.7500|T|M|Municipality in Valais at 1,620 m, at the foot of Switzerland's highest peaks.|
+Zurich|CH|47.3744|8.5411|T|W|Largest city in Switzerland, at the northwestern tip of a north-central Swiss lake.|
+Brocken|DE|51.8006|10.6172|N|O|A 1,141 m mountain in Saxony-Anhalt, between the Weser and Elbe rivers.|
+Cologne Cathedral|DE|50.9414|6.9583|L|W|Seat of the local archbishop and Germany's most visited landmark, drawing about 6 million a year.|
+Frankfurt|DE|50.1106|8.6822|T|W|Most populous city in the German state of Hesse, first mentioned in a document in 794.|
+Hamburg|DE|53.5500|10.0000|T|W|Germany's second-largest city after Berlin, and one of its three city-states.|
+Heidelberg|DE|49.4170|8.7170|T|M|Fifth-largest city in Baden-Wurttemberg; its university, founded in 1386, is Germany's oldest.|
+Munich|DE|48.1375|11.5750|T|W|Capital and most populous city of Bavaria, on the Isar river north of the Alps.|
+Saaremaa|EE|58.4170|22.5000|N|O|Largest and most populous island in Estonia, in the Baltic Sea.|
+Barcelona|ES|41.3828|2.1769|T|W|Capital and largest city of the Catalonia autonomous community on Spain's northeastern coast.|
+Ibiza|ES|38.9800|1.4300|N|W|Third largest Balearic island by area, but second largest by population.|
+Mallorca|ES|39.6170|2.9830|N|W|Largest Balearic island, whose capital Palma is the regional capital.|
+Montserrat|ES|41.5917|1.8378|N|M|Multi-peaked mountain range in Catalonia, with its highest peak Sant Jeroni at 1,236 m.|Montserrat_(mountain)
+Ronda|ES|36.7372|-5.1647|T|O|Spanish town in Malaga province, cut by a deep gorge carrying the Guadalevin river.|
+Sagrada Família|ES|41.4037|2.1743|L|W|Gaudí-designed Catholic church in Barcelona's Eixample, described as the tallest church in the world.|
+Santiago de Compostela Cathedral|ES|42.8806|-8.5444|L|M|Romanesque cathedral reputed to be the burial place of Saint James the Great.|
+Seville|ES|37.3886|-5.9950|T|W|Founded as the Roman city of Hispalis, on the lower Guadalquivir River.|
+Valencia|ES|39.4700|-0.3764|T|M|Regional capital of a Spanish autonomous community, Spain's third most populous city.|
+Cannes|FR|43.5513|7.0128|T|W|Resort city on the French Riviera, known for its association with the rich and famous.|
+Carcassonne|FR|43.2133|2.3508|T|M|Fortified city and prefecture of the Aude department in the Occitania region.|
+Château de Chambord|FR|47.6161|1.5172|L|M|Built from 1519 to 1547 for Francis I, a very recognisable French Renaissance building.|
+Lourdes|FR|43.0942|-0.0469|T|M|Market town in the Pyrenees, in the Hautes-Pyrenees department of southwestern France.|
+Marseille|FR|43.2964|5.3700|T|W|Second most populous city proper in France, with 886,040 inhabitants in 2023.|
+Mont Blanc|FR|45.8328|6.8650|N|W|Highest mountain in Europe outside the Caucasus, rising 4,807.3 metres.|
+Nice|FR|43.7034|7.2663|T|W|Coastal city on the French Riviera, on the Mediterranean Sea in southeastern France.|
+Rocamadour|FR|44.8003|1.6186|T|O|Commune in the Lot department of southwestern France, in the former province of Quercy.|
+Saint-Malo|FR|48.6494|-2.0261|T|M|Walled port on Brittany's English Channel coast with a long history of piracy.|
+Étretat|FR|49.7100|0.2100|T|O|Coastal commune in Seine-Maritime, Normandy, on the Pays de Caux shore of northwestern France.|
+Cambridge|GB|52.2050|0.1225|T|W|County town of an English county, on the River Cam about 55 miles north of London.|
+Hadrian's Wall|GB|55.0170|-2.2830|L|W|Former Roman defensive fortification in Britannia, begun in AD 122.|
+Liverpool|GB|53.4072|-2.9917|T|W|Port city and metropolitan borough on the Mersey Estuary near the Irish Sea.|
+Manchester|GB|53.4794|-2.2453|T|W|City and metropolitan borough in North West England, population over 589,000 in 2024.|
+Oxford|GB|51.7519|-1.2578|T|W|Granted city status in 1542, after founding in the eighth century.|
+White Cliffs of Dover|GB|51.1078|1.2786|N|W|Face reaching 110 m high, marking where Great Britain comes closest to continental Europe.|
+Rock of Gibraltar|GI|36.1245|-5.3431|N|W|Limestone promontory with a labyrinthine network of man-made tunnels, a major tourist attraction.|
+Corfu|GR|39.6000|19.8700|N|M|One of the Ionian Islands in western Greece, with a regional capital of the same name.|
+Mykonos|GR|37.4589|25.3642|N|W|Greek island nicknamed the Island of the Winds for its strong winds.|
+Rhodes|GR|36.1700|27.9200|N|W|Largest of Greece's Dodecanese islands and their historical capital.|
+Dubrovnik|HR|42.6403|18.1083|T|W|Adriatic seaport in southern Dalmatia, historically called Ragusa.|
+Hvar|HR|43.1500|16.7500|N|M|Croatian Adriatic island off the Dalmatian coast, with 10,678 residents in 2021.|
+Hortobágy National Park|HU|47.5944|21.1567|N|O|Hungary's first national park, designated in 1973 on the Great Plain.|
+Blue Lagoon|IS|63.8799|-22.4481|L|M|Geothermal spa in southwestern Iceland, among the country's most visited attractions.|Blue_Lagoon_(geothermal_spa)
+Vatnajökull|IS|64.4000|-16.8000|N|M|Largest and most voluminous ice cap in Iceland, covering about 8% of the country.|
+Alberobello|IT|40.7830|17.2330|T|O|Town of 10,237 inhabitants in 2022, famous for trullo buildings, a UNESCO site since 1996.|
+Capri|IT|40.5500|14.2333|N|W|Island in the Tyrrhenian Sea off the Sorrento Peninsula, with 13,451 inhabitants.|
+Cortina d'Ampezzo|IT|46.5330|12.1330|T|M|Dolomitic Alps town in Veneto, a popular winter sports resort known for its skiing.|
+Dolomites|IT|46.4330|11.8500|N|W|Mountain range in northeastern Italy, a UNESCO World Heritage Site since 2009.|
+Florence|IT|43.7714|11.2542|T|W|Medieval centre of trade and finance, among the wealthiest cities of its era.|
+Lampedusa|IT|35.5150|12.5800|N|O|Largest of Italy's Pelagian Islands, and the southernmost part of Italy.|
+Matera|IT|40.6670|16.6000|T|M|Capital of its province in Basilicata, known for rock-cut Sassi cliffside districts.|
+Milan|IT|45.4669|9.1900|T|W|Capital and largest city of Lombardy, and Italy's second-largest city after Rome.|
+Naples|IT|40.8358|14.2486|T|W|Regional capital of Campania, one of the oldest continuously inhabited urban areas in the world.|
+Pompeii|IT|40.7500|14.4861|L|W|Ancient city buried under 4 to 6 metres of ash in the 79 AD eruption of Vesuvius.|
+Sardinia|IT|40.0000|9.0000|N|W|Second-largest Mediterranean island after Sicily, and one of Italy's twenty regions.|
+Venice|IT|45.4375|12.3358|T|W|Built on 126 islands separated by open water and canals.|
+Hill of Crosses|LT|56.0153|23.4167|L|O|Pilgrimage site with crosses left on a hill about 12 km north of Šiauliai.|
+Kotor|ME|42.4300|18.7700|T|M|Old Mediterranean port in a secluded bay, surrounded by Venetian-period fortifications.|
+Lake Ohrid|MK|41.0300|20.7200|N|M|One of Europe's deepest and oldest lakes, with an ecosystem of worldwide importance.|
+Gozo|MT|36.0500|14.2500|N|M|Island in the Maltese archipelago, part of the Republic of Malta.|
+Kinderdijk|NL|51.8861|4.6310|L|M|Lies about 15 km east of Rotterdam; 19 windmills drained its polder around 1740.|
+Bergen|NO|60.3894|5.3300|T|W|Second-largest city in Norway after Oslo, on the west coast in Vestland county.|
+Trolltunga|NO|60.1332|6.7547|N|M|Rock cliff jutting horizontally out from a mountain, with a very popular hike to it.|
+Białowieża Forest|PL|52.7500|23.9500|N|M|Home to more than 800 European bison, Europe's heaviest land animal.|
+Gdańsk|PL|54.3475|18.6453|T|M|Baltic coast city and Poland's major seaport, the sixth-largest city in Poland.|
+Kraków|PL|50.0614|19.9372|T|W|Polish capital until 1596, with a UNESCO-listed Old Town since 1978.|
+Malbork Castle|PL|54.0397|19.0278|L|M|Upon completion in 1406 it was the world's largest brick castle.|
+Cape St. Vincent|PT|37.0250|-8.9944|N|O|Southwesternmost point of Portugal and of mainland Europe, in the Algarve.|
+Porto|PT|41.1500|-8.6108|T|W|Second-largest Portuguese city, on the Douro River estuary in the north.|
+Sintra|PT|38.7992|-9.3883|T|M|Municipality on the Portuguese Riviera with many historic palaces and castles.|
+Kizhi Pogost|RU|62.0667|35.2250|L|O|Wooden architectural complex built entirely of wood, listed by UNESCO in 1990.|
+Peterhof Palace|RU|59.8844|29.9089|L|M|Palace and garden complex in Saint Petersburg, commissioned by Peter the Great as a response to Versailles.|
+Saint Petersburg|RU|59.9375|30.3086|T|W|Founded by Tsar Peter the Great in 1703 on a captured Swedish fortress site.|
+Visby|SE|57.6347|18.2992|T|O|Hanseatic city and episcopal see, one of Scandinavia's best-preserved medieval cities.|
+Postojna Cave|SI|45.7827|14.2037|N|O|Second-longest cave system in Slovenia, created by the Pivka River.|
+Bamyan Valley|AF|34.8320|67.8267|L|M|Two monumental Buddhist reliefs, carved around the 6th century and destroyed by the Taliban in 2001.|Buddhas_of_Bamiyan
+Cox's Bazar|BD|21.5833|92.0167|T|M|Sandy sea beach about 120 km long, described as the world's longest.|
+Sundarbans|BD|21.7500|88.7500|N|W|World's largest mangrove forest, spanning 10,277 km2 across Bangladesh and India.|
+Guangzhou|CN|23.1300|113.2600|T|W|One of China's three largest cities and a major transportation hub.|
+Guilin|CN|25.2750|110.2960|T|M|Popular Chinese tourist destination on the west bank of the Li River.|
+Lijiang|CN|26.8552|100.2259|T|M|Prefecture-level city in northwest Yunnan Province, home to a UNESCO old town.|
+Namtso|CN|30.7000|90.5500|N|O|Largest salt lake in the Tibet Autonomous Region, on the Tibetan Plateau.|
+Qinghai Lake|CN|37.0000|100.1330|N|O|China's largest lake, classified as an alkaline endorheic salt lake.|
+Shanghai|CN|31.2325|121.4692|T|W|Provincial-level municipality on the southern Yangtze estuary, bisected by the Huangpu River.|
+Shenzhen|CN|22.5467|114.0544|T|M|Prefecture-level city in Guangdong, a special economic zone on the Pearl River estuary.|
+West Lake|CN|30.2469|120.1442|N|M|Freshwater lake in Hangzhou covering about 6.39 square kilometres.|
+Zhangye Danxia|CN|38.9156|100.1332|N|O|UNESCO Global Geopark since 2019, covering 322 square kilometres.|Zhangye_National_Geopark
+Ushguli|GE|42.9178|43.0157|T|O|Community of five medieval villages, among Europe's highest continuously inhabited settlements.|
+Mount Merapi|ID|-7.5414|110.4461|N|M|Indonesia's most active volcano, erupting regularly since 1548.|
+Mount Rinjani|ID|-8.4144|116.4598|N|O|Active stratovolcano in North Lombok, Indonesia's second-highest volcano at 3,726 metres.|
+Prambanan|ID|-7.7522|110.4917|L|M|9th-century Hindu temple compound about 17 km northeast of Yogyakarta.|
+Nazareth|IL|32.7019|35.3033|T|M|Largest city in Israel's Northern District, with a 2024 population of 75,704.|
+Tel Aviv|IL|32.0800|34.7800|T|W|Most populous city in Israel's Gush Dan metro area, on the Mediterranean coast.|
+Agra Fort|IN|27.1795|78.0211|L|M|Historic Uttar Pradesh fort, the Mughal rulers' main residence until 1638.|
+Bengaluru|IN|12.9789|77.5917|T|W|Capital and largest city of Karnataka state; third most populous city in India by 2011 census.|
+Darjeeling|IN|27.0375|88.2631|T|M|City in West Bengal's northernmost region, averaging 2,045 metres in the Eastern Himalayas.|
+Goa|IN|15.5000|73.8300|N|W|India's smallest state by area, on the southwestern coast within the Konkan region.|
+Golden Temple|IN|31.6200|74.8764|L|W|Gurdwara in Amritsar, Punjab, and the holiest site of Sikhism.|
+Jaipur|IN|26.9150|75.8200|T|W|Capital and largest city of Rajasthan state, founded in 1727 by Sawai Jai Singh II.|
+Kanyakumari|IN|8.0883|77.5385|T|O|Southernmost tip of the contiguous Indian subcontinent and southernmost mainland Indian city.|
+Khajuraho|IN|24.8544|79.9214|L|M|Group of Hindu and Jain temples famed for Nagara-style architecture and some erotic sculptures.|Khajuraho_Group_of_Monuments
+Kolkata|IN|22.5675|88.3700|T|W|Primary financial and commercial centre of eastern India, on the Hooghly River.|
+Leh|IN|34.1526|77.5771|T|M|Largest city and joint capital of Indian-administered Ladakh, in disputed Kashmir.|
+Mumbai|IN|19.0761|72.8775|T|W|Capital of Maharashtra state and India's financial capital, on the Konkan coast.|
+Varanasi|IN|25.3189|83.0128|T|W|One of the world's oldest continually inhabited cities, 121 km downstream of Prayagraj.|
+Alamut Castle|IR|36.4447|50.5861|L|O|Ruined mountain fortress that was the headquarters of the Nizari Ismaili state until 1256.|
+Lake Urmia|IR|37.7000|45.3670|N|O|Endorheic salt lake in the Azerbaijan region of northwestern Iran.|
+Naqsh-e Jahan Square|IR|32.6575|51.6778|L|W|Central square in Isfahan, built 1598 to 1629 and now a UNESCO World Heritage Site.|
+Yazd|IR|31.8822|54.3397|T|M|Capital of its province, with 529,673 residents at the 2016 census.|
+Dead Sea|JO|31.5000|35.5000|N|W|Lies on the border of Jordan, Israel and the West Bank; the deepest hypersaline lake, at 304 m.|
+Jerash|JO|32.2806|35.8972|L|M|Administrative centre of a Jordanian governorate, 48.3 km north of Amman.|
+Hokkaido|JP|43.0000|142.0000|N|W|Second-largest and northernmost of Japan's four main islands, across the Tsugaru Strait from Honshu.|
+Kyoto|JP|35.0116|135.7681|T|W|Prefectural capital in Kansai, Japan's ninth-most populous city with 1.46 million residents.|
+Lake Biwa|JP|35.2550|136.0800|N|O|Ancient lake over 4 million years old, lying entirely within Shiga Prefecture.|
+Mount Aso|JP|32.8844|131.1039|N|O|Kyushu volcano in Kumamoto Prefecture; its tallest peak, Takadake, is 1,592 metres.|
+Nara|JP|34.6844|135.8050|T|M|Imperial capital of Japan from 710 to 784, now capital of a prefecture.|Nara_(city)
+Okinawa Island|JP|26.4794|127.9278|N|M|Largest island in the Ryukyu (Nansei) chain of Japan, with a humid subtropical climate.|
+Osaka|JP|34.6939|135.5022|T|W|Designated city in Japan's Kansai region and the most populous city of its prefecture.|
+Sapporo|JP|43.0619|141.3544|T|M|Fifth most populous city in Japan and the cultural and economic centre of Hokkaido.|
+Yakushima|JP|30.3439|130.5239|N|O|Island in Kagoshima Prefecture covering about 505 square kilometres.|
+Yokohama|JP|35.4442|139.6381|T|M|Capital and most populous city of Kanagawa Prefecture, on Tokyo Bay, with 3.7 million in 2023.|
+Phnom Kulen|KH|13.6062|104.0957|N|O|National park established in 1993, covering 373.76 km2 near Siem Reap.|Phnom_Kulen_National_Park
+Kaesong|KP|37.9717|126.5528|T|O|Special city in southern North Korea, now the country's light industry centre.|
+Busan|KR|35.1800|129.0750|T|W|Second most populous city in South Korea after Seoul, and the southeast's economic hub.|
+Gyeongju|KR|35.8500|129.2170|T|M|Coastal city in the far southeast of North Gyeongsang Province, second largest by area after Andong.|
+Panmunjom|KR|37.9600|126.6650|L|M|The building where the Korean armistice was signed still stands today.|
+Seoraksan|KR|38.1194|128.4656|N|O|Highest mountain of the Taebaek range, in Gangwon Province, also called Mount Sorak.|
+Big Almaty Lake|KZ|43.0506|76.9850|N|O|Mountain lake in the Trans-Ili Alatau range, 15 km south of the city centre, at 2,511 m.|
+Plain of Jars|LA|19.4311|103.1525|L|O|Megalithic landscape with thousands of stone jars on the Xiangkhoang Plateau.|
+Byblos|LB|34.1236|35.6519|T|M|Ancient city in Lebanon's Keserwan-Jbeil Governorate and a UNESCO World Heritage Site.|
+Jeita Grotto|LB|33.9434|35.6414|N|O|Two interconnected karst limestone caves in the Nahr al-Kalb river valley.|
+Adam's Peak|LK|6.8094|80.4997|N|M|A 2,243-metre conical sacred mountain and pilgrimage site in central Sri Lanka.|
+Galle Fort|LK|6.0258|80.2175|L|M|Fortress first built by the Portuguese in 1588, then extensively fortified by the Dutch from 1649.|
+Kandy|LK|7.2931|80.6350|T|M|Last capital of the Sinhalese monarchy from 1469 to 1818, and a UNESCO site since 1988.|
+Kyaiktiyo Pagoda|MM|17.4817|97.0981|L|O|Small gold-leafed pagoda on a granite boulder, third most important Buddhist pilgrimage site in Burma.|
+Cameron Highlands|MY|4.5000|101.5000|N|O|District in Pahang, the smallest municipality in its state, at 712 square km.|
+Malacca City|MY|2.1944|102.2486|T|M|Capital of a Malaysian state and the oldest Malaysian city on its strait.|
+Penang Island|MY|5.3700|100.2600|N|M|Main island of a Malaysian state, lying off the western coast of Peninsular Malaysia.|
+Chitwan National Park|NP|27.5000|84.3333|N|M|Nepal's first national park, established in 1973 and granted World Heritage status in 1984.|
+Pokhara|NP|28.2083|83.9889|T|M|Metropolitan city in central Nepal and capital of Gandaki Province, on Phewa Lake.|
+Boracay|PH|11.9689|121.9239|N|M|Resort island in the Western Visayas region, famed for its white sand beaches.|
+Puerto Princesa Subterranean River|PH|10.1670|118.9170|N|O|Protected area in the Saint Paul Mountain Range on the western coast of Palawan island.|Puerto_Princesa_Subterranean_River_National_Park
+Taal Volcano|PH|14.0100|120.9975|N|M|Large caldera filled by a lake, about 50 km south of Manila in Batangas.|
+Vigan|PH|17.5747|120.3869|T|O|Western Luzon UNESCO World Heritage town, population 54,498 at the 2024 census.|
+K2|PK|35.8825|76.5133|N|W|Second-highest mountain on Earth, after Mount Everest.|
+Karachi|PK|24.8600|67.0100|T|W|Capital of Sindh province, Pakistan's largest city and 11th largest in the world.|
+Lahore Fort|PK|31.5878|74.3150|L|M|Citadel at the northern end of the Walled City in Punjab, Pakistan.|
+Church of the Nativity|PS|31.7043|35.2076|L|W|Basilica in Bethlehem, with a grotto venerated as Jesus's birthplace.|
+Norilsk|RU|69.3330|88.2170|T|O|Industrial closed city in Krasnoyarsk Krai, the world's northernmost city with over 175,000 people.|
+Vladivostok|RU|43.1150|131.8853|T|M|Largest city and administrative centre of Primorsky Krai, on the Sea of Japan.|
+Mecca|SA|21.4225|39.8233|T|W|Birthplace of Islam's prophet Muhammad, and the holiest city in Islam.|
+Medina|SA|24.4700|39.6100|T|W|Second holiest city in Islam after Mecca, in the Hejaz region of western Saudi Arabia.|
+Krak des Chevaliers|SY|34.7570|36.2947|L|M|Site first inhabited in the 11th century, given to the Hospitallers in 1142.|
+Ayutthaya|TH|14.3478|100.5606|L|M|Ruins of an old city founded by King Ramathibodi I in 1351.|Ayutthaya_Historical_Park
+Chiang Mai|TH|18.7953|98.9986|T|W|Largest city in northern Thailand, founded in 1296.|
+Phi Phi Islands|TH|7.7333|98.7667|N|M|Island group in the Strait of Malacca, administratively part of Krabi Province.|
+Phuket|TH|7.8900|98.3983|N|W|Thailand's largest island, with 32 smaller islands off its coast.|Phuket_province
+Sukhothai Historical Park|TH|17.0211|99.7036|L|O|Park with 193 ruins spread across 70 square kilometres of land.|
+Iskanderkul|TJ|39.0725|68.3664|N|O|Glacial mountain lake at 2,195 metres on the northern slopes of the Gissar Range.|
+Ani|TR|40.5075|43.5728|L|O|Ruined medieval Armenian city in Turkey's Kars province, once capital of a kingdom from 961 to 1045.|
+Hagia Sophia|TR|41.0083|28.9800|L|W|Former church from 360 to 1453, then a museum until 2020, in Istanbul.|
+Istanbul|TR|41.0136|28.9550|T|W|Turkey's largest city, a megacity and its main economic and cultural centre.|
+Lake Van|TR|38.6330|42.8170|N|M|Saline soda lake at 1,640 m above sea level, fed by streams from surrounding mountains.|
+Sun Moon Lake|TW|23.8670|120.9170|N|O|Largest body of water in Taiwan, and home to the Thao indigenous people.|
+Yushan|TW|23.4700|120.9572|N|O|Highest mountain in Taiwan at 3,952 metres, and the highest point in the western Pacific outside Kamchatka.|Yushan_(mountain)
+Bukhara|UZ|39.7667|64.4231|T|M|Seventh-largest city in Uzbekistan, with 280,187 residents as of January 2020.|
+Khiva|UZ|41.3814|60.3611|T|O|Oasis city founded about 2,500 years ago, once capital of Khwarezmia.|
+Samarkand|UZ|39.6547|66.9758|T|W|Among the oldest continuously inhabited cities in Central Asia, with 882,000 inhabitants as of 2026.|
+Ho Chi Minh City|VN|10.7756|106.7019|T|W|Vietnam's most populous city, with over 14 million people in 2025.|
+Huế|VN|16.4639|107.5867|T|M|One of Vietnam's nine centrally governed cities, in the central part of the country.|
+Mekong Delta|VN|10.0400|105.8000|N|M|Where the Mekong empties into the sea through a network of distributaries in south-western Vietnam.|
+Sơn Đoòng Cave|VN|17.4569|106.2875|N|M|Largest known cave passage in the world by volume, near the Laos-Vietnam border.|Hang_Sơn_Đoòng
+Shibam|YE|15.9269|48.6267|T|M|Town in Wadi Hadhramaut with mudbrick high-rises up to eleven stories tall.|
+Kalandula Falls|AO|-9.0758|16.0033|N|O|Waterfalls 105 metres high and 400 metres wide on the Lucala River, among Africa's largest by volume.|
+Makgadikgadi Pan|BW|-20.8000|25.3330|N|O|Salt pan in north-eastern Botswana, all that remains of a vast former lake.|
+Virunga National Park|CD|-0.9170|29.1670|N|M|Created in 1925, covering 7,800 square kilometres.|
+Abidjan|CI|5.3170|-4.0330|T|M|Largest city and former capital of Ivory Coast, the most populous French-speaking city in West Africa.|
+Rhumsiki|CM|10.4830|13.6000|T|O|Village in Cameroon's Far North Province.|
+Lake Abbe|DJ|11.1670|41.7830|N|O|Considered one of the most inaccessible areas on Earth, and known for its flamingos.|
+Tassili n'Ajjer|DZ|25.5000|9.0000|N|O|Plateau holding one of the world's most important groupings of prehistoric cave art.|
+Timgad|DZ|35.4842|6.4686|L|O|Roman city founded around 100 AD by Emperor Trajan, about 35 km east of Batna.|
+Alexandria|EG|31.1975|29.8925|T|W|Founded in 331 BC by Alexander the Great, one of antiquity's most important cities.|
+Great Pyramid of Giza|EG|29.9792|31.1342|L|W|Oldest of the Seven Wonders of the Ancient World, built around 2600 BC over about 26 years.|
+Great Sphinx of Giza|EG|29.9753|31.1376|L|W|Limestone statue of a resting mythical creature with a human head and lion's body, a UNESCO site.|
+Luxor|EG|25.6967|32.6444|T|W|City in Upper Egypt, among the oldest continuously inhabited cities in the world.|
+Sharm El Sheikh|EG|27.9150|34.3275|T|M|Egyptian city on the southern tip of the Sinai Peninsula, population about 77,000 in 2017.|
+White Desert|EG|27.2773|28.2004|N|O|Protected area in the Farafra depression, first established as protected in 2002.|White_Desert_National_Park
+Massawa|ER|15.6097|39.4500|T|O|Historically important Red Sea port in Eritrea's Northern Red Sea region, on the Gulf of Zula.|
+Blue Nile Falls|ET|11.4905|37.5878|N|O|Known as Tis Abay, meaning great smoke, and a top Ethiopian tourist attraction.|
+Fasil Ghebbi|ET|12.6075|37.4700|L|O|Founded in the 17th century by an emperor, long home of Ethiopian emperors.|
+Lake Tana|ET|12.0000|37.2500|N|O|Largest lake in Ethiopia and a source of the Blue Nile, fed by three rivers.|
+Cape Coast Castle|GH|5.1036|-1.2411|L|M|Originally a Portuguese trading post established in 1555 in Ghana's Central Region.|
+Kunta Kinteh Island|GM|13.3175|-16.3614|L|O|Island on the Gambia River hosting Fort James, less than 3.2 km from Albreda.|
+Pico Basilé|GQ|3.5878|8.7617|N|O|Tallest mountain of Equatorial Guinea, on the island of Bioko near Malabo.|
+Lake Nakuru|KE|-0.3670|36.0830|N|M|Rift Valley lake at 1,754 metres elevation, protected by a national park.|
+Maasai Mara|KE|-1.4900|35.1400|N|W|Large national game reserve in Kenya's Narok County, named in honour of a local people.|
+Mombasa|KE|-4.0500|39.6670|T|M|Coastal city on the Indian Ocean, formerly the first capital of British East Africa.|
+Mount Karthala|KM|-11.7603|43.3531|N|O|Very active shield volcano, the Comoros' highest point at 2,361 m, erupting over 20 times since the 1800s.|
+Maletsunyane Falls|LS|-29.8686|28.0517|N|O|A 192-metre waterfall in Lesotho, named after the nearby town of Semonkong.|
+Casablanca|MA|33.5330|-7.5830|T|W|Morocco's largest city and economic centre, with one of Africa's largest artificial ports.|
+Chefchaouen|MA|35.1714|-5.2697|T|M|Founded in 1471 by a distant descendant of the Prophet Muhammad, in mountainous northern Morocco.|
+Erg Chebbi|MA|31.1670|-3.9830|N|O|One of Morocco's several ergs, large seas of wind-blown sand on the Sahara's western edge.|
+Essaouira|MA|31.5131|-9.7697|T|M|Atlantic port city in the Marrakesh-Safi region, with 77,966 inhabitants in 2014.|
+Fez|MA|34.0433|-5.0033|T|M|Large inland city in northern Morocco, population 1.256 million in the 2024 census.|Fez,_Morocco
+Marrakesh|MA|31.6300|-8.0089|T|W|Fourth-largest city in Morocco, founded around 1070 as an Almoravid capital.|
+Isalo National Park|MG|-22.5583|45.4000|N|O|Elevation ranges from 510 to 1,268 metres, with permanent rivers and seasonal watercourses.|
+Nosy Be|MG|-13.3150|48.2675|N|O|Madagascar's largest and busiest tourist destination, its name means big island.|
+Bandiagara Escarpment|ML|14.3330|-3.4170|N|O|Sandstone cliff in Mali's Dogon country, still inhabited by the Dogon people.|
+Timbuktu|ML|16.7758|-3.0094|T|W|Ancient city about 20 km north of the Niger River, capital of its region.|
+Banc d'Arguin National Park|MR|20.2330|-16.1000|N|O|World Heritage site for migratory and breeding birds, including flamingos and pelicans.|
+Le Morne Brabant|MU|-20.4519|57.3283|N|O|Peninsula at the southwestern tip of Mauritius, topped by a 556-metre basaltic monolith.|
+Lake Malawi|MW|-12.0000|34.5000|N|M|Southernmost lake in the East African Rift system and fourth largest freshwater lake by volume.|
+Etosha National Park|NA|-18.9453|15.8978|N|M|One of the largest national parks in Africa, in northwestern Namibia.|
+Namib Desert|NA|-24.7519|15.2764|N|W|Coastal desert in southern Africa, possibly the oldest desert in the world.|Namib
+Skeleton Coast|NA|-21.6122|14.5400|N|M|Stretch of Namibian coast with constant heavy surf.|
+Agadez|NE|16.9722|7.9908|T|O|Fifth largest city in Niger, 110,497 people in the 2012 census; its historic centre is a UNESCO site.|
+Lagos|NG|6.4561|3.3936|T|W|Large port city in southwestern Nigeria, the leading financial centre of West and Central Africa.|
+Zuma Rock|NG|9.1303|7.2339|N|O|Large monolith rising about 725 metres above sea level, made of gabbro and granodiorite.|
+Lake Kivu|RW|-2.0000|29.0000|N|M|One of the African Great Lakes, lying on the border between Congo and Rwanda.|
+Sudd|SS|8.0000|31.0000|N|O|Vast swamp formed by the White Nile's Bahr al-Jabal section, one of the world's largest wetlands.|
+Ennedi Plateau|TD|17.0417|21.8628|N|O|Sandstone bulwark in the Sahara in northeast Chad, shaped by wind erosion.|
+Lake Chad|TD|13.0990|14.5330|N|M|Shared wetland at the junction of four countries, a key African freshwater fish area.|
+Carthage|TN|36.8528|10.3233|L|M|Ancient northern African city founded by the legendary Phoenician queen Dido.|
+Djerba|TN|33.8000|10.8830|N|M|Largest island of North Africa, in Tunisia's Medenine Governorate.|
+Kilwa Kisiwani|TZ|-8.9600|39.5128|L|O|Entire island a UNESCO World Heritage Site since 1981, once the centre of a sultanate.|
+Stone Town|TZ|-6.1624|39.1913|T|M|Main city of Zanzibar on the western coast of Unguja, the largest island of the archipelago.|
+Bwindi Impenetrable National Park|UG|-1.0170|29.6830|N|M|Forest national park in southwestern Uganda, 321 square km, reachable only on foot.|
+Jinja|UG|0.4233|33.2039|T|M|Sits on Lake Victoria's northern shore, near the source of the White Nile.|Jinja,_Uganda
+Lake Bunyonyi|UG|-1.2830|29.9170|N|O|Lake in south-western Uganda between Kisoro and Kabale, its name means place of many little birds.|
+Addo Elephant National Park|ZA|-33.4461|25.7458|N|O|Wildlife park near Gqeberha, ranking third in size in South Africa after Kruger and Kgalagadi.|
+Drakensberg|ZA|-29.3830|29.4500|N|M|Eastern portion of the Great Escarpment, enclosing the central Southern African plateau.|
+Hermanus|ZA|-34.4170|19.2500|T|O|Town on South Africa's southern Western Cape coast, known for Southern Right whale watching.|
+Johannesburg|ZA|-26.2044|28.0456|T|W|Capital of Gauteng province and South Africa's largest city, founded in 1886 after a gold find.|
+Kruger National Park|ZA|-24.0000|31.5000|N|W|Administrative headquarters at Skukuza; it drew close to 2 million visitors in 2024.|
+South Luangwa National Park|ZM|-13.0000|31.5000|N|O|Covers 9,050 km2 of a river valley in eastern Zambia.|
+Mana Pools National Park|ZW|-15.7500|29.3330|N|O|Wildlife conservation area of 2,196 square kilometres on Zimbabwe's lower Zambezi floodplain.|
+Exuma|BS|25.0670|-77.3330|N|M|District of the Bahamas with over 365 islands and cays.|
+Caracol|BZ|16.7639|-89.1175|L|O|Large ancient Maya archaeological site on the Vaca Plateau in Belize's Cayo District.|
+Banff|CA|51.1778|-115.5736|T|W|First municipality incorporated within a Canadian national park, and a popular tourist destination.|Banff,_Alberta
+CN Tower|CA|43.6426|-79.3871|L|W|A 553.3-metre communications and observation tower completed in 1976 in downtown Toronto.|
+Churchill|CA|58.7808|-94.1869|T|O|Subarctic port town on the west shore of Hudson Bay in northern Manitoba.|Churchill,_Manitoba
+Montreal|CA|45.5089|-73.5542|T|W|Largest city in the province of Quebec, centred on a single island.|
+Peggy's Cove|CA|44.4928|-63.9175|T|O|Village with a lighthouse established in 1868, marking the eastern point of St. Margarets Bay.|
+Tuktoyaktuk|CA|69.4508|-133.0358|T|O|Inuvialuit hamlet on the Arctic Ocean, lying north of the Arctic Circle.|
+Vancouver|CA|49.2608|-123.1139|T|W|Major Western Canadian city; its metro area had 2.6 million people in 2021.|
+Whistler|CA|50.1167|-122.9542|T|M|Resort municipality in British Columbia with about 13,982 permanent residents in 2021.|Whistler,_British_Columbia
+Monteverde|CR|10.2908|-84.8253|T|M|Major Costa Rican ecotourism destination, about four hours' drive from the Central Valley.|
+Varadero|CU|23.1394|-81.2861|T|M|Resort town in Matanzas province, one of the Caribbean's largest resort areas.|
+Boiling Lake|DM|15.3183|-61.2942|N|O|Flooded fumarole 10.5 km east of Dominica's capital Roseau, in a national park.|
+Ittoqqortoormiit|GL|70.4853|-21.9667|T|O|Remote Greenland settlement with 329 residents as of 2026.|
+Volcán de Fuego|GT|14.4747|-90.8808|N|M|Active stratovolcano on the border of three Guatemalan departments, almost always active at low level.|
+Citadelle Laferrière|HT|19.5736|-72.2439|L|M|Early 19th-century fortress in Milot, Nord, on the Bonnet a l'Eveque mountaintop.|
+Dunn's River Falls|JM|18.4158|-77.1381|N|O|Famous waterfall near Ocho Rios, about 55 metres high with natural terraces.|
+Montego Bay|JM|18.4670|-77.9170|T|M|Capital of the parish of St. James, served by the busiest airport in the Anglophone Caribbean.|
+Brimstone Hill Fortress|KN|17.3469|-62.8372|L|O|Fortification designed by British engineers and built by enslaved Africans, one of the best preserved in the Americas.|Brimstone_Hill_Fortress_National_Park
+Pitons|LC|13.8100|-61.0656|N|M|Two volcanic spires on the island, the taller reaching 798.25 metres.|Pitons_(Saint_Lucia)
+Soufrière Hills|MS|16.7170|-62.1830|N|O|Active stratovolcano on Montserrat that erupted from 1995 until 2010.|
+Acapulco|MX|16.8636|-99.8825|T|W|Port on a deep semicircular bay, a stop for ships running between Panama and San Francisco.|
+Cabo San Lucas|MX|22.8947|-109.9153|T|M|Resort city at Baja California's southern tip, population 202,694 in 2020.|
+Calakmul|MX|18.1054|-89.8108|L|O|Among the largest and most powerful Maya cities, 35 km from the Guatemalan border.|
+Cancún|MX|21.1606|-86.8475|T|W|Caribbean-coast city, one of Mexico's easternmost points and a major tourist destination.|
+Copper Canyon|MX|27.5161|-107.7658|N|M|System of six distinct canyons in the Sierra Madre Occidental, cut by six rivers.|
+El Tajín|MX|20.4481|-97.3782|L|O|Pre-Columbian site in Veracruz that flourished from 600 to 1200 AD.|
+Guanajuato|MX|21.0178|-101.2567|T|M|Historic centre and mines designated a UNESCO World Heritage Site in 1988.|Guanajuato_City
+Hierve el Agua|MX|16.8655|-96.2760|N|O|Mineral-rich spring formations about 70 km east of Oaxaca City.|
+Monte Albán|MX|17.0439|-96.7678|L|M|Large pre-Columbian archaeological site on a low mountain range in Oaxaca state.|
+Sumidero Canyon|MX|16.8317|-93.0939|N|O|Deep natural canyon just north of Chiapa de Corzo, formed around the time of the Grand Canyon.|
+Teotihuacan|MX|19.6925|-98.8439|L|W|Ancient Mesoamerican city that was the largest in the Americas at its zenith.|
+Guna Yala|PA|9.5500|-78.9670|N|M|Panamanian autonomous Indigenous region, with its capital at Gaigirgordub.|
+Panama Canal|PA|9.3874|-79.9186|L|W|Artificial 82-kilometre waterway cutting across the narrowest point of the isthmus.|
+Arecibo Observatory|PR|18.3442|-66.7528|L|M|Radio telescope owned by the US National Science Foundation, the largest single-aperture telescope for 53 years.|
+Santa Ana Volcano|SV|13.8530|-89.6300|N|O|Highest volcano in El Salvador at 2,381 metres, lying just west of Coatepeque Caldera.|
+Alcatraz Island|US|37.8267|-122.4228|L|W|Small island about 1.25 miles offshore from San Francisco, site of a closed prison.|
+Area 51|US|37.2333|-115.8083|L|M|Highly classified US Air Force facility within the Nevada Test and Training Range.|
+Bonneville Salt Flats|US|40.8000|-113.8000|N|O|Densely packed salt pan in Tooele County, Utah, left by a Pleistocene ancient lake.|
+Bryce Canyon|US|37.6400|-112.1700|N|M|Collection of giant natural amphitheaters on the eastern side of the Paunsaugunt Plateau.|Bryce_Canyon_National_Park
+Cape Cod|US|41.6800|-70.2000|N|M|Peninsula reaching into the Atlantic from Massachusetts, drawing heavy summer tourism.|
+Carlsbad Caverns|US|32.1753|-104.4439|N|M|Park whose primary attraction is a show cave in New Mexico's Guadalupe Mountains.|Carlsbad_Caverns_National_Park
+Chicago|US|41.8819|-87.6278|T|W|Most populous city in Illinois and the Midwestern United States, incorporated in 1837.|
+Craters of the Moon|US|43.4617|-113.5627|N|O|Monument established on May 2, 1924, at about 1,800 metres above sea level.|Craters_of_the_Moon_National_Monument_and_Preserve
+Denali|US|63.0692|-151.0064|N|W|Highest peak in North America at 6,190 metres, the centrepiece of its national park.|
+Disneyland|US|33.8100|-117.9200|L|W|Theme park in Anaheim, California, and the first park opened by its parent company.|
+Empire State Building|US|40.7483|-73.9856|L|W|Art Deco skyscraper built 1930 to 1931, 1,454 feet tall with its antenna.|
+Everglades|US|26.0000|-80.7000|N|W|Water system that starts near Orlando and drains via the Kissimmee River into Lake Okeechobee.|
+Gateway Arch|US|38.6246|-90.1850|L|W|Stainless steel monument in St. Louis, 630 feet tall, the world's tallest of its kind.|
+Glacier Bay National Park|US|58.5000|-137.0000|N|M|National park in Southeast Alaska; the area was made a monument in 1925.|Glacier_Bay_National_Park_and_Preserve
+Grand Teton|US|43.7412|-110.8024|N|M|Highest peak of its range, with a glacier beneath its north face.|
+Great Smoky Mountains|US|35.6118|-83.4895|N|M|Range on the Tennessee-North Carolina border, mostly protected by a national park.|
+Houston|US|29.7567|-95.3653|T|W|Most populous city in Texas and fourth-most populous in the US, with 2.3 million in 2020.|
+Key West|US|24.5652|-81.7758|T|M|Coral cay island at the southernmost end of Florida, in the Straits of Florida.|
+Kitty Hawk|US|36.0769|-75.7047|T|O|Town on Bodie Island in North Carolina's Outer Banks.|Kitty_Hawk,_North_Carolina
+Lake Tahoe|US|39.0000|-120.0000|N|M|Largest alpine lake in North America, at 6,225 feet above sea level.|
+Las Vegas|US|36.1672|-115.1486|T|W|Most populous city in Nevada, with 641,903 residents at the 2020 census.|
+Los Angeles|US|34.0500|-118.2500|T|W|Most populous city in California, and second-most populous in the United States.|
+Mesa Verde|US|37.1838|-108.4887|L|M|Protects some of the best-preserved Ancestral Puebloan sites, including 600 cliff dwellings.|Mesa_Verde_National_Park
+Miami|US|25.7742|-80.1936|T|W|Second most populous city proper in Florida, with 442,241 people in 2020.|
+Mount Rainier|US|46.8517|-121.7603|N|M|Large active stratovolcano in the Cascade Range, about 95 km from Seattle.|
+Mount Shasta|US|41.4092|-122.1949|N|O|Second-highest Cascades peak at 4,322 m, and fifth-highest in its state.|
+Mount Washington|US|44.2705|-71.3033|N|O|Highest peak in the Northeastern United States, at 1,916.6 metres.|
+New Orleans|US|29.9761|-90.0783|T|W|Consolidated city-parish on the Mississippi River in Louisiana, a major Gulf Coast port.|
+Okefenokee Swamp|US|30.6170|-82.3170|N|O|Peat-filled wetland of 438,000 acres straddling the Georgia-Florida state border.|
+Racetrack Playa|US|36.6813|-117.5627|N|O|Dry lake above Death Valley where sailing stones leave linear tracks.|
+Roswell|US|33.3942|-104.5228|T|M|County seat of Chaves County, with 48,422 residents at the 2020 census.|Roswell,_New_Mexico
+Space Needle|US|47.6204|-122.3491|L|M|Observation tower built for Seattle's 1962 World's Fair, which drew over 2.3 million visitors.|
+Statue of Liberty|US|40.6892|-74.0444|L|W|Colossal neoclassical sculpture of a robed, crowned woman, dedicated October 28, 1886.|
+The Wave|US|36.9961|-112.0061|N|O|Sandstone rock formation on the slopes of Coyote Buttes in a Utah-Arizona wilderness.|The_Wave_(Arizona)
+Times Square|US|40.7575|-73.9858|L|W|Busy junction of Broadway, Seventh Avenue and 42nd Street in Midtown Manhattan.|
+Yellowstone Lake|US|44.4670|-110.3670|N|M|Largest body of water in Wyoming, 7,732 feet above sea level and covering 136 square miles.|
+Yosemite Valley|US|37.7217|-119.6464|N|W|Glacial valley inside a national park in central California.|
+Cerro de los Siete Colores|AR|-23.7469|-65.5035|N|O|Hill bordering the Quebrada de Purmamarca, coloured by a complex geological history.|
+Cueva de las Manos|AR|-47.1558|-70.6572|L|O|Rock walls hold hundreds of stenciled hand paintings from about 7300 BC to AD 700.|
+Fitz Roy|AR|-49.2713|-73.0432|N|M|Mountain on the Argentina-Chile border in Patagonia, first climbed in 1952.|
+Ischigualasto|AR|-30.0670|-68.0000|N|O|Park established in 1971 covering 603.7 km2, listed as a UNESCO site in 2000.|Ischigualasto_Provincial_Park
+Mar del Plata|AR|-38.0000|-57.5500|T|M|Second largest city in Buenos Aires Province, on Argentina's Atlantic coast.|
+Mendoza|AR|-32.8897|-68.8444|T|M|Provincial capital in the northern-central foothills, on the eastern side of the Andes.|Mendoza,_Argentina
+San Carlos de Bariloche|AR|-41.1500|-71.3000|T|M|Largest city in Río Negro province, on the southern shore of Nahuel Huapi Lake.|
+Potosí|BO|-19.5892|-65.7533|T|M|One of the highest cities in the world, at a nominal 4,067 metres altitude.|
+Tiwanaku|BO|-16.5547|-68.6733|L|M|Pre-Columbian archaeological site near Lake Titicaca, estimated at 10,000 to 20,000 inhabitants.|
+Yungas Road|BO|-16.2903|-67.8271|L|M|Large parts built by Paraguayan prisoners during the Chaco War; some sections under 3 metres wide.|
+Florianópolis|BR|-27.5926|-48.5582|T|M|Capital and second-largest city of Santa Catarina state, including its namesake island.|
+Ilha Grande|BR|-23.1500|-44.2330|N|O|Forested island about 12 km off the Atlantic coast of Angra dos Reis, covering 193 km2.|
+Jericoacoara|BR|-2.7936|-40.5081|T|O|Northernmost municipality of Ceara state, known for its eponymous beach and national park.|
+Ouro Preto|BR|-20.3853|-43.5036|T|O|Former colonial mining town in Minas Gerais, a UNESCO site for Baroque architecture.|
+Pantanal|BR|-17.4000|-57.5000|N|M|Largest tropical wetland and largest flooded grassland area in the world, mostly in Brazil.|
+Paraty|BR|-23.2194|-44.7147|T|O|Municipality on Rio de Janeiro state's southern coast, 258 km from the state capital.|
+Rio de Janeiro|BR|-22.9111|-43.2056|T|W|Second-largest Brazilian city after São Paulo, and the most visited by international tourists.|
+São Paulo|BR|-23.5500|-46.6330|T|W|Founded in 1554 by Jesuit priests, one of the oldest continuously inhabited cities in the Americas.|
+Atacama Desert|CL|-24.5000|-69.2500|N|W|Driest non-polar desert in the world, covering about 105,000 square kilometres.|
+Mano del Desierto|CL|-24.1583|-70.1565|L|O|Large-scale sculpture referencing human rights violations under the Pinochet regime.|
+San Pedro de Atacama|CL|-22.9170|-68.2000|T|M|Chilean town in El Loa Province, Antofagasta Region, east of Antofagasta.|
+Torres del Paine|CL|-51.0000|-73.0000|N|W|Chilean Patagonia national park of mountains, glaciers and lakes, established in 1959.|Torres_del_Paine_National_Park
+Valparaíso|CL|-33.0461|-71.6197|T|M|Major Chilean seaport and naval base, named after a town in Castile-La Mancha, Spain.|
+Villarrica|CL|-39.4208|-71.9392|N|O|One of Chile's most active volcanoes, with popular guided summer ascents.|Villarrica_(volcano)
+Cartagena|CO|10.4000|-75.5000|T|W|Former Spanish colony and key port exporting Bolivian silver to Spain, defended against pirates.|Cartagena,_Colombia
+Cocora Valley|CO|4.6330|-75.4830|N|O|Valley in Colombia's Quindío Department, in the Central Cordillera of the Andes.|
+El Peñón de Guatapé|CO|6.2195|-75.1792|N|O|Monolith rock in Antioquia department, also known as La Piedra.|
+Ciudad Mitad del Mundo|EC|-0.0022|-78.4558|L|M|Land tract in San Antonio parish, about 26 km north of the centre of Quito.|
+Cuenca|EC|-2.8974|-79.0045|T|O|Andean Ecuadorian city nicknamed the Athens of Ecuador.|Cuenca,_Ecuador
+Guiana Space Centre|GF|5.2083|-52.7323|L|M|Spaceport northwest of Kourou in French Guiana, at about 5 degrees north latitude.|
+Ballestas Islands|PE|-13.7358|-76.3964|N|O|Small rocky islands near Paracas, covering an estimated 0.12 km2.|
+Chavín de Huántar|PE|-9.5928|-77.1785|L|O|Archaeological site in Ancash Region with ruins and artifacts built as early as 1200 BC.|
+Cusco|PE|-13.5169|-71.9786|T|W|Largest city of its province, historically one of Peru's main cultural and political centres.|
+Gocta Falls|PE|-6.0223|-77.8865|N|O|Perennial two-drop waterfall in Bongara province, flowing into the Cocahuayco River.|Gocta_Cataracts
+Huacachina|PE|-14.0875|-75.7633|T|O|Village in a small oasis about five kilometres from Ica, with around 100 permanent residents.|
+Iquitos|PE|-3.7500|-73.2500|T|M|Largest metropolis in the Peruvian Amazon, and Peru's ninth-most populous city.|
+Central Suriname Nature Reserve|SR|4.0000|-56.5000|N|O|Rainforest reserve in central Suriname, described as being in pristine condition.|
+Colonia del Sacramento|UY|-34.4714|-57.8442|T|O|One of Uruguay's oldest towns, its historic quarter is a UNESCO World Heritage Site.|
+Margarita Island|VE|10.9869|-63.9356|N|O|Columbus was the first European to reach it, in 1498.|
+Alice Springs|AU|-23.7000|133.8700|T|M|Third-largest settlement in the Northern Territory, after Darwin and Palmerston.|
+Blue Mountains|AU|-33.6000|150.3500|N|M|Mountain range in New South Wales, considered part of the western outskirts of Greater Sydney.|Blue_Mountains_(New_South_Wales)
+Bondi Beach|AU|-33.8911|151.2742|N|W|Surrounding Sydney suburb had 11,513 residents at the 2021 census.|
+Cradle Mountain|AU|-41.6800|145.9400|N|O|Sixth-highest mountain in Tasmania, at 1,545 metres above sea level.|
+Gold Coast|AU|-27.9983|153.3344|T|M|Coastal city and region in Queensland, also known by its initials GC.|Gold_Coast,_Queensland
+Great Barrier Reef|AU|-16.4000|145.8000|N|W|Coral reef system in the Coral Sea off Queensland, a World Heritage Site since 1981.|
+Kakadu National Park|AU|-13.1000|132.6000|N|M|Protected World Heritage area in Australia's Northern Territory, 171 km southeast of Darwin.|
+Kangaroo Island|AU|-35.8000|137.3000|N|M|Lies off South Australia, 112 km southwest of Adelaide, and draws over 200,000 visitors yearly.|
+Karlu Karlu|AU|-20.5500|134.2830|N|O|Nearest settlement is Wauchope, 9 km south; the hamlet of Wycliffe Well lies 25 km south.|Karlu_Karlu_/_Devils_Marbles_Conservation_Reserve
+Melbourne|AU|-37.8142|144.9631|T|W|Southernmost city in the world with a population exceeding one million.|
+Perth|AU|-32.0000|115.9000|T|M|Capital and largest city of Western Australia, Australia's fourth-largest city.|
+Pinnacles|AU|-30.6058|115.1575|N|O|Weathered yellow limestone pillars in Nambung National Park near Cervantes, Western Australia.|The_Pinnacles_(Western_Australia)
+Rottnest Island|AU|-32.0050|115.5150|N|O|Nineteen square kilometre island off Western Australia, an A-class reserve.|
+Sydney Opera House|AU|-33.8568|151.2151|L|W|Multi-venue performing arts centre on a harbour foreshore in New South Wales, Australia.|
+Aitutaki|CK|-18.8500|-159.7900|N|O|Almost-atoll with fifteen islets in a lagoon, the Cook Islands' second most visited island.|
+Isle of Pines|NC|-22.6170|167.4830|N|O|Nicknamed the closest island to Paradise, in the South Province of New Caledonia.|Isle_of_Pines_(New_Caledonia)
+Auckland|NZ|-36.8492|174.7653|T|W|Most populous city in New Zealand, and fifth most populous in Oceania.|
+Fox Glacier|NZ|-43.5020|170.0810|N|O|Third-largest glacier in New Zealand, covering about 32 km2 with tributaries.|
+Hobbiton Movie Set|NZ|-37.8575|175.6797|L|M|Film set used for The Lord of the Rings and The Hobbit trilogies, now a guided tourist site.|
+Queenstown|NZ|-45.0311|168.6625|T|M|Resort town in Otago in the south-west of the South Island, largest town in its district.|Queenstown,_New_Zealand
+Tongariro National Park|NZ|-39.2908|175.5622|N|M|New Zealand's oldest national park and the sixth established in the world.|
+Jellyfish Lake|PW|7.1611|134.3761|N|O|Marine lake on Eil Malk island that millions of golden creatures cross daily.|
+Rock Islands|PW|7.2330|134.3000|N|O|UNESCO World Heritage Site declared in 2012, with between 250 and 300 islands.|
+East Rennell|SB|-11.6830|160.3330|N|O|Southern portion of a Solomon Islands island, the world's largest raised coral atoll.|
+Marovo Lagoon|SB|-8.4800|158.0700|N|O|Largest double-barrier enclosed lagoon in the world, covering 700 km2.|
+Haleakalā|US|20.7097|-156.2533|N|M|Massive active shield volcano forming over 75% of Maui, Hawaii.|
+Waikiki|US|21.2636|-157.8214|T|M|Neighbourhood on Oahu that was the first capital of the Kingdom of Hawaii, 1795 to 1796.|
+Savai'i|WS|-13.5830|-172.4170|N|O|Largest and highest island in Samoa and the Samoan chain, sixth largest in Polynesia.|
+Cape Adare|AQ|-71.2830|170.2330|N|O|Black basalt cape at the northern tip of a peninsula, first confirmed Antarctic mainland landing site.|
+Gamburtsev Mountain Range|AQ|-80.5000|76.0000|N|O|Range in East Antarctica, discovered by a Soviet expedition in 1958.|
+Lake Vostok|AQ|-77.5000|106.0000|N|M|Largest of Antarctica's 675 known subglacial lakes, and 16th largest lake by area.|
+Ross Ice Shelf|AQ|-81.5000|-175.0000|N|M|Largest ice shelf of Antarctica, several hundred metres thick.|

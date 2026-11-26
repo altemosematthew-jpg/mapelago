@@ -6,8 +6,11 @@
   var P = (window.DR_PLACES || []).map(function (a, i) { return { i: i, name: a[0], country: a[1], lat: a[2], lon: a[3], pop: a[4], capital: !!a[5], tier: a[6] }; });
   // Duet's source-checked places that aren't cities, from No. 14 on. "where" is shown on the reveal only.
   (window.DR_LANDMARKS || []).forEach(function (a) { P.push({ i: P.length, lm: true, name: a[0], country: a[1], lat: a[2], lon: a[3], kind: a[4], diff: a[5], clue: a[6], tier: 0 }); });
+  var PACK_FROM = 22, NLM = P.length; // content pack 1 joins the landmarks from No. 22; the days before it keep their pools
+  (window.DR_PACK1 || []).forEach(function (a) { P.push({ i: P.length, lm: true, pack: true, name: a[0], country: a[1], lat: a[2], lon: a[3], kind: a[4], diff: a[5], clue: a[6], wiki: a[7], tier: 0 }); });
+  var LPOOLS2 = [1, 2, 3].map(function (d) { return P.filter(function (p) { return p.lm && p.diff === d; }).map(function (p) { return p.i; }); });
   var POOLS = [1, 2, 3, 4, 5].map(function (t) { return P.filter(function (p) { return !p.lm && p.tier === t; }).map(function (p) { return p.i; }); });
-  var LPOOLS = [1, 2, 3].map(function (d) { return P.filter(function (p) { return p.lm && p.diff === d; }).map(function (p) { return p.i; }); });
+  var LPOOLS = [1, 2, 3].map(function (d) { return P.filter(function (p) { return p.lm && !p.pack && p.diff === d; }).map(function (p) { return p.i; }); });
   var LM_FROM = 14; // Nos. 1 to 13 stay exactly as they were
   var MYST = window.DR_MYSTERY || [];
   var $ = function (s) { return document.querySelector(s); };
@@ -56,10 +59,13 @@
         var rl = rng(d * 104729 + 7919), diffs = [0, 1, 2], howMany = rl() < 0.5 ? 1 : 2;
         for (var q = 2; q > 0; q--) { var z = Math.floor(rl() * (q + 1)), tmp = diffs[q]; diffs[q] = diffs[z]; diffs[z] = tmp; }
         diffs.slice(0, howMany).forEach(function (df) { lmAt[df === 0 ? (rl() < 0.5 ? 0 : 1) : df === 1 ? (rl() < 0.5 ? 2 : 3) : 4] = { df: df, k: rl() }; });
+        // from No. 22: two places from the bigger list every day, in rounds 2 and 5, their difficulty set by the weekday
+        // (Monday two well-known, Saturday two obscure, Sunday one of each)
+        if (d >= PACK_FROM) { var wd = (d + 5) % 7, ARC = [[0, 2], [0, 0], [0, 1], [1, 1], [1, 1], [1, 2], [2, 2]][wd]; lmAt = {}; lmAt[1] = { df: ARC[0], k: rl() }; lmAt[4] = { df: ARC[1], k: rl() }; }
       }
       for (var t = 0; t < 5; t++) {
         if (lmAt[t]) {
-          var lp = LPOOLS[lmAt[t].df], LL = lp.length, lk = Math.floor(lmAt[t].k * LL), lc = -1;
+          var lp = (d >= PACK_FROM ? LPOOLS2 : LPOOLS)[lmAt[t].df], LL = lp.length, lk = Math.floor(lmAt[t].k * LL), lc = -1;
           for (var jj = 0; jj < LL && lc < 0; jj++) { var c = lp[(lk + jj) % LL]; if (last[c] === undefined || d - last[c] > (d >= NR ? Math.max(GAP, LL - 3) : GAP)) lc = c; }
           if (lc < 0) lc = lp[lk];
           last[lc] = d; pick.push(lc); continue;
@@ -328,6 +334,7 @@
     $("#pts").innerHTML = s + "<small>" + (mode === "daily" && WEIGHTS[current() - 1] !== 1 ? "×" + WEIGHTS[current() - 1] + " = " + Math.round(s * WEIGHTS[current() - 1]) : "points") + "</small>";
     var f = fact(t), fe = $("#fact"); fe.innerHTML = "";
     var b = document.createElement("b"); b.textContent = f[0]; fe.appendChild(b); fe.appendChild(document.createTextNode(f[1]));
+    if (t.wiki) { var wl = document.createElement("a"); wl.href = "https://en.wikipedia.org/wiki/" + encodeURIComponent(t.wiki).replace(/%2F/g, "/"); wl.target = "_blank"; wl.rel = "noopener"; wl.textContent = " Read more on Wikipedia"; fe.appendChild(wl); }
     $("#nextBtn").textContent = mode === "daily" ? (guesses.length >= 5 ? "See my score" : "Next place") : "Next practice place";
     // show both the pin and the answer
     var a = toXY(t.lat, t.lon), p = toXY(pin.lat, pin.lon), bx = box(), asp = bx.w / bx.h;
