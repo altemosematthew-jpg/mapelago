@@ -122,7 +122,8 @@ async function playTouch(p, wrong, from = 0) {
 }
 // A round by keyboard alone: Tab to things, Enter to press them, arrow keys on the slider.
 async function tabTo(p, sel) {
-  for (let n = 0; n < 25; n++) { if (await p.evaluate((s) => document.activeElement && document.activeElement.matches(s), sel)) return true; await p.keyboard.press("Tab"); }
+  // up to 80 Tabs: in an ordering question the next option can be earlier on the page, so focus has to wrap right round
+  for (let n = 0; n < 80; n++) { if (await p.evaluate((s) => document.activeElement && document.activeElement.matches(s), sel)) return true; await p.keyboard.press("Tab"); }
   return false;
 }
 async function playKeys(p) {

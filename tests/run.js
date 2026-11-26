@@ -897,6 +897,18 @@ async function page(b, url, opts = {}) {
       const r = await p.evaluate(() => __fath.S());
       check(at >= 0 && r.picks[at] === "TV" && r.total > 0, "fathoms: Tuvalu is accepted as a right answer", JSON.stringify([at, r.picks, r.total]));
       await ctx.close();
+      // review fixes: the whole answer list with a reason for each depth, "the" before names that take it, San Marino's capital
+      {
+        const f = await page(b, U + "fathoms.html#day-20", { storage: { "dailycity:fathoms:v1": '{"results":{},"game":null}' }, wait: 600 });
+        const first = await f.p.evaluate(() => __fath.S().prompts[0].answers.length);
+        await f.p.click("#fpass"); await f.p.waitForTimeout(300);
+        const list = await f.p.evaluate(() => ({ vis: document.querySelector("#allAns").getBoundingClientRect().height > 40, head: (document.querySelector("#allAns .allhead") || {}).textContent, rows: document.querySelectorAll("#allAns li:not(.allhead)").length, why: [...document.querySelectorAll("#allAns small")].map((x) => x.textContent), depth: [...document.querySelectorAll("#allAns li:not(.allhead) b")].map((x) => Number(x.textContent.replace(/,/g, ""))) }));
+        check(list.vis && /deepest first/.test(list.head) && list.rows === first && list.depth.every((x, i) => !i || x <= list.depth[i - 1]), "fathoms: after a prompt every right answer is listed, deepest first", JSON.stringify([list.rows, first]));
+        check(list.why.length === first && list.why.every((w) => /largest city about [\d.,]+( million)?$|no city big enough/.test(w)), "fathoms: each answer says why it is that deep", list.why.slice(0, 3).join(" | "));
+        const t = await f.p.evaluate(() => [__fath.the("Name a country that borders Democratic Republic of the Congo."), __fath.the("Name a country that covers more land than United Kingdom."), __fath.the("Name a country that borders Chad."), __fath.cap("SM")]);
+        check(t[0] === "Name a country that borders the Democratic Republic of the Congo." && / than the United Kingdom\./.test(t[1]) && t[2] === "Name a country that borders Chad." && t[3] === "San Marino", "fathoms: 'borders the Democratic Republic of the Congo'; San Marino's capital is San Marino", JSON.stringify(t));
+        await f.ctx.close();
+      }
       const o = await page(b, U + "fathoms.html#day-19", { wait: 600 });
       check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 20 are dealt exactly as before");
       await o.ctx.close();
