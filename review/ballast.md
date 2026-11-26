@@ -22,6 +22,20 @@ no requests to other companies. Save key: `dailycity:ballast:v1` (`results` per 
 - **Voyages:** the 30 set levels in six regions, with stars (reach the line; nothing overboard; every country named).
 - **Stats:** personal best level, runs and average, and "Today's cargo starts in ..." on the menu.
 
+## Polish stage (0.15.20), from Duet's research
+- A translucent landing ghost shows where the piece in hand will first touch; a small "Next" box previews the next country.
+- The name is asked **after** a country is placed, about that country, and never holds up the next piece. An unanswered
+  question lapses at the next drop. After a load's last piece there is a Continue button, with the question still open.
+- The day's first two levels (nine pieces) use each region's best-known countries. Every level opens with its
+  broadest piece as a base. In the climb the line only counts once half the cargo is aboard.
+- The last piece of a load must lie still for 1.2 s before the load is judged (0.45 s for earlier pieces).
+- "Next climb in 5h 12m" on the menu and the result.
+- Voyage stars: "every country named" now means every country you placed (a voyage can end early at the line).
+- Not done: freezing settled pieces below the top (risk of visible snapping); Monday-to-Saturday weather (difficulty
+  follows the level reached instead); strictly one dial at a time (swell, wind and count are staggered but overlap).
+- One bot sweep after these changes: levels 1 to 4 cleared every time, 5 and 6 about 83%, 7 to 9 about 50%, 10 and up
+  about 25%: no worse than before, so nothing was retuned.
+
 ## How the difficulty was set (three bot sweeps, then stopped)
 A test bot plays plainly: each piece laid flat, dropped in the middle or alternating sides, every name right.
 - Generator: the load line is 27% of the pieces' summed square-root areas times (0.8 + 0.09 × level). With that, one

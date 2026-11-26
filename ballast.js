@@ -72,6 +72,8 @@
     var region = n % 6 === 0 ? "World" : order[(n - 1) % 5];
     var pool = SHAPES.filter(function (s) { return s.a >= 15000 && (region === "World" || regionOf(s) === region); });
     var count = Math.min(10, 4 + Math.floor(n * 0.6));
+    // the first two levels (the day's first nine pieces) use each region's best-known countries
+    if (n <= 2) { var known = pool.slice().sort(function (a, b) { return b.f - a.f; }).slice(0, 14); if (known.length >= count + 2) pool = known; }
     // pieces of similar size, around a random anchor
     var anchor = pool[Math.floor(r() * pool.length)], near = pool.filter(function (s) { return s.a >= anchor.a / 6 && s.a <= anchor.a * 3; });
     if (near.length < count) near = pool.slice().sort(function (a, b) { return Math.abs(Math.log(a.a / anchor.a)) - Math.abs(Math.log(b.a / anchor.a)); }).slice(0, Math.max(count, 8));
@@ -79,6 +81,9 @@
     var picks = shuffle(near, r);
     if (n >= 7) picks.sort(function (a, b) { return (longness(b) > 2 ? 1 : 0) - (longness(a) > 2 ? 1 : 0); });
     picks = shuffle(picks.slice(0, count), r);
+    // a breather opens every level: the broadest, least awkward piece goes first, as a base
+    var base = picks.reduce(function (m, x) { return x.a / Math.pow(longness(x), 2) > m.a / Math.pow(longness(m), 2) ? x : m; }, picks[0]);
+    picks = [base].concat(picks.filter(function (x) { return x !== base; }));
     var lv = R("g" + n, region, "Level " + n, picks.map(function (s) { return s.cc; }), {
       deck: Math.max(170, 236 - 5 * n), big: Math.min(0.62, 0.4 + 0.016 * n),
       swell: n < 3 ? 0 : Math.min(5, Math.floor((n - 1) / 2)), wind: n < 4 ? 0 : Math.min(3, Math.floor((n - 1) / 3)),
@@ -92,7 +97,7 @@
   var TUTORIAL = [
     R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country over the deck, then press Drop. Stack past the dashed load line.", name: "none", line: 0, lineKm: 700, endAtLine: true, tut: 1 }),
     R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap the play area to turn a country (or use the round arrows, or Q and E). Lay long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
-    R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "Name each country before you drop it for bonus points (10 each in a run). A wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
+    R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "After you place a country, name it for bonus points (10 each in a run). It never holds up the next piece, and a wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
     R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right. Build a little to the left.", name: "pick", wind: 2, lineKm: 600, endAtLine: true, tut: 4 }),
     R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck. Keep the stack low and in the middle. Three lives a run: a failed load costs one.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
   ];
@@ -150,7 +155,7 @@
   var VW = 360, VH = 400;           // view size in world units; the canvas is scaled to fit
   var DECK_Y = 0;                    // top of the deck
   var cv = $("#sea"), cx = cv.getContext("2d");
-  var engine, world, ship, rails, pieces, current, hover, L, S, camY = 0, raf = 0, last = 0, acc = 0, time = 0, settleT = 0, state = "idle", ttl = 0;
+  var dropping = null, engine, world, ship, rails, pieces, current, hover, L, S, camY = 0, raf = 0, last = 0, acc = 0, time = 0, settleT = 0, state = "idle", ttl = 0;
 
   function scaleFor(list, deck, share) {
     // one km-to-unit scale for the whole round: the biggest piece is ~45% of the deck wide
@@ -197,6 +202,7 @@
     $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
     $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
     $("#nameBox").hidden = L.name === "none";
+    asked = null; dropping = null; $("#dropBtn").hidden = false; $("#contBtn").hidden = true;
     $("#play").hidden = false; $("#done").hidden = true; $("#chart").hidden = true;
     next();
     if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); }
@@ -208,14 +214,36 @@
   }
 
   // ---------- one piece at a time ----------
+  // The name question is about the country just placed, never the one in hand, and never holds up the next piece.
+  var asked = null; // { s, answer: null | true | false }
+  function lastCall() { // the load is over: one last chance to name the final country, then Continue
+    if (!asked || asked.answer !== null || L.name === "none") { finish(); return; }
+    state = "last"; $("#dropBtn").hidden = true; $("#contBtn").hidden = false; renderHud();
+  }
+  function cont() { if (state !== "last") return; if (asked && asked.answer === null) markName(false, true); finish(); }
   function next() {
-    if (S.i >= L.list.length) { finish(); return; }
+    if (S.i >= L.list.length) { lastCall(); return; }
     var s = byCC[L.list[S.i]];
-    hover = { s: s, x: 0, ang: 0, named: null, answer: null };
-    renderName(); renderHud(); state = "aim";
+    hover = { s: s, x: 0, ang: 0 };
+    if (!asked) renderName(); renderHud(); state = "aim";
     $("#dropBtn").disabled = false;
   }
   function stackTop() { var top = DECK_Y; pieces.forEach(function (b) { if (!b.mxGone) top = Math.min(top, b.bounds.min.y); }); return top; }
+  // where the piece in hand would first touch if dropped straight down (for the landing ghost)
+  var ghostBody = null, ghostKey = "";
+  function ghostY() {
+    if (!hover || !world) return null;
+    var key = hover.s.cc + "|" + hover.ang.toFixed(3) + "|" + Math.round(hover.x) + "|" + pieces.length + "|" + S.i;
+    if (key === ghostKey) return hover.gy;
+    ghostKey = key;
+    var bk = hover.s.cc + "|" + hover.ang.toFixed(3);
+    if (!ghostBody || ghostBody.mxKey !== bk) { ghostBody = makeBody(hover.s, S.k, 0, 0, hover.ang); ghostBody.mxKey = bk; }
+    var others = M.Composite.allBodies(world), y = hoverY(), stop = DECK_Y + 60, hit = false;
+    for (; y < stop; y += 3) { M.Body.setPosition(ghostBody, { x: hover.x, y: y }); if (M.Query.collides(ghostBody, others).length) { hit = true; break; } }
+    hover.gy = hit ? y - 3 : null;
+    return hover.gy;
+  }
+  function untilMidnight() { var n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1), mins = Math.max(0, Math.round((m - n) / 60000)); return Math.floor(mins / 60) + "h " + (mins % 60) + "m"; }
   function hoverY() { var h = halfHeight(hover.s, S.k, hover.ang); return Math.min(stackTop(), DECK_Y) - 14 - h; }
   function drop() {
     if (state !== "aim") return;
@@ -225,7 +253,8 @@
     state = "fall"; settleT = 0; ttl = 0;
     $("#dropBtn").disabled = true;
     SFX.drop();
-    if (hover.answer === null && L.name !== "none") markName(false, true);
+    if (asked && asked.answer === null && L.name !== "none") markName(false, true); // the earlier question lapses
+    dropping = hover.s;
   }
   function overboard(b) { return b.position.y > DECK_Y + 140 || Math.abs(b.position.x) > VW; }
   function settled() { return pieces.every(function (b) { return b.mxGone || b.isSleeping || (b.speed < 0.1 && b.angularSpeed < 0.008); }); }
@@ -247,10 +276,13 @@
     if (state === "fall") {
       ttl += dt;
       settleT = settled() ? settleT + dt : 0;
-      if (settleT > 450 || ttl > 6000) {
+      // the last piece gets 1.2 s of stillness before the load is judged; earlier ones 0.45 s to keep the pace
+      if (settleT > (S.i === L.list.length - 1 ? 1200 : 450) || ttl > 7000) {
         S.height = heightKm(); S.peak = Math.max(S.peak, S.height);
         SFX.land(); S.i++;
-        if (S.height >= L.lineKm && L.endAtLine !== false) { finish(); return; }
+        if (L.name !== "none") { asked = { s: dropping, answer: null }; renderName(); }
+        // in the climb, the line only counts once at least half the cargo is aboard (one tall piece can't clear a level)
+        if (S.height >= L.lineKm && L.endAtLine !== false && (!L.climb || S.i >= Math.ceil(L.list.length / 2))) { lastCall(); return; }
         next();
       }
       renderHud();
@@ -314,12 +346,25 @@
       var hy = hoverY(), o = localOutline(hover.s, S.k);
       cx.strokeStyle = css("--muted", "#6b777e"); cx.setLineDash([3 * k, 4 * k]); cx.lineWidth = 1;
       cx.beginPath(); cx.moveTo(X(hover.x), Y(hy)); cx.lineTo(X(hover.x), Y(DECK_Y)); cx.stroke(); cx.setLineDash([]);
+      var gy = ghostY();
+      if (gy !== null && gy > hy + 6) { cx.save(); cx.globalAlpha = 0.28; shape(o, hover.x, gy, hover.ang, true); cx.restore(); }
       shape(o, hover.x, hy, hover.ang, true);
+    }
+    // the next country, small, in the corner
+    var nx = L.list[S.i + (state === "aim" ? 1 : 0)] && byCC[L.list[S.i + (state === "aim" ? 1 : 0)]];
+    if (nx && state !== "done" && state !== "last") {
+      var bw = 46 * k, bx = W - bw - 8 * k, by = 8 * k, sc = 34 * k / 100;
+      cx.fillStyle = css("--paper", "#fff"); cx.strokeStyle = css("--ink", "#000"); cx.lineWidth = 1.5 * k / 1.2;
+      cx.beginPath(); cx.rect(bx, by, bw, bw + 12 * k); cx.fill(); cx.stroke();
+      cx.fillStyle = css("--ink-2", "#3d4a52"); cx.font = "700 " + 9.5 * k + "px " + css("--font", "sans-serif"); cx.textAlign = "center"; cx.fillText("Next", bx + bw / 2, by + 11 * k); cx.textAlign = "left";
+      cx.save(); cx.translate(bx + bw / 2, by + 12 * k + bw / 2);
+      cx.beginPath(); nx.p.forEach(function (q, i) { (i ? cx.lineTo : cx.moveTo).call(cx, q[0] * sc, q[1] * sc); }); cx.closePath();
+      cx.fillStyle = css("--land", "#f3d98a"); cx.fill(); cx.strokeStyle = css("--ink", "#000"); cx.lineWidth = 1; cx.stroke(); cx.restore();
     }
     function shape(out, px, py, a, live) {
       cx.save(); cx.translate(X(px), Y(py)); cx.rotate(a);
       cx.beginPath(); out.forEach(function (v, i) { (i ? cx.lineTo : cx.moveTo).call(cx, v.x * k, v.y * k); }); cx.closePath();
-      cx.fillStyle = live ? css("--accent", "#b4237d") : css("--land", "#f3d98a"); cx.globalAlpha = live ? 0.85 : 1; cx.fill(); cx.globalAlpha = 1;
+      cx.fillStyle = live ? css("--accent", "#b4237d") : css("--land", "#f3d98a"); var ga = cx.globalAlpha; cx.globalAlpha = live ? ga * 0.85 : ga; cx.fill(); cx.globalAlpha = ga;
       cx.lineJoin = "round"; cx.strokeStyle = css("--ink", "#000"); cx.lineWidth = 1.6 * k / 1.2; cx.stroke();
       cx.restore();
     }
@@ -327,8 +372,11 @@
 
   // ---------- naming ----------
   function renderName() {
-    var box = $("#nameBox"), s = hover.s;
-    $("#nameQ").textContent = "Which country is this? (+" + nameBonus() + ")";
+    var box = $("#nameBox");
+    box.classList.remove("right", "wrong"); $("#nameSay").textContent = "";
+    if (!asked) { $("#nameQ").textContent = "Place a country, then name it for +" + nameBonus() + "."; $("#nameOpts").hidden = true; $("#nameType").hidden = true; return; }
+    var s = asked.s;
+    $("#nameQ").textContent = "Which country did you just place? (+" + nameBonus() + ")";
     $("#nameSay").textContent = "";
     if (L.name === "pick") {
       $("#nameType").hidden = true; $("#nameOpts").hidden = false;
@@ -344,11 +392,11 @@
     box.classList.remove("right", "wrong");
   }
   function markName(ok, skipped) {
-    if (hover.answer !== null) return;
-    hover.answer = ok; S.named.push(ok ? 1 : 0);
-    var s = hover.s, box = $("#nameBox");
+    if (!asked || asked.answer !== null) return;
+    asked.answer = ok; S.named.push(ok ? 1 : 0);
+    var s = asked.s, box = $("#nameBox");
     box.classList.add(ok ? "right" : "wrong");
-    $("#nameSay").textContent = ok ? "Right: " + s.n + ". +" + nameBonus() : skipped ? "Dropped unnamed: it was " + s.n + "." : "It's " + s.n + ".";
+    $("#nameSay").textContent = ok ? "Right: " + s.n + ". +" + nameBonus() : skipped ? "Unnamed: that was " + s.n + "." : "It's " + s.n + ".";
     Array.prototype.forEach.call(document.querySelectorAll("#nameOpts .opt"), function (b) { b.disabled = true; if (b.dataset.cc === s.cc) b.classList.add("is"); });
     $("#nin").disabled = true;
     if (!skipped) (ok ? SFX.right : SFX.wrong)();
@@ -356,7 +404,7 @@
   }
   // a name is worth 10 points in a Daily or practice run (where the levels are the score) and 100 on a voyage
   function nameBonus() { return RUN ? 10 : 100; }
-  function answer(cc) { if (state !== "aim" || hover.answer !== null) return; markName(cc === hover.s.cc); }
+  function answer(cc) { if (!asked || asked.answer !== null || (state !== "aim" && state !== "last")) return; markName(cc === asked.s.cc); if (state === "last") setTimeout(function () { if (state === "last") finish(); }, 700); }
 
   // ---------- HUD, end ----------
   function named() { return S.named.reduce(function (a, b) { return a + b; }, 0); }
@@ -369,7 +417,7 @@
   }
   function stars() {
     if (S.height < L.lineKm) return 0;
-    return 1 + (S.lost.length === 0 ? 1 : 0) + (named() === L.list.length ? 1 : 0);
+    return 1 + (S.lost.length === 0 ? 1 : 0) + (S.named.length > 0 && named() === S.kept.length ? 1 : 0); // every country placed was named
   }
   function finish() {
     S.over = true; state = "done";
@@ -427,7 +475,7 @@
     $("#doneStars").hidden = true;
     $("#bigScore").textContent = res.lvl; $("#bigUnit").textContent = res.lvl === 1 ? "level cleared" : "levels cleared";
     $("#doneLine").textContent = fmt(res.score) + " points: " + res.lvl + " × 100 for the levels + " + res.named + " × 10 for the names.";
-    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " A new run arrives at midnight; Endless practice and the voyages are open any time." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
+    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " Next climb in " + untilMidnight() + ". Endless practice and the voyages are open any time." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
     var share = $("#shareText"), sb = $("#shareBtn");
     share.hidden = sb.hidden = r.mode !== "daily";
     if (r.mode === "daily") share.textContent = shareText(dayNo, res);
@@ -454,7 +502,7 @@
     var r = save.results[dayNo], d = $("#dailyBtn");
     d.disabled = !!r; d.textContent = r ? "Daily Ballast done: " + r.lvl + (r.lvl === 1 ? " level" : " levels") + " cleared" : save.run && save.run.day === dayNo ? "Carry on today's Daily Ballast (level " + save.run.lvl + ")" : "Play today's Daily Ballast";
     $("#dailyNote").hidden = false;
-    $("#dailyNote").textContent = (r ? "New cargo at midnight. " : cargoPreview(dayNo) + " ") + statsLine();
+    $("#dailyNote").textContent = (r ? "Next climb in " + untilMidnight() + ". " : cargoPreview(dayNo) + " ") + statsLine();
     $("#homeShare").hidden = !r; if (r) $("#homeShareText").textContent = shareText(dayNo, r);
   }
 
@@ -498,9 +546,11 @@
     $("#rightBtn").onclick = function () { move(12); };
     $("#ccwBtn").onclick = function () { turn(-1); };
     $("#cwBtn").onclick = function () { turn(1); };
-    $("#dropBtn").onclick = drop;
+    $("#dropBtn").onclick = drop; $("#contBtn").onclick = cont;
     window.addEventListener("keydown", function (e) {
-      if (state !== "aim" || /^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
+      if (/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
+      if (state === "last" && (e.key === " " || e.key === "Enter") && !/^BUTTON$/.test((e.target || {}).tagName)) { cont(); e.preventDefault(); return; }
+      if (state !== "aim") return;
       if (e.key === "ArrowLeft") { move(e.shiftKey ? -3 : -8); e.preventDefault(); }
       else if (e.key === "ArrowRight") { move(e.shiftKey ? 3 : 8); e.preventDefault(); }
       else if (e.key === "q" || e.key === "Q" || e.key === "ArrowUp") { turn(-1); e.preventDefault(); }
@@ -533,7 +583,7 @@
     $("#skipTut").onclick = function () { save.tut = 1; store(); RUN = null; startDaily(); };
     $("#homeShareBtn").onclick = async function () { var t = $("#homeShareText").textContent, b = this; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); } };
     // a new day while the page is open: offer it, never interrupt a run
-    setInterval(function () { if (today() !== dayNo && !dm) { $("#fresh").hidden = false; } }, 30000);
+    setInterval(function () { if (today() !== dayNo && !dm) { $("#fresh").hidden = false; } else if (!$("#chart").hidden && save.results[dayNo]) $("#dailyNote").textContent = "Next climb in " + untilMidnight() + ". " + statsLine(); }, 30000);
     $("#chartList").addEventListener("click", function (e) { var b = e.target.closest("button[data-i]"); if (b && !b.disabled) { RUN = null; start(LEVELS[+b.dataset.i]); } });
     renderChart();
     // first visit: the tutorial; then today's run, unless it's already played
@@ -544,7 +594,7 @@
       // test bot helpers: lay the piece flat, and run the physics until it settles, without waiting for frames
       flat: function () { var best = 0, bh = Infinity, o = localOutline(hover.s, S.k); for (var i = 0; i < 24; i++) { var a = i * Math.PI / 12, c = Math.cos(a), sn = Math.sin(a), lo = 0, hi = 0; o.forEach(function (v) { var y = v.x * sn + v.y * c; lo = Math.max(lo, y); hi = Math.min(hi, y); }); var h = lo * 2 + (lo - hi) * 0.3; if (h < bh) { bh = h; best = a; } } hover.ang = best; },
       settle: function () { for (var n = 0; n < 900 && state === "fall" && !S.over; n++) step(1000 / 60); return state; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang] : null; }, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover && hover.gy; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);
