@@ -52,3 +52,15 @@ Target: inside a round, about 90%, 65% and 35% right by thirds; a median score o
 - Voyage: make sailing on risk banked points (a scoring change: needs a start number).
 - Stamps and Voyage: order questions by obscurity so the last third is hard.
 - A weekly arc where there is none (Bigger, Fathoms, Stamps, Dead Reckoning, Ballast), and the day's difficulty shown in words on every game.
+
+## Weekly arc and the day's level in words (from No. 17)
+Monday is gentlest, Saturday hardest; one dial per game. The header shows it, for example "No. 18 · Tue · easy".
+
+| Game | Dial | Status |
+|---|---|---|
+| Mystery city, Logbook, Crossings | already had a level per weekday | in place |
+| Bigger city?, Bigger country? | the whole ramp is 30% wider apart on Monday and 20% closer on Saturday (never under 15% and 10%) | added |
+| Ballast | the same cargo with the load line 6% lower on Monday and 4% higher on Saturday; Sunday has the Captain's run | added; bot not re-run |
+| Mystery country, Voyage, Fathoms, Stamps, Dead Reckoning | none yet | not done: each needs its schedule or scoring reworked (Fathoms' deck, Dead Reckoning's pools, and the Voyage and Stamps decisions waiting on Matthew) |
+
+Sunday is "medium" in the two Bigger games; it has no special round there.

@@ -108,7 +108,9 @@
     for (; nrAt < day;) { nrAt++; for (var l = 1; l <= NRL; l++) { for (var v = 0; v < 40; v++) { var k = genLevel(nrAt, l, 0, v).list.slice().sort().join(""); if (!nrUsed[k]) { nrUsed[k] = 1; nrPick[nrAt + ":" + l] = v; break; } } } }
     return nrPick[day + ":" + n] || 0;
   }
-  function dailyLevel(day, n) { return genLevel(day, n, 0, dailyVariant(day, n)); }
+  // The weekly arc (from No. 17): the same cargo, with the load line a little lower on Monday and a little higher on Saturday.
+  function arc(day) { return day >= NR && window.MXS && MXS.weekLevel ? MXS.weekLevel(day) : null; }
+  function dailyLevel(day, n) { var lv = genLevel(day, n, 0, dailyVariant(day, n)), a = arc(day); if (a) { lv.lineKm = Math.round(lv.lineKm * (1 + (1 - a.f) * 0.2)); lv.arc = a; } return lv; }
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [
     R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country, let go to drop it, and hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
@@ -222,7 +224,7 @@
     if (L.spare == null) L.spare = L.tut ? 99 : 2; // how many countries may be lost to the sea before the load fails
     zoom = 1; holdT = 0; time = 0; stillT = 0; cheerT = 0; lastBody = null; listA = 0; sinkV = 0;
     $("#lvlTitle").textContent = RUN && RUN.mode === "daily" ? "Daily Ballast · Level " + RUN.lvl : RUN && RUN.mode === "practice" ? "Practice · Level " + RUN.lvl : RUN && RUN.mode === "captain" ? "Captain's run · Level " + RUN.lvl : L.title;
-    $("#lvlMeta").textContent = (RUN && RUN.mode !== "tut" ? "♥".repeat(RUN.lives) + "♡".repeat(3 - RUN.lives) + " · " : "") + L.region + " · " + L.list.length + " countries" + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
+    $("#lvlMeta").textContent = (RUN && RUN.mode !== "tut" ? "♥".repeat(RUN.lives) + "♡".repeat(3 - RUN.lives) + " · " : "") + L.region + " · " + L.list.length + " countries" + (L.arc ? " · " + L.arc.day + ", " + L.arc.word : "") + (L.swell ? " · swell" : "") + (L.wind ? " · wind" : "");
     $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
     $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
     $("#nameBox").hidden = L.name === "none"; $("#nameBox").dataset.mode = L.name === "type" ? "type" : "pick";

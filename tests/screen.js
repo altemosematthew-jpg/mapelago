@@ -115,6 +115,13 @@ const GAMES = [
     } },
 ];
 // games that must pass all three; a game joins this list in the release that fixes it
+// standard 9: the first action of each game (run inside the page), which must change what is on screen within 100 ms
+const ACT = {
+  ballast: "document.querySelector('#dropBtn').click()", bigger: "document.querySelector('#pick0').click()", bigcountry: "document.querySelector('#pick0').click()",
+  history: "document.querySelector('#qbody .opt').click()", city: "__lf.move('left') || __lf.move('up')", country: "__lf.move('left') || __lf.move('up')",
+  voyage: "document.querySelector('#opts button').click()", crossings: "(function(){var P=__cross.P();for(var i=0;i<60;i++)if(i!==P.from&&i!==P.to){__cross.guess(i);break}})()",
+  reckoning: "__dr.tapAt(10, 10)", stamps: "document.querySelector('#spin').click()", fathoms: "document.querySelector('#fpass').click()",
+};
 const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning", "country", "stamps", "fathoms"];
 
 // known slow starts that do not count as regressions yet (none now)
@@ -138,6 +145,14 @@ const SLOW = [];
     ctx = await b.newContext({ viewport: { width: W, height: H }, hasTouch: true, isMobile: true, serviceWorkers: "block" }); p = await ctx.newPage(); const c = await ctx.newCDPSession(p);
     await c.send("Network.enable"); await c.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 1.6e6 / 8, uploadThroughput: 750e3 / 8 }); await c.send("Emulation.setCPUThrottlingRate", { rate: 4 });
     const t0 = Date.now(); await p.goto(srv.url + g.page, { waitUntil: "commit", timeout: 60000 }); await ready(p, g).catch(() => {}); row.F = Date.now() - t0; await ctx.close();
+    ctx = await b.newContext({ viewport: { width: W, height: H }, hasTouch: true, isMobile: true, serviceWorkers: "block" }); p = await ctx.newPage();
+    await p.goto(srv.url + g.page, { waitUntil: "load" }); await ready(p, g).catch(() => {}); await p.waitForTimeout(900);
+    row.R = await p.evaluate((act) => new Promise((done) => {
+      const app = document.querySelector(".app"), snap = () => app.innerHTML.length + "|" + [...app.querySelectorAll("[class]")].map((e) => e.className.length || 0).join("") + "|" + (window.__ballast ? __ballast.state() : ""), before = snap(), t0 = performance.now();
+      try { eval(act); } catch (e) { return done(-1); }
+      const tick = () => { const t = performance.now() - t0; if (snap() !== before) done(Math.round(t)); else if (t > 600) done(999); else requestAnimationFrame(tick); }; tick();
+    }), ACT[g.id]).catch(() => -1);
+    await ctx.close();
     rows.push(row); }
   await b.close(); srv.close();
   const pad = (s, n) => (s + " ".repeat(n)).slice(0, n); let bad = 0;
@@ -145,6 +160,7 @@ const SLOW = [];
   table("A. First move", (r) => [!r.A.length, r.A.join("; ")]);
   table("B. One screen (375x667)", (r) => [!r.B.length, r.B.length ? r.B.join("; ") : r.states + " states"]);
   table("D. Daily habit on the finish screen (shared streak, time to the next puzzles, next game in one tap)", (r) => [!r.D.length, r.D.join("; ")]);
+  table("R. Feedback within 100 ms of the first action", (r) => [r.R >= 0 && r.R < 100, r.R < 0 ? "could not act" : r.R === 999 ? "nothing changed" : r.R + " ms"]);
   table("F. Ready on slow 4G", (r) => [r.F < 2000, (r.F / 1000).toFixed(1) + " s"], SLOW);
   rows.forEach((r) => { if (r.errs.length) { bad++; console.log("  ERROR in " + r.g.name + ": " + r.errs.join("; ")); } });
   console.log(bad ? `\n${bad} regressions in games that must pass` : "\nno regressions"); process.exit(bad ? 1 : 0);
