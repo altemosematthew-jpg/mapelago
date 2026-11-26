@@ -145,10 +145,10 @@
   },
   "ballast": {
    "file": "ballast.html",
-   "title": "Ballast: a daily stack-the-countries game | Mapelago",
-   "description": "Stack real country outlines on a rocking ship without toppling them, and name each one for bonus points. A free daily geography game from Mapelago.",
-   "heading": "Stack the world without tipping it over.",
-   "explainer": "Ballast is Mapelago's stacking game. Real country outlines, all drawn at the same scale, come one at a time. Move each one, turn it, and drop it on the ship's deck. The stack obeys gravity, so a careless Chile can bring the whole load down, and anything that falls in the sea is lost. Before you drop a country you can name it for bonus points: from four choices at first, typed from level 5. Daily Ballast is one run a day with the same cargo for everyone. Level 1 is easy, and every level you load to the line is harder: more countries, a higher line, then swell, wind and long awkward shapes, in a new region each level. There's no top level. You have three lives, and a load that ends below the line costs one. Your score is 100 for each level cleared plus 10 for each country named. Endless practice is the same climb with a random cargo, and the thirty voyages are set levels by region with one to three stars each.",
+   "title": "Ballast: a daily load-the-ship geography game | Mapelago",
+   "description": "Load real country outlines onto a rocking ship without toppling them, and name each one for bonus points. A free daily geography game from Mapelago.",
+   "heading": "Load the ship without tipping it over.",
+   "explainer": "Ballast is Mapelago's load-the-ship game. Real country outlines, all drawn at the same scale, come one at a time. Move each one, turn it, and drop it on the ship's deck. The stack obeys gravity, so a careless Chile can bring the whole load down, and anything that falls in the sea is lost. Before you drop a country you can name it for bonus points: from four choices at first, typed from level 5. Daily Ballast is one run a day with the same cargo for everyone. Level 1 is easy, and every level you load to the line is harder: more countries, a higher line, then swell, wind and long awkward shapes, in a new region each level. There's no top level. You have three lives, and a load that ends below the line costs one. Your score is 100 for each level cleared plus 10 for each country named. Endless practice is the same climb with a random cargo, and the thirty voyages are set levels by region with one to three stars each.",
    "howto": [
     "Name the country for bonus points: tap a choice, or type it from level 5.",
     "Drag to move it, tap to turn it. On a keyboard: arrows move, Q and E turn.",
@@ -156,8 +156,8 @@
     "Anything that topples into the sea is lost. A load that ends below the line costs one of your three lives.",
     "Every level is harder. Your score is 100 a level plus 10 a name. One Daily run a day; practice and voyages any time."
    ],
-   "invite": "How high can you stack?",
-   "image": "Stack the world."
+   "invite": "How high can you load it?",
+   "image": "Load the deck."
   }
  },
  "home": {
@@ -173,7 +173,7 @@
    "stamps": "Spin the wheel, answer the question, stamp all six.",
    "crossings": "Name the countries between two others, border by border.",
    "history": "Eight questions on the world map since 1800. Get warmer.",
-   "ballast": "Stack real countries on a ship. Name them for bonus points."
+   "ballast": "Load a ship with real countries. Name them for bonus points."
   }
  },
  "allGames": {

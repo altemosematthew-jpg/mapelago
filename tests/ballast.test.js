@@ -14,6 +14,17 @@ module.exports = async function ({ b, U, page, check }) {
     }
     return false;
   };
+  // wording: "Stack the Countries" is another app's registered trademark, so the phrase is used nowhere on the site
+  {
+    const fs = require("fs"), path = require("path"), root = path.join(__dirname, ".."), hits = [];
+    const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).forEach((e) => { const f = path.join(d, e.name);
+      if (e.isDirectory()) { if (!/^(node_modules|\.git|vendor|fonts|tests)$/.test(e.name)) walk(f); }
+      else if (/\.(html|js|json|xml|webmanifest|md|txt)$/.test(e.name) && !/world\.js|ballast-data\.js|history-data\.js/.test(e.name)) { if (/stack[- ]the[- ]countr|\bStack the\b/i.test(fs.readFileSync(f, "utf8"))) hits.push(path.relative(root, f)); } });
+    walk(root);
+    check(!hits.length, "ballast: the phrase 'stack the countries' (and 'Stack the ...') appears nowhere on the site", hits.join(" "));
+    const page0 = fs.readFileSync(path.join(root, "ballast.html"), "utf8");
+    check(/<title>Ballast: a daily load-the-ship geography game \| Mapelago<\/title>/.test(page0) && /Load the deck with countries/.test(page0), "ballast: its own title and subtitle");
+  }
   // outlines, true scale, the generator
   {
     const { ctx, p } = await page(b, U + "ballast.html#day-20", { storage: SEEN, wait: 900 });
@@ -71,6 +82,7 @@ module.exports = async function ({ b, U, page, check }) {
     await p.keyboard.press("ArrowLeft"); await p.keyboard.press("e");
     const keyed = await p.evaluate(() => __ballast.hover());
     check(dragged[0] > before[0] + 20 && turned[1] !== dragged[1] && keyed[0] < turned[0] && keyed[1] !== turned[1], `ballast ${tag}: drag moves, a tap turns, arrow keys and E work`, JSON.stringify([before, dragged, turned, keyed]));
+    check(/\(\+10\)/.test(await p.textContent("#nameQ")), `ballast ${tag}: the naming bonus shown (+10) is what a run scores`);
     await p.click("#nameOpts .opt >> nth=0");
     check(/Right|It's/.test(await p.textContent("#nameSay")), `ballast ${tag}: tapping a name choice answers`);
     await p.keyboard.press(" ");

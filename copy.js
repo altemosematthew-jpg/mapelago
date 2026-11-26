@@ -10,7 +10,7 @@ window.MXCOPY = {
   "stamps": "Can you fill all six in fewer spins than me?",
   "crossings": "Can you cross it in par?",
   "history": "How close to the year can you get?",
-  "ballast": "How high can you stack?"
+  "ballast": "How high can you load it?"
  },
  "cards": {
   "city": "Guess the city: slide tiles for clues, then pin it on the map.",
@@ -22,7 +22,7 @@ window.MXCOPY = {
   "stamps": "Spin the wheel, answer the question, stamp all six.",
   "crossings": "Name the countries between two others, border by border.",
   "history": "Eight questions on the world map since 1800. Get warmer.",
-  "ballast": "Stack real countries on a ship. Name them for bonus points."
+  "ballast": "Load a ship with real countries. Name them for bonus points."
  },
  "home": {
   "headline": "A little geography, every day",

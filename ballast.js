@@ -15,7 +15,7 @@
 
   // ---------- levels ----------
   // deck: deck width in view units (the view is 360 wide); swell: rocking in degrees; wind: push to the side;
-  // name: "pick" (four choices) or "type"; line: the load line as a share of the stack the test bot reached.
+  // name: "pick" (four choices) or "type"; line: the load line as a share of the height the test bot reached.
   var R = function (id, region, title, list, o) { return Object.assign({ id: id, region: region, title: title, list: list, deck: 230, swell: 0, wind: 0, name: "pick" }, o || {}); };
   var LEVELS = [
     R("eu1", "Europe", "Calm harbour", ["FR", "ES", "DE", "IT", "GB", "PL"]),
@@ -92,7 +92,7 @@
   var TUTORIAL = [
     R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country over the deck, then press Drop. Stack past the dashed load line.", name: "none", line: 0, lineKm: 700, endAtLine: true, tut: 1 }),
     R("t2", "Tutorial", "2 of 5: Turn", ["IT", "GB", "PL"], { tip: "Tap the play area to turn a country (or use the round arrows, or Q and E). Lay long ones flat.", name: "none", lineKm: 500, endAtLine: true, tut: 2 }),
-    R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "Name each country before you drop it for bonus points. A wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
+    R("t3", "Tutorial", "3 of 5: Name it", ["EG", "TR", "NG"], { tip: "Name each country before you drop it for bonus points (10 each in a run). A wrong guess costs nothing.", name: "pick", lineKm: 900, endAtLine: true, tut: 3 }),
     R("t4", "Tutorial", "4 of 5: Wind", ["TH", "MY", "VN", "KH"], { tip: "Wind pushes the stack to the right. Build a little to the left.", name: "pick", wind: 2, lineKm: 600, endAtLine: true, tut: 4 }),
     R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck. Keep the stack low and in the middle. Three lives a run: a failed load costs one.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
   ];
@@ -328,7 +328,7 @@
   // ---------- naming ----------
   function renderName() {
     var box = $("#nameBox"), s = hover.s;
-    $("#nameQ").textContent = "Which country is this? (+100)";
+    $("#nameQ").textContent = "Which country is this? (+" + nameBonus() + ")";
     $("#nameSay").textContent = "";
     if (L.name === "pick") {
       $("#nameType").hidden = true; $("#nameOpts").hidden = false;
@@ -348,12 +348,14 @@
     hover.answer = ok; S.named.push(ok ? 1 : 0);
     var s = hover.s, box = $("#nameBox");
     box.classList.add(ok ? "right" : "wrong");
-    $("#nameSay").textContent = ok ? "Right: " + s.n + ". +100" : skipped ? "Dropped unnamed: it was " + s.n + "." : "It's " + s.n + ".";
+    $("#nameSay").textContent = ok ? "Right: " + s.n + ". +" + nameBonus() : skipped ? "Dropped unnamed: it was " + s.n + "." : "It's " + s.n + ".";
     Array.prototype.forEach.call(document.querySelectorAll("#nameOpts .opt"), function (b) { b.disabled = true; if (b.dataset.cc === s.cc) b.classList.add("is"); });
     $("#nin").disabled = true;
     if (!skipped) (ok ? SFX.right : SFX.wrong)();
     renderHud();
   }
+  // a name is worth 10 points in a Daily or practice run (where the levels are the score) and 100 on a voyage
+  function nameBonus() { return RUN ? 10 : 100; }
   function answer(cc) { if (state !== "aim" || hover.answer !== null) return; markName(cc === hover.s.cc); }
 
   // ---------- HUD, end ----------
@@ -435,7 +437,7 @@
   }
   function statsLine() { var st = save.stats; return st.runs ? "Your best: level " + (st.best || 0) + " cleared. Average over " + st.runs + (st.runs === 1 ? " run: " : " runs: ") + (Math.round((st.sum || 0) / st.runs * 10) / 10) + "." : ""; }
   function shareText(n, res) {
-    var t = "Mapelago Ballast No. " + n + " \u{1F422} " + fmt(res.score) + " points\n" + res.marks + "\nCleared " + res.lvl + (res.lvl === 1 ? " level" : " levels") + " · " + res.named + " named\n" + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.ballast) || "How high can you stack?") + " mapelago.com/ballast.html#c-" + n + "-" + res.score;
+    var t = "Mapelago Ballast No. " + n + " \u{1F422} " + fmt(res.score) + " points\n" + res.marks + "\nCleared " + res.lvl + (res.lvl === 1 ? " level" : " levels") + " · " + res.named + " named\n" + ((window.MXCOPY && MXCOPY.invite && MXCOPY.invite.ballast) || "How high can you load it?") + " mapelago.com/ballast.html#c-" + n + "-" + res.score;
     return window.MXS && MXS.beat ? MXS.beat.upgrade(t) : t;
   }
   function startDaily() {

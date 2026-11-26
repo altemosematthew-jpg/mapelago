@@ -494,7 +494,7 @@
   // ---------- Dead Reckoning: end ----------
   // ---------- Ballast ----------
   // Only the Daily Ballast counts for streaks and "Today's games"; the voyages (levels) keep their stars in the same save.
-  GAMES.push({ id: "ballast", name: "Ballast", key: "dailycity:ballast:v1", url: "ballast.html", icon: "\u{1F6A2}", about: "Stack real countries on a ship. Name them for bonus points." });
+  GAMES.push({ id: "ballast", name: "Ballast", key: "dailycity:ballast:v1", url: "ballast.html", icon: "\u{1F6A2}", about: "Load a ship with real countries. Name them for bonus points." });
   UNIT.ballast = function (n) { return Number(n).toLocaleString("en-US") + " points"; };
   // ---------- Ballast: end ----------
 
