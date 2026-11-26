@@ -2,12 +2,12 @@
 // Everything else (map data, fonts, icons) is answered from the saved copy at once and refreshed behind the scenes.
 // On install every game is saved, so every game works offline after the first visit to any of them.
 // Release checklist: change this version here AND in every ?v= in the pages (tests/run.js checks they match).
-const C = "mapelago-0.15.29";
+const C = "mapelago-0.15.30";
 const PRE = [
   "./", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html",
-  "dead-reckoning.html", "dead-reckoning.js?v=0.15.29",
-  "ballast.html", "ballast.js?v=0.15.29", "ballast-data.js?v=0.15.29", "vendor/matter.min.js?v=0.15.29", "vendor/decomp.min.js?v=0.15.29",
-  "offline.html", "analytics.js?v=0.15.29", "copy.js?v=0.15.29", "history.js?v=0.15.29", "history-data.js?v=0.15.29", "site.js?v=0.15.29", "extras.js?v=0.15.29", "shapes.js?v=0.15.29", "world.js?v=0.15.29", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
+  "dead-reckoning.html", "dead-reckoning.js?v=0.15.30",
+  "ballast.html", "ballast.js?v=0.15.30", "ballast-data.js?v=0.15.30", "vendor/matter.min.js?v=0.15.30", "vendor/decomp.min.js?v=0.15.30",
+  "offline.html", "analytics.js?v=0.15.30", "copy.js?v=0.15.30", "history.js?v=0.15.30", "history-data.js?v=0.15.30", "site.js?v=0.15.30", "extras.js?v=0.15.30", "shapes.js?v=0.15.30", "world.js?v=0.15.30", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
   "fonts/overpass-latin-400-normal.woff2", "fonts/overpass-latin-600-normal.woff2",
   "fonts/overpass-latin-800-normal.woff2", "fonts/overpass-latin-800-italic.woff2"
 ];

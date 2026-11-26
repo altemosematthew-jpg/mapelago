@@ -96,7 +96,7 @@ const GAMES = [
     } },
 ];
 // games that must pass all three; a game joins this list in the release that fixes it
-const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning", "country"];
+const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning", "country", "stamps"];
 
 // known slow starts, still to fix (the smaller map): they do not count as regressions yet
 const SLOW = ["crossings", "reckoning"];
