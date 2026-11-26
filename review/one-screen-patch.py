@@ -55,7 +55,82 @@ t.addEventListener("click",function(e){var li=e.target.closest("li");if(!li)retu
 })();
 </script>
 '''
-for f in sys.argv[1:] or ['index.html', 'country.html']:
+# ---- the other games: a style block for phones, the rules moved behind a "?" (site.js shows it), one opening sentence
+def simple(f, css, help_html, swaps):
+    s = open(f, encoding='utf8').read()
+    s = re.sub(r'<style id="mxOne">.*?</style>\n', '', s, flags=re.S); s = re.sub(r'<template id="mxHelp">.*?</template>\n', '', s, flags=re.S)
+    for a, b in swaps:
+        if b in s and a not in s: continue
+        assert s.count(a) == 1, (f, a, s.count(a)); s = s.replace(a, b)
+    assert s.count('</head>') == 1
+    s = s.replace('</head>', '<style id="mxOne">' + css + '</style>\n</head>')
+    i = s.index('<footer'); s = s[:i] + '<template id="mxHelp">' + help_html + '</template>\n' + s[i:]
+    open(f, 'w', encoding='utf8').write(s); print('patched', f)
+
+VOYAGE_CSS = r'''
+@media (max-width:520px){
+.top{margin-bottom:6px}.lede{font-size:14.5px;line-height:1.3;margin:0 0 6px}
+.dots{margin:0 0 4px}.vx-ladder{margin:0 0 6px}.vx-key,#vxHarborNote,.vx-topics{display:none}
+.status{margin-bottom:6px;min-height:0}.stat{padding:3px 4px;gap:1px}.stat b{font-size:21px}
+#play.panel,#choice.panel{padding:8px 10px;margin:0 0 6px}#play .kind{margin:0 0 2px;font-size:13px}#ask{font-size:17.5px;line-height:1.2;margin:0 0 6px}
+#show{display:block;max-height:128px;width:auto;max-width:100%;margin:0 auto 6px}#show[hidden]{display:none}
+#opts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0}#opts button{min-height:48px;padding:4px 6px;font-size:15px;line-height:1.15;margin:0}
+.spy{min-height:40px;margin:6px 0 0;padding:2px 8px;font-size:13.5px}
+#say{margin:0 0 4px;font-size:14px;min-height:20px}
+.badges{margin:0;gap:4px}.badges li{font-size:12px;padding:2px 6px;min-height:0}
+#done .panel{padding:10px 14px}#done h2{font-size:21px;margin:0 0 4px}#done .score{margin:2px 0 6px}#done .score b{font-size:40px}#done .share{padding:8px 10px;font-size:13px;line-height:1.3;margin:0 0 8px}#done .row2{margin:0 0 6px;gap:8px}#done .act{min-height:46px;font-size:15px}#done .note,#done .next{font-size:13px;margin:4px 0}
+}
+'''
+VOYAGE_HELP = '''<h2>How to play Voyage</h2>
+<ul>
+<li>Ten islands, one question on each.</li>
+<li>After a right answer, drop anchor to keep your points, or sail on for more.</li>
+<li>A wrong answer wrecks you: you keep only what is safe in harbor.</li>
+<li>⚓ Islands 3 and 6 are harbors: points you reach there are safe. Safe in harbor is 0 until you answer island 3 right.</li>
+<li>The spyglass takes away two wrong answers, once a voyage.</li>
+<li>Today's topics sit under the question; each one fills in when you get it right.</li>
+</ul>'''
+if not sys.argv[1:] or 'voyage.html' in sys.argv:
+    simple('voyage.html', VOYAGE_CSS, VOYAGE_HELP, [
+        ('<p class="lede" id="lede">Ten islands, one question on each. Drop anchor to keep your points, or sail on for more. Islands 3 and 6 are harbors: points you reach there are safe.</p>',
+         '<p class="lede" id="lede">Answer each island\'s question, then sail on for more points or drop anchor to keep them.</p>'),
+        ('<div class="opts" id="opts"></div>', '<div class="opts" id="opts" data-first></div>'),
+        ('<p class="note vx-topics">', '<p class="note vx-topics" data-below>'),
+    ])
+
+RECK_CSS = r'''
+@media (max-width:520px){
+.top{margin-bottom:6px}.lede{font-size:14.5px;line-height:1.3;margin:0 0 6px}
+.game{gap:6px}.side{gap:6px}
+.ask{padding:4px 10px;margin-bottom:6px;gap:6px;box-shadow:none}.ask h2{font-size:19px}.rnd{font-size:12px}
+.mapwrap{aspect-ratio:auto;height:clamp(200px,calc(100vh - 330px),340px);height:clamp(200px,calc(100svh - 330px),340px)}
+.maphint{display:none}
+.dots{gap:4px}.dots li{min-height:0}
+#lockBtn{min-height:50px}
+/* after a pin is locked the answer panel needs the room, so the map gives some up */
+.app:has(#reveal:not([hidden])) .mapwrap{height:clamp(170px,calc(100vh - 470px),300px);height:clamp(170px,calc(100svh - 470px),300px)}
+.reveal{padding:8px 10px}.reveal .dist{margin:0 0 4px;gap:8px}.reveal .arrow{width:36px;height:36px}.reveal .km{font-size:20px}.reveal .pts{font-size:24px}.fact{margin:0 0 6px;font-size:13.5px;line-height:1.3}.reveal .act{min-height:46px}
+/* the result takes the screen */
+.app:has(#done:not([hidden])) :is(.lede,#ask,.mapwrap,.dots){display:none}
+#done .panel{padding:10px 14px}#done h2{font-size:21px;margin:0 0 4px}#done .score{margin:2px 0 6px}#done .score b{font-size:40px}#done .share{padding:8px 10px;font-size:13px;line-height:1.3;margin:0 0 8px}#done .row2{margin:0 0 6px;gap:8px}#done .act{min-height:46px;font-size:15px}#done .note,#done .next,#done p{font-size:13px;margin:4px 0}
+#done .panel{display:flex;flex-direction:column}#done .panel>*{order:5}#done #doneTitle,#done .score{order:1}#done .share{order:2}#done .row2{order:3}#done .next{order:4}
+}
+'''
+RECK_HELP = '''<h2>How to play Dead Reckoning</h2>
+<ul>
+<li>Five places a day. Tap where each one is on a blank map, then lock in your pin. The closer, the more points.</li>
+<li>Pinch or scroll to zoom, drag to move the map.</li>
+<li>Keyboard: arrow keys move the pin (Shift for big steps), Enter locks it in, plus and minus zoom.</li>
+<li>Play more is practice: endless random places that never change today's result, your streak or your stats.</li>
+</ul>'''
+if not sys.argv[1:] or 'dead-reckoning.html' in sys.argv:
+    simple('dead-reckoning.html', RECK_CSS, RECK_HELP, [
+        ('<p class="lede" id="lede">Five places a day. Tap where each one is on a blank map. The closer, the more points.</p>',
+         '<p class="lede" id="lede">Tap the blank map where you think each of today\'s five places is.</p>'),
+        ('<div class="mapwrap">', '<div class="mapwrap" data-first>'),
+    ])
+
+for f in [x for x in (sys.argv[1:] or ['index.html']) if x in ('index.html', 'country.html')]:
     s = open(f, encoding='utf8').read()
     s = re.sub(r'<style id="mxOne">.*?</style>\n', '', s, flags=re.S); s = re.sub(r'\n<script id="mxOneJs">.*?</script>\n', '\n', s, flags=re.S)
     assert s.count('</head>') == 1 and s.count('</body>') == 1

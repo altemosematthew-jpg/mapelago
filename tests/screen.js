@@ -53,15 +53,32 @@ const GAMES = [
       await far(0); await p.waitForTimeout(1300); await m("after a miss"); await far(10); await p.waitForTimeout(1300); await m("after two misses");
       await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2500); await m("finish", ["#endTitle", "#endBody .place", "#endBody .score", "#endBody .row2", "#endBody .also", "#endBody .next"]);
     } },
-  { id: "voyage", name: "Voyage", page: "voyage.html", strict: true, first: "#play button, .opts button, main button", read: ".lede, .note", states: async () => {} },
-  { id: "crossings", name: "Crossings", page: "crossings.html", strict: true, first: "#cin", read: ".lede, #parNote", ready: "!document.querySelector('#map').classList.contains('wait')", states: async () => {} },
-  { id: "reckoning", name: "Dead Reckoning", page: "dead-reckoning.html", strict: true, first: "#map", read: ".lede, .note", states: async () => {} },
+  { id: "voyage", name: "Voyage", page: "voyage.html", strict: true, first: "#opts button", read: ".lede, .note", ready: "!!window.__voy",
+    states: async (p, m) => {
+      const pick = (right) => p.evaluate((right) => { const S = __voy.S(), q = S.qs[S.g.at], want = q.options[q.answer]; const b = [...document.querySelectorAll("#opts button")].find((x) => (x.textContent.trim() === want) === right); b.click(); }, right);
+      await pick(true); await p.waitForTimeout(1200); await m("after an answer");
+      await p.click("#sail"); await p.waitForTimeout(900); await m("a question with a picture");
+      await pick(false); await p.waitForTimeout(2200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
+    } },
+  { id: "crossings", name: "Crossings", page: "crossings.html", strict: true, first: "#cin", read: ".lede, #parNote", ready: "!!window.__cross && !document.querySelector('#map').classList.contains('wait')",
+    states: async (p, m) => {
+      await p.evaluate(() => { const P = __cross.P(); let n = 0; for (let i = 0; n < 4 && i < 60; i++) if (i !== P.from && i !== P.to) { __cross.guess(i); n++; } }); await p.waitForTimeout(700); await m("after four guesses");
+      await p.fill("#cin", "an"); await p.waitForTimeout(400); await m("typing a name"); await p.fill("#cin", "");
+      await p.evaluate(() => { for (let i = 0; i < 12 && !__cross.G().over; i++) __cross.hint(); }); await p.waitForTimeout(1500); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
+    } },
+  { id: "reckoning", name: "Dead Reckoning", page: "dead-reckoning.html", strict: true, first: ".mapwrap", read: ".lede, .maphint", ready: "!!window.__dr && !!window.__WORLD && !!document.querySelector('#map path')",
+    states: async (p, m) => {
+      await p.evaluate(() => __dr.tapAt(10, 10)); await p.waitForTimeout(400); await m("a pin placed");
+      await p.click("#lockBtn"); await p.waitForTimeout(1200); await m("after an answer");
+      for (let i = 0; i < 4; i++) { await p.click("#nextBtn"); await p.waitForTimeout(500); await p.evaluate(() => __dr.tapAt(20, 30)); await p.click("#lockBtn"); await p.waitForTimeout(900); }
+      await p.click("#nextBtn").catch(() => {}); await p.waitForTimeout(1500); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
+    } },
   { id: "country", name: "Mystery country", page: "country.html", strict: true, first: "#board", read: ".lede, .tip, #tip", states: async () => {} },
   { id: "stamps", name: "Stamps", page: "stamps.html", strict: true, first: "#spin", read: ".lede, .note", states: async () => {} },
   { id: "fathoms", name: "Fathoms", page: "fathoms.html", strict: true, first: "#fin", read: ".lede", states: async () => {} },
 ];
 // games that must pass all three; a game joins this list in the release that fixes it
-const MUST = ["ballast", "bigger", "bigcountry", "history", "city"];
+const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage"];
 
 (async () => {
   const srv = await start({ gzip: true }), b = await chromium.launch(), rows = [], only = process.argv[2];
