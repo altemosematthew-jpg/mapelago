@@ -10,10 +10,10 @@ Measured by `node tests/repeat.js`, which builds every game's schedule for 365 d
 | Bigger city? | 10 pairs | 3,650 different pairs in a year | 365 days | Pass (fixed: 71 pairs used to return) |
 | Bigger country? | 10 pairs | 160 countries with official areas; 12,375 pairs at least 10% apart | 365 days | Pass (fixed: 850 pairs used to return). Only 327 pairs are 10-20% apart and two are used a day, so after about 160 days the last two pairs of the day get easier. |
 | Ballast | up to 12 levels' cargo | 2,920 different sets in a year | 365 days | Pass (fixed: Oceania had the same three countries every time; it now sails with Asia) |
-| Mystery country | 1 country | 193 | one full cycle (193 days), then a reshuffle; at least 60 days between the same country | Pass by the agreed cycle rule |
+| Mystery country | 1 country | 193 | one full cycle (193 days), then a reshuffle; at least 45 days between the same country | Pass by the agreed cycle rule |
 | Dead Reckoning | 5 places | 923 places in five difficulty pools of 110, 130, 140, 170 and 83, plus landmarks | 75 to 160 days, pool by pool (was 60) | Short of a year: content needed |
 | Fathoms | 7 prompts | 319 prompts | 45 days as one deck, at least 20 days apart (the language prompts used to return every 9 days) | Short of a year: content needed |
-| Voyage | 10 questions | 2,248 different in a year | at least 20 days apart; most facts return after about 100 days | Short of a year: content needed |
+| Voyage | 10 questions | 2,248 different in a year | at least 14 days apart; most facts return after about 100 days | Short of a year: content needed |
 | Stamps | 12 questions (6 wedges, 2 each) | 3,117 different in a year | at least 30 days apart; most return after about 110 days | Short of a year: content needed |
 
 Nothing appears twice in one day in any game.

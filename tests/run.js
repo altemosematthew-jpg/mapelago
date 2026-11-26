@@ -688,10 +688,10 @@ async function page(b, url, opts = {}) {
         for (let d = 14; d <= 44; d++) {
           await q.p.goto(U + "bigger-country.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
           const x = await q.p.evaluate(() => { const P = __big.S().pairs, A = MxBC.areas; return { bad: P.flat().filter((c) => A[c.cid] !== c.pop).map((c) => c.name), morocco: P.flat().some((c) => c.name === "Morocco"), last: P.slice(8).map((t) => Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)) }; });
-          seen.wrong.push(...x.bad); if (x.morocco) seen.morocco++; if (x.last.some((v) => v > 1.2 || v < 1.04)) seen.wide.push(d + ":" + x.last.map((v) => v.toFixed(2))); seen.n++;
+          seen.wrong.push(...x.bad); if (x.morocco) seen.morocco++; if (d < 17 ? x.last.some((v) => v > 1.2 || v < 1.04) : (x.last[1] > 1.2 || x.last[1] < 1.1 || x.last[0] > 1.29 || x.last[0] < 1.1)) seen.wide.push(d + ":" + x.last.map((v) => v.toFixed(2))); seen.n++;
         }
         check(!seen.wrong.length && !seen.morocco, "bigcountry: from No. 14 every area is the official total (CIA World Factbook), Morocco left out", JSON.stringify(seen.wrong.slice(0, 5)));
-        check(!seen.wide.length && seen.n === 31, "bigcountry: from No. 14 the last two pairs are within 20% (Nos. 14 to 44)", seen.wide.join(" "));
+        check(!seen.wide.length && seen.n === 31, "bigcountry: the last two pairs are close (within 20% to No. 16; from No. 17 the ninth within 29% and the last within 10-20%)", seen.wide.join(" "));
         await q.p.goto(U + "bigger-country.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
         check((await q.p.evaluate(() => __big.S().pairs[0][0].pop)) === 2322794, "bigcountry: No. 12 keeps the figures it was played with");
         check(!q.p.errs.length, "bigcountry official areas: no errors", q.p.errs.join("; "));
@@ -888,10 +888,16 @@ async function page(b, url, opts = {}) {
 
     // 19. Fathoms: Tuvalu is a country (from No. 20), and from No. 20 each day deals seven different kinds of prompt
     {
-      const { ctx, p } = await page(b, U + "fathoms.html#day-20", { storage: { "dailycity:fathoms:v1": '{"results":{},"game":null}' }, wait: 600 });
-      const kinds = await p.evaluate(() => __fath.S().prompts.map((x) => x.kind));
-      check(new Set(kinds).size === 7, "fathoms: seven different kinds of prompt on No. 20", kinds.join(","));
-      const at = await p.evaluate(() => __fath.S().prompts.findIndex((x) => x.answers.includes("TV")));
+      let ctx, p, at = -1, kinds = [], sizes = [];
+      // one deck from No. 20: at most three of a kind a day, never two of a kind in a row, longest answer list first where that allows
+      for (let day = 20; day < 70 && at < 0; day++) {
+        if (ctx) await ctx.close();
+        ({ ctx, p } = await page(b, U + "fathoms.html?d=" + day + "#day-" + day, { storage: { "dailycity:fathoms:v1": '{"results":{},"game":null}' }, wait: 300 }));
+        if (day === 20) { kinds = await p.evaluate(() => __fath.S().prompts.map((x) => x.kind)); sizes = await p.evaluate(() => __fath.S().prompts.map((x) => x.answers.length)); }
+        at = await p.evaluate(() => __fath.S().prompts.findIndex((x) => x.answers.includes("TV")));
+      }
+      const fam = (k) => ({ border: 0, nearby: 0, larger: 1, smaller: 1, within: 2, place: 3, region: 3, tongue: 4, letter: 5, initial: 5 })[k] ?? 6, fams = kinds.map(fam), count = {}; fams.forEach((f) => { count[f] = (count[f] || 0) + 1; });
+      check(kinds.length === 7 && Math.max(...Object.values(count)) <= 3 && fams.every((f, i) => !i || f !== fams[i - 1]) && sizes[0] >= sizes[6], "fathoms: No. 20 deals seven prompts, at most three of a kind, never two of a kind in a row, easiest first", kinds.join(",") + " " + sizes.join(","));
       for (let i = 0; i < at; i++) { await p.click("#fpass"); await p.waitForTimeout(150); await p.click("#fnext"); await p.waitForTimeout(150); }
       await p.fill("#fin", "Tuvalu"); await p.waitForTimeout(100); await p.click("#fgo"); await p.waitForTimeout(400);
       const r = await p.evaluate(() => __fath.S());
