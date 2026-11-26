@@ -398,30 +398,35 @@ a.act{text-decoration:none}
 .modes{display:flex;gap:8px;margin:0 0 10px}
 .modes button{flex:1;min-height:44px;font-weight:800;border:var(--bw) solid var(--line);border-radius:var(--r-btn);background:var(--paper);color:var(--ink)}
 #stage{position:relative;border:var(--bw) solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--sea);touch-action:none;margin:0 0 8px}
-#sea{display:block;width:100%;height:clamp(300px,calc(100vh - 350px),640px);height:clamp(300px,calc(100svh - 350px),640px);cursor:grab;touch-action:none}
+#sea{display:block;width:100%;height:clamp(220px,calc(100vh - 350px),640px);height:clamp(220px,calc(100svh - 350px),640px);cursor:grab;touch-action:none}
 #sea:active{cursor:grabbing}
-.hud{display:flex;flex-wrap:wrap;gap:2px 14px;margin:0 0 6px;font-size:13.5px;font-weight:600;color:var(--ground-ink-2)}.hud b{font-weight:800;color:var(--ground-ink);font-variant-numeric:tabular-nums}
+.hud{display:flex;flex-wrap:wrap;gap:2px 12px;margin:0 0 4px;font-size:13px;font-weight:600;color:var(--ground-ink-2)}.hud b{font-weight:800;color:var(--ground-ink);font-variant-numeric:tabular-nums}
 .ctrl{display:flex;justify-content:center;gap:6px;margin:6px 0}
 .ctrl .tool{width:auto;min-width:44px;height:44px;padding:0 12px;font-size:17px;font-weight:800}
 #contBtn{flex:1 1 0;min-width:0;min-height:48px}#contBtn[hidden],#dropBtn[hidden]{display:none}
 .ctrl{flex-wrap:nowrap;max-width:100%}.ctrl .tool{flex:0 1 auto;padding:0 10px}
-#nameBox[data-mode="pick"]{min-height:172px}#nameBox[data-mode="type"]{min-height:116px}#nameBox{box-sizing:border-box}
-#nameBox{margin:0 0 8px;padding:10px 12px}#doneTitle:focus{outline:none}.lede{margin-bottom:8px}#nameBox.right{border-color:#1a7f37}#nameBox.wrong{border-color:var(--accent)}
-#nameQ{margin:0 0 6px;font-weight:800;font-size:15px}
+#nameBox[data-mode="pick"]{min-height:136px}#nameBox[data-mode="type"]{min-height:92px}#nameBox{box-sizing:border-box}
+#nameBox.right #nameQ,#nameBox.wrong #nameQ,#nameSay:empty{display:none}
+.lvhead .hbtns{display:flex;gap:12px;align-items:baseline;flex:none}.lvhead h2{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#helpBtn{text-decoration:none;border:2px solid var(--ground-ink);border-radius:999px;width:28px;height:28px;padding:0;line-height:1;color:var(--ground-ink)}
+#helpDlg{border:var(--bw) solid var(--line);border-radius:var(--r);background:var(--paper);color:var(--ink);max-width:min(440px,calc(100vw - 24px));padding:16px}#helpDlg::backdrop{background:rgba(0,0,0,.45)}#helpDlg h2{margin:0 0 8px;font-size:21px}#helpDlg li{margin:0 0 6px}#helpDlg ul{margin:0 0 12px;padding-left:20px}
+#nameBox{margin:0 0 6px;padding:6px 8px}#doneTitle:focus{outline:none}.lede{margin-bottom:8px}#nameBox.right{border-color:#1a7f37}#nameBox.wrong{border-color:var(--accent)}
+#nameQ{margin:0 0 4px;font-weight:800;font-size:14.5px}
 #nameOpts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-#nameOpts .opt{min-height:44px;padding:4px 8px;font-weight:700;font-size:15px;border:2px solid var(--line);border-radius:var(--r-btn);background:var(--paper);color:var(--ink)}
+#nameOpts .opt{min-height:44px;padding:2px 6px;font-weight:700;font-size:14.5px;line-height:1.1;border:2px solid var(--line);border-radius:var(--r-btn);background:var(--paper);color:var(--ink)}
 #nameOpts .opt.is{background:var(--accent);color:var(--on-accent)}
 #nameOpts .opt:disabled:not(.is){opacity:.55}
 #nin{display:block;width:100%;height:48px;padding:0 12px;font:600 17px var(--font);color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-btn);box-sizing:border-box}
-#nameSay{min-height:20px;margin:4px 0 0;font-weight:800;font-size:14.5px}
-.lvhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 0 6px}.lvhead h2{margin:0;font-size:19px}#lvlMeta{margin:0 0 10px;font-size:13px;color:var(--ground-ink-2);font-weight:600}
+#nameSay{margin:0 0 4px;font-weight:800;font-size:14.5px}
+.lvhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 0 6px}.lvhead h2{margin:0;font-size:19px}#lvlMeta{margin:0 0 4px;font-size:13px;color:var(--ground-ink-2);font-weight:600}
 #chart .region{list-style:none;margin:0 0 12px}#chart h3{margin:0 0 6px;font-size:16px}
 #chartList{margin:0;padding:0}
 .lv{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
 .lvbtn{width:100%;min-height:64px;display:grid;grid-template-rows:auto 1fr auto;gap:2px;padding:6px;text-align:left;border:var(--bw) solid var(--line);border-bottom-width:var(--lip);border-radius:var(--r-btn);background:var(--paper);color:var(--ink)}
 .lvbtn b{font-size:15px}.lvbtn span{font-size:12px;line-height:1.2}.lvbtn i{font-style:normal;color:var(--accent-ink);letter-spacing:1px}
 .lvbtn.done{background:var(--tint)}.lvbtn:disabled{opacity:.5}
-.tipline{margin:0 0 8px;padding:8px 10px;border:var(--bw) solid var(--line);border-left:6px solid var(--accent);border-radius:var(--r);background:var(--paper);color:var(--ink);font-weight:700;font-size:14.5px}.tipline[hidden],#homeShare[hidden]{display:none}
+.tipline{margin:0 0 6px;padding:6px 10px;line-height:1.25;border:var(--bw) solid var(--line);border-left:6px solid var(--accent);border-radius:var(--r);background:var(--paper);color:var(--ink);font-weight:700;font-size:14.5px}.tipline[hidden],#homeShare[hidden]{display:none}
+#done .panel{padding:10px 14px}#done h2{font-size:21px;line-height:1.15;margin:0 0 4px}#done .score{margin:2px 0 4px}#done .score b{font-size:40px}#done p{margin:0 0 6px}#done .share{padding:8px 10px;font-size:13px;line-height:1.3;margin:0 0 8px}#done .row2{margin:0 0 6px;gap:8px}#done .row2 .act{min-height:46px;font-size:15px}#done .note{font-size:12.5px;line-height:1.3}
 #doneStars{font-size:34px;color:var(--accent-ink);letter-spacing:4px;margin:6px 0}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -434,10 +439,10 @@ a.act{text-decoration:none}
   </header>
   <p class="note" id="dailyNote" hidden></p>
   <section id="play" aria-label="Loading the ship">
-    <div class="lvhead"><h2 id="lvlTitle"></h2><button class="linkbtn" id="chartBtn" type="button">Menu</button></div>
+    <div class="lvhead"><h2 id="lvlTitle"></h2><span class="hbtns"><button class="linkbtn" id="skipTut" type="button" hidden>Skip</button><button class="linkbtn" id="helpBtn" type="button" aria-label="How to play">?</button><button class="linkbtn" id="chartBtn" type="button">Menu</button></span></div>
     <p id="lvlMeta"></p>
     <p id="tip" class="tipline" hidden></p>
-    <p class="hud" aria-label="This load"><span>Stack <b id="hHeight">0</b> km</span><span><b id="hPieces"></b> to load</span><span>Overboard <b id="hLost">0</b></span><span><b id="hNamed">0</b> right</span></p>
+    <p class="hud" aria-label="This load"><span>Stack <b id="hHeight">0</b> km</span><span><b id="hPieces"></b> to load</span><span>Lost <b id="hLost">0</b></span><span><b id="hNamed">0</b> right</span></p>
     <div id="stage"><canvas id="sea" role="img" aria-label="The ship's deck, the stack of countries and the load line. Press and drag to move the country in hand; let go to drop it; tap to turn it."></canvas></div>
     <section id="nameBox" class="panel" aria-label="Question">
       <p id="nameQ"></p>
@@ -456,8 +461,20 @@ a.act{text-decoration:none}
       <button class="tool" id="cwBtn" type="button" aria-label="Turn right (E)">&#x27F3;</button>
       <button class="tool" id="rightBtn" type="button" aria-label="Move right">&rarr;</button>
     </div>
-    <p class="note">Drag the country and let go to drop it; tap to turn it. Keys: arrows move, Q and E turn, Space drops. <button class="linkbtn" id="skipTut" type="button" hidden>Skip the tutorial</button></p>
   </section>
+
+  <dialog id="helpDlg" aria-labelledby="helpH">
+    <h2 id="helpH">How to play Ballast</h2>
+    <ul>
+      <li>Drag the country and let go to drop it. Tap it to turn it 15 degrees.</li>
+      <li>Hold the stack above the dashed load line for 2 seconds to clear the level.</li>
+      <li>Keys and buttons: arrows move, Q and E turn, Space drops.</li>
+      <li>After you place a country, name it for bonus points. A wrong guess costs nothing and never holds up the next piece.</li>
+      <li>Wind pushes the stack sideways; the swell rocks the deck. Build low and against the wind.</li>
+      <li>You may lose two countries overboard; the third ends the load. A Daily run has three lives.</li>
+    </ul>
+    <p><button class="act" id="helpClose" type="button">Got it</button></p>
+  </dialog>
 
   <section id="done" hidden>
     <div class="panel">
@@ -514,13 +531,13 @@ a.act{text-decoration:none}
   <noscript><p class="note">This game needs JavaScript to run. Turn it on in your browser settings, then reload this page.</p></noscript>
 </div>
 <div id="toast" role="status"></div>
-<script src="copy.js?v=0.15.23"></script>
-<script src="site.js?v=0.15.23"></script>
-<script src="vendor/matter.min.js?v=0.15.23"></script>
-<script src="vendor/decomp.min.js?v=0.15.23"></script>
-<script src="ballast-data.js?v=0.15.23"></script>
+<script src="copy.js?v=0.15.24"></script>
+<script src="site.js?v=0.15.24"></script>
+<script src="vendor/matter.min.js?v=0.15.24"></script>
+<script src="vendor/decomp.min.js?v=0.15.24"></script>
+<script src="ballast-data.js?v=0.15.24"></script>
 <script>window.MX_TURTLE_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"38\" height=\"38\" aria-hidden=\"true\">\n  \n  <g fill=\"#9fc98b\" stroke=\"#000000\" stroke-width=\"2.2\" stroke-linejoin=\"round\">\n    <path d=\"M45.5 24h9v12h-9z\"/>\n    <path d=\"M50 8c6 0 9.5 5 9.5 10.5S56 28 50 28s-9.5-4-9.5-9.5S44 8 50 8z\"/>\n    <path d=\"M32 41C21 30 9 30 8.5 37.5c-.4 5.6 9 10 23.5 12z\"/>\n    <path d=\"M68 41c11-11 23-11 23.5-3.5.4 5.6-9 10-23.5 12z\"/>\n    <path d=\"M35 73c-9 4-16 11-12 15 4.5 3.8 12-3 17-10z\"/>\n    <path d=\"M65 73c9 4 16 11 12 15-4.5 3.8-12-3-17-10z\"/>\n    <path d=\"M46.5 80 50 91l3.5-11z\"/>\n  </g>\n  <circle cx=\"46\" cy=\"16.5\" r=\"1.8\" fill=\"#000000\"/><circle cx=\"54\" cy=\"16.5\" r=\"1.8\" fill=\"#000000\"/>\n  <rect x=\"29\" y=\"34\" width=\"42\" height=\"43\" rx=\"15\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"2.4\"/>\n  <rect x=\"34.2\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#dcedf5\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"55.800000000000004\" y=\"39.2\" width=\"10.8\" height=\"10.8\" fill=\"#a9d3e8\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"34.2\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#9fc98b\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#b4237d\" stroke=\"#000000\" stroke-width=\"1.4\"/><path d=\"M50.4 58.9c-.7-1.4-3-3.3-3-5.2a3 3 0 0 1 6 0c0 1.9-2.3 3.8-3 5.2z\" fill=\"#ffffff\"/><circle cx=\"50.4\" cy=\"53.8\" r=\"1\" fill=\"#b4237d\"/><rect x=\"55.800000000000004\" y=\"50\" width=\"10.8\" height=\"10.8\" fill=\"#f3d98a\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"34.2\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#a9d3e8\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"45\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#dcedf5\" stroke=\"#000000\" stroke-width=\"1.4\"/><rect x=\"55.800000000000004\" y=\"60.800000000000004\" width=\"10.8\" height=\"10.8\" fill=\"#ffffff\" stroke=\"#000000\" stroke-width=\"1.4\"/>\n</svg>";window.MX_BALLAST_BOT={"eu1":2054,"eu2":871,"eu3":536,"eu4":1974,"eu5":436,"af1":2617,"af2":1441,"af3":2406,"af4":847,"af5":3209,"as1":5251,"as2":1886,"as3":2329,"as4":666,"as5":1265,"am1":3095,"am2":878,"am3":4869,"am4":1871,"am5":578,"oc1":3493,"oc2":232,"oc3":1303,"wo1":4325,"wo2":1103,"wo3":2438,"wo4":3200,"wo5":1261,"wo6":9487,"wo7":1488};</script>
-<script src="ballast.js?v=0.15.23"></script>
-<script src="analytics.js?v=0.15.23" defer></script>
+<script src="ballast.js?v=0.15.24"></script>
+<script src="analytics.js?v=0.15.24" defer></script>
 </body>
 </html>
