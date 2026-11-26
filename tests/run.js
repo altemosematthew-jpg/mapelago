@@ -1152,6 +1152,16 @@ async function page(b, url, opts = {}) {
       check(!p.errs.length, `vx: ${f} practice: no errors`, p.errs.join("; "));
       await ctx.close();
     }
+    // ---- standard 8: Fathoms knows every UN member by the name in the country pack (or an alternate name that leads to it)
+    {
+      const names = fs.readFileSync(path.join(__dirname, "..", "data", "countries.txt"), "utf8").split("\n").filter((l) => l.includes("|") && !l.startsWith("#") && !/non-member/.test(l.split("|")[0])).map((l) => l.split("|")[0].trim());
+      const { ctx, p } = await page(b, U + "fathoms.html#day-20", { desktop: true });
+      await p.waitForFunction(() => window.__fath);
+      const miss = [];
+      for (const n of names) { await p.fill("#fin", n); await p.waitForTimeout(10); if (!(await p.evaluate(() => document.querySelectorAll("#sugs .sug").length))) miss.push(n); }
+      check(names.length === 193 && !miss.length, "fathoms: all 193 UN members can be typed and are offered (from No. 20, Tuvalu included)", names.length + " names; missing: " + miss.join(", "));
+      await ctx.close();
+    }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });
