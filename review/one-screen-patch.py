@@ -224,7 +224,7 @@ LOG_CSS = r'''
 if not sys.argv[1:] or 'history.html' in sys.argv:
     simple('history.html', LOG_CSS, None, [('<p class="morebar"><button class="linkbtn" id="pastBtn"', '<p class="morebar" data-below><button class="linkbtn" id="pastBtn"')])
 
-for f in [x for x in (sys.argv[1:] or ['index.html', 'country.html']) if x in ('index.html', 'country.html')]:
+for f in [x for x in (sys.argv[1:] or ['city.html', 'country.html']) if x in ('city.html', 'country.html')]:
     s = open(f, encoding='utf8').read()
     s = re.sub(r'<style id="mxOne">.*?</style>\n', '', s, flags=re.S); s = re.sub(r'\n<script id="mxOneJs">.*?</script>\n', '\n', s, flags=re.S)
     assert s.count('</head>') == 1 and s.count('</body>') == 1

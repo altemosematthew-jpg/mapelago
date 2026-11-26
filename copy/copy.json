@@ -2,7 +2,7 @@
  "_note": "Edit the text here, then run: python3 copy/apply.py (from the repository folder). Titles must be 60 characters or fewer, descriptions 155 or fewer. 'invite' is the line before the link in each game's copied result.",
  "games": {
   "city": {
-   "file": "index.html",
+   "file": "city.html",
    "title": "Mystery city: a daily guess-the-city game | Mapelago",
    "description": "Slide tiles like 2048 to earn clues about today's mystery city, then drop a pin on the map. Three pins, one city for everyone. Free, no sign-up.",
    "heading": "Find today's mystery city",

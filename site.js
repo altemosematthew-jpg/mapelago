@@ -95,7 +95,7 @@
 
   // ---------- 3. streaks across all the games (5.1, 5.2, 5.3, 5.4) ----------
   var GAMES = [
-    { id: "city", name: "Mystery city", key: "dailycity:v2", url: "./", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
+    { id: "city", name: "Mystery city", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
     { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "The same, with a country to find." },
     { id: "bigger", name: "Bigger city?", key: "dailycity:bigger:v1", url: "bigger.html", icon: "\u{1F465}", about: "Ten pairs: tap the city where more people live." },
     { id: "bigcountry", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
@@ -258,7 +258,7 @@
 
   // Addresses come with or without ".html" (mapelago.com/bigger and the previews' /bigger work too), and the home
   // page as "/", "/index" or "/index.html". Pages inside a folder (/games/, /about/) are not games.
-  function pageKey(p) { p = String(p || "").replace(/^\.?\//, "").replace(/\.html$/, ""); return p === "index" ? "" : p; }
+  function pageKey(p) { p = String(p || "").replace(/^\.?\//, "").replace(/\.html$/, ""); return p === "index" ? "" : p; } // the home page ("" or index) is the hub, not a game
   function here() {
     var parts = location.pathname.split("/"), f = parts.pop();
     if (parts.filter(Boolean).length) return undefined;
