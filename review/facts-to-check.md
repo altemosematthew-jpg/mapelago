@@ -78,3 +78,14 @@ Items 3, 4 and 5 in the table above (Saudi Arabia, Netherlands, Pakistan) are se
 | Saudi Arabia area | 1.93M km2 (map) | 2,206,714 (UN) | High | Fixed by the UN areas from No. 17. |
 | Kampala population | about 1.4 million (city proper) | larger | Medium | Same cause as items 1 and 2: one population definition for the cities list is with Duet. |
 | Tianjin clue "Temperate, inland" | the city centre is about 50 km from the Bohai coast | coastal | Medium | Our clue reads the city's point, not the municipality, which reaches the sea. Recommend "coastal" for cities whose municipality touches the coast; needs Matthew's rule. |
+
+## City populations: one source from No. 17
+
+From No. 17 every city population in Bigger city?, Voyage and Mystery city is UN DESA, World Urbanization Prospects 2025 (urban centre, 2025), from the table Matthew supplied (`un-cities.js`, 315 cities). Items 1, 2 and 9 above and the Kampala line are settled by it. Ho Chi Minh City is 14,052,713, Kampala 4,880,943. Matola is dropped, because the UN merges it into Maputo.
+
+Two UN figures will surprise players. Both are held out of Bigger city? pairs, Voyage and Mystery city until someone confirms them:
+
+| City | UN WUP 2025 | Why it surprises |
+|---|---|---|
+| Luxor, Egypt | 4,188,023 | The city is usually given as about half a million. The UN urban centre probably takes in the whole built-up Nile valley strip. |
+| Nay Pyi Taw, Myanmar | 53,925 | The capital district is usually given as about a million. The UN urban centre counts only the dense core. |

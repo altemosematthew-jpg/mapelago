@@ -25,3 +25,7 @@ More items will be added by the never-the-same-twice count (P3): each game's poo
 ## 5. Voyage and Stamps facts (most facts return after about 100 days)
 - Each uses one fact per country per family (capital, outline, border, highest point, calling code and so on), so a family of 195 lasts about 100 to 200 days at one or two a day.
 - **Needed for a year:** either more families of the same size (each needs one sourced fact for all 195 countries), or fewer questions a day from the small families. I have not changed these two schedules.
+
+## 6. City populations for Mystery city (UN WUP 2025)
+- From No. 17, Mystery city shows the UN figure, and its size band, for the 272 of its 730 cities that appear in the UN table Matthew supplied. The other 458 keep their earlier figures until UN figures are added for them.
+- **Needed:** the same WUP 2025 Cities-tab figure (urban centre, 2025) for each of those 458 cities. Add them to `un-cities.js` with the game's own spelling as the key. Then every city population on the site is from one source.
