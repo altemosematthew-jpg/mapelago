@@ -68,7 +68,7 @@ def simple(f, css, help_html, swaps):
         assert s.count(a) == 1, (f, a, s.count(a)); s = s.replace(a, b)
     assert s.count('</head>') == 1
     s = s.replace('</head>', '<style id="mxOne">' + css + '</style>\n</head>')
-    i = s.index('<footer'); s = s[:i] + '<template id="mxHelp">' + help_html + '</template>\n' + s[i:]
+    if help_html: i = s.index('<footer'); s = s[:i] + '<template id="mxHelp">' + help_html + '</template>\n' + s[i:]
     open(f, 'w', encoding='utf8').write(s); print('patched', f)
 
 VOYAGE_CSS = r'''
@@ -192,6 +192,37 @@ if not sys.argv[1:] or 'fathoms.html' in sys.argv:
          '<p class="lede" id="lede">Type any right answer: the less obvious it is, the deeper you go.</p>'),
         ('<input id="fin" type="text"', '<input id="fin" data-first type="text"'),
     ])
+
+# Bigger city? and Bigger country?: only the result is rearranged (title, score, share and the next game first)
+BIG_CSS = r'''
+@media (max-width:520px){
+''' + DONE_CSS + '''
+#done .panel{display:flex;flex-direction:column}#done .panel>*{order:5}#done #doneTitle,#done .score{order:1}#done .bcstats{order:2;margin:0 0 6px}#done .row2{order:3}#done .next{order:4}
+}
+'''
+for f in ('bigger.html', 'bigger-country.html'):
+    if not sys.argv[1:] or f in sys.argv: simple(f, BIG_CSS, None, [])
+
+# Logbook: the same questions, tightened so the slider questions and their answers fit a phone screen
+LOG_CSS = r'''
+@media (max-width:520px){
+.top{margin-bottom:6px}.lede{font-size:14px;line-height:1.3;margin:0 0 6px}
+#dots,.dots{margin:0 0 4px}
+#play.panel,#game .panel{padding:8px 10px}
+#qask{font-size:17.5px;line-height:1.2;margin:0}
+.ev{margin:6px 0 0;padding:6px 10px;font-size:15px;line-height:1.25}
+.hint{margin:4px 0 0;font-size:13px}
+.tl{margin-top:6px}.yearbig{margin:0 0 2px}.yearbig b{font-size:40px}.tlpins{height:38px}
+.nudge{margin:4px 0 0;gap:6px}
+.opts{gap:6px;margin-top:8px}.opt{min-height:46px;padding:4px 10px;font-size:15.5px;line-height:1.2}
+.qsay{margin:6px 0 4px;padding:5px 8px;font-size:14px;line-height:1.25}
+#qnext{margin-top:6px;min-height:48px}
+''' + DONE_CSS + '''
+#done .panel{display:flex;flex-direction:column}#done .panel>*{order:5}#done #doneTitle,#done .score{order:1}#done .row2{order:3}#done .next{order:4}
+}
+'''
+if not sys.argv[1:] or 'history.html' in sys.argv:
+    simple('history.html', LOG_CSS, None, [('<p class="morebar"><button class="linkbtn" id="pastBtn"', '<p class="morebar" data-below><button class="linkbtn" id="pastBtn"')])
 
 for f in [x for x in (sys.argv[1:] or ['index.html', 'country.html']) if x in ('index.html', 'country.html')]:
     s = open(f, encoding='utf8').read()

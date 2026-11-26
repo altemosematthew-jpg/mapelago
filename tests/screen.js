@@ -42,9 +42,25 @@ const GAMES = [
       await p.click("#nameOpts .opt"); await m("after an answer");
       await p.evaluate(() => { const B = __ballast; B.run().lives = 1; B.run().cleared = 3; B.run().lvl = 4; B.S().cleared = false; B.finish(); }); await p.waitForTimeout(500); await m("finish");
     } },
-  { id: "bigger", name: "Bigger city?", page: "bigger.html", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async () => {} },
-  { id: "bigcountry", name: "Bigger country?", page: "bigger-country.html", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async () => {} },
-  { id: "history", name: "Logbook", page: "history.html", first: ".opt, #q button, main button", read: ".lede", states: async () => {} },
+  { id: "bigger", name: "Bigger city?", page: "bigger.html", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async (p, m) => {
+      for (let i = 0; i < 40; i++) { const st = await p.evaluate(() => { const d = document.querySelector("#done"); if (d && !d.hidden) return "done"; const n = [...document.querySelectorAll("#play button")].find((x) => x.offsetParent && !x.disabled && !/^pick/.test(x.id)); if (n) { n.click(); return "next"; } const b = document.querySelector("#pick0"); if (b && b.offsetParent && !b.disabled) { b.click(); return "pick"; } return "wait"; }); if (st === "done") break; await p.waitForTimeout(450); if (i === 0) await m("after an answer"); }
+      await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
+    } },
+  { id: "bigcountry", name: "Bigger country?", page: "bigger-country.html", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async (p, m) => {
+      for (let i = 0; i < 40; i++) { const st = await p.evaluate(() => { const d = document.querySelector("#done"); if (d && !d.hidden) return "done"; const n = [...document.querySelectorAll("#play button")].find((x) => x.offsetParent && !x.disabled && !/^pick/.test(x.id)); if (n) { n.click(); return "next"; } const b = document.querySelector("#pick0"); if (b && b.offsetParent && !b.disabled) { b.click(); return "pick"; } return "wait"; }); if (st === "done") break; await p.waitForTimeout(450); if (i === 0) await m("after an answer"); }
+      await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
+    } },
+  { id: "history", name: "Logbook", page: "history.html", first: "#qbody .opt, #slider", read: ".lede", ready: "!!window.__hist",
+    states: async (p, m) => {
+      for (let i = 0; i < 8; i++) {
+        const q = await p.evaluate((i) => ({ k: __hist.QS[i].k, r: __hist.right(i) }), i);
+        if (q.k === "t" || q.k === "g") { await p.evaluate((v) => { const s = document.querySelector("#slider"); s.value = v; s.dispatchEvent(new Event("input")); }, q.r.g[0]); await p.waitForTimeout(100); await m("a " + (q.k === "t" ? "year" : "gap") + " question"); await p.tap("#qnext"); }
+        else if (q.k === "o") { await m("an order question"); for (const j of q.r.p) await p.tap(`#qbody .opt[data-k="${j}"]`); await p.tap("#qnext"); }
+        else await p.tap(`#qbody .opt[data-k="${q.r.p}"]`);
+        await p.waitForTimeout(250); await m("after answer " + (i + 1)); await p.tap("#qnext"); await p.waitForTimeout(250);
+      }
+      await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
+    } },
   { id: "city", name: "Mystery city", page: "index.html", strict: true, first: "#board", read: ".lede, #tip, .modes", ready: "!!window.__lf",
     states: async (p, m) => {
       const far = (k) => p.evaluate((k) => { __lf.confirmAt([((__lf.P.lon + 180 - k) % 360) - 180, -__lf.P.lat]); }, k);
