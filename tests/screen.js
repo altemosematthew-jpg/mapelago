@@ -73,12 +73,30 @@ const GAMES = [
       for (let i = 0; i < 4; i++) { await p.click("#nextBtn"); await p.waitForTimeout(500); await p.evaluate(() => __dr.tapAt(20, 30)); await p.click("#lockBtn"); await p.waitForTimeout(900); }
       await p.click("#nextBtn").catch(() => {}); await p.waitForTimeout(1500); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
     } },
-  { id: "country", name: "Mystery country", page: "country.html", strict: true, first: "#board", read: ".lede, .tip, #tip", states: async () => {} },
-  { id: "stamps", name: "Stamps", page: "stamps.html", strict: true, first: "#spin", read: ".lede, .note", states: async () => {} },
-  { id: "fathoms", name: "Fathoms", page: "fathoms.html", strict: true, first: "#fin", read: ".lede", states: async () => {} },
+  { id: "country", name: "Mystery country", page: "country.html", strict: true, first: "#board", read: ".lede, #tip, .mx-tip, .modes", ready: "!!window.__lf",
+    states: async (p, m) => {
+      const far = (k) => p.evaluate((k) => { const P = __lf.P; __lf.confirmAt([((P.lon + 180 - k) % 360) - 180, -P.lat]); }, k);
+      await p.evaluate(() => { const d = ["left", "up", "right", "down"]; for (let i = 0; i < 40; i++) __lf.move(d[i % 4]); }); await p.waitForTimeout(900); await m("mid-play");
+      await far(0); await p.waitForTimeout(1300); await m("after a miss"); await far(10); await p.waitForTimeout(1300); await m("after two misses");
+      await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2500); await m("finish", ["#endTitle", "#endBody .place", "#endBody .score", "#endBody .row2", "#endBody .also", "#endBody .next"]);
+    } },
+  { id: "stamps", name: "Stamps", page: "stamps.html", strict: true, first: "#spin", read: ".lede, .note", ready: "!!window.__stamp",
+    states: async (p, m) => {
+      const ask = async () => { await p.evaluate(() => document.querySelector("#spin").click()); await p.waitForTimeout(250); await p.evaluate(() => document.querySelector("#wheelbox").click()); await p.waitForFunction(() => !document.querySelector("#quiz").hidden && document.querySelector("#qopts .opt") && __stamp.S().cur, null, { timeout: 12000 }); await p.waitForTimeout(300); };
+      const answer = (right) => p.evaluate((right) => { const c = __stamp.S().cur, b = [...document.querySelectorAll("#qopts .opt")]; (right ? b[c.answer] : b[(c.answer + 1) % b.length]).click(); }, right);
+      await ask(); await m("a question"); await answer(false); await p.waitForTimeout(700); await m("after a wrong answer");
+      for (let i = 0; i < 14; i++) { if (await p.evaluate(() => !document.querySelector("#done").hidden)) break; await p.evaluate(() => { const n = document.querySelector("#qnext"); if (n && !n.hidden) n.click(); }); await p.waitForTimeout(400); if (await p.evaluate(() => !document.querySelector("#done").hidden)) break; if (await p.evaluate(() => document.querySelector("#quiz").hidden)) await ask(); await answer(true); await p.waitForTimeout(600); if (i === 0) await m("after a right answer"); }
+      await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
+    } },
+  { id: "fathoms", name: "Fathoms", page: "fathoms.html", strict: true, first: "#fin", read: ".lede", ready: "!!window.__fath",
+    states: async (p, m) => {
+      await p.fill("#fin", "a"); await p.waitForTimeout(400); await m("typing an answer"); await p.fill("#fin", "");
+      for (let i = 0; i < 7; i++) { await p.click("#fpass"); await p.waitForTimeout(500); if (i === 0) await m("after an answer"); await p.evaluate(() => { const n = document.querySelector("#fnext"); if (n && n.offsetParent) n.click(); }); await p.waitForTimeout(400); }
+      await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", "#done .next"]);
+    } },
 ];
 // games that must pass all three; a game joins this list in the release that fixes it
-const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning"];
+const MUST = ["ballast", "bigger", "bigcountry", "history", "city", "voyage", "crossings", "reckoning", "country"];
 
 // known slow starts, still to fix (the smaller map): they do not count as regressions yet
 const SLOW = ["crossings", "reckoning"];

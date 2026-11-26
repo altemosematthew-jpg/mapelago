@@ -37,20 +37,24 @@ CSS = r'''
 #endBody>.score{order:2;margin:8px 0 6px}#endBody .score b{font-size:44px}
 #endBody>.row2{order:3;margin:0 0 8px}#endBody>.also{order:3;margin:0}#endBody>.next{order:4;margin:8px 0}
 #endBody>#miniMap{order:5}#endBody>.facts{order:6}
+.mx-tip{margin:0 0 8px;padding:6px 10px;font-size:13.5px;font-weight:600;line-height:1.25;background:var(--paper);color:var(--ink);border:var(--bw) solid var(--line);border-radius:var(--r)}.app:not(.mx-new) .mx-tip{display:none}.app.mx-new:has(#mxTip){--y1:54px}
 /* first visit: show the first move on the board */
-.app:has(#mxMode:not([hidden])) .board::after{content:"\1F446";position:absolute;left:50%;top:50%;font-size:34px;line-height:1;z-index:6;pointer-events:none;animation:mxSwipe 1.8s ease-in-out infinite}
-html.mx-quick .app:has(#mxMode:not([hidden])) .board::after{display:none}
-html.mx-quick .app:has(#mxMode:not([hidden])) .actbar .act{animation:mxPulse 1.6s ease-in-out infinite}
+.app.mx-new .board::after{content:"\1F446";position:absolute;left:50%;top:50%;font-size:34px;line-height:1;z-index:6;pointer-events:none;animation:mxSwipe 1.8s ease-in-out infinite}
+html.mx-quick .app.mx-new .board::after{display:none}
+html.mx-quick .app.mx-new .actbar .act{animation:mxPulse 1.6s ease-in-out infinite}
 }
 @keyframes mxSwipe{0%{transform:translate(-90px,-10px);opacity:0}15%{opacity:1}70%{transform:translate(50px,-10px);opacity:1}100%{transform:translate(50px,-10px);opacity:0}}
 @keyframes mxPulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 35%,transparent)}}
-@media (prefers-reduced-motion:reduce){.app:has(#mxMode:not([hidden])) .board::after{animation:none;transform:translate(-17px,-10px)}html.mx-quick .app:has(#mxMode:not([hidden])) .actbar .act{animation:none}}
+@media (prefers-reduced-motion:reduce){.app.mx-new .board::after{animation:none;transform:translate(-17px,-10px)}html.mx-quick .app.mx-new .actbar .act{animation:none}}
 '''
 JS = r'''
 <script id="mxOneJs">
 // One screen: a new clue brings the clue row back to its start, and tapping a tile size shows that clue.
 (function(){var c=document.getElementById("clues"),t=document.getElementById("track");if(!c||!t)return;
 new MutationObserver(function(){c.scrollLeft=0}).observe(c,{childList:true});
+var app=document.querySelector(".app"),sw=document.getElementById("swipes"),gu=document.getElementById("guesses");
+function fresh(){if(app)app.classList.toggle("mx-new",!!sw&&sw.textContent.trim()==="0"&&!(gu&&gu.children.length))}
+if(sw)new MutationObserver(fresh).observe(sw,{childList:true,characterData:true,subtree:true});if(gu)new MutationObserver(fresh).observe(gu,{childList:true});fresh();
 t.addEventListener("click",function(e){var li=e.target.closest("li");if(!li)return;var i=[].indexOf.call(t.children,li),k=c.children[i];if(k&&k.scrollIntoView)k.scrollIntoView({block:"nearest",inline:"start",behavior:"smooth"})});
 })();
 </script>
@@ -130,13 +134,78 @@ if not sys.argv[1:] or 'dead-reckoning.html' in sys.argv:
         ('<div class="mapwrap">', '<div class="mapwrap" data-first>'),
     ])
 
-for f in [x for x in (sys.argv[1:] or ['index.html']) if x in ('index.html', 'country.html')]:
+DONE_CSS = "#done .panel{padding:10px 14px}#done h2{font-size:21px;margin:0 0 4px}#done .score{margin:2px 0 6px}#done .score b{font-size:40px}#done .share{padding:8px 10px;font-size:13px;line-height:1.3;margin:0 0 8px}#done .row2{margin:0 0 6px;gap:8px}#done .act{min-height:46px;font-size:15px}#done .note,#done .next,#done p{font-size:13px;margin:4px 0}"
+STAMPS_CSS = r'''
+@media (max-width:520px){
+.top{margin-bottom:6px}.lede{font-size:14.5px;line-height:1.3;margin:0 0 6px}
+.wheelbox{width:min(210px,56vw);height:min(210px,56vw);margin:2px auto 8px}.wheelbox.asked{width:76px;height:76px;margin:0 auto 6px}
+.vx-wheel-note{display:none}
+#spin{min-height:50px}
+#quiz.panel{padding:8px 10px}#qcat{margin:0 0 2px;font-size:13px}#qask{font-size:17px;line-height:1.2;margin:0}
+#qopts{gap:6px;margin-top:6px;grid-template-columns:1fr 1fr}#qopts .opt{min-height:46px;padding:4px 6px;font-size:15px;line-height:1.15}
+#qabout{font-size:13px;line-height:1.3;margin:6px 0 0}.qsay{margin:6px 0;padding:5px 8px;font-size:14px;line-height:1.25}#qnext{min-height:46px}
+#say{margin:4px 0 0;min-height:18px;font-size:14px}
+.passport{margin-top:6px;padding:8px 10px}.passport h2{font-size:15px;margin:0}
+.pass{margin:6px 0 0;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.pass .slot{min-width:0;gap:2px}.pass .slot .ring{width:42px;height:42px}.pass .slot .ring svg{width:24px;height:24px}.pass .slot b{font-size:9.5px;line-height:1.1;letter-spacing:-.2px;text-align:center}.pass .slot>span:last-child{font-size:9.5px}
+.app:has(#done:not([hidden])) :is(.lede,.wheelbox,#spin,#say,.passport){display:none}
+''' + DONE_CSS + '''
+}
+'''
+STAMPS_HELP = '''<h2>How to play Stamps</h2>
+<ul>
+<li>Spin the wheel and answer the question it lands on. A right answer stamps that category. Fill all six.</li>
+<li>Tap the wheel to stop it early.</li>
+<li>The wheel skips categories that are already stamped or missed twice, and when only one is left it picks that one for you.</li>
+</ul>'''
+if not sys.argv[1:] or 'stamps.html' in sys.argv:
+    simple('stamps.html', STAMPS_CSS, STAMPS_HELP, [
+        ('<p class="lede" id="lede">Spin the wheel and answer the question it lands on. A right answer stamps that category. Fill all six.</p>',
+         '<p class="lede" id="lede">Spin the wheel, answer its question, and fill all six stamps.</p>'),
+        ('<button class="act" id="spin">', '<button class="act" id="spin" data-first>'),
+    ])
+
+FATHOMS_CSS = r'''
+@media (max-width:520px){
+.top{margin-bottom:6px}.lede{font-size:14.5px;line-height:1.3;margin:0 0 6px}
+.dots{margin:0 0 6px}.status{margin-bottom:6px;min-height:0}.stat{padding:3px 4px;gap:1px}.stat b{font-size:21px}
+#play.panel,#shown.panel{padding:8px 10px}#play .kind{margin:0 0 2px;font-size:13px}#ask{font-size:18px;line-height:1.2;margin:0 0 8px}
+#fin{height:48px}#sugs{margin:6px 0 0;gap:4px;max-height:150px;overflow:auto}#sugs li,#sugs button{min-height:40px}
+#fgo{min-height:50px;margin-top:8px}#fpass{margin-top:2px}
+#shown h2{font-size:18px;line-height:1.2;margin:0 0 6px}#shownNote{font-size:13.5px;line-height:1.3;margin:6px 0}
+/* every right answer stays one tap away in its own scrolling list, so Next is always on screen */
+#allAns{max-height:calc(100vh - 470px);max-height:calc(100svh - 470px);min-height:90px;overflow:auto;margin:0 0 8px;font-size:13.5px}
+#fnext{min-height:50px}
+#say{margin:4px 0 0;min-height:18px;font-size:14px}
+''' + DONE_CSS + '''
+}
+'''
+FATHOMS_HELP = '''<h2>How to play Fathoms</h2>
+<ul>
+<li>Seven prompts a day, each with many right answers.</li>
+<li>The less obvious your answer, the deeper it goes: up to 1,000 fathoms a prompt, 7,000 in all.</li>
+<li>A wrong answer or a pass scores nothing for that prompt.</li>
+<li>After each prompt you see every right answer, deepest first.</li>
+</ul>'''
+if not sys.argv[1:] or 'fathoms.html' in sys.argv:
+    simple('fathoms.html', FATHOMS_CSS, FATHOMS_HELP, [
+        ('<p class="lede" id="lede">Seven prompts a day, each with many right answers. The less obvious your answer, the deeper it goes.</p>',
+         '<p class="lede" id="lede">Type any right answer: the less obvious it is, the deeper you go.</p>'),
+        ('<input id="fin" type="text"', '<input id="fin" data-first type="text"'),
+    ])
+
+for f in [x for x in (sys.argv[1:] or ['index.html', 'country.html']) if x in ('index.html', 'country.html')]:
     s = open(f, encoding='utf8').read()
     s = re.sub(r'<style id="mxOne">.*?</style>\n', '', s, flags=re.S); s = re.sub(r'\n<script id="mxOneJs">.*?</script>\n', '\n', s, flags=re.S)
     assert s.count('</head>') == 1 and s.count('</body>') == 1
     s = s.replace('</head>', '<style id="mxOne">' + CSS + '</style>\n</head>')
     s = s.replace('</body>', JS.strip('\n') + '\n</body>') if False else s.replace('</body>', JS.lstrip('\n') + '</body>')
     s = s.replace('<div id="board" class="board" tabindex="0"', '<div id="board" class="board" data-first tabindex="0"') if 'class="board" data-first' not in s else s
+    if f == 'country.html':
+        # the rules sheet no longer opens by itself on a first visit (it stays behind the ? button); one sentence instead
+        s = s.replace('hn.seenHelp||(A("#helpModal").hidden=!1);', '/*mx-one: play first*/')
+        if 'id="mxTip"' not in s:
+            a0 = '<div id="board" class="board"'; assert s.count(a0) == 1
+            s = s.replace(a0, '<p id="mxTip" class="mx-tip">Swipe the board to join matching tiles and open clues to today\'s mystery country.</p>\n  ' + a0)
     for a in ['<p class="note" id="costNote"', '<div class="pad" role="group"', '<p class="note" id="streakNote"', '<p class="note" id="nextNote"']:
         if a in s: s = s.replace(a, a.replace(' ', ' data-below ', 1))
     open(f, 'w', encoding='utf8').write(s); print('patched', f)
