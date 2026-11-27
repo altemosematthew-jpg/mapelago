@@ -5,7 +5,7 @@ const fs = require("fs"), path = require("path");
 const start = require("./server.js");
 const UPDATE = process.argv.includes("--update-golden");
 const GOLDEN = path.join(__dirname, "golden.json");
-const GAMES = { city: "city.html", country: "country.html", bigger: "bigger.html", biggercountry: "bigger-country.html", voyage: "voyage.html", fathoms: "fathoms.html", stamps: "stamps.html", crossings: "crossings.html" };
+const GAMES = { city: "city.html", country: "country.html", bigger: "bigger-city.html", biggercountry: "bigger-country.html", voyage: "voyage.html", fathoms: "fathoms.html", stamps: "stamps.html", crossings: "crossings.html" };
 const DAYS = [...Array(30).keys()].map((i) => i + 1).concat([60, 100, 200, 365]);
 const PHONE = { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true };
 const DESKTOP = { viewport: { width: 1280, height: 800 } };
@@ -41,7 +41,7 @@ async function page(b, url, opts = {}) {
   const b = await chromium.launch();
   try {
     // 1. every page loads cleanly at phone and desktop size
-    for (const f of ["city.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "ballast.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
+    for (const f of ["city.html", "country.html", "bigger.html", "bigger-city.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "ballast.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
       for (const desktop of [false, true]) {
         const { ctx, p } = await page(b, U + f, { desktop, wait: 800 });
         check(!p.errs.length, `loads cleanly: /${f} ${desktop ? "desktop" : "phone"}`, p.errs.join("; "));
@@ -51,7 +51,7 @@ async function page(b, url, opts = {}) {
     // 1b. a release bumps the cache and every script address together, so returning players get it on their next visit
     {
       const sw = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8"), v = /const C = "mapelago-([^"]+)"/.exec(sw)[1];
-      for (const f of ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "ballast.html", "privacy/index.html", "shapes.js", "sw.js"]) {
+      for (const f of ["index.html", "country.html", "bigger.html", "bigger-city.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "ballast.html", "privacy/index.html", "shapes.js", "sw.js"]) {
         const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
         const tags = [...s.matchAll(/["'](?:\.\.\/|\.\/|vendor\/)?(?:matter\.min|decomp\.min|ballast|ballast-data|site|extras|shapes|world|copy|analytics|history|history-data)\.js(\?v=[^"']*)?["']/g)].map((m) => m[1] || "");
         check(tags.length > 0 && tags.every((t) => t === "?v=" + v), `script addresses carry the cache version ${v}: ${f}`, tags.join(" "));
@@ -68,10 +68,31 @@ async function page(b, url, opts = {}) {
       check(k.css && k.bg === "rgb(16, 19, 22)" && k.letters >= 9 && /^Episode \d+/.test(k.num) && k.frames >= 2 && k.rim > 50, "ink: the standard look is Ink & Lantern (dark page, hand-set title, Episode N, inked panels, shaded and hatched land)", JSON.stringify(k));
       check(!p.errs.length, "ink: no errors", p.errs.join("; "));
       await ctx.close();
-      const o = await page(b, U + "bigger.html", { storage: { "dailycity:look": "night" }, wait: 1200 });
+      const o = await page(b, U + "bigger-city.html#day-14", { storage: { "dailycity:look": "night" }, wait: 1200 });
       const n = await o.p.evaluate(() => ({ letters: document.querySelectorAll(".top .word .ink-l").length, frames: document.querySelectorAll(".ink-frame").length, num: document.querySelector("#num").textContent }));
       check(!n.letters && !n.frames && /^No\. \d+/.test(n.num), "ink: another look (Night watch) is left exactly as it was", JSON.stringify(n));
       await o.ctx.close();
+    }
+
+    // 1d. Bigger? (from No. 17): one game for cities and countries, one streak that keeps both old histories
+    {
+      const old = { "dailycity:bigger:v1": JSON.stringify({ results: { 12: { score: 7, picks: [] }, 13: { score: 8, picks: [] } } }), "dailycity:bigcountry:v1": JSON.stringify({ results: { 14: { score: 6, picks: [] }, 15: { score: 9, picks: [] }, 16: { score: 5, picks: [] } } }) };
+      const { ctx, p } = await page(b, U + "bigger.html", { storage: old, clock: new Date("2026-11-30T12:00:00"), wait: 800 });
+      const d = await p.evaluate(() => { const s = __big.S(); return { n: s.n, kinds: s.pairs.map((x) => x[0].t).join(""), r: s.pairs.map((x) => Math.max(x[0].pop, x[1].pop) / Math.min(x[0].pop, x[1].pop)), ask: document.querySelector("#ask").textContent }; });
+      check(d.n === 17 && d.kinds === "citycountrycitycountrycitycountrycitycountrycitycountry" && d.r.every((x) => x >= 1.15) && d.r[0] > d.r[9] && d.ask === "Which city has more people?", "bigger?: No. 17 deals ten pairs, cities and countries in turn, closing up", JSON.stringify(d));
+      for (let i = 0; i < 10; i++) { await p.click("#pick0"); await p.waitForTimeout(60); await p.click("#next"); await p.waitForTimeout(60); }
+      const r = await p.evaluate(() => ({ save: JSON.parse(localStorage.getItem("dailycity:bigger:v1")).results, share: document.querySelector("#shareText").textContent, info: MXS.info().map((s) => [s.game.id, s.cur, s.played]) }));
+      const big = r.info.find((x) => x[0] === "bigger");
+      check(r.save[17] && r.save[17].picks.length === 10 && r.save[12] && /^Mapelago Bigger\? No\. 17 \u{1F422} \d+\/10\n[\u{1F3D9}\u{1F5FA}️⬜]+\nCity or country, which is bigger\? mapelago\.com\/bigger\.html#/u.test(r.share), "bigger?: the result is saved beside Bigger city?'s history, with its share line", r.share);
+      check(big && big[1] === 6 && big[2] === 6 && !r.info.some((x) => x[0] === "bigcountry"), "bigger?: one streak and stats from both old games (Nos. 12 to 17 run on)", JSON.stringify(r.info));
+      check(!p.errs.length, "bigger?: no errors", p.errs.join("; "));
+      await ctx.close();
+      const pre = await page(b, U + "bigger.html", { clock: new Date("2026-11-28T12:00:00") });
+      check(await pre.p.isVisible("#before") && !(await pre.p.isVisible("#play")) && (await pre.p.$$eval("#before a", (a) => a.map((x) => x.getAttribute("href")).join())) === "bigger-city.html,bigger-country.html", "bigger?: before No. 17 it points to the two games still running");
+      await pre.ctx.close();
+      const red = await page(b, U + "bigger-country.html", { clock: new Date("2026-11-30T12:00:00"), wait: 900 });
+      check(/\/bigger\.html$/.test(red.p.url()) && (await red.p.isVisible("#pick0")), "bigger?: from No. 17 the old pages send you to Bigger?", red.p.url());
+      await red.ctx.close();
     }
 
     // 2. the daily schedule never changes by accident
@@ -445,7 +466,7 @@ async function page(b, url, opts = {}) {
       }
       const t = fs.readFileSync(path.join(__dirname, "../teachers/index.html"), "utf8").replace(/<[^>]+>/g, " ");
       check(["no accounts", "no ads", "no cookies", "Nothing to install", "same puzzles", "projector", "student devices", "offline", "Bigger country?", "Crossings", "Logbook", "Scale", "Borders", "Capitals", "History", "Place"].every((w) => t.includes(w)), "teachers page says what it promised");
-      const pages = ["index.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "offline.html", "about/index.html", "privacy/index.html", "how-to-play/index.html", "games/index.html", "teachers/index.html"];
+      const pages = ["index.html", "country.html", "bigger.html", "bigger-city.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "offline.html", "about/index.html", "privacy/index.html", "how-to-play/index.html", "games/index.html", "teachers/index.html"];
       const missing = pages.filter((f) => { const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8"); return (s.match(/href="(?:\.\.?\/)?teachers\/"[^>]*>For teachers<\/a>/g) || []).length !== 1; });
       check(!missing.length, "every page's menu has For teachers, once", missing.join());
       check(/<loc>https:\/\/mapelago\.com\/teachers\/<\/loc>/.test(fs.readFileSync(path.join(__dirname, "../sitemap.xml"), "utf8")), "sitemap lists the teachers page");
@@ -639,7 +660,7 @@ async function page(b, url, opts = {}) {
       check(/"extras\.js\?v=/.test(sw) && /"world\.js\?v=/.test(sw) && /"shapes\.js\?v=/.test(sw), "bigcountry: everything it needs is in the offline copy");
     }
       // "Play more": endless practice in Bigger country? and Bigger city?, which never touches the daily
-      for (const [file, key, id] of [["bigger-country.html", "dailycity:bigcountry:v1", "bigcountry"], ["bigger.html", "dailycity:bigger:v1", "bigger"]]) {
+      for (const [file, key, id] of [["bigger-country.html", "dailycity:bigcountry:v1", "bigcountry"], ["bigger-city.html", "dailycity:bigger:v1", "bigger"]]) {
         const daily = JSON.stringify({ results: { 11: { score: 6, picks: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] }, 12: { score: 7, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } }, game: null });
         // not offered before the daily round is finished
         {
@@ -692,7 +713,7 @@ async function page(b, url, opts = {}) {
         check(!k.p.errs.length, `${id} practice desktop: no errors`, k.p.errs.join("; "));
         await k.ctx.close();
       }
-      check(fs.readFileSync(path.join(__dirname, "../bigger.html"), "utf8").match(/<script>\n\/\* bigcountry-practice:[\s\S]*?<\/script>/)[0] === fs.readFileSync(path.join(__dirname, "../bigger-country.html"), "utf8").match(/<script>\n\/\* bigcountry-practice:[\s\S]*?<\/script>/)[0], "practice: the same code in both games");
+      check(fs.readFileSync(path.join(__dirname, "../bigger-city.html"), "utf8").match(/<script>\n\/\* bigcountry-practice:[\s\S]*?<\/script>/)[0] === fs.readFileSync(path.join(__dirname, "../bigger-country.html"), "utf8").match(/<script>\n\/\* bigcountry-practice:[\s\S]*?<\/script>/)[0], "practice: the same code in both games");
     // ---- the review fixes: official areas, close last pairs, waiting for the tap, your pick, stats, checked city figures ----
     {
       const fresh = { "dailycity:bigcountry:v1": '{"results":{},"game":null}' };
@@ -733,7 +754,7 @@ async function page(b, url, opts = {}) {
         await ctx.close();
       }
       // stats panels: played, average, streak, best streak and the spread, from the save
-      for (const [file, key, id] of [["bigger-country.html", "dailycity:bigcountry:v1", "bigcountry"], ["bigger.html", "dailycity:bigger:v1", "bigger"]]) {
+      for (const [file, key, id] of [["bigger-country.html", "dailycity:bigcountry:v1", "bigcountry"], ["bigger-city.html", "dailycity:bigger:v1", "bigger"]]) {
         const save = { results: { 9: { score: 10, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }, 10: { score: 7, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }, 11: { score: 8, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } }, game: null };
         const { ctx, p } = await page(b, U + file + "#day-11", { storage: { [key]: JSON.stringify(save) }, clock: new Date("2026-11-24T12:00:00"), wait: 900 });
         const s = await p.evaluate(() => ({ nums: [...document.querySelectorAll("#mxStats .stats b")].map((x) => x.textContent), rows: [...document.querySelectorAll("#mxStats .hrow")].map((r) => r.firstChild.textContent + "=" + r.querySelector(".hbar").lastChild.textContent), title: document.querySelector("#mxStatsH").textContent }));
@@ -744,7 +765,7 @@ async function page(b, url, opts = {}) {
       }
       {
         // Bigger city?: checked figures, real cities with English names, no pair within 10%, from No. 14
-        const { ctx, p } = await page(b, U + "bigger.html#day-14", { storage: { "dailycity:bigger:v1": '{"results":{},"game":null}' } });
+        const { ctx, p } = await page(b, U + "bigger-city.html#day-14", { storage: { "dailycity:bigger:v1": '{"results":{},"game":null}' } });
         const pool = await p.evaluate(() => MxCity.pool.map((c) => [c.name, c.country, c.pop, c.note || ""]));
         const by = (n, c) => pool.find((x) => x[0] === n && (!c || x[1] === c));
         const gone = ["Göteborg", "Gustavo Adolfo Madero", "Brooklyn", "Kowloon", "Dadonghai", "Cape Town", "Durban", "Brussels", "Asmara", "Mogadishu", "Allahābād", "Nur-Sultan", "Abu Dhabi", "Çankaya", "Iztapalapa", "Soweto", "Yono"];
@@ -755,26 +776,26 @@ async function page(b, url, opts = {}) {
           "bigger: checked figures with their year, and the unit where it matters", JSON.stringify([by("Kathmandu"), by("Buenos Aires"), by("Tokyo")]));
         const bad = [];
         for (let d = 14; d <= 44; d++) {
-          await p.goto(U + "bigger.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
+          await p.goto(U + "bigger-city.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
           const x = await p.evaluate(() => __big.S().pairs.map((t) => [t[0].name, t[1].name, Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)]));
           x.forEach((t) => { if (t[2] < 1.1 || !by(t[0]) || !by(t[1])) bad.push(d + ":" + t.join("/")); });
         }
         check(!bad.length, "bigger: Nos. 14 to 44 deal only checked cities, never two within 10%", bad.slice(0, 5).join(" "));
-        await p.goto(U + "bigger.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
+        await p.goto(U + "bigger-city.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
         check((await p.evaluate(() => __big.S().pairs[9].map((c) => c.name + " " + c.pop).join(" | "))) === "Kathmandu 1442271 | Tegucigalpa 850848", "bigger: No. 12 stays as played (Kathmandu v Tegucigalpa)");
         // from No. 17: one source (UN WUP 2025, urban areas), only the cities it lists, two surprising ones held back
         await p.goto(U + "bigger.html?d=17#day-17", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
-        const un = await p.evaluate(() => MxCity.pool.map((c) => [c.name, c.country, c.pop, c.note || ""]));
+        const un = await p.evaluate(() => __big.CITY.map((c) => [c.name, c.sub, c.v]));
         const ub = (n) => un.find((x) => x[0] === n);
-        check(un.length === 313 && ub("Tokyo")[2] === 33412512 && ub("Jakarta")[2] === 41913860 && !ub("Luxor") && !ub("Nay Pyi Taw") && !ub("Giza") && !ub("Foshan") && un.every((x) => x[3] === "urban area population, UN WUP 2025"),
-          "bigger: from No. 17, the 313 UN WUP 2025 cities, each labelled", JSON.stringify([un.length, ub("Tokyo"), ub("Luxor")]));
+        check(un.length === 313 && ub("Tokyo")[2] === 33412512 && ub("Jakarta")[2] === 41913860 && !ub("Luxor") && !ub("Nay Pyi Taw") && !ub("Giza") && !ub("Foshan"),
+          "bigger: from No. 17, Bigger? plays the 313 UN WUP 2025 cities", JSON.stringify([un.length, ub("Tokyo"), ub("Luxor")]));
         await p.goto(U + "city.html?d=17#day-17", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__lf);
         const mc = await p.evaluate(() => [__lf.P.city, __lf.P.pop, __lf.P.clues.people, (__lf.P.facts || []).join(" / ")]);
         check(mc[0] === "Bangkok" && mc[1] === 18180280 && /^10 million\+ · /.test(mc[2]) && /About 18,180,280 people live in its urban area \(UN WUP 2025\)/.test(mc[3]), "mystery city: from No. 17 its population clue is the UN figure", JSON.stringify(mc));
         check(!p.errs.length, "bigger data: no errors", p.errs.join("; "));
         await ctx.close();
         // the reveal and the list give the year; the list marks your pick
-        const k = await page(b, U + "bigger.html#day-14", { storage: { "dailycity:bigger:v1": '{"results":{},"game":null}' }, clock: new Date("2026-11-27T12:00:00") });
+        const k = await page(b, U + "bigger-city.html#day-14", { storage: { "dailycity:bigger:v1": '{"results":{},"game":null}' }, clock: new Date("2026-11-27T12:00:00") });
         await k.p.waitForTimeout(300); await k.p.click("#pick0"); await k.p.waitForTimeout(300);
         const shown = await k.p.evaluate(() => [...document.querySelectorAll(".pick .pop span")].map((x) => x.textContent));
         check(shown.length === 2 && shown.every((t) => / people( \((.+, )?\d{4}\))?$/.test(t)) && shown.some((t) => /\(\d{4}\)|, \d{4}\)/.test(t)), "bigger: the reveal gives each checked figure's year", JSON.stringify(shown));
@@ -818,7 +839,7 @@ async function page(b, url, opts = {}) {
     // 14. visitor counting (Cloudflare Web Analytics, switched on 25 Nov 2026): the beacon loads on mapelago.com only,
     //     never for Global Privacy Control or Do Not Track, and the privacy page always matches the switch
     {
-      const PAGES = ["city.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/", "about/", "games/"];
+      const PAGES = ["city.html", "country.html", "bigger.html", "bigger-city.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/", "about/", "games/"];
       const words = (q) => q.evaluate(() => [MXANALYTICS.on, [...document.querySelectorAll('[data-analytics="on"]')].every((e) => !e.hidden), [...document.querySelectorAll('[data-analytics="off"]')].every((e) => e.hidden), /Cloudflare Web Analytics/.test(document.querySelector("main").innerText), /no tracking scripts/.test(document.querySelector("main").innerText), (document.querySelector("#analyticsSince") || {}).textContent]);
       // switched on, on this machine: nothing is loaded, the wording is the counting wording
       {
@@ -839,7 +860,7 @@ async function page(b, url, opts = {}) {
         await ctx.route(/cloudflareinsights/, (r) => { hits.push(r.request().url()); r.abort(); });
         await ctx.route(new RegExp("^https?://" + host.replace(/\./g, "\\.") + "/"), async (r) => { const u = new URL(r.request().url()); const res = await r.fetch({ url: U + u.pathname.slice(1) + u.search }); r.fulfill({ response: res }); });
         const p = await ctx.newPage();
-        await p.goto("http://" + host + "/bigger.html", { waitUntil: "load" }); await p.waitForTimeout(300);
+        await p.goto("http://" + host + "/bigger-city.html", { waitUntil: "load" }); await p.waitForTimeout(300);
         await p.goto("http://" + host + "/privacy/", { waitUntil: "load" }); await p.waitForTimeout(300);
         const w = await words(p);
         await ctx.close();
@@ -964,7 +985,7 @@ async function page(b, url, opts = {}) {
     // 21. landmarks for screen readers: exactly one main region on every page (checked with axe-core: no landmark issues left)
     {
       const ctx = await b.newContext(PHONE), p = await ctx.newPage(), bad = [];
-      for (const f of ["city.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "dead-reckoning.html", "games/", "privacy/", "about/", "how-to-play/"]) {
+      for (const f of ["city.html", "country.html", "bigger.html", "bigger-city.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "dead-reckoning.html", "games/", "privacy/", "about/", "how-to-play/"]) {
         await p.goto(U + f, { waitUntil: "load" }); await p.waitForTimeout(250);
         const r = await p.evaluate(() => [document.querySelectorAll("main,[role=main]").length, document.querySelectorAll("main header,[role=main] > header:not([role=none])").length]);
         if (r[0] !== 1 || r[1]) bad.push(f + " " + JSON.stringify(r));
@@ -996,7 +1017,7 @@ async function page(b, url, opts = {}) {
 
     // 24. the next-game button goes to the first unplayed game; the release line is in every game's footer
     {
-      const pre = await page(b, U + "bigger.html"); const T = await pre.p.evaluate(() => MXS.today()); await pre.ctx.close();
+      const pre = await page(b, U + "bigger-city.html"); const T = await pre.p.evaluate(() => MXS.today()); await pre.ctx.close();
       const done = (k) => JSON.stringify({ results: { [T]: { score: 5 } }, games: {} });
       const st = { "dailycity:v2": done(), "dailycity:country:v1": done(), "dailycity:bigger:v1": done(), "dailycity:coach": "1" };
       const { ctx, p } = await page(b, U + "crossings.html", { storage: st, wait: 600 });

@@ -97,8 +97,10 @@
   var GAMES = [
     { id: "city", name: "Mystery city", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
     { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "The same, with a country to find." },
-    { id: "bigger", name: "Bigger city?", key: "dailycity:bigger:v1", url: "bigger.html", icon: "\u{1F465}", about: "Ten pairs: tap the city where more people live." },
-    { id: "bigcountry", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
+    // Bigger? (from No. 17) is Bigger city? and Bigger country? as one game: it saves where Bigger city? did, and Bigger
+    // country?'s days count toward its streak and stats. The old pages still play Nos. 1 to 16.
+    { id: "bigger", name: "Bigger?", key: "dailycity:bigger:v1", url: "bigger.html", pages: ["bigger-city.html"], icon: "\u{1F465}", about: "Ten pairs, cities and countries in turn: tap the bigger one." },
+    { id: "bigcountry", parent: "bigger", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
     { id: "voyage", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
     { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html", icon: "\u{1F30A}", about: "Name the least obvious right answer." },
     { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." },
@@ -132,10 +134,13 @@
   function read(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
   function plural(n, a, b) { return n + " " + (n === 1 ? a : b); }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  // a game that became part of another (it has a parent) is not listed on its own: its days count for the parent
+  function results(g) { var save = read(g.key); return (save && save.results) || {}; }
   function info() {
     var now = today();
-    return GAMES.map(function (g) {
-      var save = read(g.key), res = (save && save.results) || {};
+    return GAMES.filter(function (g) { return !g.parent; }).map(function (g) {
+      var res = results(g), kids = GAMES.filter(function (k) { return k.parent === g.id; });
+      if (kids.length) { var all = {}; kids.forEach(function (k) { var r = results(k); Object.keys(r).forEach(function (d) { if (r[d]) all[d] = r[d]; }); }); Object.keys(res).forEach(function (d) { if (res[d]) all[d] = res[d]; }); res = all; }
       var s = streak(res, now);
       s.game = g; s.doneToday = !!res[now]; s.res = res;
       return s;
@@ -262,7 +267,7 @@
   function here() {
     var parts = location.pathname.split("/"), f = parts.pop();
     if (parts.filter(Boolean).length) return undefined;
-    return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(f); })[0];
+    return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(f) || (g.pages || []).some(function (u) { return pageKey(u) === pageKey(f); }); })[0];
   }
 
   // 5.2 a note on every game page when another game's streak is waiting for today
@@ -905,7 +910,26 @@
         cv.hidden = false; cv.setAttribute("aria-label", "Map: " + hi.map(function (f) { return f.name; }).join(", ")); requestAnimationFrame(function () { draw(cv, hi); });
       });
     }
-    return { show: show, namesIn: namesIn, load: load };
+    // one country's outline, fitted to a small canvas (Bigger?'s country cards): land colour, a darker rim on the shadow side
+    function outline(cv, cid) {
+      if (!cv) return;
+      load(function () {
+        decode(); var f = feats.filter(function (x) { return x.id === +cid; })[0]; if (!f || !cv.isConnected) return;
+        var w = cv.clientWidth || 80, h = cv.clientHeight || 56, dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = w * dpr; cv.height = h * dpr;
+        var g = cv.getContext("2d"), cs = getComputedStyle(document.documentElement), col = function (v, d) { return (cs.getPropertyValue(v) || "").trim() || d; };
+        // the largest part decides the frame, so a far-off island does not shrink the mainland to a speck
+        var big = f.polys.map(function (p) { var b = [1e9, 1e9, -1e9, -1e9]; p[0].forEach(function (q) { b[0] = Math.min(b[0], q[0]); b[1] = Math.min(b[1], q[1]); b[2] = Math.max(b[2], q[0]); b[3] = Math.max(b[3], q[1]); }); return b; }).sort(function (a, b) { return (b[2] - b[0]) * (b[3] - b[1]) - (a[2] - a[0]) * (a[3] - a[1]); })[0];
+        if (!big) return;
+        var my = (big[1] + big[3]) / 2, cos = Math.cos(my * Math.PI / 180), bw = Math.max(0.2, (big[2] - big[0]) * cos), bh = Math.max(0.2, big[3] - big[1]);
+        var k = Math.min((w - 8) / bw, (h - 8) / bh), mx = (big[0] + big[2]) / 2;
+        var P = function (q) { return [w / 2 + (q[0] - mx) * cos * k, h / 2 - (q[1] - my) * k]; };
+        g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h); g.lineJoin = "round";
+        var path = function (dx, dy) { g.beginPath(); f.polys.forEach(function (p) { p.forEach(function (r) { r.forEach(function (q, i) { var s = P(q); if (i) g.lineTo(s[0] + dx, s[1] + dy); else g.moveTo(s[0] + dx, s[1] + dy); }); g.closePath(); }); }); };
+        path(-1.4, 1.4); g.fillStyle = col("--land-line", "#6f5d22"); g.fill();
+        path(0, 0); g.fillStyle = col("--land", "#f3d98a"); g.fill(); g.strokeStyle = col("--ink", "#000"); g.lineWidth = 1.1; g.stroke();
+      });
+    }
+    return { show: show, namesIn: namesIn, load: load, outline: outline };
   })();
   window.MXMAP = MXMAP;
   // which text names the answer, and where the map goes, in each game
