@@ -8,7 +8,7 @@
     if (window.__WORLD || loading) return;
     loading = true;
     var s = document.createElement("script");
-    s.src = "world.js?v=0.15.64"; s.async = true;
+    s.src = "world.js?v=0.15.65"; s.async = true;
     document.head.appendChild(s);
   }
   (window.requestIdleCallback || function (f) { setTimeout(f, 1500); })(load);

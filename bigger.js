@@ -1,12 +1,12 @@
-/* Bigger?: Bigger city? and Bigger country? as one game, from No. 17.
+/* Bigger?: Bigger city? and Bigger country? as one game, from No. 14.
    Ten pairs a day that take turns: a pair of cities (which has more people: the UN's urban-area figure for 2025) and a
    pair of countries (which covers more land: the UN Demographic Yearbook's surface area). The pairs close up through
    the day and follow the weekly arc. No pair ever comes back. One result a day, saved where Bigger city? kept its
    results, so that history carries on; Bigger country?'s history joins it for the streak (site.js).
-   Before No. 17 the two games still play on their own pages (bigger-city.html, bigger-country.html). */
+   Archive days before No. 14 still play on the old pages (bigger-city.html, bigger-country.html). */
 (function () {
   "use strict";
-  var START = 17, KEY = "dailycity:bigger:v1", N = 10, D = window.BQ_DATA;
+  var START = 14, KEY = "dailycity:bigger:v1", N = 10, D = window.BQ_DATA;
   var $ = function (s) { return document.querySelector(s); };
   var fmt = function (n) { return Math.round(n).toLocaleString("en-US"); };
   var CITY = D.city.map(function (r) { return { t: "city", name: r[0], sub: r[1], v: r[2], lat: r[3], lon: r[4], key: r[0] + "|" + r[1] }; });
@@ -17,7 +17,7 @@
   var kind = function (i) { return i % 2 ? "country" : "city"; }; // round 1 is cities, round 2 countries, and so on
   var close = function (a, b) { return a.t === "country" && window.MXAclose ? MXAclose({ area: a.v, szr: a.szr }, { area: b.v, szr: b.szr }) : false; };
 
-  // the day's pairs, dealt in order from No. 17 so that no pair ever returns
+  // the day's pairs, dealt in order from No. 14 so that no pair ever returns
   var used = { city: {}, country: {} }, dealt = {}, last = START - 1;
   function sorted(list) { return list.map(function (_, i) { return i; }).sort(function (a, b) { return list[a].v - list[b].v; }); }
   var BY = { city: sorted(CITY), country: sorted(LAND) }, POOL = { city: CITY, country: LAND };
@@ -58,11 +58,11 @@
   var num = $("#num"); if (num) num.textContent = "No. " + n;
   var old = /^#(?:c-|b-[a-z]+-)(\d+)/.exec(location.hash);
   if (old && +old[1] < START) { location.replace("bigger-city.html" + location.hash); return; } // a Bigger city? result from before the merge
-  if (n < START) { // the two games still run apart until No. 17
+  if (n < START) { // the two old games, for archive days before the merge
     $("#play").hidden = true; $("#before").hidden = false; $("#dots").hidden = true;
     return;
   }
-  var pairs = deal(n), g = save.game && save.game.n === n ? save.game : { n: n, picks: [] }, res = save.results[n];
+  var pairs = deal(n), g = save.game && save.game.n === n ? save.game : { n: n, picks: [] }, res = save.results[n] && save.results[n].bq ? save.results[n] : null; // a result from the old Bigger city? page is not today's Bigger?
   if (res) g = { n: n, picks: res.picks };
   var ok = function (i) { var p = pairs[i]; return p[g.picks[i]].v > p[1 - g.picks[i]].v; };
   var score = function () { var s = 0; for (var i = 0; i < g.picks.length; i++) if (ok(i)) s++; return s; };
@@ -78,7 +78,7 @@
     }).join("");
   }
   function run() { var r = 0; for (var i = 0; i < g.picks.length; i++) r = ok(i) ? r + 1 : 0; return r; }
-  var phase = "choose";
+  var phase = "choose", shownAt = 0;
   function show() {
     var i = g.picks.length;
     dots();
@@ -94,17 +94,17 @@
       b.setAttribute("aria-label", x.name + ", " + x.sub);
     });
     if (k === "country" && window.MXMAP && MXMAP.outline) [0, 1].forEach(function (j) { MXMAP.outline($("#pick" + j + " canvas"), p[j].cid); });
-    $("#say").textContent = ""; $("#next").hidden = true; var mm = $("#play canvas.mx-mini"); if (mm) mm.hidden = true; phase = "choose";
+    $("#say").textContent = ""; $("#next").hidden = true; var mm = $("#play canvas.mx-mini"); if (mm) mm.hidden = true; phase = "choose"; shownAt = Date.now();
   }
   function choose(j) {
-    if (phase !== "choose") return;
+    if (phase !== "choose" || Date.now() - shownAt < 250) return; // a tap left over from the last round never answers the new pair unseen
     var i = g.picks.length, p = pairs[i], w = p[0].v > p[1].v ? 0 : 1;
     g.picks.push(j); phase = "reveal";
     [0, 1].forEach(function (q) { var b = $("#pick" + q); b.disabled = true; b.classList.add(q === w ? "right" : "wrong"); if (q === j) b.classList.add("mine"); b.querySelector(".fig").textContent = unit(p[q]); });
     var right = j === w, src = kind(i) === "city" ? "urban area population, UN WUP 2025" : "surface area, UN Demographic Yearbook 2023";
     $("#say").innerHTML = (right ? "<b>Right.</b> " : "<b>Not this one.</b> ") + the(p[w].name) + " is " + times(p[0].v, p[1].v) + (kind(i) === "city" ? " bigger by people" : " bigger by land") + ". <span class=\"src\">(" + src + ")</span>";
     if (window.MXMAP) MXMAP.show($("#say"), kind(i) === "city" ? p[0].sub + " " + p[1].sub : p[0].name + " " + p[1].name);
-    if (g.picks.length >= N) { save.results[n] = { score: score(), picks: g.picks.slice() }; save.game = null; } else save.game = g;
+    if (g.picks.length >= N) { save.results[n] = { score: score(), picks: g.picks.slice(), bq: 1 }; save.game = null; } else save.game = g;
     store(); dots();
     $("#run").textContent = run() ? run() + " in a row" : "";
     var nx = $("#next"); nx.hidden = false; nx.textContent = g.picks.length >= N ? "See your result" : "Next pair"; nx.focus({ preventScroll: true });

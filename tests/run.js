@@ -80,20 +80,24 @@ async function page(b, url, opts = {}) {
       const { ctx, p } = await page(b, U + "bigger.html", { storage: old, clock: new Date("2026-11-30T12:00:00"), wait: 800 });
       const d = await p.evaluate(() => { const s = __big.S(); return { n: s.n, kinds: s.pairs.map((x) => x[0].t).join(""), r: s.pairs.map((x) => Math.max(x[0].pop, x[1].pop) / Math.min(x[0].pop, x[1].pop)), ask: document.querySelector("#ask").textContent }; });
       check(d.n === 17 && d.kinds === "citycountrycitycountrycitycountrycitycountrycitycountry" && d.r.every((x) => x >= 1.15) && d.r[0] > d.r[9] && d.ask === "Which city has more people?", "bigger?: No. 17 deals ten pairs, cities and countries in turn, closing up", JSON.stringify(d));
-      for (let i = 0; i < 10; i++) { await p.click("#pick0"); await p.waitForTimeout(60); await p.click("#next"); await p.waitForTimeout(60); }
+      for (let i = 0; i < 10; i++) { await p.click("#pick0"); await p.waitForTimeout(60); await p.click("#next"); await p.waitForTimeout(300); }
       const r = await p.evaluate(() => ({ save: JSON.parse(localStorage.getItem("dailycity:bigger:v1")).results, share: document.querySelector("#shareText").textContent, info: MXS.info().map((s) => [s.game.id, s.cur, s.played]) }));
       const big = r.info.find((x) => x[0] === "bigger");
-      check(r.save[17] && r.save[17].picks.length === 10 && r.save[12] && /^Mapelago Bigger\? No\. 17 \u{1F422} \d+\/10\n[\u{1F3D9}\u{1F5FA}️⬜]+\nCity or country, which is bigger\? mapelago\.com\/bigger\.html#/u.test(r.share), "bigger?: the result is saved beside Bigger city?'s history, with its share line", r.share);
+      check(r.save[17] && r.save[17].picks.length === 10 && r.save[17].bq === 1 && r.save[12] && /^Mapelago Bigger\? No\. 17 \u{1F422} \d+\/10\n[\u{1F3D9}\u{1F5FA}️⬜]+\nCity or country, which is bigger\? mapelago\.com\/bigger\.html#/u.test(r.share), "bigger?: the result is saved beside Bigger city?'s history, with its share line", r.share);
       check(big && big[1] === 6 && big[2] === 6 && !r.info.some((x) => x[0] === "bigcountry"), "bigger?: one streak and stats from both old games (Nos. 12 to 17 run on)", JSON.stringify(r.info));
       const src = await p.evaluate(() => { const bad = []; for (let d = 17; d <= 60; d++) __big.deal(d).forEach((pr) => { const [x, y] = pr; if (x.t === "country" && ((MXAREA[x.cc] != null && MXAREA[x.cc] !== x.v) || (MXAREA[y.cc] != null && MXAREA[y.cc] !== y.v) || MXAclose({ area: x.v, szr: x.szr }, { area: y.v, szr: y.szr }))) bad.push(d + ":" + x.name + "/" + y.name); if (x.t === "city" && x.sub === y.sub) bad.push(d + ":" + x.name + "/" + y.name); }); return bad; });
       check(!src.length, "bigger?: Nos. 17 to 60 use the UN areas, never two cities of one country, never a pair too close to call", src.slice(0, 5).join(" "));
       check(!p.errs.length, "bigger?: no errors", p.errs.join("; "));
       await ctx.close();
-      const pre = await page(b, U + "bigger.html", { clock: new Date("2026-11-28T12:00:00") });
-      check(await pre.p.isVisible("#before") && !(await pre.p.isVisible("#play")) && (await pre.p.$$eval("#before a", (a) => a.map((x) => x.getAttribute("href")).join())) === "bigger-city.html,bigger-country.html", "bigger?: before No. 17 it points to the two games still running");
+      const pre = await page(b, U + "bigger.html#day-13", { wait: 600 });
+      check(await pre.p.isVisible("#before") && !(await pre.p.isVisible("#play")) && (await pre.p.$$eval("#before a", (a) => a.map((x) => x.getAttribute("href")).join())) === "bigger-city.html,bigger-country.html", "bigger?: an archive day before No. 14 points to the two old games");
       await pre.ctx.close();
+      const oldDay = await page(b, U + "bigger.html", { storage: { "dailycity:bigger:v1": JSON.stringify({ results: { 14: { score: 7, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } } }) }, clock: new Date("2026-11-27T12:00:00"), wait: 800 });
+      const od = await oldDay.p.evaluate(() => ({ play: !document.querySelector("#play").hidden, done: !document.querySelector("#done").hidden, listed: MXS.info().find((x) => x[0] === "bigger" || x.game.id === "bigger").doneToday, streak: MXS.info().find((x) => x.game.id === "bigger").cur }));
+      check(od.play && !od.done && !od.listed && od.streak === 1, "bigger?: No. 14 is Bigger?; a round played on the old page today still counts for the streak but doesn't mark Bigger? done", JSON.stringify(od));
+      await oldDay.ctx.close();
       const red = await page(b, U + "bigger-country.html", { clock: new Date("2026-11-30T12:00:00"), wait: 900 });
-      check(/\/bigger\.html$/.test(red.p.url()) && (await red.p.isVisible("#pick0")), "bigger?: from No. 17 the old pages send you to Bigger?", red.p.url());
+      check(/\/bigger\.html$/.test(red.p.url()) && (await red.p.isVisible("#pick0")), "bigger?: the old pages send you to Bigger?", red.p.url());
       await red.ctx.close();
     }
 
@@ -169,7 +173,7 @@ async function page(b, url, opts = {}) {
     for (const [g, file] of Object.entries(GAMES)) {
       now[g] = {};
       for (const d of DAYS) {
-        if (g === "voyage" && d >= 17) continue; // Voyage retires on No. 17
+        if (g === "voyage" && d >= 14) continue; // Voyage retired on No. 14
         await p.goto(`${U}${file}?t=${d}#day-${d}`, { waitUntil: "domcontentloaded" });
         await p.waitForFunction((g) => (g === "city" || g === "country" ? window.__lf : g.startsWith("bigger") ? window.__big : window[{ voyage: "__voy", fathoms: "__fath", stamps: "__stamp", crossings: "__cross" }[g]]), g);
         now[g][d] = await p.evaluate(PUZZLE[g]);
@@ -182,7 +186,7 @@ async function page(b, url, opts = {}) {
     if (UPDATE || !fs.existsSync(GOLDEN)) { fs.writeFileSync(GOLDEN, JSON.stringify(now, null, 1)); console.log("golden.json written"); }
     else {
       const gold = JSON.parse(fs.readFileSync(GOLDEN, "utf8"));
-      for (const g of Object.keys(GAMES)) for (const d of DAYS.filter((d) => g !== "voyage" || d < 17))
+      for (const g of Object.keys(GAMES)) for (const d of DAYS.filter((d) => g !== "voyage" || d < 14))
         check(gold[g] && gold[g][d] === now[g][d], `schedule unchanged: ${g} No. ${d}`);
     }
 

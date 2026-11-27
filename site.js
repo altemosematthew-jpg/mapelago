@@ -100,11 +100,11 @@
     { id: "city", name: "Mystery", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city, or switch to today's country." },
     { id: "country", parent: "city", name: "Mystery (Country)", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "Mystery's Country mode: the same, with a country to find." },
     { id: "daily", name: "Daily Voyage", key: "dailycity:dailyvoyage:v1", url: "daily.html", icon: "\u2693", about: "Four stops from the best games, one score out of 100." },
-    // Bigger? (from No. 17) is Bigger city? and Bigger country? as one game: it saves where Bigger city? did, and Bigger
+    // Bigger? (from No. 14) is Bigger city? and Bigger country? as one game: it saves where Bigger city? did, and Bigger
     // country?'s days count toward its streak and stats. The old pages still play Nos. 1 to 16.
-    { id: "bigger", name: "Bigger?", key: "dailycity:bigger:v1", url: "bigger.html", pages: ["bigger-city.html"], icon: "\u{1F465}", about: "Ten pairs, cities and countries in turn: tap the bigger one." },
+    { id: "bigger", name: "Bigger?", key: "dailycity:bigger:v1", url: "bigger.html", pages: ["bigger-city.html"], doneIf: function (r) { return !!(r && r.bq); }, /* done today only when Bigger? itself was played */ icon: "\u{1F465}", about: "Ten pairs, cities and countries in turn: tap the bigger one." },
     { id: "bigcountry", parent: "bigger", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
-    // Voyage retires on No. 17: its best question is a Daily Voyage stop, and its days count toward the Daily Voyage streak
+    // Voyage retired on No. 14: its best question is a Daily Voyage stop, and its days count toward the Daily Voyage streak
     { id: "voyage", parent: "daily", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
     { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html", icon: "\u{1F30A}", about: "Name the least obvious right answer." },
     { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." },
@@ -146,7 +146,7 @@
       var res = results(g), kids = GAMES.filter(function (k) { return k.parent === g.id; });
       if (kids.length) { var all = {}; kids.forEach(function (k) { var r = results(k); Object.keys(r).forEach(function (d) { if (r[d]) all[d] = r[d]; }); }); Object.keys(res).forEach(function (d) { if (res[d]) all[d] = res[d]; }); res = all; }
       var s = streak(res, now);
-      s.game = g; s.doneToday = !!res[now]; s.res = res;
+      s.game = g; s.doneToday = !!res[now] && (!g.doneIf || g.doneIf(results(g)[now])); s.res = res;
       return s;
     });
   }

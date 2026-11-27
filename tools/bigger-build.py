@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds bigger.html (Bigger?, from No. 17) from Fathoms' head and the shared look. Run after a version bump;
+"""Builds bigger.html (Bigger?, from No. 14) from Fathoms' head and the shared look. Run after a version bump;
 tools/ink-link.py and review/teachers-menu-patch.py run after it (bump.sh does both)."""
 import os, re
 R = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -56,8 +56,8 @@ BODY = """
     <button class="act" id="next" type="button" hidden>Next pair</button>
   </section>
   <section id="before" class="panel" hidden>
-    <h2>One game from Episode 17</h2>
-    <p>Bigger city? and Bigger country? become one game, Bigger?, on Episode 17. Until then, today's pairs are on their own pages.</p>
+    <h2>Before the merge</h2>
+    <p>Bigger city? and Bigger country? became one game, Bigger?, on Episode 14. Earlier episodes are on their own pages.</p>
     <div class="row2"><a class="act" href="bigger-city.html">Bigger city?</a><a class="act" href="bigger-country.html">Bigger country?</a></div>
   </section>
   <section id="done" hidden>

@@ -72,7 +72,7 @@ const GAMES = [
       await far(0); await p.waitForTimeout(1300); await m("after a miss"); await far(10); await p.waitForTimeout(1300); await m("after two misses");
       await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2500); await m("finish", ["#endTitle", "#endBody .place", "#endBody .score", "#endBody .row2", "#endBody .also", ".mx-daily"]);
     } },
-  { id: "voyage", name: "Voyage (until No. 16)", page: "voyage.html", at: "2026-11-27T12:00:00", strict: true, first: "#opts button", read: ".lede, .note", ready: "!!window.__voy",
+  { id: "voyage", name: "Voyage (to No. 13)", page: "voyage.html", at: "2026-11-26T12:00:00", strict: true, first: "#opts button", read: ".lede, .note", ready: "!!window.__voy",
     states: async (p, m) => {
       const pick = (right) => p.evaluate((right) => { const S = __voy.S(), q = S.qs[S.g.at], want = q.options[q.answer]; const b = [...document.querySelectorAll("#opts button")].find((x) => (x.textContent.trim() === want) === right); b.click(); }, right);
       await pick(true); await p.waitForTimeout(1200); await m("after an answer");
