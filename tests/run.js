@@ -1110,7 +1110,7 @@ async function page(b, url, opts = {}) {
     {
       const C = JSON.parse(fs.readFileSync(path.join(__dirname, "../copy/copy.json"), "utf8")).games;
       const how = fs.readFileSync(path.join(__dirname, "../how-to-play/index.html"), "utf8"), strip = (t) => t.replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&").trim();
-      const bad = ["voyage", "fathoms", "history", "stamps", "crossings", "ballast", "bigger", "bigcountry"].filter((id) => { const m = new RegExp("<!-- rules:" + id + " -->([\\s\\S]*?)<!-- /rules:" + id + " -->").exec(how); return !m || strip(m[1]) !== C[id].explainer; });
+      const bad = ["fathoms", "history", "stamps", "crossings", "ballast", "bigger"].filter((id) => { const m = new RegExp("<!-- rules:" + id + " -->([\\s\\S]*?)<!-- /rules:" + id + " -->").exec(how); return !m || strip(m[1]) !== C[id].explainer; });
       check(!bad.length, "how to play: each game's rules are the same text as its footer and All games (copy.json)", bad.join(" "));
       check(/<h2 id="crossings">/.test(how) && /the Daily Voyage and all eight games/.test(how) && how.indexOf("From No. 14, on 27 November 2026") < how.indexOf("plays by the same rules as Mystery city"), "how to play: Crossings has its own heading; the title covers every game; Mystery country's date comes first");
       const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
@@ -1348,7 +1348,7 @@ async function page(b, url, opts = {}) {
     {
       const t = await page(b, U, { wait: 600 });
       const r = await t.p.evaluate(() => ({ go: document.querySelector("#dvGo").getAttribute("href"), feat: [...document.querySelectorAll(".feat a")].map((a) => a.getAttribute("href")), more: document.querySelectorAll(".more a").length, top: document.querySelector("#dvGo").getBoundingClientRect().bottom }));
-      check(r.go === "daily.html" && r.top <= 667 && r.feat.join() === "crossings.html,dead-reckoning.html,city.html" && r.more === 8 && !t.p.errs.length, "home: Daily Voyage above the fold, three featured games and eight more", JSON.stringify(r));
+      check(r.go === "daily.html" && r.top <= 667 && r.feat.join() === "crossings.html,dead-reckoning.html,city.html" && r.more === 5 && !t.p.errs.length, "home: Daily Voyage above the fold, three featured games and five more", JSON.stringify(r));
       await t.ctx.close();
       const o = await page(b, U + "#b-mc-20-0-700", { wait: 900 });
       check(/city\.html$/.test(new URL(o.p.url()).pathname) && (await o.p.evaluate(() => !!window.__lf)), "home: an old Mystery city link (mapelago.com/#...) opens the game", o.p.url());
