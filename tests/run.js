@@ -1075,7 +1075,7 @@ async function page(b, url, opts = {}) {
         await f.p.click("#fpass"); await f.p.waitForTimeout(300);
         const list = await f.p.evaluate(() => ({ vis: document.querySelector("#allAns").getBoundingClientRect().height > 40, head: (document.querySelector("#allAns .allhead") || {}).textContent, rows: document.querySelectorAll("#allAns li:not(.allhead)").length, why: [...document.querySelectorAll("#allAns small")].map((x) => x.textContent), depth: [...document.querySelectorAll("#allAns li:not(.allhead) b")].map((x) => Number(x.textContent.replace(/,/g, ""))) }));
         check(list.vis && /deepest first/.test(list.head) && list.rows === first && list.depth.every((x, i) => !i || x <= list.depth[i - 1]), "fathoms: after a prompt every right answer is listed, deepest first", JSON.stringify([list.rows, first]));
-        check(list.why.length === first && list.why.every((w) => /largest city about [\d.,]+( million)?$|no city big enough/.test(w)), "fathoms: each answer says why it is that deep", list.why.slice(0, 3).join(" | "));
+        check(list.why.length === first && list.why.every((w) => /^placed by the size of its largest city$|^one of the ten smallest countries: halfway down$/.test(w)), "fathoms: each answer says why it is that deep", list.why.slice(0, 3).join(" | "));
         const t = await f.p.evaluate(() => [__fath.the("Name a country that borders Democratic Republic of the Congo."), __fath.the("Name a country that covers more land than United Kingdom."), __fath.the("Name a country that borders Chad."), __fath.cap("SM")]);
         check(t[0] === "Name a country that borders the Democratic Republic of the Congo." && / than the United Kingdom\./.test(t[1]) && t[2] === "Name a country that borders Chad." && t[3] === "San Marino", "fathoms: 'borders the Democratic Republic of the Congo'; San Marino's capital is San Marino", JSON.stringify(t));
         await f.ctx.close();
@@ -1371,10 +1371,10 @@ async function page(b, url, opts = {}) {
     }
     // ---- every result card: personal best and "beat yesterday", from the game's own saves
     {
-      const { ctx, p } = await page(b, U + "crossings.html#day-20", { storage: { "dailycity:crossings:v1": JSON.stringify({ results: { 18: { score: 900 }, 19: { score: 400 } } }) }, wait: 800 });
+      const { ctx, p } = await page(b, U + "crossings.html#day-20", { storage: { "dailycity:crossings:v1": JSON.stringify({ results: { 18: { score: 900 }, 19: { score: 100 } } }) }, wait: 800 });
       await p.evaluate(() => { for (let i = 0; i < 12 && !__cross.G().over; i++) __cross.hint(); }); await p.waitForTimeout(1500);
       const t = await p.evaluate(() => document.querySelector(".mx-daily").textContent);
-      check(/Your best: 900 points\. Beat yesterday's 400 points\./.test(t), "result card: personal best and beat yesterday", t);
+      check(/Your best: 900 points\. Beat yesterday's 100 points\./.test(t), "result card: personal best and beat yesterday", t);
       await ctx.close();
     }
     // ---- Fathoms practice: seven random prompts, nothing saved
@@ -1387,7 +1387,7 @@ async function page(b, url, opts = {}) {
     }
     // ---- J: a small answer map after a reveal (Stamps, Voyage, Fathoms, Logbook) and for the pair in Bigger city?
     {
-      const t = await page(b, U + "fathoms.html#day-20", { wait: 700 });
+      const t = await page(b, U + "fathoms.html#day-23", { wait: 700 });
       const before = await t.p.evaluate(() => !!document.querySelector("canvas.mx-mini:not([hidden])"));
       await t.p.click("#fpass"); await t.p.waitForTimeout(1200);
       const after = await t.p.evaluate(() => { const c = document.querySelector("canvas.mx-mini:not([hidden])"); if (!c) return null; const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let acc = 0; for (let i = 0; i < d.length; i += 4) if ((d[i] > 150 && d[i + 1] < 80 && d[i + 2] > 90) || (d[i] > 140 && d[i + 1] < 90 && d[i + 2] < 70)) acc++; /* magenta, or rust in Ink & Lantern */ return [c.getAttribute("aria-label"), acc > 20]; });

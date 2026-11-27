@@ -116,26 +116,42 @@
   var LINE_FROM = 16, lineMemo = {};
   function longSide(cc) { var s = byCC[cc]; return Math.sqrt(s.a * longness(s)); }
   function tallest(lv) { return lv.list.reduce(function (t, cc) { return Math.max(t, longSide(cc)); }, 0); }
+  // Swapping pieces can make a set of countries another day already had, so from No. 16 the days are worked through in
+  // order (as for the variants) and a repeated set has one more piece swapped until it is new, or failing that the
+  // level takes its next variant.
+  var setUsed = {}, setAt = 0, setKey = function (l) { return l.slice().sort().join(""); };
   function dailyLevel(day, n) {
     var key = day + ":" + n; if (lineMemo[key]) return lineMemo[key];
-    var lv = genLevel(day, n, 0, dailyVariant(day, n)), a = arc(day), af = a ? 1 + (1 - a.f) * 0.2 : 1;
+    if (day < LINE_FROM || n > NRL) return buildLevel(day, n);
+    for (; setAt < day;) { setAt++; for (var l = 1; l <= NRL; l++) { var v0 = dailyVariant(setAt, l), lv = buildLevel(setAt, l, v0); for (var vv = 1; setAt >= LINE_FROM && vv < 60 && setUsed[setKey(lv.list)]; vv++) lv = buildLevel(setAt, l, v0 + vv); if (setAt >= LINE_FROM) lineMemo[setAt + ":" + l] = lv; setUsed[setKey(lv.list)] = 1; } }
+    return lineMemo[key];
+  }
+  function buildLevel(day, n, variant) {
+    var lv = genLevel(day, n, 0, variant === undefined ? dailyVariant(day, n) : variant), a = arc(day), af = a ? 1 + (1 - a.f) * 0.2 : 1;
     if (day < LINE_FROM) { lv.lineKm = Math.round(lv.lineKm * af); if (a) lv.arc = a; return lv; }
     if (a) lv.arc = a;
     var share = 0.27 * 0.89 * Math.pow(1.07, n - 1); share = Math.min(0.6, share);
     var reg = function (s) { return lv.region === "World" ? true : (day >= 17 ? region2(s) : regionOf(s)) === lv.region; };
     var line = function () { var e = 0; lv.list.forEach(function (cc) { e += Math.sqrt(byCC[cc].a); }); return Math.round(e * share * af); };
-    var target = lv.lineKm = line();
+    var target = lv.lineKm = line(), raised = 0;
+    var fits = function (w) { return SHAPES.filter(function (s) { return s.a >= 15000 && (n < 2 || longSide(s.cc) * 1.1 <= target) && lv.list.indexOf(s.cc) < 0 && reg(s); })
+      .sort(function (x, y) { return Math.abs(Math.log(x.a / w.a)) - Math.abs(Math.log(y.a / w.a)); }); };
     for (var k = 0; n >= 2 && k < 12 && tallest(lv) * 1.1 > target; k++) {
-      var worst = lv.list.reduce(function (m, cc) { return longSide(cc) > longSide(m) ? cc : m; }, lv.list[0]), w = byCC[worst];
-      var alt = SHAPES.filter(function (s) { return s.a >= 15000 && longSide(s.cc) * 1.1 <= target && lv.list.indexOf(s.cc) < 0 && reg(s); })
-        .sort(function (x, y) { return Math.abs(Math.log(x.a / w.a)) - Math.abs(Math.log(y.a / w.a)); })[0];
-      if (!alt) { lv.lineKm = Math.round(tallest(lv) * 1.05); return (lineMemo[key] = lv); }
+      var worst = lv.list.reduce(function (m, cc) { return longSide(cc) > longSide(m) ? cc : m; }, lv.list[0]), alt = fits(byCC[worst])[0];
+      if (!alt) { raised = Math.round(tallest(lv) * 1.05); break; }
       lv.list[lv.list.indexOf(worst)] = alt.cc;
     }
+    // a set another day already had: swap one more piece (the last first) for the nearest in size that makes it new
+    for (var p = lv.list.length - 1; p >= 1 && setUsed[setKey(lv.list)]; p--) {
+      var was = lv.list[p], c = fits(byCC[was]);
+      for (var q = 0; q < c.length; q++) { lv.list[p] = c[q].cc; if (!setUsed[setKey(lv.list)]) break; }
+      if (setUsed[setKey(lv.list)]) lv.list[p] = was;
+    }
+    if (raised) { lv.lineKm = Math.max(raised, Math.round(tallest(lv) * 1.05)); return lv; }
     // the line never asks more than 60% of the cargo's total size
     var est = 0; lv.list.forEach(function (cc) { est += Math.sqrt(byCC[cc].a); });
     lv.lineKm = Math.min(target, Math.round(est * 0.6 * af));
-    return (lineMemo[key] = lv);
+    return lv;
   }
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [

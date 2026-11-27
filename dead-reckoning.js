@@ -50,9 +50,9 @@
   function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   var sched = [null], last = {}, NR = 17;
   // From No. 16 (scorecard 3): later in the week the cities come from less-known tiers (1 best known, 5 least known),
-  // round by round. Monday to Wednesday keep one tier a round. Some tiers now come up twice a day, so a place rests 70
-  // days (it was nearly its whole pool's length, which two draws a day would exhaust).
-  var HARD_FROM = 16, TIERS = [[2, 3, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 3, 3, 4, 5], [2, 3, 4, 4, 5], [3, 4, 4, 5, 5]];
+  // round by round. Monday to Wednesday keep one tier a round. A place rests 75 days (two draws a
+  // day from one tier would exhaust the old whole-pool rest); the least-known tier comes up seven times a week, so its 83 places last.
+  var HARD_FROM = 16, TIERS = [[2, 3, 3, 4, 4], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 3, 3, 4, 5], [2, 3, 4, 4, 5], [3, 4, 4, 5, 5]];
   function daily(n) {
     while (sched.length <= n) {
       var d = sched.length, r = rng(d * 7919 + 104729), m = (MYST[d - 1] || "|").split("|"), used = {}, pick = [];
@@ -78,7 +78,7 @@
         for (var pass = 0; pass < 2 && chosen < 0; pass++)
           for (var j = 0; j < L; j++) {
             var p = P[pool[(k + j) % L]];
-            if (last[p.i] !== undefined && d - last[p.i] <= (d >= HARD_FROM ? GAP + 10 : d >= NR ? Math.max(GAP, L - 8) : GAP)) continue; // from No. 17 a place rests until nearly the whole of its pool has had a turn
+            if (last[p.i] !== undefined && d - last[p.i] <= (d >= HARD_FROM ? GAP + 15 : d >= NR ? Math.max(GAP, L - 8) : GAP)) continue; // from No. 17 a place rests until nearly the whole of its pool has had a turn
             if (pass === 0 && (used[p.country] || p.country === m[1] || p.name === m[0])) continue;
             chosen = p.i; break;
           }
