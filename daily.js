@@ -42,8 +42,16 @@
     cross = { a: A, b: B, links: links, opts: opts };
   }
   LEGS.push({ kind: "cross", name: "Crossing", cross: cross, ask: "Which country lies between " + the(cross.a.name) + " and " + the(cross.b.name) + "?" });
-  // 4. rotating: a Fathoms prompt on odd days, a Logbook pair on even days
-  if (N % 2) {
+  // 4. rotating: a Fathoms prompt on odd days, a Logbook pair on even days; from No. 17 three in turn, the third being
+  //    Voyage's best question (Voyage itself retires): which city is at the mark?
+  var ROT = N >= 17 ? ["deep", "first", "mark"][N % 3] : N % 2 ? "deep" : "first";
+  if (ROT === "mark") {
+    var cities = D.P.filter(function (p) { return p[4] === "city"; }), at = pick(cities), near = [];
+    var far = cities.filter(function (p) { var d = km([p[2], p[3]], [at[2], at[3]]); return d > 1500 && d < 7000 && p[1] !== at[1]; });
+    while (near.length < 3 && far.length) { var c3 = far.splice(Math.floor(r() * far.length), 1)[0]; if (near.every(function (x) { return km([x[2], x[3]], [c3[2], c3[3]]) > 800; })) near.push(c3); }
+    var mopts = [at].concat(near); for (var mi = 3; mi > 0; mi--) { var mj = Math.floor(r() * (mi + 1)), mt = mopts[mi]; mopts[mi] = mopts[mj]; mopts[mj] = mt; }
+    LEGS.push({ kind: "mark", name: "Voyage", ask: "Which city is at the mark?", at: at, opts: mopts });
+  } else if (ROT === "deep") {
     var fam = pick(D.FAM), ans = fam[1].filter(function (c) { return byCC[c]; }).sort(function (x, y) { return byCC[y].fame - byCC[x].fame; });
     LEGS.push({ kind: "deep", name: "Fathoms", ask: fam[0], answers: ans });
   } else {
@@ -89,6 +97,7 @@
     var dot = function (p, c) { var s = P(p[0], p[1]); g.beginPath(); g.arc(s[0], s[1], 6, 0, 6.2832); g.fillStyle = c; g.fill(); g.lineWidth = 2; g.strokeStyle = col("--ink", "#000"); g.stroke(); return s; };
     if (pin && ans) { var s1 = P(pin[0], pin[1]), s2 = P(ans[0], ans[1]); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(s1[0], s1[1]); g.lineTo(s2[0], s2[1]); g.strokeStyle = col("--ink", "#000"); g.stroke(); g.setLineDash([]); }
     if (pin) dot(pin, col("--accent", "#b4237d")); if (ans) dot(ans, "#1a7f37");
+    if (cv.mxMark) { var mk = P(cv.mxMark[0], cv.mxMark[1]); g.lineWidth = 3; g.strokeStyle = col("--accent", "#b4237d"); g.beginPath(); g.arc(mk[0], mk[1], 9, 0, 6.2832); g.stroke(); g.beginPath(); g.moveTo(mk[0] - 14, mk[1]); g.lineTo(mk[0] - 5, mk[1]); g.moveTo(mk[0] + 5, mk[1]); g.lineTo(mk[0] + 14, mk[1]); g.moveTo(mk[0], mk[1] - 14); g.lineTo(mk[0], mk[1] - 5); g.moveTo(mk[0], mk[1] + 5); g.lineTo(mk[0], mk[1] + 14); g.stroke(); }
     cv.mxP = function (x, y) { return [82 - y / h * 140, x / w * 360 - 180]; };
   }
 
@@ -121,6 +130,14 @@
         if (ok) { bt.classList.add("right"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; }); finishLeg(G.tries ? 12 : 25, "Right: " + the(byCC[bt.dataset.cc].name) + " borders both."); box.onclick = null; }
         else if (!G.tries) { bt.classList.add("wrong"); G.tries = 1; say(the(byCC[bt.dataset.cc].name) + " doesn't border both. One more try."); }
         else { bt.classList.add("wrong"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; if (L.cross.links.indexOf(o.dataset.cc) >= 0) o.classList.add("right"); }); finishLeg(0, "It was " + the(byCC[L.cross.links[0]].name) + "."); box.onclick = null; } };
+    } else if (L.kind === "mark") {
+      box.innerHTML = '<canvas id="pinmap" role="img" aria-label="A world map with one city marked"></canvas>' + L.opts.map(function (p, i) { return '<button class="opt" data-i="' + i + '">' + p[0] + ", " + p[1] + "</button>"; }).join("");
+      var mcv = $("#pinmap"); mcv.mxMark = [L.at[2], L.at[3]]; var mgo = function () { drawMap(mcv); };
+      if (window.__WORLD) mgo(); else { var ms = document.createElement("script"); ms.src = document.querySelector('script[src*="daily.js"]').src.replace("daily.js", "world-lite.js"); ms.onload = mgo; document.head.appendChild(ms); mgo(); }
+      box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy || bt.disabled) return; var p = L.opts[+bt.dataset.i], ok = p === L.at; bt.disabled = true;
+        if (ok) { bt.classList.add("right"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; }); finishLeg(G.tries ? 12 : 25, "Right: that's " + L.at[0] + "."); box.onclick = null; }
+        else if (!G.tries) { bt.classList.add("wrong"); G.tries = 1; say("Not " + p[0] + ". One more try."); }
+        else { bt.classList.add("wrong"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; if (L.opts[+o.dataset.i] === L.at) o.classList.add("right"); }); finishLeg(0, "It was " + L.at[0] + ", " + L.at[1] + "."); box.onclick = null; } };
     } else if (L.kind === "deep") {
       box.innerHTML = '<input id="din" list="dlist" autocomplete="off" placeholder="Type a country"><datalist id="dlist">' + D.C.map(function (c) { return "<option value=\"" + c[1] + "\">"; }).join("") + '</datalist><button class="act" id="dgo">Answer</button>';
       var go2 = function () { if (busy) return; var v = $("#din").value.trim().toLowerCase(), c = D.C.filter(function (x) { return x[1].toLowerCase() === v; })[0]; if (!c) { say("Pick a country from the list."); return; }
@@ -141,13 +158,14 @@
   function shareText() { var res = save.results[N]; return "Mapelago Daily Voyage No. " + N + " \u{1F422} " + res.score + " of 100\n" + res.pts.map(mark).join("") + "\nFour stops, one voyage. mapelago.com/daily.html"; }
   function done() {
     if (!save.results[N]) { save.results[N] = { score: total(), pts: G.pts.slice() }; delete save.game; store(); ping("done"); }
-    var res = save.results[N], st = window.MXS ? MXS.streak(save.results, N) : { cur: 1, best: 1 };
+    // one streak with the retired Voyage's days in it (site.js counts them for the Daily Voyage)
+    var res = save.results[N], mine = window.MXS && MXS.info ? MXS.info().filter(function (x) { return x.game.id === "daily"; })[0] : null, st = mine || (window.MXS ? MXS.streak(save.results, N) : { cur: 1, best: 1 });
     $("#play").hidden = true; $("#done").hidden = false; chart();
     $("#big").textContent = res.score; $("#grid").textContent = res.pts.map(mark).join(" ");
     $("#legs").innerHTML = res.pts.map(function (p, i) { return "<li>" + LEGS[i].name + ": " + p + " of 25</li>"; }).join("");
     $("#shareText").textContent = shareText();
     var best = Math.max.apply(null, Object.keys(save.results).map(function (k) { return save.results[k].score; })), y = save.results[N - 1];
-    $("#streak").textContent = "Voyage streak: " + st.cur + (st.cur === 1 ? " day" : " days") + ". Your best: " + best + "." + (y ? (res.score > y.score ? " Beat yesterday's " + y.score + "." : " Yesterday: " + y.score + ".") : "") + (window.MXS && MXS.untilNext ? " Next voyage in " + MXS.untilNext() + "." : "");
+    $("#streak").textContent = "Daily Voyage streak: " + st.cur + (st.cur === 1 ? " day" : " days") + ". Your best: " + best + "." + (y ? (res.score > y.score ? " Beat yesterday's " + y.score + "." : " Yesterday: " + y.score + ".") : "") + (window.MXS && MXS.untilNext ? " Next voyage in " + MXS.untilNext() + "." : "");
   }
   $("#imgBtn").onclick = function () { if (window.MXS && MXS.shareCard) MXS.shareCard(); };
   $("#shareBtn").onclick = function () { var t = shareText(); if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { say("Copied."); $("#shareBtn").textContent = "Copied"; }, function () {}); };

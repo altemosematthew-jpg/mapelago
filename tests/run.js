@@ -112,12 +112,35 @@ async function page(b, url, opts = {}) {
       }
     }
 
+    // 1f. Voyage retires on No. 17: its best question is a Daily Voyage stop, its days count for the Daily Voyage streak
+    {
+      const kinds = {};
+      for (const d of [15, 16, 18, 19, 20]) { const t = await page(b, U + "daily.html?k=" + d + "#day-" + d, { wait: 300 }); kinds[d] = await t.p.evaluate(() => __dv.LEGS[3].kind); await t.ctx.close(); }
+      check(JSON.stringify(kinds) === '{"15":"deep","16":"first","18":"deep","19":"first","20":"mark"}', "daily voyage: stop 4 keeps its rule to No. 16, then Fathoms, Logbook and Voyage's city at the mark in turn", JSON.stringify(kinds));
+      const { ctx, p } = await page(b, U + "daily.html#day-20", { storage: { "dailycity:dailyvoyage:v1": JSON.stringify({ results: {}, game: { n: 20, at: 3, pts: [25, 25, 25], tries: 0 } }) }, wait: 900 });
+      const m = await p.evaluate(() => { const L = __dv.LEGS[3]; return { ask: document.querySelector("#ask").textContent, n: document.querySelectorAll("#leg .opt").length, right: L.opts.indexOf(L.at), mark: !!document.querySelector("#pinmap").mxMark }; });
+      await p.click(`#leg .opt[data-i="${m.right}"]`); await p.waitForTimeout(200);
+      const after = await p.evaluate(() => __dv.G().pts);
+      check(m.ask === "Which city is at the mark?" && m.n === 4 && m.mark && JSON.stringify(after) === "[25,25,25,25]", "daily voyage: the Voyage stop marks a city on the map, four choices, 25 for the right one first time", JSON.stringify([m, after]));
+      check(!p.errs.length, "daily voyage: no errors", p.errs.join("; "));
+      await ctx.close();
+      const st = { "dailycity:voyage:v1": JSON.stringify({ results: { 14: { score: 300 }, 15: { score: 400 }, 16: { score: 500 } } }) };
+      const red = await page(b, U + "voyage.html", { storage: st, clock: new Date("2026-11-30T12:00:00"), wait: 900 });
+      const r = await red.p.evaluate(() => ({ url: location.pathname, info: MXS.info().map((s) => [s.game.id, s.cur, s.played]) }));
+      check(r.url === "/daily.html" && !r.info.some((x) => x[0] === "voyage") && JSON.stringify(r.info.find((x) => x[0] === "daily")) === '["daily",3,3]', "voyage: from No. 17 it opens the Daily Voyage, and its days carry the streak there (Nos. 14 to 16, today still open)", JSON.stringify(r));
+      await red.ctx.close();
+      const old = await page(b, U + "voyage.html#day-14", { clock: new Date("2026-11-30T12:00:00"), wait: 900 });
+      check(/voyage\.html$/.test(old.p.url().split("#")[0]) && (await old.p.evaluate(() => !!window.__voy)), "voyage: a link to an earlier number still opens Voyage");
+      await old.ctx.close();
+    }
+
     // 2. the daily schedule never changes by accident
     const now = {};
     const ctx = await b.newContext(PHONE); const p = await ctx.newPage();
     for (const [g, file] of Object.entries(GAMES)) {
       now[g] = {};
       for (const d of DAYS) {
+        if (g === "voyage" && d >= 17) continue; // Voyage retires on No. 17
         await p.goto(`${U}${file}?t=${d}#day-${d}`, { waitUntil: "domcontentloaded" });
         await p.waitForFunction((g) => (g === "city" || g === "country" ? window.__lf : g.startsWith("bigger") ? window.__big : window[{ voyage: "__voy", fathoms: "__fath", stamps: "__stamp", crossings: "__cross" }[g]]), g);
         now[g][d] = await p.evaluate(PUZZLE[g]);
@@ -130,7 +153,7 @@ async function page(b, url, opts = {}) {
     if (UPDATE || !fs.existsSync(GOLDEN)) { fs.writeFileSync(GOLDEN, JSON.stringify(now, null, 1)); console.log("golden.json written"); }
     else {
       const gold = JSON.parse(fs.readFileSync(GOLDEN, "utf8"));
-      for (const g of Object.keys(GAMES)) for (const d of DAYS)
+      for (const g of Object.keys(GAMES)) for (const d of DAYS.filter((d) => g !== "voyage" || d < 17))
         check(gold[g] && gold[g][d] === now[g][d], `schedule unchanged: ${g} No. ${d}`);
     }
 
@@ -273,7 +296,7 @@ async function page(b, url, opts = {}) {
       check(/Each move costs 6 points/.test(t) && !/costs 8 points/.test(t), "hints page: city moves cost 6");
       await ctx.close();
       const ab = fs.readFileSync(path.join(__dirname, "../about/index.html"), "utf8");
-      check(!/One mystery city a day/.test(ab) && ["Mystery city", "Mystery country", "Bigger city?", "Bigger country?", "Voyage", "Fathoms", "Stamps", "Crossings", "Logbook", "Dead Reckoning", "Ballast"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /Eleven games a day/.test(ab), "about page: names all eleven daily games");
+      check(!/One mystery city a day/.test(ab) && ["Daily Voyage", "Mystery", "Bigger?", "Fathoms", "Stamps", "Crossings", "Logbook", "Dead Reckoning", "Ballast"].every((g) => (/<p class="lede">(.*?)<\/p>/.exec(ab) || ["", ""])[1].includes(g)) && /eight games a day/.test(ab), "about page: names the Daily Voyage and all eight games");
     }
     // ---- end mx-country-rules ----
 
@@ -482,7 +505,7 @@ async function page(b, url, opts = {}) {
         await ctx.close();
       }
       const t = fs.readFileSync(path.join(__dirname, "../teachers/index.html"), "utf8").replace(/<[^>]+>/g, " ");
-      check(["no accounts", "no ads", "no cookies", "Nothing to install", "same puzzles", "projector", "student devices", "offline", "Bigger country?", "Crossings", "Logbook", "Scale", "Borders", "Capitals", "History", "Place"].every((w) => t.includes(w)), "teachers page says what it promised");
+      check(["no accounts", "no ads", "no cookies", "Nothing to install", "same puzzles", "projector", "student devices", "offline", "Bigger?", "Daily Voyage", "Crossings", "Logbook", "Scale", "Borders", "Capitals", "History", "Place"].every((w) => t.includes(w)), "teachers page says what it promised");
       const pages = ["index.html", "country.html", "bigger.html", "bigger-city.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "hints.html", "offline.html", "about/index.html", "privacy/index.html", "how-to-play/index.html", "games/index.html", "teachers/index.html"];
       const missing = pages.filter((f) => { const s = fs.readFileSync(path.join(__dirname, "..", f), "utf8"); return (s.match(/href="(?:\.\.?\/)?teachers\/"[^>]*>For teachers<\/a>/g) || []).length !== 1; });
       check(!missing.length, "every page's menu has For teachers, once", missing.join());
@@ -1017,7 +1040,7 @@ async function page(b, url, opts = {}) {
       const ok = (m.shortcuts || []).every((x) => fs.existsSync(path.join(__dirname, "..", x.url === "./" ? "index.html" : x.url.endsWith("/") ? x.url + "index.html" : x.url)));
       check(ok && m.shortcuts.length >= 3, "manifest: shortcuts point at real pages");
       const home = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
-      check(/Eleven free daily geography games[^"]*Dead Reckoning/.test(home), "home page search data lists all eleven games");
+      check(/Eight free daily geography games[^"]*Dead Reckoning[^"]*Daily Voyage/.test(home), "home page search data lists the eight games and the Daily Voyage");
     }
 
     // 23. Crossings speaks in countries: par is the countries between, and the result shows one shortest route
@@ -1041,7 +1064,7 @@ async function page(b, url, opts = {}) {
       await p.evaluate(() => { const X = __cross, P = X.P(); let x = P.from; while (X.dist[x][P.to] > 1) { x = X.C.map((_, i) => i).find((n) => X.dist[x][n] === 1 && X.dist[n][P.to] === X.dist[x][P.to] - 1); X.guess(x); } });
       await p.waitForTimeout(400);
       const btn = await p.evaluate(() => { const a = document.querySelector("#done .row2 a.act.plain"); return [a.getAttribute("href"), a.textContent]; });
-      check(btn[0] === "voyage.html" && btn[1] === "Play Voyage next", "next game: skips the games already played today", JSON.stringify(btn));
+      check(btn[0] === "daily.html" && btn[1] === "Play Daily Voyage next", "next game: skips the games already played today", JSON.stringify(btn));
       check(/^Mapelago release \d+\.\d+\.\d+$/.test(await p.textContent(".mx-ver")), "the footer names the release");
       await ctx.close();
       // with every other game done and this one not, it doesn't say everything is done
@@ -1089,7 +1112,7 @@ async function page(b, url, opts = {}) {
       const how = fs.readFileSync(path.join(__dirname, "../how-to-play/index.html"), "utf8"), strip = (t) => t.replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&").trim();
       const bad = ["voyage", "fathoms", "history", "stamps", "crossings", "ballast", "bigger", "bigcountry"].filter((id) => { const m = new RegExp("<!-- rules:" + id + " -->([\\s\\S]*?)<!-- /rules:" + id + " -->").exec(how); return !m || strip(m[1]) !== C[id].explainer; });
       check(!bad.length, "how to play: each game's rules are the same text as its footer and All games (copy.json)", bad.join(" "));
-      check(/<h2 id="crossings">/.test(how) && /rules of all eleven daily games/.test(how) && how.indexOf("From No. 14, on 27 November 2026") < how.indexOf("plays by the same rules as Mystery city"), "how to play: Crossings has its own heading; the title covers every game; Mystery country's date comes first");
+      check(/<h2 id="crossings">/.test(how) && /the Daily Voyage and all eight games/.test(how) && how.indexOf("From No. 14, on 27 November 2026") < how.indexOf("plays by the same rules as Mystery city"), "how to play: Crossings has its own heading; the title covers every game; Mystery country's date comes first");
       const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
       await p.waitForFunction(() => window.__WORLD);
       const s0 = await p.textContent("#score");
@@ -1174,7 +1197,7 @@ async function page(b, url, opts = {}) {
       const v11 = await rd();
       await p.goto(U + "voyage.html?n=12#day-12"); await p.waitForTimeout(600); const v12 = await rd();
       await p.goto(U + "voyage.html?n=13#day-13"); await p.waitForTimeout(600);
-      const v13 = await p.evaluate(() => ({ choice: !document.querySelector("#choice").hidden, pts: document.querySelector("#vPoints").textContent, streak: MXS.info().find((s) => s.game.id === "voyage").cur }));
+      const v13 = await p.evaluate(() => ({ choice: !document.querySelector("#choice").hidden, pts: document.querySelector("#vPoints").textContent, streak: MXS.info().find((s) => s.game.id === "daily").cur /* Voyage's days count for the Daily Voyage */ }));
       check(v11.done && v11.pts === "150" && v11.title === "Anchored after island 3." && v12.pts === "150" && v12.title === "Wrecked at island 5." && v13.choice && v13.pts === "100" && v13.streak === 2,
         `vx: ${v} save: Voyage results, streak and the round in progress load unchanged`, JSON.stringify([v11, v12, v13]));
       await p.goto(U + "stamps.html?n=11#day-11"); await p.waitForTimeout(600);
@@ -1239,7 +1262,7 @@ async function page(b, url, opts = {}) {
     }
     // ---- sourced areas: in use from No. 17, never before; pairs within 2%, or that could flip under another definition, are never compared
     {
-      for (const f of ["fathoms.html", "stamps.html", "voyage.html", "country.html"]) {
+      for (const f of ["fathoms.html", "stamps.html", "country.html"]) {
         const a = await page(b, U + f + "?a=16#day-16", { desktop: true }); await a.p.waitForTimeout(300);
         const before = await a.p.evaluate(() => !!(window.MXA && MXA.byCid)); await a.ctx.close();
         const c = await page(b, U + f + "?a=17#day-17", { desktop: true }); await c.p.waitForTimeout(300);
@@ -1251,22 +1274,12 @@ async function page(b, url, opts = {}) {
     {
       const at = async (f, day, fn) => { const t = await page(b, U + f + "?f=" + day + "#day-" + day, { desktop: true }); await t.p.waitForTimeout(300); const r = await t.p.evaluate(fn); await t.ctx.close(); return JSON.stringify(r); };
       const tbl = () => { const T = (window.MXA && MXA.byCid) || {}; return T[72] ? [T[72].langs, T[124].next.includes("DK"), T[208].next.includes("CA")] : null; };
-      const v17 = await at("voyage.html", 17, tbl), v18 = await at("voyage.html", 18, tbl), f18 = await at("fathoms.html", 18, tbl), s18 = await at("stamps.html", 18, tbl);
-      const p17 = await at("voyage.html", 17, () => VXPACK["South Africa"].p), p18 = await at("voyage.html", 18, () => VXPACK["South Africa"].p), d18 = await at("dead-reckoning.html", 18, () => DR_COUNTRIES["South Africa"][2]);
+      const v17 = await at("stamps.html", 17, tbl), v18 = await at("stamps.html", 18, tbl), f18 = await at("fathoms.html", 18, tbl), s18 = await at("stamps.html", 18, tbl);
+      const p17 = await at("stamps.html", 17, () => VXPACK["South Africa"].p), p18 = await at("stamps.html", 18, () => VXPACK["South Africa"].p), d18 = await at("dead-reckoning.html", 18, () => DR_COUNTRIES["South Africa"][2]);
       const want = '[["English"],true,true]';
       check(v17 === '[["English","Tswana"],false,false]' && v18 === want && f18 === want && s18 === want && p17 === '"Ntheledi"' && p18 === '"Mafadi (Ntheledi)"' && /^"Mafadi \(Ntheledi\), 3450"$/.test(d18), "facts from No. 18: Botswana English only, Canada and Denmark border each other, Mafadi (Ntheledi); No. 17 unchanged", [v17, v18, f18, s18, p17, p18, d18].join(" "));
     }
-    // ---- Voyage from No. 19: early islands pay more, harbors at 1, 3, 6 and 8, and no sail-or-anchor question where nothing is at risk
-    {
-      const run = async (day) => { const t = await page(b, U + "voyage.html?v=" + day + "#day-" + day, { storage: { "dailycity:voyage:v1": "{}" }, wait: 700 }); await t.p.waitForFunction(() => window.__voy);
-        const ladder = await t.p.evaluate(() => [...document.querySelectorAll(".vx-ladder li")].map((l) => l.textContent.replace(", harbor", "*")).join(" ")), seen = [];
-        for (let i = 0; i < 3; i++) { await t.p.evaluate(() => { const S = __voy.S(), q = S.qs[S.g.at], want = q.options[q.answer]; [...document.querySelectorAll("#opts button")].find((x) => x.textContent.trim() === want).click(); }); await t.p.waitForTimeout(1300);
-          const choice = await t.p.evaluate(() => !document.querySelector("#choice").hidden); seen.push([choice, await t.p.evaluate(() => __voy.S().points)]); if (choice) { await t.p.click("#sail"); await t.p.waitForTimeout(300); } }
-        await t.ctx.close(); return [ladder, JSON.stringify(seen)]; };
-      const a = await run(18), c = await run(19);
-      check(a[0] === "50 100 150* 250 350 500* 650 800 900 1,000" && a[1] === "[[true,50],[true,100],[true,150]]", "voyage: No. 18 keeps the old ladder and choices", a.join(" "));
-      check(c[0] === "200* 400 600* 680 750 810* 870 920* 960 1,000" && c[1] === "[[false,200],[true,400],[false,600]]", "voyage: from No. 19 the ladder pays early, and a harbor sails straight on (the choice is asked only when points are at risk)", c.join(" "));
-    }
+    // (Voyage from No. 19 was tested here; Voyage retires on No. 17 and hands its players to the Daily Voyage)
     // ---- Stamps from No. 19: one question a wedge, and the wheel goes from the best-known subject to the most obscure
     {
       const run = async (day) => { const t = await page(b, U + "stamps.html?s=" + day + "#day-" + day, { storage: { "dailycity:stamps:v1": "{}" }, wait: 600 }); await t.p.waitForFunction(() => window.__stamp); const seen = [];

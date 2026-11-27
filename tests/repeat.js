@@ -10,7 +10,6 @@ const GAMES = [
   { id: "city", name: "Mystery city", page: "city.html", unit: "city", hook: "__lf", key: () => [__lf.P.city + ", " + __lf.P.country] },
   { id: "country", name: "Mystery country", page: "country.html", unit: "country", gap: 45, why: "about 195 countries: one full cycle, then a reshuffle", hook: "__lf", key: () => [__lf.P.city] },
   { id: "bigger", name: "Bigger? (cities and countries)", page: "bigger.html", unit: "pair", hook: "__big", key: () => __big.S().pairs.map((p) => p.map((c) => c.name + "," + (c.country || "")).sort().join(" | ")) },
-  { id: "voyage", name: "Voyage", page: "voyage.html", unit: "question", gap: 14, why: "its fact pools (capitals, outlines, borders) hold 100 to 200 each", hook: "__voy", key: () => __voy.S().qs.map((q) => q.kind + ": " + q.ask + " [" + q.options[q.answer] + (/Which of these|largest|smallest|most|fewest/.test(q.ask) ? "; " + q.options.slice().sort().join(", ") : "") + "]") },
   { id: "fathoms", name: "Fathoms", page: "fathoms.html", unit: "prompt", gap: 20, why: "329 prompts at seven a day last 47 days", hook: "__fath", key: () => __fath.S().prompts.map((q) => q.ask) },
   { id: "stamps", name: "Stamps", page: "stamps.html", unit: "question", gap: 30, why: "six wedges, two questions each, from pools of 100 to 200", hook: "__stamp", key: () => { const q = __stamp.S().q, out = []; Object.keys(q).forEach((c) => q[c].forEach((x) => out.push(x.ask + " [" + x.options[x.answer] + (/Which of these|Three of these|largest|smallest/.test(x.ask) ? "; " + x.options.slice().sort().join(", ") : "") + "]"))); return out; } },
   { id: "history", name: "Logbook", page: "history.html", unit: "question", hook: "__hist", key: () => __hist.QS.map((q) => q.k === "m" ? "m:" + q.q : q.k + ":" + q.f.slice().sort((a, c) => a - c).join(",")) },
@@ -19,7 +18,7 @@ const GAMES = [
   { id: "ballast", name: "Ballast", page: "ballast.html", unit: "piece set", hook: "__ballast", inPage: (n) => [1, 2, 3, 4, 5, 6, 7, 8].map((l) => __ballast.daily(n, l).list.slice().sort().join("")) },
 ];
 // games that must never repeat (within a year, or within their stated gap where the pool is smaller than a year)
-const MUST = (process.env.MUST || "city,country,bigger,voyage,fathoms,stamps,history,crossings,reckoning,ballast").split(",").filter(Boolean);
+const MUST = (process.env.MUST || "city,country,bigger,fathoms,stamps,history,crossings,reckoning,ballast").split(",").filter(Boolean);
 (async () => {
   const srv = await start(), b = await chromium.launch(), only = process.env.ONLY, rows = [];
   for (const g of GAMES) { if (only && g.id !== only) continue;

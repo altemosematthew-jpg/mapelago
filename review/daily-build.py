@@ -68,11 +68,11 @@ BODY = '''
       <div class="row2"><button id="shareBtn" class="act" type="button">Copy result</button><button id="imgBtn" class="act" type="button">Share image</button><a class="act plain" href="games/">All games</a></div>
       <p class="note" id="streak"></p>
       <p><b>Play the full games:</b></p>
-      <div class="full"><a class="act plain" href="dead-reckoning.html">Dead Reckoning</a><a class="act plain" href="bigger-country.html">Bigger country?</a><a class="act plain" href="crossings.html">Crossings</a><a class="act plain" href="fathoms.html">Fathoms</a></div>
+      <div class="full"><a class="act plain" href="dead-reckoning.html">Dead Reckoning</a><a class="act plain" href="bigger.html">Bigger?</a><a class="act plain" href="crossings.html">Crossings</a><a class="act plain" href="fathoms.html">Fathoms</a></div>
     </div>
   </section>
   <footer class="about">
-    <p>Daily Voyage strings together one stop from Dead Reckoning, Bigger country? and Crossings, then a Fathoms prompt or a Logbook pair, on alternate days. Every game still has its own page, streak and archive.</p>
+    <p>Daily Voyage strings together one stop from Dead Reckoning, Bigger? and Crossings, then, in turn, a Fathoms prompt, a Logbook pair or the old Voyage game\'s best question: which city is at the mark? Every game still has its own page, streak and archive; the retired Voyage\'s days count toward the Daily Voyage streak.</p>
     <nav aria-label="Site"><a href="./">Home</a> <a href="games/">All games</a> <a href="how-to-play/">How to play</a> <a href="about/">About</a> <a href="privacy/">Privacy</a></nav>
   </footer>
 </div>

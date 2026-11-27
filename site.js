@@ -99,11 +99,13 @@
     // days count toward Mystery's one streak and stats.
     { id: "city", name: "Mystery", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city, or switch to today's country." },
     { id: "country", parent: "city", name: "Mystery (Country)", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "Mystery's Country mode: the same, with a country to find." },
+    { id: "daily", name: "Daily Voyage", key: "dailycity:dailyvoyage:v1", url: "daily.html", icon: "\u2693", about: "Four stops from the best games, one score out of 100." },
     // Bigger? (from No. 17) is Bigger city? and Bigger country? as one game: it saves where Bigger city? did, and Bigger
     // country?'s days count toward its streak and stats. The old pages still play Nos. 1 to 16.
     { id: "bigger", name: "Bigger?", key: "dailycity:bigger:v1", url: "bigger.html", pages: ["bigger-city.html"], icon: "\u{1F465}", about: "Ten pairs, cities and countries in turn: tap the bigger one." },
     { id: "bigcountry", parent: "bigger", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
-    { id: "voyage", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
+    // Voyage retires on No. 17: its best question is a Daily Voyage stop, and its days count toward the Daily Voyage streak
+    { id: "voyage", parent: "daily", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
     { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html", icon: "\u{1F30A}", about: "Name the least obvious right answer." },
     { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." },
     { id: "crossings", name: "Crossings", key: "dailycity:crossings:v1", url: "crossings.html", icon: "\u{1F9ED}", about: "Name the countries between two others, border by border." }
@@ -506,6 +508,7 @@
       var id = s.game.id, v =
         id === "city" || id === "country" ? (r.q ? (r.won ? r.pins + "/5 quick" : "X/5 quick") : r.score != null ? r.score : "✓") :
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
+        id === "daily" ? (r.score != null ? r.score + "/100" : "✓") :
         id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
         id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") :
         id === "crossings" ? (r.score != null ? r.score : "✓") : id === "reckoning" ? (r.total != null ? r.total : "✓") :
@@ -609,7 +612,7 @@
   }
 
   // 18.5 a friend's challenge link (#c-<number>-<score>) on the games that had none
-  var UNIT = { bigger: function (n) { return n + " of 10"; }, bigcountry: function (n) { return n + " of 10"; }, voyage: function (n) { return n + " points"; },
+  var UNIT = { daily: function (n) { return n + " of 100"; }, bigger: function (n) { return n + " of 10"; }, bigcountry: function (n) { return n + " of 10"; }, voyage: function (n) { return n + " points"; },
     fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; }, crossings: function (n) { return n + " points"; } };
   function challenge(app) {
     var me = here(), m = /^#c-(\d+)-(\d+)$/.exec(location.hash);

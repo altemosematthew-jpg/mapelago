@@ -10,22 +10,24 @@ window.MXCOPY = {
   "stamps": "Can you fill all six in fewer spins than me?",
   "crossings": "Can you cross it in par?",
   "history": "How close to the year can you get?",
-  "ballast": "How high can you load it?"
+  "ballast": "How high can you load it?",
+  "biggercity": "Ten pairs, one minute. Can you beat my row?"
  },
  "cards": {
-  "city": "Guess the city: slide tiles for clues, then pin it on the map.",
+  "city": "Guess the city, or switch to the country: slide tiles for clues, then pin it.",
   "country": "Guess the country: slide tiles for clues, then pin it on the map.",
-  "bigger": "Two cities, one tap: which has more people? Ten pairs.",
+  "bigger": "Cities by people, countries by land: tap the bigger one. Ten pairs.",
   "bigcountry": "Which covers more land? Ten pairs, closer as you go.",
   "voyage": "Ten islands of trivia. Keep your points or sail on.",
   "fathoms": "Name a country that fits. Less obvious answers go deeper.",
   "stamps": "Spin the wheel, answer the question, stamp all six.",
   "crossings": "Name the countries between two others, border by border.",
   "history": "Eight questions on the world map since 1800. Get warmer.",
-  "ballast": "Load a ship with real countries. Name them for bonus points."
+  "ballast": "Load a ship with real countries. Name them for bonus points.",
+  "daily": "Four stops from the best games, one score out of 100."
  },
  "home": {
   "headline": "A little geography, every day",
-  "line": "Eleven free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for."
+  "line": "A Daily Voyage and eight free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for."
  }
 };

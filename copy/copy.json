@@ -6,7 +6,7 @@
    "title": "Mystery city: a daily guess-the-city game | Mapelago",
    "description": "Slide tiles like 2048 to earn clues about today's mystery city, then drop a pin on the map. Three pins, one city for everyone. Free, no sign-up.",
    "heading": "Find today's mystery city",
-   "explainer": "Mystery city is Mapelago's daily guess-the-city game. You start with 1,000 points and a board of number tiles. Slide them to merge matching pairs, like 2048. Each new tile size you make, up to 64, earns a clue: hemisphere, continent, climate and coast, city size and language, its country's shape, then the first letter and length of the city's name. Every move costs 6 points, so each clue is a small bet, and each new tile size adds half its value back: a 16 adds 8. When you think you know it, drop a pin. You get three, and a pin within 50 km finds the city. A miss costs 50 to 150 points, less the closer it lands. It tells you how far off you were, which way to go, whether you're getting warmer, and opens the next clue for free. Stuck on a city you don't know? Ask the turtle where in its country it is, for 80 points. Short on time? Pick Quick mode before your first move: no tiles, one clue to start, a new clue after each missed pin, and five pins. Your result shows the sum and up to three stars. Everyone plays the same city, and a new one arrives at midnight, your time.",
+   "explainer": "Mystery is Mapelago's daily guess-the-place game, with a City and a Country switch at the top. In City mode you find today's city. You start with 1,000 points and a board of number tiles. Slide them to merge matching pairs, like 2048. Each new tile size you make, up to 64, earns a clue: hemisphere, continent, climate and coast, city size and language, its country's shape, then the first letter and length of the city's name. Every move costs 6 points, so each clue is a small bet, and each new tile size adds half its value back: a 16 adds 8. When you think you know it, drop a pin. You get three, and a pin within 50 km finds the city. A miss costs 50 to 150 points, less the closer it lands. It tells you how far off you were, which way to go, whether you're getting warmer, and opens the next clue for free. Stuck on a city you don't know? Ask the turtle where in its country it is, for 80 points. Short on time? Pick Quick mode before your first move: no tiles, one clue to start, a new clue after each missed pin, and five pins. Your result shows the sum and up to three stars. Everyone plays the same city, and a new one arrives at midnight, your time.",
    "howto": [
     "Slide the tiles. Two matching tiles merge into one worth double.",
     "Each new tile size, up to 64, unlocks a clue and adds half its value. Every move costs 6 of your 1,000 points.",
@@ -23,7 +23,7 @@
    "title": "Mystery country: a daily guess-the-country game | Mapelago",
    "description": "Slide tiles to earn clues about today's mystery country, then pin it on the map. Three pins, one country for everyone. A free daily geography game.",
    "heading": "Find today's mystery country",
-   "explainer": "Mystery country is the guess-the-country version of Mapelago, and it plays by the same rules as Mystery city. Slide the tiles to merge matching pairs, like 2048. Each new tile size you make, up to 64, earns a clue, in this order: hemisphere, continent, coast and borders, languages, the first letter of the capital, then the country's outline. Every move costs 6 of your 1,000 points, so each clue is a small bet, and each new tile size adds half its value back: a 16 adds 8. When you think you know it, drop a pin. You get three. A pin inside the country, or within 50 km of it, counts as found. A miss costs 50 to 150 points, less the closer it lands. It tells you how far your pin was from the nearest point of the country, which way to go and whether you're getting warmer, and it opens the next clue for free. Your result shows the sum and up to three stars. Short on time? Pick Quick mode before your first move: no tiles, one clue to start, a new clue after each missed pin, and five pins. Everyone gets the same country, and a new one arrives at midnight, your time.",
+   "explainer": "Switch Mystery to Country for today's country. It plays by the same rules as the City mode, with its own puzzle, and its days count toward the same Mystery streak. Slide the tiles to merge matching pairs, like 2048. Each new tile size you make, up to 64, earns a clue, in this order: hemisphere, continent, coast and borders, languages, the first letter of the capital, then the country's outline. Every move costs 6 of your 1,000 points, so each clue is a small bet, and each new tile size adds half its value back: a 16 adds 8. When you think you know it, drop a pin. You get three. A pin inside the country, or within 50 km of it, counts as found. A miss costs 50 to 150 points, less the closer it lands. It tells you how far your pin was from the nearest point of the country, which way to go and whether you're getting warmer, and it opens the next clue for free. Your result shows the sum and up to three stars. Short on time? Pick Quick mode before your first move: no tiles, one clue to start, a new clue after each missed pin, and five pins. Everyone gets the same country, and a new one arrives at midnight, your time.",
    "howto": [
     "Slide the tiles. Two matching tiles merge into one worth double.",
     "Each new tile size, up to 64, unlocks a clue and adds half its value, ending with the country's outline. Every move costs 6 of your 1,000 points.",
@@ -37,15 +37,15 @@
   },
   "bigger": {
    "file": "bigger.html",
-   "title": "Bigger city? A daily city population game | Mapelago",
-   "description": "Which city has more people? Ten pairs a day, like higher or lower for city populations. A free one-minute game from Mapelago, the same for everyone.",
-   "heading": "Which city has more people?",
-   "explainer": "Bigger city? is Mapelago's one-minute population game. You see two cities and tap the one where more people live. Each reveal shows both populations, so a few answers may surprise you. There are ten pairs a day. They start far apart and get closer, so the last few are the hard ones. Everyone in the world gets the same ten pairs, and your result is a row of ten ticks and crosses. New pairs arrive at midnight, your time.",
+   "title": "Bigger? Which city or country is bigger | Mapelago",
+   "description": "Ten pairs a day, cities and countries in turn: tap the one with more people, or the one with more land. Free, one minute, the same for everyone.",
+   "heading": "Which is bigger?",
+   "explainer": "Bigger? is Mapelago's one-minute size game. Ten pairs a day take turns: two cities, where you tap the one where more people live, and two countries, where you tap the one that covers more land. Each reveal shows both figures: city populations are the UN's 2025 estimates of each urban area, and country sizes are the UN's surface areas. The pairs start far apart and close up, so the last few are the hard ones. Everyone in the world gets the same ten pairs, and new ones arrive at midnight, your time.",
    "howto": [
-    "Look at the two cities.",
-    "Tap the one where more people live.",
+    "Read the question: people for cities, land for countries.",
+    "Tap the bigger one.",
     "Go through all ten pairs. They get closer as you go.",
-    "See your result: a row of ten ticks and crosses to share."
+    "See your result: a row of ten marks to share."
    ],
    "invite": "Ten pairs, one minute. Can you beat my row?",
    "image": "Which city has more people?"
@@ -159,25 +159,41 @@
    ],
    "invite": "How high can you load it?",
    "image": "Load the deck."
+  },
+  "biggercity": {
+   "file": "bigger-city.html",
+   "title": "Bigger city? A daily city population game | Mapelago",
+   "description": "Which city has more people? Ten pairs a day, like higher or lower for city populations. A free one-minute game from Mapelago, the same for everyone.",
+   "heading": "Which city has more people?",
+   "explainer": "Bigger city? is Mapelago's one-minute population game. You see two cities and tap the one where more people live. Each reveal shows both populations, so a few answers may surprise you. There are ten pairs a day. They start far apart and get closer, so the last few are the hard ones. Everyone in the world gets the same ten pairs, and your result is a row of ten ticks and crosses. New pairs arrive at midnight, your time.",
+   "howto": [
+    "Look at the two cities.",
+    "Tap the one where more people live.",
+    "Go through all ten pairs. They get closer as you go.",
+    "See your result: a row of ten ticks and crosses to share."
+   ],
+   "invite": "Ten pairs, one minute. Can you beat my row?",
+   "image": "Which city has more people?"
   }
  },
  "home": {
   "headline": "A little geography, every day",
-  "line": "Eleven free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for.",
+  "line": "A Daily Voyage and eight free daily games about cities, countries and maps. Everyone gets the same puzzles, and there's nothing to sign up for.",
   "cards": {
-   "city": "Guess the city: slide tiles for clues, then pin it on the map.",
+   "city": "Guess the city, or switch to the country: slide tiles for clues, then pin it.",
    "country": "Guess the country: slide tiles for clues, then pin it on the map.",
-   "bigger": "Two cities, one tap: which has more people? Ten pairs.",
+   "bigger": "Cities by people, countries by land: tap the bigger one. Ten pairs.",
    "bigcountry": "Which covers more land? Ten pairs, closer as you go.",
    "voyage": "Ten islands of trivia. Keep your points or sail on.",
    "fathoms": "Name a country that fits. Less obvious answers go deeper.",
    "stamps": "Spin the wheel, answer the question, stamp all six.",
    "crossings": "Name the countries between two others, border by border.",
    "history": "Eight questions on the world map since 1800. Get warmer.",
-   "ballast": "Load a ship with real countries. Name them for bonus points."
+   "ballast": "Load a ship with real countries. Name them for bonus points.",
+   "daily": "Four stops from the best games, one score out of 100."
   }
  },
  "allGames": {
-  "intro": "Mapelago has eleven daily geography games. They're all free, with no account and nothing to install, and everyone in the world gets the same puzzles each day. The two Bigger games take about a minute. Mystery city takes about three. Start with Mystery city, the tile-and-pin game where Mapelago began, then pick whatever catches your eye. Our turtle won't judge a wrong pin."
+  "intro": "Mapelago has a Daily Voyage and eight daily geography games. They're all free, with no account and nothing to install, and everyone in the world gets the same puzzles each day. Bigger? takes about a minute; Mystery takes about three. Start with the Daily Voyage, four short stops from the best games, then pick whatever catches your eye. Our turtle won't judge a wrong pin."
  }
 }

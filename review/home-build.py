@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Builds index.html: the home page. Daily Voyage is the one big button; three featured games; the other eight below.
+# Builds index.html: the home page. Daily Voyage is the one big button; three featured games; the rest below.
 # Old links to the Mystery city game (mapelago.com/#..., shares, archive days) are sent on to city.html.
 import re, json
 R = '/home/user/mapelago'
@@ -7,7 +7,7 @@ f = open(R + '/fathoms.html', encoding='utf8').read()
 v = re.search(r'site\.js\?v=([0-9.]+)', f).group(1)
 head = f[:f.find('</style>')]
 T = 'Mapelago: free daily geography games'
-DESC = "Today's Daily Voyage, four stops in a few minutes, and eleven free daily geography games: find a city, cross borders, pin places on a blank map and more. The same puzzles for everyone, nothing to sign up for."
+DESC = "Today's Daily Voyage, four stops in a few minutes, and eight free daily geography games: find a city, cross borders, pin places on a blank map and more. The same puzzles for everyone, nothing to sign up for."
 head = head.replace('fathoms.html', '').replace('og-fathoms.png', 'og-voyage.png')
 head = re.sub(r'<title>[^<]*</title>', '<title>' + T + '</title>', head)
 head = re.sub(r'(og:title" content=")[^"]*', r'\g<1>' + T, head)
@@ -15,7 +15,7 @@ head = re.sub(r'(name="description" content=")[^"]*', r'\g<1>' + DESC, head)
 head = re.sub(r'(og:description" content=")[^"]*', r'\g<1>' + DESC, head)
 head = re.sub(r'"name":"Fathoms"', '"name":"Mapelago"', head)
 head = re.sub(r'<script type="application/ld\+json">.*?</script>', '', head, flags=re.S)
-LD = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Mapelago","url":"https://mapelago.com/","description":"Eleven free daily geography games: Mystery city, Mystery country, Bigger city?, Bigger country?, Voyage, Fathoms, Stamps, Crossings, Logbook, Dead Reckoning and Ballast, and a Daily Voyage that strings four of them together."}</script>'
+LD = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Mapelago","url":"https://mapelago.com/","description":"Eight free daily geography games: Mystery (a city or a country), Bigger?, Crossings, Dead Reckoning, Ballast, Fathoms, Stamps and Logbook, and a Daily Voyage that strings four of them together."}</script>'
 head = head.replace('<head>', '<head>\n' + LD, 1)
 head = head.replace('<head>', '<head>\n<script>/* links made for the Mystery city game when it lived here (shares, archive days, #day-N) go on to it */\nif (location.hash.length > 1 || /[?&](q|city)=/.test(location.search)) location.replace("city.html" + location.search + location.hash);</script>', 1)
 CSS = r'''
@@ -33,15 +33,12 @@ h2.sec{font-size:18px;margin:0 0 8px}
 '''
 FEAT = [("crossings.html", "\U0001F9ED", "Crossings", "Get from one country to another, border by border."),
         ("dead-reckoning.html", "\U0001F4CD", "Dead Reckoning", "Five places, a blank map, the closer the better."),
-        ("city.html", "\U0001F3D9️", "Mystery city", "Slide tiles for clues, then pin today's city.")]
-MORE = [("country.html", "\U0001F30D", "Mystery country", "Clues, then pin the country."),
-        ("bigger.html", "\U0001F465", "Bigger city?", "Ten pairs: which has more people?"),
-        ("bigger-country.html", "\U0001F5FA️", "Bigger country?", "Ten pairs: which covers more land?"),
-        ("voyage.html", "⚓", "Voyage", "Ten islands, sail on or drop anchor."),
+        ("city.html", "\U0001F3D9️", "Mystery", "Slide tiles for clues, then pin today's city or country.")]
+MORE = [("bigger.html", "\U0001F465", "Bigger?", "Cities by people, countries by land: tap the bigger one."),
+        ("ballast.html", "\U0001F6A2", "Ballast", "Stack real countries on a rocking ship."),
         ("fathoms.html", "\U0001F419", "Fathoms", "Name a country nobody else would."),
         ("stamps.html", "\U0001F4EE", "Stamps", "Spin the wheel, fill six stamps."),
-        ("history.html", "\U0001F4DC", "Logbook", "How the map changed since 1800."),
-        ("ballast.html", "\U0001F6A2", "Ballast", "Stack real countries on a rocking ship.")]
+        ("history.html", "\U0001F4DC", "Logbook", "How the map changed since 1800.")]
 card = lambda c: '<a href="%s" data-game="%s"><span class="ic" aria-hidden="true">%s</span><b>%s</b><span>%s</span></a>' % (c[0], c[0], c[1], c[2], c[3])
 ROUTE = '<svg viewBox="0 0 320 50" aria-hidden="true"><path d="M18 32 C70 6 110 46 160 24 S250 8 302 28" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 5"/><circle cx="18" cy="32" r="8" fill="#b4237d" stroke="currentColor" stroke-width="2"/><circle cx="112" cy="30" r="8" fill="#fff" stroke="currentColor" stroke-width="2"/><circle cx="208" cy="18" r="8" fill="#fff" stroke="currentColor" stroke-width="2"/><circle cx="302" cy="28" r="8" fill="#fff" stroke="currentColor" stroke-width="2"/></svg>'
 BODY = '''

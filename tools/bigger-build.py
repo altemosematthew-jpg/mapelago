@@ -74,8 +74,9 @@ BODY = """
     <!-- copy:start -->
     <h1 class="about-h">Which is bigger?</h1>
     <p>Bigger? is Mapelago's one-minute size game. Ten pairs a day take turns: two cities (tap the one where more people live) and two countries (tap the one that covers more land). The pairs start far apart and close up, so the last few are the hard ones.</p>
-    <p class="mxsource">Sources: city populations are the UN's 2025 estimates of each city's urban area (World Urbanization Prospects 2025, the built-up urban area, not city limits). Country areas are surface areas from the UN Demographic Yearbook 2023. A pair is never asked where the two figures are within 2% or where another common definition could flip the answer.</p>
+
     <!-- copy:end -->
+    <p class="mxsource">Sources: city populations are the UN's 2025 estimates of each city's urban area (World Urbanization Prospects 2025, the built-up urban area, not city limits). Country areas are surface areas from the UN Demographic Yearbook 2023. A pair is never asked where the two figures are within 2% or where another common definition could flip the answer.</p>
     <nav aria-label="Site"><a href="./">Home</a> <a href="games/">All games</a> <a href="how-to-play/">How to play</a> <a href="about/">About</a> <a href="privacy/">Privacy</a></nav>
   </footer>
 </div>
