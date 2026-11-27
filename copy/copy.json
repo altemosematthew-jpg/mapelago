@@ -88,7 +88,7 @@
    "howto": [
     "Read the prompt, such as a country that borders Germany.",
     "Type one country that fits. Skip the first one that comes to mind if you can.",
-    "Score up to 1,000 fathoms. The country whose largest city is smallest goes deepest.",
+    "Score up to 1,000 fathoms. The country whose largest city is smallest goes deepest, except the ten smallest countries, which sit halfway.",
     "A wrong answer scores nothing. Pass if you're stuck.",
     "Play all seven prompts, for up to 7,000 fathoms."
    ],
@@ -116,7 +116,7 @@
    "title": "Crossings: a daily border-route geography game | Mapelago",
    "description": "Walk from one country to another overland, naming the countries in between. Shortest route is par. A free daily geography game from Mapelago.",
    "heading": "Cross the map, one border at a time.",
-   "explainer": "Crossings is Mapelago's daily route game. You get two countries joined by land, such as France and Poland, and you name the countries in between until your chain links them border to border. Par is the shortest route. Each country you name is coloured by how far it is from a shortest route, so the map warms up as you close in. Every guess beyond par costs 100 points, and a hint, which reveals a country on a shortest route, costs 150. Six guesses beyond par and the border stays shut. Only land borders count, so island countries can't be on a route. Borders that exist only through an exclave or overseas territory, such as Kaliningrad or French Guiana, aren't used in daily crossings. Monday's crossing is short and Sunday's is a long haul. Everyone gets the same crossing, and a new one arrives at midnight, your time.",
+   "explainer": "Crossings is Mapelago's daily route game. You get two countries joined by land, such as France and Poland, and you name the countries in between until your chain links them border to border. Par is the shortest route. Each country you name is coloured by how far it is from a shortest route, so the map warms up as you close in. Every guess beyond par costs 250 points, and a hint, which reveals a country on a shortest route, costs 150. Four guesses beyond par and the border stays shut. Monday is a short hop between well-known countries; through the week the routes get longer and pass through less familiar ones, and Saturday is the hardest. Only land borders count, so island countries can't be on a route. Borders that exist only through an exclave or overseas territory, such as Kaliningrad or French Guiana, aren't used in daily crossings. Monday's crossing is short and Sunday's is a long haul. Everyone gets the same crossing, and a new one arrives at midnight, your time.",
    "howto": [
     "Read today's two countries and par, the fewest borders between them.",
     "Type a country you'd pass through on the way.",

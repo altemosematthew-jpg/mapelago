@@ -49,6 +49,9 @@
   // a country with that day's Mystery city answer (so neither game gives the other away).
   function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   var sched = [null], last = {}, NR = 17;
+  // From No. 16 (scorecard 3): later in the week the cities come from less-known tiers (1 best known, 5 least known),
+  // round by round. Monday to Wednesday keep one tier a round.
+  var HARD_FROM = 16, TIERS = [[2, 3, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 3, 3, 4, 5], [2, 3, 4, 4, 5], [3, 4, 4, 5, 5]];
   function daily(n) {
     while (sched.length <= n) {
       var d = sched.length, r = rng(d * 7919 + 104729), m = (MYST[d - 1] || "|").split("|"), used = {}, pick = [];
@@ -70,7 +73,7 @@
           if (lc < 0) lc = lp[lk];
           last[lc] = d; pick.push(lc); continue;
         }
-        var pool = POOLS[t], L = pool.length, k = Math.floor(r() * L), chosen = -1;
+        var pool = POOLS[d >= HARD_FROM ? TIERS[(d + 5) % 7][t] - 1 : t], L = pool.length, k = Math.floor(r() * L), chosen = -1;
         for (var pass = 0; pass < 2 && chosen < 0; pass++)
           for (var j = 0; j < L; j++) {
             var p = P[pool[(k + j) % L]];
@@ -96,7 +99,9 @@
   function fact(p) {
     if (p.lm) return [p.clue, cap(p.kind) + " · " + p.country];
     var c = (window.DR_COUNTRIES || {})[p.country] || [], kind = c[0], cur = c[1], high = c[2];
-    var one = p.capital ? "The capital of " + the(p.country) + ", home to about " + popText(p.pop) + " people." : "A city in " + the(p.country) + " of about " + popText(p.pop) + " people.";
+    // one population figure across the site (scorecard 3): the UN's 2025 urban-area estimate, or no figure at all
+    var un = window.MXUN ? MXUN.pop(p.name, p.country) : null, ppl = un ? " about " + popText(un) + " people live in its urban area" : "";
+    var one = p.capital ? "The capital of " + the(p.country) + (ppl ? ";" + ppl : "") + "." : "A city in " + the(p.country) + (ppl ? ";" + ppl : "") + ".";
     var two = [];
     if (kind === "island") two.push(the(p.country) + " is an island country");
     else if (kind === "landlocked") two.push(the(p.country) + " has no coastline");

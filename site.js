@@ -419,10 +419,12 @@
         var ends = /^(.*) to (.*?) ·/.exec(lines[2] || "") || [];
         blob(pts[0][0], pts[0][1], 40, "#C9A257"); blob(pts[pts.length - 1][0], pts[pts.length - 1][1], 40, "#C9A257");
         if (ends[1]) label(ends[1], pts[0][0] - 30, pts[0][1] - 60, 34, "left"); if (ends[2]) label(ends[2], pts[pts.length - 1][0] + 30, pts[pts.length - 1][1] - 60, 34, "right");
-        marks.forEach(function (m, i) { var p = pts[i + 1]; blob(p[0], p[1], 26, col(m)); });
+        var mids = window.MX_SHARE_NAMES || [];
+        marks.forEach(function (m, i) { var p = pts[i + 1]; blob(p[0], p[1], 26, col(m)); if (mids[i]) label(mids[i].length > 14 ? mids[i].slice(0, 13) + "." : mids[i], p[0], p[1] + (i === marks.length - 1 && i ? -40 : 62), 24); });
       } else {
-        var names = ["PIN", "BIGGER", "CROSSING", (lines[0] || "").length ? "STOP 4" : ""];
-        marks.forEach(function (m, i) { var p = pts[i]; blob(p[0], p[1], 44, col(m)); label(String(i + 1), p[0], p[1] + 12, 40); label(names[i], p[0], p[1] + 92, 30); });
+        // each stop: its name (from the share line, from No. 16) and how it went: a tick for full marks, a half for some, a cross for none
+        var named = / \u00b7 /.test(lines[2] || "") ? lines[2].split(" \u00b7 ") : null, names = named || ["PIN", "BIGGER", "CROSSING", "STOP 4"], how = { "\u2693": "\u2713", "\u{1F9ED}": "\u00bd", "\u{1F30A}": "\u2717" };
+        marks.forEach(function (m, i) { var p = pts[i]; blob(p[0], p[1], 44, col(m)); label(how[m] || String(i + 1), p[0], p[1] + 14, 44); label(String(names[i] || "").toUpperCase(), p[0], p[1] + 92, 30); });
       }
       return true;
     }

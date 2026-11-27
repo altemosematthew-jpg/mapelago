@@ -409,7 +409,7 @@ h2.sec{font-size:18px;margin:0 0 8px}
 .more{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 18px}.more a{grid-template-columns:auto 1fr;padding:10px}.more b{font-size:15px}.more span{font-size:12.5px}
 @media (min-width:900px){.app{max-width:760px}.feat{grid-template-columns:repeat(3,1fr)}.more{grid-template-columns:repeat(4,1fr)}}
 </style>
-<link rel="stylesheet" href="ink.css?v=0.15.66">
+<link rel="stylesheet" href="ink.css?v=0.15.67">
 </head>
 <body>
 <div class="app">
@@ -451,7 +451,7 @@ h2.sec{font-size:18px;margin:0 0 8px}
   </footer>
 </div>
 <div id="toast" role="status"></div>
-<script src="site.js?v=0.15.66"></script>
+<script src="site.js?v=0.15.67"></script>
 <script>
 // a tick on the games already played today, and the voyage button says when today's is done
 (function () { try {
@@ -460,6 +460,6 @@ h2.sec{font-size:18px;margin:0 0 8px}
   if (r) { document.getElementById("dvGo").textContent = "Today's voyage: " + r.score + " of 100. See it"; document.getElementById("dvLine").textContent = "Done for today. A new voyage in " + (MXS.untilNext ? MXS.untilNext() : "the morning") + "."; }
 } catch (e) {} })();
 </script>
-<script src="analytics.js?v=0.15.66" defer></script>
+<script src="analytics.js?v=0.15.67" defer></script>
 </body>
 </html>

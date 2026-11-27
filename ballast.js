@@ -110,7 +110,33 @@
   }
   // The weekly arc (from No. 17): the same cargo, with the load line a little lower on Monday and a little higher on Saturday.
   function arc(day) { return day >= NR && window.MXS && MXS.weekLevel ? MXS.weekLevel(day) : null; }
-  function dailyLevel(day, n) { var lv = genLevel(day, n, 0, dailyVariant(day, n)), a = arc(day); if (a) { lv.lineKm = Math.round(lv.lineKm * (1 + (1 - a.f) * 0.2)); lv.arc = a; } return lv; }
+  // From No. 16 (scorecard 3: one tall piece could clear a level). From level 2 no piece reaches the line on its own: a
+  // piece whose long side comes within 10% of it is swapped for the country nearest its size whose long side sits well under the line, from the same
+  // region (where the region has none, the line is raised to just above that piece instead). And the line climbs steadily: it is a share of the cargo (the sum of the pieces' sizes) that grows 7% a level.
+  var LINE_FROM = 16, lineMemo = {};
+  function longSide(cc) { var s = byCC[cc]; return Math.sqrt(s.a * longness(s)); }
+  function tallest(lv) { return lv.list.reduce(function (t, cc) { return Math.max(t, longSide(cc)); }, 0); }
+  function dailyLevel(day, n) {
+    var key = day + ":" + n; if (lineMemo[key]) return lineMemo[key];
+    var lv = genLevel(day, n, 0, dailyVariant(day, n)), a = arc(day), af = a ? 1 + (1 - a.f) * 0.2 : 1;
+    if (day < LINE_FROM) { lv.lineKm = Math.round(lv.lineKm * af); if (a) lv.arc = a; return lv; }
+    if (a) lv.arc = a;
+    var share = 0.27 * 0.89 * Math.pow(1.07, n - 1); share = Math.min(0.6, share);
+    var reg = function (s) { return lv.region === "World" ? true : (day >= 17 ? region2(s) : regionOf(s)) === lv.region; };
+    var line = function () { var e = 0; lv.list.forEach(function (cc) { e += Math.sqrt(byCC[cc].a); }); return Math.round(e * share * af); };
+    var target = lv.lineKm = line();
+    for (var k = 0; n >= 2 && k < 12 && tallest(lv) * 1.1 > target; k++) {
+      var worst = lv.list.reduce(function (m, cc) { return longSide(cc) > longSide(m) ? cc : m; }, lv.list[0]), w = byCC[worst];
+      var alt = SHAPES.filter(function (s) { return s.a >= 15000 && longSide(s.cc) * 1.1 <= target && lv.list.indexOf(s.cc) < 0 && reg(s); })
+        .sort(function (x, y) { return Math.abs(Math.log(x.a / w.a)) - Math.abs(Math.log(y.a / w.a)); })[0];
+      if (!alt) { lv.lineKm = Math.round(tallest(lv) * 1.05); return (lineMemo[key] = lv); }
+      lv.list[lv.list.indexOf(worst)] = alt.cc;
+    }
+    // the line never asks more than 60% of the cargo's total size
+    var est = 0; lv.list.forEach(function (cc) { est += Math.sqrt(byCC[cc].a); });
+    lv.lineKm = Math.min(target, Math.round(est * 0.6 * af));
+    return (lineMemo[key] = lv);
+  }
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [
     R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country, let go to drop it, and hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
@@ -927,7 +953,7 @@
       // run the physics (no frames needed) until the dropped piece has landed and any hold countdown or final judging is over
       settle: function () { for (var n = 0; n < 1500 && !S.over && (state === "fall" || state === "wait" || state === "cheer" || holdT > 0); n++) step(1000 / 60); return state; },
       earn: function (right) { if (state === "earn") earn(right === false ? earnQ.all.findIndex(function (o) { return o !== earnQ.right; }) : earnQ.all.indexOf(earnQ.right)); }, earnQ: function () { return earnQ; }, hold: function () { return holdT; }, zoom: function () { return zoom; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, look: function () { return save.look; }, crew: function () { return [crew.s, deckStow.length, ripples.length, wobbling]; }, stowFor: stowFor, daily: dailyLevel, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, dailyLevel: dailyLevel, tallest: function (lv) { return tallest(lv); }, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, look: function () { return save.look; }, crew: function () { return [crew.s, deckStow.length, ripples.length, wobbling]; }, stowFor: stowFor, daily: dailyLevel, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);

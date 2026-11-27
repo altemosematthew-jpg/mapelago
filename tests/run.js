@@ -148,7 +148,7 @@ async function page(b, url, opts = {}) {
         check(!r.dialogs && r.top < 667 && r.words <= 20 && ms < 10000, `first visit: ${f} opens straight onto the game (no dialog, the first control on the first screen, a short instruction)`, JSON.stringify([r, ms]));
         await ctx.close();
       }
-      const T = { daily: "Mapelago Daily Voyage No. 20 \u{1F422} 78 of 100\n⚓\u{1F9ED}⚓\u{1F30A}\nFour stops, one voyage. mapelago.com/daily.html",
+      const T = { daily: "Mapelago Daily Voyage No. 20 \u{1F422} 78 of 100\n⚓\u{1F9ED}⚓\u{1F30A}\nPin · Bigger · Crossing · Voyage\nFour stops, one voyage. mapelago.com/daily.html",
         crossings: "Mapelago Crossings No. 20 \u{1F422} 850 points\n\u{1F9ED}\u{1F97E}\u{1F9ED}\nLatvia to Saudi Arabia · par 4 countries · 3 guesses\nCan you cross it? mapelago.com/crossings.html",
         reckoning: "Mapelago Dead Reckoning No. 20 \u{1F422} 742 of 1,000\n\u{1F3AF}\u{1F4CD}\u{1F9ED}⛵\u{1F3AF}\nFive pins on a blank map. How close can you get? mapelago.com/dead-reckoning.html",
         fathoms: "Mapelago Fathoms No. 20 \u{1F422} 5,420 fathoms\n\u{1F7E9}\u{1F7E8}\u{1F41F}\u{1F7E5}\u{1F419}\u{1F7E7}\u{1F7E8}\nHow deep can you go? mapelago.com/fathoms.html",
@@ -193,6 +193,25 @@ async function page(b, url, opts = {}) {
         const say = await p.evaluate(() => ({ t: document.querySelector("#say").textContent, a: !!document.querySelector('#say a[href*="wikipedia.org"]') }));
         check(z === 180 && /is to the (north|south|east|west|northeast|northwest|southeast|southwest) of your pin\. It's in /.test(say.t) && say.a, "daily voyage: the pin map zooms; a miss gives the direction, where it is and a link to read about it", JSON.stringify([z, say]));
         await ctx.close(); }
+    }
+    // 1i. scorecard 3 difficulty (from No. 16)
+    {
+      const { ctx, p } = await page(b, U + "ballast.html#day-20", { storage: { "dailycity:ballast:v1": '{"tut":1}' }, wait: 900 });
+      const bl = await p.evaluate(() => { const B = __ballast, bad = []; for (let d = 16; d <= 40; d++) for (let n = 2; n <= 10; n++) { const lv = B.dailyLevel(d, n); if (B.tallest(lv) >= lv.lineKm) bad.push(d + ":" + n); } return bad; });
+      check(!bl.length, "ballast: from No. 16, after level 1 no single piece is as tall as the load line", bl.join(" "));
+      await ctx.close();
+      const ratio = async (d) => { const x = await page(b, U + "bigger.html#day-" + d, { wait: 500 }); const r = await x.p.evaluate(() => __big.S().pairs.map((q) => Math.max(q[0].pop, q[1].pop) / Math.min(q[0].pop, q[1].pop))); await x.ctx.close(); return r; };
+      const mon = await ratio(17), sat = await ratio(22), gm = (a) => Math.exp(a.reduce((s, r) => s + Math.log(r), 0) / a.length);
+      check(gm(sat) < gm(mon) && Math.min(...sat) < 1.15, "bigger: from No. 16 Saturday's pairs are closer than Monday's", JSON.stringify([gm(mon).toFixed(2), gm(sat).toFixed(2)]));
+      const dr = await page(b, U + "dead-reckoning.html#day-22", { wait: 700 });
+      const tiers = await dr.p.evaluate(() => [17, 22].map((d) => __dr.daily(d).map((i) => __dr.P[i].tier)));
+      const mt = (a) => { const c = a.filter((t) => t > 0); return c.reduce((s, t) => s + t, 0) / c.length; };
+      check(mt(tiers[1]) > mt(tiers[0]), "dead reckoning: from No. 16 Saturday's cities come from less-known tiers than Monday's", JSON.stringify(tiers));
+      await dr.ctx.close();
+      const fa = await page(b, U + "fathoms.html#day-20", { wait: 700 });
+      const tiny = await fa.p.evaluate(() => __fath.S().prompts.filter((q) => q.answers.some((c) => ["VA", "MC", "SM", "LI", "NR", "TV"].includes(c)) && q.answers.some((c) => !["VA", "MC", "NR", "TV", "SM", "LI", "MH", "KN", "MV", "MT"].includes(c))).map((q) => ["VA", "MC", "NR", "TV", "SM", "LI", "MH", "KN", "MV", "MT"].includes(q.answers[q.answers.length - 1])));
+      check(tiny.length && tiny.every((x) => !x), "fathoms: from No. 16 the ten smallest countries are never the deepest answer", JSON.stringify(tiny));
+      await fa.ctx.close();
     }
 
     // 2. the daily schedule never changes by accident
@@ -311,8 +330,8 @@ async function page(b, url, opts = {}) {
         check(Math.abs(r.sq[0] - 111.19) < 0.05 && r.sq[1][0] === 5 && r.sq[1][1] === 0, "country: distance to the middle of a long edge, not its corners", JSON.stringify(r.sq));
         check(r.name === "Mexico" && r.az.d > 125 && r.az.d < 136 && Math.abs(r.az.b - 180) < 10, "country: a pin in Arizona is about 130 km north of Mexico's nearest border", JSON.stringify(r));
         for (let i = 0; i < 3; i++) { await p.evaluate(() => __lf.confirmAt([-110, 32.5])); await p.waitForTimeout(1900); }
-        const s = await p.evaluate(() => __lf.S()), want = Math.round((1000 - 2 * 50) * (1 - Math.sqrt((r => r - 50)(s.pins[0].d) / 2450)));
-        check(s.done && !s.won && s.score === want, `country: three near misses score on the softer last-pin curve (${want})`, JSON.stringify([s.score, s.pins.map((x) => x.d)]));
+        const s = await p.evaluate(() => __lf.S()), L = await p.evaluate(() => __lf.landKm()), want = Math.round((1000 - 2 * 50) * (1 - Math.sqrt((s.pins[0].d - L) / (2500 - L))));
+        check(s.done && !s.won && s.score === want, `country: three near misses score on the softer last-pin curve, from the answer's own landing distance (${want}, ${L} km)`, JSON.stringify([s.score, s.pins.map((x) => x.d)]));
         await ctx.close();
       }
       // a save made on the live release (0.14.0): results, streak and a No. 14 round in progress keep their rules and scores
@@ -1403,7 +1422,7 @@ async function page(b, url, opts = {}) {
         await t.ctx.close(); return [legs, r, t.p.errs]; };
       const a = await play(), c = await play();
       check(a[0] === c[0] && JSON.parse(a[0]).length === 4, "daily voyage: the same four legs on every load", a[0].slice(0, 200));
-      check(a[1].done && a[1].saved && a[1].saved.score === a[1].total && a[1].total >= 0 && a[1].total <= 100 && /^Mapelago Daily Voyage No\. 23 \u{1F422} \d+ of 100\n[\u2693\u{1F9ED}\u{1F30A}]{4}\nFour stops, one voyage\. mapelago\.com\/daily\.html$/u.test(a[1].share) && !a[2].length, "daily voyage: four legs to one score out of 100, saved, and a spoiler-free share", JSON.stringify(a[1]) + a[2].join(";"));
+      check(a[1].done && a[1].saved && a[1].saved.score === a[1].total && a[1].total >= 0 && a[1].total <= 100 && /^Mapelago Daily Voyage No\. 23 \u{1F422} \d+ of 100\n[\u2693\u{1F9ED}\u{1F30A}]{4}\nPin · Bigger · Crossing · (Fathoms|Logbook|Voyage)\nFour stops, one voyage\. mapelago\.com\/daily\.html$/u.test(a[1].share) && !a[2].length, "daily voyage: four legs to one score out of 100, saved, and a spoiler-free share", JSON.stringify(a[1]) + a[2].join(";"));
     }
     // ---- R: the home page: Daily Voyage is the one big button; three featured games, then the other eight; old city links still work
     {

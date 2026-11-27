@@ -23,11 +23,18 @@
   // ---------- the day's four legs (same for everyone) ----------
   var famous = D.C.filter(function (c) { return !c[6]; }).sort(function (a, b) { return b[4] - a[4]; }).slice(0, 120).map(function (c) { return byCC[c[0]]; });
   var LEGS = [];
+  // From No. 16 (scorecard 3) every stop is tuned to the day: H runs from 0 on Monday to 1 on Saturday (Thursday and
+  // Sunday in the middle). Pin: better-known cities early in the week, less-known places later, scored more strictly.
+  // Bigger: closer pairs. Crossing: less-known countries. Mark: nearer wrong cities. Logbook: closer dates.
+  var TUNE = N >= 16, H = Math.max(0, Math.min(1, (1.3 - W.f) / 0.5));
   // 1. a place: well known on Monday, less so later in the week
-  var places = D.P.filter(function (p) { return W.f >= 1.1 ? p[4] === "city" : true; }), place = pick(places);
+  var places = D.P.filter(function (p) { return W.f >= 1.1 ? p[4] === "city" : true; }), place;
+  if (TUNE) { var pc = D.P.filter(function (p) { return p[4] === "city"; }), p0 = Math.floor(H * 0.6 * pc.length); places = pc.slice(p0, p0 + Math.ceil(0.4 * pc.length)); if (H >= 0.5) places = places.concat(D.P.filter(function (p) { return p[4] !== "city"; })); }
+  place = pick(places);
   LEGS.push({ kind: "pin", name: "Pin", place: place, ask: "Where is " + place[0] + (place[1] ? ", " + place[1] : "") + "?" });
   // 2. a pair of countries: further apart on Monday, closer on Saturday
   var lo = 1 + 0.4 * W.f, hi = lo + 0.6, pair = null;
+  if (TUNE) { lo = 1.06 + 0.5 * (1 - H); hi = lo + 0.25 + 0.3 * (1 - H); }
   for (var t = 0; t < 4000 && !pair; t++) { var a = pick(famous), b = pick(famous), q = Math.max(a.area, b.area) / Math.min(a.area, b.area); if (a !== b && q >= lo && q <= hi) pair = [a, b]; }
   if (N >= 17 && N % 2 && window.BQ_DATA) {
     // from No. 17 the Bigger stop follows Bigger?: on odd numbers a pair of cities, by the UN's urban-area figures
@@ -36,9 +43,10 @@
     LEGS.push({ kind: "pair", name: "Bigger", city: true, pair: cp.map(function (c) { return { name: c[0], cont: c[1], area: c[2] }; }), ask: "Which city has more people?" });
   } else LEGS.push({ kind: "pair", name: "Bigger", pair: pair, ask: "Which covers more land?" });
   // 3. a crossing with one country between: which one links them?
-  var cross = null;
+  var cross = null, cfam = famous;
+  if (TUNE) { var f160 = D.C.filter(function (c) { return !c[6]; }).sort(function (a, b) { return b[4] - a[4]; }).slice(0, 160).map(function (c) { return byCC[c[0]]; }), c0 = Math.floor(H * 90); cfam = f160.slice(c0, c0 + 70); }
   for (t = 0; t < 4000 && !cross; t++) {
-    var A = pick(famous), nbA = adj[A.cc] || []; if (!nbA.length) continue;
+    var A = pick(cfam), nbA = adj[A.cc] || []; if (!nbA.length) continue;
     var mid = byCC[pick(nbA)]; if (!mid) continue; var nbM = (adj[mid.cc] || []).filter(function (x) { return x !== A.cc && nbA.indexOf(x) < 0 && byCC[x]; }); if (!nbM.length) continue;
     var B = byCC[pick(nbM)], links = nbA.filter(function (x) { return (adj[B.cc] || []).indexOf(x) >= 0 && byCC[x]; });
     var wrong = nbA.concat(adj[B.cc] || []).filter(function (x) { return links.indexOf(x) < 0 && x !== A.cc && x !== B.cc && byCC[x]; });
@@ -54,16 +62,18 @@
   var ROT = N >= 17 ? ["deep", "first", "mark"][N % 3] : N % 2 ? "deep" : "first";
   if (ROT === "mark") {
     var cities = D.P.filter(function (p) { return p[4] === "city"; }), at = pick(cities), near = [];
-    var far = cities.filter(function (p) { var d = km([p[2], p[3]], [at[2], at[3]]); return d > 1500 && d < 7000 && p[1] !== at[1]; });
-    while (near.length < 3 && far.length) { var c3 = far.splice(Math.floor(r() * far.length), 1)[0]; if (near.every(function (x) { return km([x[2], x[3]], [c3[2], c3[3]]) > 800; })) near.push(c3); }
+    var far = cities.filter(function (p) { var d = km([p[2], p[3]], [at[2], at[3]]); return d > (TUNE ? 1500 - 900 * H : 1500) && d < (TUNE ? 7000 - 4000 * H : 7000) && p[1] !== at[1]; });
+    while (near.length < 3 && far.length) { var c3 = far.splice(Math.floor(r() * far.length), 1)[0]; if (near.every(function (x) { return km([x[2], x[3]], [c3[2], c3[3]]) > (TUNE ? 800 - 500 * H : 800); })) near.push(c3); }
     var mopts = [at].concat(near); for (var mi = 3; mi > 0; mi--) { var mj = Math.floor(r() * (mi + 1)), mt = mopts[mi]; mopts[mi] = mopts[mj]; mopts[mj] = mt; }
     LEGS.push({ kind: "mark", name: "Voyage", ask: "Which city is at the mark?", at: at, opts: mopts });
   } else if (ROT === "deep") {
     var fam = pick(D.FAM), ans = fam[1].filter(function (c) { return byCC[c]; }).sort(function (x, y) { return byCC[y].fame - byCC[x].fame; });
+    // as in Fathoms from No. 16: the ten smallest countries sit halfway down, not at the bottom
+    if (TUNE) { var TINY = ["VA", "MC", "NR", "TV", "SM", "LI", "MH", "KN", "MV", "MT"], tn = ans.filter(function (c) { return TINY.indexOf(c) >= 0; }), rest = ans.filter(function (c) { return TINY.indexOf(c) < 0; }); if (tn.length && rest.length) ans = rest.slice(0, rest.length >> 1).concat(tn, rest.slice(rest.length >> 1)); }
     LEGS.push({ kind: "deep", name: "Fathoms", ask: fam[0], answers: ans });
   } else {
     var F = D.F.map(function (f, i) { return f ? [f[0], f[1], f[2], i] : null; }).filter(Boolean), e1, e2;
-    for (t = 0; t < 2000 && !e2; t++) { e1 = pick(F); var c2 = pick(F), gap = Math.abs(e1[0] - c2[0]); if (gap >= (e1[2] || c2[2] ? 25 : 18) && gap <= 120) e2 = c2; }
+    for (t = 0; t < 2000 && !e2; t++) { e1 = pick(F); var c2 = pick(F), gap = Math.abs(e1[0] - c2[0]); if (TUNE ? gap >= Math.round(25 - 17 * H) && gap <= Math.round(120 - 90 * H) : gap >= (e1[2] || c2[2] ? 25 : 18) && gap <= 120) e2 = c2; }
     LEGS.push({ kind: "first", name: "Logbook", ask: "Which came first?", ev: r() < 0.5 ? [e1, e2] : [e2, e1] });
   }
 
@@ -134,7 +144,7 @@
       $("#zin").onclick = function () { zoom(0.5); }; $("#zout").onclick = function () { zoom(2); };
       if (window.__WORLD) go(); else { var sc = document.createElement("script"); sc.src = document.querySelector('script[src*="daily.js"]').src.replace("daily.js", "world-lite.js"); sc.onload = go; document.head.appendChild(sc); go(); }
       cv.onclick = function (e) { if (busy) return; var rc = cv.getBoundingClientRect(); pin = cv.mxP(e.clientX - rc.left, e.clientY - rc.top); drawMap(cv, pin); $("#lock").disabled = false; };
-      $("#lock").onclick = function () { if (busy || !pin) return; var ans = [L.place[2], L.place[3]], d = km(pin, ans), p = Math.round(25 * Math.exp(-d / 1200)); $("#lock").disabled = true; cv.mxAns = ans; cv.mxV = null; drawMap(cv, pin, ans);
+      $("#lock").onclick = function () { if (busy || !pin) return; var ans = [L.place[2], L.place[3]], d = km(pin, ans), p = Math.round(25 * Math.exp(-d / (TUNE ? 1200 * (1.15 - 0.4 * H) : 1200))); $("#lock").disabled = true; cv.mxAns = ans; cv.mxV = null; drawMap(cv, pin, ans);
         var dir = ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"][Math.round(bearing(pin, ans) / 45) % 8], co = byName[L.place[1]];
         finishLeg(p, Math.round(d).toLocaleString("en-US") + " km off" + (d > 50 ? ": " + L.place[0] + " is to the " + dir + " of your pin." : ". Spot on.") + " It's in " + the(L.place[1] || L.place[0]) + (co ? ", " + co.cont : "") + ".");
         $("#say").insertAdjacentHTML("beforeend", ' <a href="https://en.wikipedia.org/w/index.php?search=' + encodeURIComponent(L.place[0] + (L.place[1] ? ", " + L.place[1] : "")) + '" target="_blank" rel="noopener">Read about ' + L.place[0] + "</a>"); };
@@ -174,7 +184,7 @@
   $("#next").onclick = function () { G.at = G.pts.length; keep(); show(); };
 
   // ---------- the finish ----------
-  function shareText() { var res = save.results[N]; return "Mapelago Daily Voyage No. " + N + " \u{1F422} " + res.score + " of 100\n" + res.pts.map(mark).join("") + "\nFour stops, one voyage. mapelago.com/daily.html"; }
+  function shareText() { var res = save.results[N]; return "Mapelago Daily Voyage No. " + N + " \u{1F422} " + res.score + " of 100\n" + res.pts.map(mark).join("") + (N >= 16 ? "\n" + LEGS.map(function (l) { return l.name; }).join(" · ") : "") + "\nFour stops, one voyage. mapelago.com/daily.html"; }
   function done() {
     if (!save.results[N]) { save.results[N] = { score: total(), pts: G.pts.slice() }; delete save.game; store(); ping("done"); }
     // one streak with the retired Voyage's days in it (site.js counts them for the Daily Voyage)

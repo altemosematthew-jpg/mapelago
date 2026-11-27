@@ -18,15 +18,18 @@
   var close = function (a, b) { return a.t === "country" && window.MXAclose ? MXAclose({ area: a.v, szr: a.szr }, { area: b.v, szr: b.szr }) : false; };
 
   // the day's pairs, dealt in order from No. 14 so that no pair ever returns
-  var used = { city: {}, country: {} }, dealt = {}, last = START - 1;
+  var used = { city: {}, country: {} }, dealt = {}, last = START - 1, HARDER = 16;
   function sorted(list) { return list.map(function (_, i) { return i; }).sort(function (a, b) { return list[a].v - list[b].v; }); }
   var BY = { city: sorted(CITY), country: sorted(LAND) }, POOL = { city: CITY, country: LAND };
   function dealOne(n) {
-    var rnd = mulb(n * 7919 + 131), today = { city: {}, country: {} }, out = [], wf = window.MXS && MXS.weekLevel ? MXS.weekLevel(n).f : 1;
+    var rnd = mulb(n * 7919 + 131), today = { city: {}, country: {} }, out = [], wf = window.MXS && MXS.weekLevel ? MXS.weekLevel(n).f : 1, floor = 1.15;
+    // From No. 16 (scorecard 3): closer pairs, most of all on hard days. Each pair's gap is cut by the day's share below,
+    // and the closest pairs may be only 6% apart.
+    if (n >= HARDER) { wf = { 1.3: 0.9, 1.2: 0.8, 1.1: 0.7, 1: 0.6, 0.9: 0.38 }[wf] || (wf < 0.85 ? 0.24 : 0.6); floor = 1.06; }
     for (var s = 0; s < N; s++) {
       var k = kind(s), P = POOL[k], by = BY[k], got = null;
       for (var widen = 0; widen < 5 && !got; widen++) {
-        var lo = Math.max(1.15, 1 + (RAMP[s][0] - 1) * wf - 0.05 * widen), hi = Math.max(lo + 0.06, 1 + (RAMP[s][1] - 1) * wf + 0.15 * widen);
+        var lo = Math.max(floor, 1 + (RAMP[s][0] - 1) * wf - 0.05 * widen), hi = Math.max(lo + 0.06, 1 + (RAMP[s][1] - 1) * wf + 0.15 * widen);
         for (var t = 0; t < 400 && !got; t++) {
           var a = Math.floor(rnd() * P.length); if (today[k][a]) continue;
           var want = P[a].v * (lo + rnd() * (hi - lo)) * (rnd() < 0.5 ? 1 : 1 / Math.pow(lo + rnd() * (hi - lo), 2));
