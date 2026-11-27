@@ -1068,9 +1068,12 @@
     if (!isInk()) return;
     var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", "#101316");
     document.querySelectorAll(".top .word, .about-h").forEach(inkTitle);
-    inkEpisode(); inkFrames(); inkMaps(); inkArt();
-    var t = null; new MutationObserver(function (ms) { if (ms.every(function (m) { return m.target.closest && m.target.closest("[data-ink-copy]") || Array.prototype.every.call(m.addedNodes, function (n) { return n.nodeType === 1 && n.hasAttribute("data-ink-copy"); }) && m.addedNodes.length; })) return; clearTimeout(t); t = setTimeout(function () { inkFrames(); inkMaps(); }, 250); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
-    window.addEventListener("load", function () { setTimeout(function () { inkFrames(); inkMaps(); }, 300); });
+    inkEpisode(); inkFrames(); inkArt();
+    // the textures (map hatching, blots, paper grain) wait until the page has loaded, so they never slow the first move
+    var ready = false, settle = function () { ready = true; document.documentElement.classList.add("ink-ready"); inkMaps(); };
+    if (document.readyState === "complete") setTimeout(settle, 200); else window.addEventListener("load", function () { setTimeout(settle, 200); });
+    var t = null; new MutationObserver(function (ms) { if (ms.every(function (m) { return m.target.closest && m.target.closest("[data-ink-copy]") || Array.prototype.every.call(m.addedNodes, function (n) { return n.nodeType === 1 && n.hasAttribute("data-ink-copy"); }) && m.addedNodes.length; })) return; clearTimeout(t); t = setTimeout(function () { inkFrames(); if (ready) inkMaps(); }, 250); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
+    window.addEventListener("load", function () { setTimeout(inkFrames, 300); });
   }
 
   function emblem() {

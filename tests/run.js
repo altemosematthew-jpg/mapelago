@@ -1259,7 +1259,7 @@ async function page(b, url, opts = {}) {
       const t = await page(b, U + "fathoms.html#day-20", { wait: 700 });
       const before = await t.p.evaluate(() => !!document.querySelector("canvas.mx-mini:not([hidden])"));
       await t.p.click("#fpass"); await t.p.waitForTimeout(1200);
-      const after = await t.p.evaluate(() => { const c = document.querySelector("canvas.mx-mini:not([hidden])"); if (!c) return null; const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let acc = 0; for (let i = 0; i < d.length; i += 4) if ((d[i] > 150 && d[i + 1] < 80 && d[i + 2] > 90) || (d[i] > 140 && d[i + 1] < 90 && d[i + 2] < 70)) acc++; // magenta, or rust in Ink & Lantern return [c.getAttribute("aria-label"), acc > 20]; });
+      const after = await t.p.evaluate(() => { const c = document.querySelector("canvas.mx-mini:not([hidden])"); if (!c) return null; const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let acc = 0; for (let i = 0; i < d.length; i += 4) if ((d[i] > 150 && d[i + 1] < 80 && d[i + 2] > 90) || (d[i] > 140 && d[i + 1] < 90 && d[i + 2] < 70)) acc++; /* magenta, or rust in Ink & Lantern */ return [c.getAttribute("aria-label"), acc > 20]; });
       check(!before && after && /^Map: .+/.test(after[0]) && after[1], "answer map: none before the answer; after it, the answer country is drawn highlighted", JSON.stringify([before, after]));
       await t.ctx.close();
     }

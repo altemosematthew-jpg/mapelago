@@ -1,10 +1,10 @@
-# What still looks plain (0.15.58 contact sheets, 375x667 and 1280x800)
+# What still looks plain (Ink & Lantern, 0.15.60, contact sheet at 375x667)
 
-1. Desktop uses a narrow column on most games, with wide empty margins (Bigger city?, Bigger country?, Voyage, Fathoms, Stamps, Logbook). Only Mystery city, Mystery country, Dead Reckoning and Ballast use the width.
-2. Bigger city? cards are text only: no picture, map or skyline for the city. Bigger country? has outlines, so the two look uneven.
-3. Logbook and Fathoms question cards are plain text boxes with no picture of the place or the era.
-4. The header line drawings are small next to the turtle mark. They read as decoration, not as illustrations in the Chart room look. A larger header drawing per game would need an illustrator, not more code.
-5. The "Today's games" list under each game is a grid of plain text cards. It repeats on every page and takes the lower half of the phone screen.
-6. Daily Voyage's pin leg and Dead Reckoning use a flat yellow world with no relief or sea texture. The chart grid shows only in the page background, not on the maps.
-7. The home page's "More games" cards are small and dense on desktop (four across, tiny type).
-8. Result cards share one layout, a turtle, a score and marks. Only Ballast draws its own picture (the stack outline). The other games could draw their route, map or wheel.
+1. The "Today's games" list under every game still uses emoji icons on plain cards. It doesn't use the comic panels yet.
+2. The map hatching and shadow rim reach every SVG map: Crossings, Dead Reckoning, the Daily Voyage pin map and the outlines in Bigger country? and Voyage. The canvas-drawn maps get the new colours but no hatching or rim: the Mystery city and Mystery country pin map, Voyage's globe, and the small answer maps.
+3. The header panel art only appears when the game name fits on one line beside it. Mystery city, Mystery country, Crossings and Dead Reckoning are too crowded on a phone, so the drawing gives way there.
+4. Disabled buttons (for example Lock in my pin before a pin is placed) read as muddy dashed boxes rather than inked ones.
+5. Logbook and Fathoms question cards are still text only, with no picture of the place or the era.
+6. Ballast's sea and ship hull are flat colour. Only the cargo is inked.
+7. On desktop most games still sit in a narrow column, so there is a lot of dark page around them.
+8. The panel drawings are generated in code: simple shapes with wobble and hatching. A human illustrator would make them read as a real comic.
