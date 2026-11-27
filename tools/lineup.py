@@ -33,5 +33,6 @@ for f in subprocess.check_output(["git", "ls-files", "*.html"]).decode().split()
                 last = re.search(re.escape(ins), blk)
         return blk
     s = re.sub(r'<nav\b[^>]*>.*?</nav>', fix, s, flags=re.S)
+    s = s.replace("Mapelago, the mystery city game", "Mapelago home")  # the logo is the way home, not one game
     if s != o: open(f, "w", encoding="utf8").write(s); n += 1
 print("lineup:", n, "pages changed")

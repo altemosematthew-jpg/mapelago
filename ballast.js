@@ -234,6 +234,8 @@
     next();
     fit(); resize(); // again now that the readouts are filled in
     if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); }
+    // a voyage starts from the chart further down the page: bring the board up to the top of the screen
+    if (!RUN) setTimeout(function () { var p = $("#play"); if (p && p.scrollIntoView) p.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" }); }, 30);
   }
   function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; if (engine) M.Engine.clear(engine); engine = null; }
   function estimateLine(level) {
@@ -247,7 +249,9 @@
   var asked = null; // { s, answer: null | true | false, body }
   function lastCall() { // the load is over: one last chance to name the final country, then Continue
     hover = null;
-    if (asked && asked.answer === null && L.name !== "none" && L.name !== "earn") markName(false, true); // naming never holds up the load
+    if (asked && asked.answer === null && L.name !== "none" && L.name !== "earn") { // the question stays open: answer it or skip it, then on
+      state = "last"; $("#dropBtn").hidden = true; $("#contBtn").hidden = false; renderHud(); return;
+    }
     finish();
   }
   function cont() { if (state !== "last") return; if (asked && asked.answer === null) markName(false, true); $("#contBtn").hidden = true; $("#dropBtn").hidden = false; finish(); }
@@ -342,7 +346,7 @@
     var h = heightKm(); S.height = h;
     if (S.lost.length > L.spare) { S.cause = "overboard"; endLevel(false); return; }
     // the goal: the stack must stand above the line for two seconds
-    if (h >= L.lineKm && aboard() >= need() && state !== "fall") holdT += dt; else if (h < L.lineKm || state !== "fall") holdT = 0;
+    if (h >= L.lineKm && aboard() >= need() && state !== "fall" && state !== "earn") holdT += dt; else if (h < L.lineKm || state !== "fall") holdT = 0; // never while a question is open
     if (holdT >= HOLD) { endLevel(true); return; }
     if (state === "wait") { stillT = settled() ? stillT + dt : 0; if (stillT > 1200 && (h < L.lineKm || aboard() < need())) { if (h >= L.lineKm) S.cause = "overboard"; /* all loaded and settled: below the line, or too few left aboard */ endLevel(false); return; } }
     if ((time / (1000 / 60) | 0) % 6 === 0) renderHud();
@@ -612,6 +616,7 @@
     $("#nin").disabled = true;
     if (!skipped) (ok ? SFX.right : SFX.wrong)();
     renderHud();
+    if (state === "last") setTimeout(function () { if (state === "last") cont(); }, 900); // answered after the load: on to the next level
   }
   // ---------- voyages: each piece is earned with a question about that country ----------
   // Four choices. A right answer gives you the country; a wrong one costs nothing but gives a plain crate, about a third

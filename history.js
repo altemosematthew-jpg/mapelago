@@ -358,7 +358,7 @@
     if (window.MXS && !past) {
       var s = MXS.streak(save.results, today);
       $("#streakNote").hidden = false;
-      $("#streakNote").textContent = "Streak: " + s.cur + (s.cur === 1 ? " day" : " days") + ". Best: " + s.best + "." + (s.freezes ? " \u{1F9CA} " + s.freezes + (s.freezes === 1 ? " freeze" : " freezes") + " ready." : "");
+      $("#streakNote").textContent = "Logbook streak: " + s.cur + (s.cur === 1 ? " day" : " days") + ". Best: " + s.best + "." + (s.freezes ? " \u{1F9CA} " + s.freezes + (s.freezes === 1 ? " freeze" : " freezes") + " ready." : "");
     }
     drawDots();
     $("#done").hidden = false;

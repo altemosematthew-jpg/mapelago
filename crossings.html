@@ -896,7 +896,7 @@ a.act{text-decoration:none}
       if (window.MXS) {
         var s = MXS.streak(save.results, today);
         $("#streakNote").hidden = false;
-        $("#streakNote").textContent = "Streak: " + s.cur + (s.cur === 1 ? " day" : " days") + ". Best: " + s.best + "." + (s.freezes ? " \u{1F9CA} " + s.freezes + (s.freezes === 1 ? " freeze" : " freezes") + " ready." : "");
+        $("#streakNote").textContent = "Crossings streak: " + s.cur + (s.cur === 1 ? " day" : " days") + ". Best: " + s.best + "." + (s.freezes ? " \u{1F9CA} " + s.freezes + (s.freezes === 1 ? " freeze" : " freezes") + " ready." : "");
       }
     }
     d.hidden = false;

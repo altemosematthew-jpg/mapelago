@@ -212,11 +212,14 @@
     return { book: book, save: function () { try { localStorage.setItem(key, JSON.stringify(book)); } catch (e) {} } };
   }
   function bestText(me, shareEl) {
+    if (shareEl && (shareEl.hidden || !shareEl.offsetParent)) return ""; // no share line on show (a Ballast voyage, practice): no daily best either
     var mine = ownResult(shareEl && shareEl.textContent); if (!mine || !me) return "";
     var sb = scoreBook(me); sb.book[mine.n] = mine.score; sb.save();
     var all = Object.keys(sb.book).map(function (d) { return sb.book[d]; }), best = Math.max.apply(null, all), y = sb.book[mine.n - 1];
+    // a new best has to beat every earlier day; matching one is not new
+    var before = Object.keys(sb.book).filter(function (d) { return +d !== mine.n; }).map(function (d) { return sb.book[d]; }), prev = before.length ? Math.max.apply(null, before) : null;
     var u = UNIT[me.id] || function (n) { return Number(n).toLocaleString("en-US") + " points"; }, vs = y == null ? "" : mine.score > y ? " Beat yesterday's " + u(y) + "." : mine.score === y ? " Same as yesterday." : " Yesterday: " + u(y) + ".";
-    return (mine.score >= best && all.length > 1 ? "A new personal best." : "Your best: " + u(best) + ".") + vs;
+    return (prev != null && mine.score > prev ? "A new personal best." : mine.score === prev ? "Equal to your best: " + u(best) + "." : "Your best: " + u(best) + ".") + vs;
   }
   function dailyText() {
     var st = siteStreak();
@@ -236,7 +239,7 @@
     if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
     if (p.textContent !== t) p.textContent = t;
   }
-  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay, shareCard: function () { return shareImageClick({ id: "daily" }); }, card: function (t, id) { return inkCard(t, id); }, inkOn: function () { return isInk(); } };
+  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay, shareCard: function () { return shareImageClick({ id: "daily" }); }, card: function (t, id) { return inkCard(t, id); }, inkOn: function () { return isInk(); }, modeLine: function (g) { return modeLine(g); } };
 
   var CSS = '.mx-risk{display:block;margin:0 0 10px;line-height:1.45;padding:8px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000);font-size:14px;font-weight:600}'
     + '.mx-risk a{color:inherit;font-weight:800}'
@@ -257,7 +260,7 @@
     + '.mx-today{grid-column:1/-1;margin:36px 0 0}.mx-today h2{margin:0 0 10px;font-size:20px}'
     + '.mx-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}'
     + '.mx-card a{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;align-items:start;height:100%;box-sizing:border-box;padding:10px 12px;min-height:44px;border:var(--bw,2px) solid var(--line,#000);border-bottom-width:var(--lip,6px);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);text-decoration:none}'
-    + '.mx-card .ic{grid-row:span 3;font-size:26px;line-height:1.1}.mx-card b{font-size:16px;line-height:1.2}.mx-card .ab{font-size:13px;line-height:1.3;color:var(--ink-2,#3d4a52)}'
+    + '.mx-card .ic{grid-row:span 3;font-size:26px;line-height:1.1}.mx-card b{font-size:16px;line-height:1.2}.mx-card .ab{font-size:13px;line-height:1.3;color:var(--ink-2,#3d4a52)}.mx-modes{display:block;margin-top:2px;font-size:13px;font-weight:800;color:var(--accent-ink,#b4237d)}'
     + '.mx-card .st{font-size:12.5px;font-weight:800;color:var(--accent-ink,#b4237d)}.mx-card.done a{background:var(--tint,#dcedf5)}.mx-card.here a{outline:3px solid var(--accent,#b4237d);outline-offset:-3px}'
     + '.mx-next{margin:10px 0 0;font-size:15px;font-weight:600}.mx-next a{font-weight:800;color:inherit}'
     + '.mx-passport{margin:18px 0 0}.mx-passport h3{margin:0 0 4px;font-size:17px}.mx-passport p{margin:0 0 8px;font-size:14px}.mx-passport ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.mx-passport li{display:grid;justify-items:center;gap:2px;padding:6px 2px;border:1.5px dashed var(--line,#000);border-radius:8px;font-size:12px}.mx-passport b{font-size:11px;letter-spacing:-1px;color:var(--accent-ink,#b4237d);word-break:break-all;text-align:center;line-height:1.1}'
@@ -437,7 +440,7 @@
       // one line sounded per prompt: the deeper the answer, the longer the line
       var deep = { "\u{1F7E9}": .25, "\u{1F7E8}": .45, "\u{1F7E7}": .6, "\u{1F7E5}": .75, "\u{1F41F}": .85, "\u{1F419}": 1, "\u{1F30A}": .15 };
       x.fillStyle = "rgba(126,156,147,.55)"; x.fillRect(0, H * .18, W, H * .82);
-      marks.forEach(function (m, i) { var cx = 70 + i * ((W - 140) / Math.max(1, marks.length - 1)), d = (deep[m] != null ? deep[m] : .5) * H * .72;
+      marks.forEach(function (m, i) { var cx = 70 + i * ((W - 360) / Math.max(1, marks.length - 1)), d = (deep[m] != null ? deep[m] : .5) * H * .72; // clear of the score stamp
         x.strokeStyle = "#14110d"; x.lineWidth = 4; x.beginPath(); x.moveTo(cx, H * .1); x.lineTo(cx, H * .18 + d); x.stroke(); blob(cx, H * .18 + d + 16, 18, col(m)); });
       return true;
     }
@@ -642,6 +645,12 @@
   }
 
   // 16.5 Today's games: a card for every game with today's status, and what to play next
+  // Mystery has two modes, each with its own daily puzzle: the card says which are done today
+  function modeLine(g) {
+    if (g.id !== "city") return "";
+    var t = today(), c = !!results(g)[t], k = !!results(GAMES.filter(function (x) { return x.id === "country"; })[0])[t];
+    return '<span class="mx-modes">City ' + (c ? "\u2713" : "\u25CB") + " \u00b7 Country " + (k ? "\u2713" : "\u25CB") + "</span>";
+  }
   function today_games(app) {
     var me = here(), all = info();
     var sec = document.createElement("section");
@@ -651,7 +660,7 @@
     sec.innerHTML = (homeCopy ? '<h2 id="mxTodayH">' + esc(homeCopy.headline) + '</h2><p class="mx-next">' + esc(homeCopy.line) + "</p>" : '<h2 id="mxTodayH">Today\'s games</h2>') + '<ul class="mx-cards">' + all.map(function (s) {
       var g = s.game, isMe = me && g.id === topId(me);
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
-      return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
+      return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span>' + modeLine(g) + '<span class="st">' + st + "</span></a></li>";
     }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">' + (meLeft ? "This is the last game left today." : "Every game done today. See you tomorrow.") + '</p>');
     // the shared streak, under the heading
     var sst = siteStreak(), sp = document.createElement("p"); sp.className = "mx-next mx-site";
@@ -921,7 +930,7 @@
   // answer is; it never appears before the answer.
   var MXMAP = (function () {
     var feats = null, byName = {}, waiting = [];
-    var ALIAS = { "united states": "united states of america", "usa": "united states of america", "czech republic": "czechia", "ivory coast": "côte d'ivoire", "cote d'ivoire": "côte d'ivoire", "dr congo": "dem. rep. congo", "democratic republic of the congo": "dem. rep. congo", "republic of the congo": "congo", "central african republic": "central african rep.", "south sudan": "s. sudan", "bosnia and herzegovina": "bosnia and herz.", "dominican republic": "dominican rep.", "equatorial guinea": "eq. guinea", "eswatini": "eswatini", "north macedonia": "macedonia", "solomon islands": "solomon is.", "western sahara": "w. sahara", "türkiye": "turkey", "turkiye": "turkey", "east timor": "timor-leste", "cabo verde": "cape verde", "the bahamas": "bahamas", "the gambia": "gambia" };
+    var ALIAS = { "united states": "united states of america", "usa": "united states of america", "czech republic": "czechia", "ivory coast": "côte d'ivoire", "cote d'ivoire": "côte d'ivoire", "dr congo": "dem. rep. congo", "democratic republic of the congo": "dem. rep. congo", "republic of the congo": "congo", "central african republic": "central african rep.", "south sudan": "s. sudan", "bosnia and herzegovina": "bosnia and herz.", "dominican republic": "dominican rep.", "equatorial guinea": "eq. guinea", "eswatini": "eswatini", "north macedonia": "macedonia", "solomon islands": "solomon is.", "western sahara": "w. sahara", "türkiye": "turkey", "turkiye": "turkey", "east timor": "timor-leste", "cabo verde": "cape verde", "the bahamas": "bahamas", "the gambia": "gambia", "burma": "myanmar", "turkiye": "turkey", "türkiye (turkey)": "turkey" };
     function load(cb) {
       if (window.__WORLD) return cb();
       waiting.push(cb); if (waiting.length > 1) return;

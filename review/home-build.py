@@ -86,7 +86,7 @@ BODY = '''
 <script>
 // a tick on the games already played today, and the voyage button says when today's is done
 (function () { try {
-  var g = window.MXS && MXS.info ? MXS.info() : []; g.forEach(function (s) { var a = document.querySelector('a[data-game="' + s.game.url + '"]'); if (a && s.doneToday) a.classList.add("done"); });
+  var g = window.MXS && MXS.info ? MXS.info() : []; g.forEach(function (s) { var a = document.querySelector('a[data-game="' + s.game.url + '"]'); if (a && s.doneToday) a.classList.add("done"); if (a && MXS.modeLine && !a.querySelector(".mx-modes")) a.insertAdjacentHTML("beforeend", MXS.modeLine(s.game)); });
   var dv = JSON.parse(localStorage.getItem("dailycity:dailyvoyage:v1") || "{}"), n = window.MXS ? MXS.today() : 0, r = dv.results && dv.results[n];
   if (r) { document.getElementById("dvGo").textContent = "Today's voyage: " + r.score + " of 100. See it"; document.getElementById("dvLine").textContent = "Done for today. A new voyage in " + (MXS.untilNext ? MXS.untilNext() : "the morning") + "."; }
 } catch (e) {} })();

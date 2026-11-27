@@ -15,6 +15,8 @@
   var byCC = {}; D.C.forEach(function (c) { byCC[c[0]] = { cc: c[0], name: c[1], cid: c[2], area: c[3], fame: c[4], cont: c[5], flag: c[6] }; });
   var THE = /^(United States|United Kingdom|United Arab Emirates|Netherlands|Philippines|Bahamas|Gambia|Maldives|Comoros|Seychelles|Central African Republic|Dominican Republic|Czech Republic|Solomon Islands|Marshall Islands|Democratic Republic of the Congo|Republic of the Congo)$/;
   var the = function (n) { return (THE.test(n) ? "the " : "") + n; };
+  var byName = {}; D.C.forEach(function (c) { byName[c[1]] = { cont: c[5] }; });
+  function bearing(a, b) { var R = Math.PI / 180, y = Math.sin((b[1] - a[1]) * R) * Math.cos(b[0] * R), x = Math.cos(a[0] * R) * Math.sin(b[0] * R) - Math.sin(a[0] * R) * Math.cos(b[0] * R) * Math.cos((b[1] - a[1]) * R); return (Math.atan2(y, x) / R + 360) % 360; }
   var adj = {}; D.E.forEach(function (e) { (adj[e[0]] = adj[e[0]] || []).push(e[1]); (adj[e[1]] = adj[e[1]] || []).push(e[0]); });
   function km(a, b) { var R = Math.PI / 180, x = Math.sin((b[0] - a[0]) * R / 2), y = Math.sin((b[1] - a[1]) * R / 2), h = x * x + Math.cos(a[0] * R) * Math.cos(b[0] * R) * y * y; return 12742 * Math.asin(Math.min(1, Math.sqrt(h))); }
 
@@ -95,7 +97,8 @@
   function drawMap(cv, pin, ans) {
     decode(); var w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = w * dpr; cv.height = h * dpr;
     var g = cv.getContext("2d"), cs = getComputedStyle(document.documentElement), col = function (v, d) { return cs.getPropertyValue(v).trim() || d; };
-    var P = function (lat, lon) { return [(lon + 180) / 360 * w, (82 - lat) / 140 * h]; };
+    var V = cv.mxV || (cv.mxV = { lon0: -180, lon1: 180, lat0: 82, lat1: -58 }); // the part of the world in view (zoom)
+    var P = function (lat, lon) { return [(lon - V.lon0) / (V.lon1 - V.lon0) * w, (V.lat0 - lat) / (V.lat0 - V.lat1) * h]; };
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.fillStyle = col("--sea", "#dcedf5"); g.fillRect(0, 0, w, h);
     g.strokeStyle = col("--grat", "#c9e1ec"); g.lineWidth = 1; for (var lo = -150; lo <= 150; lo += 30) { var a = P(0, lo); g.beginPath(); g.moveTo(a[0], 0); g.lineTo(a[0], h); g.stroke(); } for (var la = -30; la <= 60; la += 30) { var b = P(la, 0); g.beginPath(); g.moveTo(0, b[1]); g.lineTo(w, b[1]); g.stroke(); }
     if (feats) feats.forEach(function (f) { g.beginPath(); f.forEach(function (p) { p.forEach(function (rg) { rg.forEach(function (q, i) { var s = P(q[1], q[0]); if (i) g.lineTo(s[0], s[1]); else g.moveTo(s[0], s[1]); }); g.closePath(); }); }); g.fillStyle = col("--land", "#f3d98a"); g.fill(); g.strokeStyle = col("--land-line", "#6f5d22"); g.lineWidth = 0.5; g.stroke(); });
@@ -103,7 +106,7 @@
     if (pin && ans) { var s1 = P(pin[0], pin[1]), s2 = P(ans[0], ans[1]); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(s1[0], s1[1]); g.lineTo(s2[0], s2[1]); g.strokeStyle = col("--ink", "#000"); g.stroke(); g.setLineDash([]); }
     if (pin) dot(pin, col("--accent", "#b4237d")); if (ans) dot(ans, "#1a7f37");
     if (cv.mxMark) { var mk = P(cv.mxMark[0], cv.mxMark[1]); g.lineWidth = 3; g.strokeStyle = col("--accent", "#b4237d"); g.beginPath(); g.arc(mk[0], mk[1], 9, 0, 6.2832); g.stroke(); g.beginPath(); g.moveTo(mk[0] - 14, mk[1]); g.lineTo(mk[0] - 5, mk[1]); g.moveTo(mk[0] + 5, mk[1]); g.lineTo(mk[0] + 14, mk[1]); g.moveTo(mk[0], mk[1] - 14); g.lineTo(mk[0], mk[1] - 5); g.moveTo(mk[0], mk[1] + 5); g.lineTo(mk[0], mk[1] + 14); g.stroke(); }
-    cv.mxP = function (x, y) { return [82 - y / h * 140, x / w * 360 - 180]; };
+    cv.mxP = function (x, y) { return [V.lat0 - y / h * (V.lat0 - V.lat1), V.lon0 + x / w * (V.lon1 - V.lon0)]; };
   }
 
   // ---------- the legs ----------
@@ -121,11 +124,20 @@
     if (save.results[N] || G.at >= 4) return done();
     var L = LEGS[G.at], box = $("#leg"); $("#ask").textContent = L.ask; $("#kind").textContent = "Stop " + (G.at + 1) + " of 4 · " + L.name;
     if (L.kind === "pin") {
-      box.innerHTML = '<canvas id="pinmap" role="application" aria-label="Blank world map. Tap where you think the place is, then lock it in."></canvas><button class="act" id="lock" disabled>Lock in my pin</button>';
+      box.innerHTML = '<div class="dvmap"><canvas id="pinmap" role="application" aria-label="Blank world map. Tap where you think the place is, then lock it in. The plus and minus buttons zoom."></canvas><div class="dvzoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">\u2212</button></div></div><button class="act" id="lock" disabled>Lock in my pin</button>';
       var cv = $("#pinmap"), pin = null, go = function () { drawMap(cv, pin); };
+      // zoom: halves or doubles the view around your pin (or the middle), from the whole world down to an eighth of it
+      var zoom = function (f) { var V = cv.mxV || (cv.mxV = { lon0: -180, lon1: 180, lat0: 82, lat1: -58 }), cl = pin ? pin[1] : (V.lon0 + V.lon1) / 2, ca = pin ? pin[0] : (V.lat0 + V.lat1) / 2;
+        var lw = Math.max(45, Math.min(360, (V.lon1 - V.lon0) * f)), lh = lw * 140 / 360;
+        var l0 = Math.max(-180, Math.min(180 - lw, cl - lw / 2)), a0 = Math.min(82, Math.max(-58 + lh, ca + lh / 2));
+        cv.mxV = { lon0: l0, lon1: l0 + lw, lat0: a0, lat1: a0 - lh }; drawMap(cv, pin, cv.mxAns); };
+      $("#zin").onclick = function () { zoom(0.5); }; $("#zout").onclick = function () { zoom(2); };
       if (window.__WORLD) go(); else { var sc = document.createElement("script"); sc.src = document.querySelector('script[src*="daily.js"]').src.replace("daily.js", "world-lite.js"); sc.onload = go; document.head.appendChild(sc); go(); }
       cv.onclick = function (e) { if (busy) return; var rc = cv.getBoundingClientRect(); pin = cv.mxP(e.clientX - rc.left, e.clientY - rc.top); drawMap(cv, pin); $("#lock").disabled = false; };
-      $("#lock").onclick = function () { if (busy || !pin) return; var d = km(pin, [L.place[2], L.place[3]]), p = Math.round(25 * Math.exp(-d / 1200)); $("#lock").disabled = true; drawMap(cv, pin, [L.place[2], L.place[3]]); finishLeg(p, Math.round(d).toLocaleString("en-US") + " km off."); };
+      $("#lock").onclick = function () { if (busy || !pin) return; var ans = [L.place[2], L.place[3]], d = km(pin, ans), p = Math.round(25 * Math.exp(-d / 1200)); $("#lock").disabled = true; cv.mxAns = ans; cv.mxV = null; drawMap(cv, pin, ans);
+        var dir = ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"][Math.round(bearing(pin, ans) / 45) % 8], co = byName[L.place[1]];
+        finishLeg(p, Math.round(d).toLocaleString("en-US") + " km off" + (d > 50 ? ": " + L.place[0] + " is to the " + dir + " of your pin." : ". Spot on.") + " It's in " + the(L.place[1] || L.place[0]) + (co ? ", " + co.cont : "") + ".");
+        $("#say").insertAdjacentHTML("beforeend", ' <a href="https://en.wikipedia.org/w/index.php?search=' + encodeURIComponent(L.place[0] + (L.place[1] ? ", " + L.place[1] : "")) + '" target="_blank" rel="noopener">Read about ' + L.place[0] + "</a>"); };
     } else if (L.kind === "pair") {
       box.innerHTML = L.pair.map(function (c, i) { return '<button class="opt big" data-i="' + i + '"><b>' + c.name + "</b><span>" + c.cont + "</span></button>"; }).join("");
       box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy) return; var i = +bt.dataset.i, w = L.pair[0].area > L.pair[1].area ? 0 : 1, ok = i === w, q = L.pair[w].area / L.pair[1 - w].area;

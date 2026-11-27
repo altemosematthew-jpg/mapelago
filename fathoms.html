@@ -389,7 +389,7 @@ a.act{text-decoration:none}
 .allans{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:3px;max-height:40vh;overflow:auto;font-size:14.5px}
 .allans li{display:flex;justify-content:space-between;gap:10px;padding:4px 10px;border:1.5px solid var(--rule,#c9e1ec);border-radius:8px;background:var(--paper)}
 .allans li.you{border:2px solid var(--accent);font-weight:800}
-.allans li.you span::after{content:"  \2190 yours"}
+.allans li.you span::after{content:"Your answer";display:inline-block;margin-left:8px;padding:0 6px;font-size:12px;font-weight:800;line-height:1.6;background:var(--accent);color:var(--on-accent);border-radius:3px;vertical-align:1px}
 .allans b{font-variant-numeric:tabular-nums}
 .about-h{margin:0 0 10px;font-size:22px;line-height:1.2}.howto{margin:6px 0 14px;padding-left:22px;line-height:1.45}
 .allans small{display:block;font-size:12px;font-weight:400;color:var(--ink-2)}.allans li.allhead{border:0;background:none;padding:2px 2px 4px;font-weight:800;font-size:13.5px}
@@ -414,7 +414,7 @@ a.act{text-decoration:none}
 <body>
 <div class="app">
   <header class="top">
-    <div class="mark"><a href="./" id="logoMascot" aria-label="Mapelago, the mystery city game"></a><div class="name"><p class="word">Fathoms</p><span class="no" id="num"></span></div></div>
+    <div class="mark"><a href="./" id="logoMascot" aria-label="Mapelago home"></a><div class="name"><p class="word">Fathoms</p><span class="no" id="num"></span></div></div>
   </header>
   <p class="lede" id="lede">Type any right answer: the less obvious it is, the deeper you go.</p>
   <ol class="dots" id="dots" aria-label="The seven prompts"></ol>

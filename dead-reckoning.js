@@ -204,6 +204,16 @@
     var b = box(); if (sx == null) { sx = b.w / 2; sy = b.h / 2; }
     var px = view.x + sx / b.w * view.w, py = view.y + sy / b.h * view.h;
     view.w /= f; view.h /= f; view.x = px - sx / b.w * view.w; view.y = py - sy / b.h * view.h; applyView();
+    if (view.w < 120) detail();
+  }
+  // zoomed in, the small world map's coastlines look coarse: the detailed one is fetched once and the land redrawn from it
+  var detailAsked = false;
+  function detail() {
+    if (detailAsked) return; detailAsked = true;
+    var me = document.querySelector('script[src*="dead-reckoning.js"]'), v = me ? (me.getAttribute("src").split("?")[1] || "") : "", sc = document.createElement("script");
+    sc.src = "world.js" + (v ? "?" + v : ""); sc.async = true;
+    sc.onload = function () { var old = svg.querySelector(".landg .land"); if (old) old.remove(); landDrawn = false; drawLand(); drawPins(); };
+    document.head.appendChild(sc);
   }
   function screenToMap(cx, cy) { var b = box(); return [view.x + (cx - b.l) / b.w * view.w, view.y + (cy - b.t) / b.h * view.h]; }
 
@@ -287,7 +297,7 @@
     var k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
     if (!k || revealed) return;
     e.preventDefault();
-    var step = (e.shiftKey ? 48 : 12) * unit(), c = pin ? toXY(pin.lat, pin.lon) : [view.x + view.w / 2, view.y + view.h / 2];
+    var step = (e.shiftKey ? 15 : 3) * unit(), c = pin ? toXY(pin.lat, pin.lon) : [view.x + view.w / 2, view.y + view.h / 2];
     var nx = Math.max(view.x + 2 * unit(), Math.min(view.x + view.w - 2 * unit(), c[0] + k[0] * step)), ny = Math.max(view.y + 2 * unit(), Math.min(view.y + view.h - 2 * unit(), c[1] + k[1] * step));
     place([nx, ny]);
     $("#mapHint").textContent = "Pin placed. Enter locks it in."; // no coordinates: they would let you aim by numbers

@@ -119,7 +119,7 @@ Katowice | Poland | Stalinogrod | 1956 | Stalin name dropped, old name back
 Szczecin | Poland | Stettin | 1945 | German city became Polish Szczecin
 Wroclaw | Poland | Breslau | 1945 | German city became Polish Wroclaw
 Dolisie | Republic of the Congo | Loubomo | 1991 | earlier name Dolisie restored
-Brasov | Romania | Orasul Stalin | 1960 | Stalin name dropped, old name back
+Brașov | Romania | Orașul Stalin | 1960 | Stalin name dropped, old name back
 Baltiysk | Russia | Pillau | 1946 | German name replaced under Soviet rule
 Chernyakhovsk | Russia | Insterburg | 1946 | German name replaced under Soviet rule
 Dimitrovgrad | Russia | Melekess | 1972 | renamed after Georgi Dimitrov
@@ -166,9 +166,9 @@ Qonce | South Africa | King William's Town | 2021 | officially renamed
 eMalahleni | South Africa | Witbank | 2006 | officially renamed
 Bokhtar | Tajikistan | Qurghonteppa | 2018 | city officially renamed Bokhtar
 Istaravshan | Tajikistan | Ura-Tyube | 2000 | Tajik government restored the historic name
-Istanbul | Turkiye | Constantinople | 1930 | Istanbul made the official name
-Kahramanmaras | Turkiye | Maras | 1973 | parliament added the title kahraman (heroic)
-Sanliurfa | Turkiye | Urfa | 1984 | parliament added the title sanli (glorious)
+Istanbul | Türkiye | Constantinople | 1930 | Istanbul made the official name
+Kahramanmaras | Türkiye | Maras | 1973 | parliament added the title kahraman (heroic)
+Sanliurfa | Türkiye | Urfa | 1984 | parliament added the title sanli (glorious)
 Turkmenbashi | Turkmenistan | Krasnovodsk | 1993 | renamed after President Niyazov's title
 Dnipro | Ukraine | Dnipropetrovsk | 2016 | renamed under decommunization law
 Ivano-Frankivsk | Ukraine | Stanislav | 1962 | renamed after writer Ivan Franko

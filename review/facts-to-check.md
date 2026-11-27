@@ -89,3 +89,8 @@ Two UN figures will surprise players. Both are held out of Bigger city? pairs, V
 |---|---|---|
 | Luxor, Egypt | 4,188,023 | The city is usually given as about half a million. The UN urban centre probably takes in the whole built-up Nile valley strip. |
 | Nay Pyi Taw, Myanmar | 53,925 | The capital district is usually given as about a million. The UN urban centre counts only the dense core. |
+
+## Logbook (scorecard 3)
+- Accents are kept: Türkiye, Curaçao, Brașov, Orașul Stalin (from 0.15.66).
+- Brașov: the question now asks what it was called "until 1960, when its old name came back" (Orașul Stalin). "Before 1960" was ambiguous, because it was Brașov before 1950 too. (The source line gives only 1960, so no other date is added.)
+- Pillau: the grader noted "Pillau was German in 1946". Pillau was German until 1945, under Soviet rule from 1945, and renamed Baltiysk in November 1946. The event now reads "Pillau, once German, now in the Soviet Union, is renamed Baltiysk" (1946). If the note meant something else, it needs Matthew's word and a source.

@@ -83,3 +83,7 @@ html:not([data-look]) main,html:not([data-look]) .page{color:var(--ink)}
 /* the small panels on the game cards under every game */
 :is(html[data-look="chart"],html:not([data-look])) .mx-card .ic.ink-ic{width:48px;height:34px;flex:none;font-size:0;line-height:0}
 :is(html[data-look="chart"],html:not([data-look])) .mx-card .ic.ink-ic img{width:48px;height:34px;display:block;box-shadow:2px 2px 0 #000}
+
+/* a right answer is sage green, never the rust of the main button (which read as a miss) */
+:is(html[data-look="chart"],html:not([data-look])) .opt.right,:is(html[data-look="chart"],html:not([data-look])) button.right{background:#7d9a5a!important;color:#14110d!important;border-color:#14110d!important}
+:is(html[data-look="chart"],html:not([data-look])) .pick.right{outline-color:#7d9a5a!important}
