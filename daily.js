@@ -27,7 +27,12 @@
   // 2. a pair of countries: further apart on Monday, closer on Saturday
   var lo = 1 + 0.4 * W.f, hi = lo + 0.6, pair = null;
   for (var t = 0; t < 4000 && !pair; t++) { var a = pick(famous), b = pick(famous), q = Math.max(a.area, b.area) / Math.min(a.area, b.area); if (a !== b && q >= lo && q <= hi) pair = [a, b]; }
-  LEGS.push({ kind: "pair", name: "Bigger", pair: pair, ask: "Which covers more land?" });
+  if (N >= 17 && N % 2 && window.BQ_DATA) {
+    // from No. 17 the Bigger stop follows Bigger?: on odd numbers a pair of cities, by the UN's urban-area figures
+    var CT = BQ_DATA.city, cp = null;
+    for (t = 0; t < 4000 && !cp; t++) { var ca = pick(CT), cb = pick(CT), cq = Math.max(ca[2], cb[2]) / Math.min(ca[2], cb[2]); if (ca !== cb && ca[1] !== cb[1] && cq >= lo && cq <= hi) cp = [ca, cb]; }
+    LEGS.push({ kind: "pair", name: "Bigger", city: true, pair: cp.map(function (c) { return { name: c[0], cont: c[1], area: c[2] }; }), ask: "Which city has more people?" });
+  } else LEGS.push({ kind: "pair", name: "Bigger", pair: pair, ask: "Which covers more land?" });
   // 3. a crossing with one country between: which one links them?
   var cross = null;
   for (t = 0; t < 4000 && !cross; t++) {
@@ -104,13 +109,15 @@
   // ---------- the legs ----------
   var busy = false;
   function say(t) { $("#say").textContent = t; }
-  function finishLeg(p, why) {
+  function finishLeg(p, why, names) {
     G.pts.push(p); G.tries = 0; busy = true; say(why + " +" + p); keep(); chart();
+    if (names && names.length && window.MXMAP) MXMAP.show($("#say"), names.join(" ")); // where the answer is
     $("#next").hidden = false; $("#next").textContent = G.pts.length < 4 ? "Sail on to stop " + (G.pts.length + 1) : "See the voyage";
     $("#next").focus({ preventScroll: true });
   }
   function show() {
     busy = false; $("#next").hidden = true; say(""); chart();
+    var mm = document.querySelector("#play canvas.mx-mini"); if (mm) mm.hidden = true;
     if (save.results[N] || G.at >= 4) return done();
     var L = LEGS[G.at], box = $("#leg"); $("#ask").textContent = L.ask; $("#kind").textContent = "Stop " + (G.at + 1) + " of 4 · " + L.name;
     if (L.kind === "pin") {
@@ -122,14 +129,14 @@
     } else if (L.kind === "pair") {
       box.innerHTML = L.pair.map(function (c, i) { return '<button class="opt big" data-i="' + i + '"><b>' + c.name + "</b><span>" + c.cont + "</span></button>"; }).join("");
       box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy) return; var i = +bt.dataset.i, w = L.pair[0].area > L.pair[1].area ? 0 : 1, ok = i === w, q = L.pair[w].area / L.pair[1 - w].area;
-        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "x"); o.querySelector("span").textContent = Math.round(L.pair[k].area).toLocaleString("en-US") + " km²"; });
-        finishLeg(ok ? 25 : 0, (ok ? "Right: " : "No: ") + the(L.pair[w].name) + " is " + (q >= 1.995 ? q.toFixed(1) + " times" : Math.round((q - 1) * 100) + "%") + " bigger."); box.onclick = null; };
+        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "x"); o.querySelector("span").textContent = Math.round(L.pair[k].area).toLocaleString("en-US") + (L.city ? " people" : " km²"); });
+        finishLeg(ok ? 25 : 0, (ok ? "Right: " : "No: ") + the(L.pair[w].name) + " is " + (q >= 1.995 ? q.toFixed(1) + " times" : Math.round((q - 1) * 100) + "%") + (L.city ? " bigger by people (urban areas, UN 2025)." : " bigger."), L.city ? [L.pair[0].cont, L.pair[1].cont] : [L.pair[0].name, L.pair[1].name]); box.onclick = null; };
     } else if (L.kind === "cross") {
       box.innerHTML = L.cross.opts.map(function (cc) { return '<button class="opt" data-cc="' + cc + '">' + byCC[cc].name + "</button>"; }).join("");
       box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy || bt.disabled) return; var ok = L.cross.links.indexOf(bt.dataset.cc) >= 0; bt.disabled = true;
-        if (ok) { bt.classList.add("right"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; }); finishLeg(G.tries ? 12 : 25, "Right: " + the(byCC[bt.dataset.cc].name) + " borders both."); box.onclick = null; }
+        if (ok) { bt.classList.add("right"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; }); finishLeg(G.tries ? 12 : 25, "Right: " + the(byCC[bt.dataset.cc].name) + " borders both.", [L.cross.a.name, byCC[bt.dataset.cc].name, L.cross.b.name]); box.onclick = null; }
         else if (!G.tries) { bt.classList.add("wrong"); G.tries = 1; say(the(byCC[bt.dataset.cc].name) + " doesn't border both. One more try."); }
-        else { bt.classList.add("wrong"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; if (L.cross.links.indexOf(o.dataset.cc) >= 0) o.classList.add("right"); }); finishLeg(0, "It was " + the(byCC[L.cross.links[0]].name) + "."); box.onclick = null; } };
+        else { bt.classList.add("wrong"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; if (L.cross.links.indexOf(o.dataset.cc) >= 0) o.classList.add("right"); }); finishLeg(0, "It was " + the(byCC[L.cross.links[0]].name) + ".", [L.cross.a.name, byCC[L.cross.links[0]].name, L.cross.b.name]); box.onclick = null; } };
     } else if (L.kind === "mark") {
       box.innerHTML = '<canvas id="pinmap" role="img" aria-label="A world map with one city marked"></canvas>' + L.opts.map(function (p, i) { return '<button class="opt" data-i="' + i + '">' + p[0] + ", " + p[1] + "</button>"; }).join("");
       var mcv = $("#pinmap"); mcv.mxMark = [L.at[2], L.at[3]]; var mgo = function () { drawMap(mcv); };

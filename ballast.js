@@ -434,12 +434,23 @@
     var wave = reduce ? 0 : 3 * Math.sin(time / 600);
     cx.fillStyle = css("--tint-2", "#a9d3e8");
     cx.beginPath(); cx.moveTo(0, Y(WATER + wave)); for (var sx = -VW; sx <= VW; sx += 20) cx.lineTo(X(sx), Y(WATER + wave + (reduce ? 0 : 2.5 * Math.sin(sx / 30 + time / 500)))); cx.lineTo(W, H); cx.lineTo(0, H); cx.closePath(); cx.fill();
+    var inkd = (function () { var l = document.documentElement.getAttribute("data-look"); return !l || l === "chart"; })();
+    if (inkd) { // Ink & Lantern: the water gets inked wave strokes at fixed places, so nothing flickers
+      cx.save(); cx.strokeStyle = "rgba(20,17,13,.45)"; cx.lineWidth = 1.4; cx.lineCap = "round";
+      for (var wi = 0; wi < 26; wi++) { var wx = ((wi * 97) % 100) / 100 * W, wy = Y(WATER + wave) + 10 + ((wi * 53) % 100) / 100 * Math.max(10, H - Y(WATER + wave) - 14), wl = 10 + (wi * 31) % 16;
+        cx.beginPath(); cx.moveTo(wx, wy); cx.quadraticCurveTo(wx + wl / 2, wy - 4, wx + wl, wy); cx.stroke(); }
+      cx.restore(); }
     // the ship
     shipFrame();
     var dk = ship.parts[1]; cx.save(); cx.translate(X(dk.position.x), Y(dk.position.y)); cx.rotate(ship.angle);
     var dw = deckW() * kz, u = kz;
     cx.fillStyle = "#8a5a2b"; cx.strokeStyle = ink; cx.lineWidth = 2 * k / 1.2;
     cx.beginPath(); cx.moveTo(-dw / 2 - 10 * u, -7 * u); cx.lineTo(dw / 2 + 16 * u, -7 * u); cx.lineTo(dw / 2 - 6 * u, 34 * u); cx.lineTo(-dw / 2 + 4 * u, 34 * u); cx.closePath(); cx.fill(); cx.stroke();
+    if (inkd) { // planks, and hatching on the shadow side (the lantern is top right), with a heavier line
+      cx.save(); cx.clip(); cx.strokeStyle = "rgba(20,17,13,.5)"; cx.lineWidth = 1.2;
+      for (var pk = 1; pk < 4; pk++) { cx.beginPath(); cx.moveTo(-dw / 2 - 10 * u, (-7 + pk * 10) * u); cx.lineTo(dw / 2 + 16 * u, (-7 + pk * 10) * u); cx.stroke(); }
+      for (var hh = 0; hh < 14; hh++) { var hx = -dw / 2 + (hh * 0.37 % 1) * dw * 0.45, hy = (-2 + (hh * 0.61 % 1) * 34) * u; cx.beginPath(); cx.moveTo(hx, hy); cx.lineTo(hx + 7 * u, hy - 5 * u); cx.stroke(); }
+      cx.restore(); cx.lineWidth = 3 * k / 1.2; cx.stroke(); }
     cx.fillStyle = "#c08a50"; cx.fillRect(-dw / 2, -7 * u, dw, 6 * u); cx.strokeRect(-dw / 2, -7 * u, dw, 6 * u);
     [-1, 1].forEach(function (sd) { cx.fillRect(sd * (dw / 2 - 3 * u) - 3 * u, -23 * u, 6 * u, 16 * u); cx.strokeRect(sd * (dw / 2 - 3 * u) - 3 * u, -23 * u, 6 * u, 16 * u); });
     var ct = time - crew.t, cs = crew.s; if (cs !== "watch" && ct > (cs === "cheer" ? 1400 : 700)) { crew.s = cs = "watch"; }

@@ -387,6 +387,65 @@
   var TURTLE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200"><g fill="#9fc98b" stroke="#000000" stroke-width="2.2" stroke-linejoin="round"><path d="M45.5 24h9v12h-9z"/><path d="M50 8c6 0 9.5 5 9.5 10.5S56 28 50 28s-9.5-4-9.5-9.5S44 8 50 8z"/><path d="M32 41C21 30 9 30 8.5 37.5c-.4 5.6 9 10 23.5 12z"/><path d="M68 41c11-11 23-11 23.5-3.5.4 5.6-9 10-23.5 12z"/><path d="M35 73c-9 4-16 11-12 15 4.5 3.8 12-3 17-10z"/><path d="M65 73c9 4 16 11 12 15-4.5 3.8-12-3-17-10z"/><path d="M46.5 80 50 91l3.5-11z"/></g><circle cx="46" cy="16.5" r="1.8" fill="#000000"/><circle cx="54" cy="16.5" r="1.8" fill="#000000"/><rect x="29" y="34" width="42" height="43" rx="15" fill="#ffffff" stroke="#000000" stroke-width="2.4"/><rect x="34.2" y="39.2" width="10.8" height="10.8" fill="#ffffff" stroke="#000000" stroke-width="1.4"/><rect x="45" y="39.2" width="10.8" height="10.8" fill="#dcedf5" stroke="#000000" stroke-width="1.4"/><rect x="55.800000000000004" y="39.2" width="10.8" height="10.8" fill="#a9d3e8" stroke="#000000" stroke-width="1.4"/><rect x="34.2" y="50" width="10.8" height="10.8" fill="#9fc98b" stroke="#000000" stroke-width="1.4"/><rect x="45" y="50" width="10.8" height="10.8" fill="#b4237d" stroke="#000000" stroke-width="1.4"/><path d="M50.4 58.9c-.7-1.4-3-3.3-3-5.2a3 3 0 0 1 6 0c0 1.9-2.3 3.8-3 5.2z" fill="#ffffff"/><circle cx="50.4" cy="53.8" r="1" fill="#b4237d"/><rect x="55.800000000000004" y="50" width="10.8" height="10.8" fill="#f3d98a" stroke="#000000" stroke-width="1.4"/><rect x="34.2" y="60.800000000000004" width="10.8" height="10.8" fill="#a9d3e8" stroke="#000000" stroke-width="1.4"/><rect x="45" y="60.800000000000004" width="10.8" height="10.8" fill="#dcedf5" stroke="#000000" stroke-width="1.4"/><rect x="55.800000000000004" y="60.800000000000004" width="10.8" height="10.8" fill="#ffffff" stroke="#000000" stroke-width="1.4"/></svg>';
   // Ink & Lantern share card: a dark episode cover with the game's panel and a rust score stamp, the same for everyone
   function inkBase() { var l = document.querySelector('link[href*="ink.css"]'); return l ? l.getAttribute("href").replace(/ink\.css.*$/, "") : ""; }
+  // The picture on each result card, drawn from the player's own share line (its marks per round, never an answer):
+  // the Daily Voyage's route, Crossings' stepping stones, Dead Reckoning's pins, Fathoms' depths, Bigger?'s ten tiles and
+  // Ballast's own stack. On aged chart paper, inked; false when a game has no picture of its own.
+  var INK_MARK = { "⚓": "#9FB39A", "\u{1F9ED}": "#D9A55B", "\u{1F30A}": "#7E9C93", "\u{1F3AF}": "#A8442E", "\u{1F4CD}": "#D9A55B", "⛵": "#E3D3A8",
+    "\u{1F7E9}": "#9FB39A", "\u{1F7E8}": "#D9A55B", "\u{1F7E7}": "#C9773A", "\u{1F7E5}": "#A8442E", "⬜": "#EFE6CF", "\u{1F7E6}": "#7E9C93", "\u{1F419}": "#3d5650",
+    "\u{1F41F}": "#7E9C93", "\u{1F4A1}": "#F3C46B", "\u{1F4E6}": "#C9A257", "\u{1F3D9}": "#D9A55B", "\u{1F5FA}": "#9FB39A", "✅": "#A8442E", "\u{1F97E}": "#C9A257", "❌": "#3a3530" };
+  function inkMarks(line) { return Array.from(line || "").filter(function (c) { return /\S/.test(c) && c !== "️" && c !== "‍"; }); }
+  function inkArtFor(id, x, W, H, lines, rnd) {
+    var marks = inkMarks(lines[1]), col = function (m) { return INK_MARK[m] || "#C9A257"; };
+    var paper = function () {
+      x.fillStyle = "#CDB98E"; x.fillRect(0, 0, W, H);
+      x.strokeStyle = "rgba(20,17,13,.16)"; x.lineWidth = 1.5; for (var gx = 0; gx <= W; gx += 86) { x.beginPath(); x.moveTo(gx, 0); x.lineTo(gx, H); x.stroke(); } for (var gy = 0; gy <= H; gy += 86) { x.beginPath(); x.moveTo(0, gy); x.lineTo(W, gy); x.stroke(); }
+      x.strokeStyle = "rgba(90,69,32,.35)"; x.lineWidth = 1.2; for (var i = 0; i < 160; i++) { var hx = rnd() * W, hy = rnd() * H, a = -0.7 + (rnd() - .5) * .4, l = 6 + rnd() * 10; x.beginPath(); x.moveTo(hx, hy); x.lineTo(hx + Math.cos(a) * l, hy + Math.sin(a) * l); x.stroke(); }
+    };
+    var blob = function (cx, cy, r, fill) { x.beginPath(); for (var i = 0; i <= 14; i++) { var a = i / 14 * Math.PI * 2, rr = r * (1 + (rnd() - .5) * .12); x[i ? "lineTo" : "moveTo"](cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); } x.closePath();
+      x.save(); x.translate(-4, 4); x.fillStyle = "rgba(20,17,13,.55)"; x.fill(); x.restore(); x.fillStyle = fill; x.fill(); x.lineWidth = 5; x.strokeStyle = "#14110d"; x.stroke(); };
+    var label = function (t, tx, ty, size, align) { x.font = (size || 34) + "px 'Patrick Hand SC', cursive"; x.textAlign = align || "center"; x.lineWidth = 7; x.strokeStyle = "#EFE6CF"; x.strokeText(t, tx, ty); x.fillStyle = "#14110d"; x.fillText(t, tx, ty); x.textAlign = "left"; };
+    if (id === "ballast" && window.MX_SHARE_ART) { paper(); try { if (MX_SHARE_ART(x, { x: 40, y: 30, w: W - 80, h: H - 60 })) return true; } catch (e) {} return false; }
+    if (!marks.length || !/^(daily|crossings|reckoning|fathoms|bigger)$/.test(id || "")) return false;
+    paper();
+    if (id === "daily" || id === "crossings") {
+      // a dashed route across the chart, one stop per mark
+      var n = marks.length, pts = [];
+      for (var i = 0; i < n + (id === "crossings" ? 2 : 0); i++) { var t = (i + .5) / (n + (id === "crossings" ? 2 : 0)); pts.push([60 + t * (W - 120), H * .52 + Math.sin(t * Math.PI * 2.2) * H * .2]); }
+      x.setLineDash([18, 14]); x.lineWidth = 6; x.strokeStyle = "#14110d"; x.beginPath(); pts.forEach(function (p, i) { x[i ? "lineTo" : "moveTo"](p[0], p[1]); }); x.stroke(); x.setLineDash([]);
+      if (id === "crossings") {
+        var ends = /^(.*) to (.*?) ·/.exec(lines[2] || "") || [];
+        blob(pts[0][0], pts[0][1], 40, "#C9A257"); blob(pts[pts.length - 1][0], pts[pts.length - 1][1], 40, "#C9A257");
+        if (ends[1]) label(ends[1], pts[0][0] - 30, pts[0][1] - 60, 34, "left"); if (ends[2]) label(ends[2], pts[pts.length - 1][0] + 30, pts[pts.length - 1][1] - 60, 34, "right");
+        marks.forEach(function (m, i) { var p = pts[i + 1]; blob(p[0], p[1], 26, col(m)); });
+      } else {
+        var names = ["PIN", "BIGGER", "CROSSING", (lines[0] || "").length ? "STOP 4" : ""];
+        marks.forEach(function (m, i) { var p = pts[i]; blob(p[0], p[1], 44, col(m)); label(String(i + 1), p[0], p[1] + 12, 40); label(names[i], p[0], p[1] + 92, 30); });
+      }
+      return true;
+    }
+    if (id === "reckoning") {
+      // five pins pushed into the chart, each ringed by how close it landed
+      var spots = [[.16, .35], [.36, .62], [.52, .3], [.7, .58], [.86, .36]], q = { "\u{1F3AF}": 3, "\u{1F4CD}": 2, "\u{1F9ED}": 1 };
+      marks.slice(0, 5).forEach(function (m, i) {
+        var cx = spots[i][0] * W, cy = spots[i][1] * H, rings = q[m] || 0;
+        for (var r = 3; r >= 1; r--) { x.beginPath(); x.arc(cx, cy, 22 * r, 0, Math.PI * 2); x.strokeStyle = r <= rings ? "#14110d" : "rgba(20,17,13,.25)"; x.lineWidth = r <= rings ? 4 : 2; x.stroke(); }
+        x.lineWidth = 5; x.strokeStyle = "#14110d"; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + 26, cy - 70); x.stroke(); blob(cx + 30, cy - 80, 20, col(m));
+      });
+      return true;
+    }
+    if (id === "fathoms") {
+      // one line sounded per prompt: the deeper the answer, the longer the line
+      var deep = { "\u{1F7E9}": .25, "\u{1F7E8}": .45, "\u{1F7E7}": .6, "\u{1F7E5}": .75, "\u{1F41F}": .85, "\u{1F419}": 1, "\u{1F30A}": .15 };
+      x.fillStyle = "rgba(126,156,147,.55)"; x.fillRect(0, H * .18, W, H * .82);
+      marks.forEach(function (m, i) { var cx = 70 + i * ((W - 140) / Math.max(1, marks.length - 1)), d = (deep[m] != null ? deep[m] : .5) * H * .72;
+        x.strokeStyle = "#14110d"; x.lineWidth = 4; x.beginPath(); x.moveTo(cx, H * .1); x.lineTo(cx, H * .18 + d); x.stroke(); blob(cx, H * .18 + d + 16, 18, col(m)); });
+      return true;
+    }
+    // Bigger?: ten tiles, cities and countries in turn
+    marks.slice(0, 10).forEach(function (m, i) { var cx = 70 + (i % 5) * ((W - 140) / 4), cy = H * (i < 5 ? .32 : .7); x.save(); x.translate(cx, cy); x.rotate((rnd() - .5) * .12);
+      x.fillStyle = "rgba(20,17,13,.55)"; x.fillRect(-56, -48, 120, 104); x.fillStyle = col(m); x.fillRect(-60, -52, 120, 104); x.lineWidth = 5; x.strokeStyle = "#14110d"; x.strokeRect(-60, -52, 120, 104); x.restore(); });
+    return true;
+  }
   function inkCard(text, id) {
     var lines = text.split("\n"), W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
     var x = c.getContext("2d"), rnd = inkRand(1126);
@@ -406,9 +465,11 @@
       var ep = no ? "EPISODE " + no : "EPISODE"; x.font = "150px Anton, Impact, sans-serif"; var cx = 110;
       Array.from(ep).forEach(function (ch) { x.save(); x.translate(cx, 320); x.rotate((rnd() - .5) * .07); x.fillStyle = "#000"; x.fillText(ch, 6, 6); x.fillStyle = "#F3EAD3"; x.fillText(ch, 0, 0); x.restore(); cx += x.measureText(ch).width + 2; });
       x.fillStyle = "#EFE6CF"; x.font = "78px Anton, Impact, sans-serif"; x.fillText(game, 112, 420);
-      if (art) { x.save(); x.translate(110, 470); x.rotate(-.012); x.fillStyle = "#000"; x.fillRect(14, 14, 860, 602); x.drawImage(art, 0, 0, 860, 602); x.restore(); }
+      x.save(); x.translate(110, 470); x.rotate(-.012); x.fillStyle = "#000"; x.fillRect(14, 14, 860, 602);
+      if (!inkArtFor(id, x, 860, 602, lines, rnd) && art) x.drawImage(art, 0, 0, 860, 602);
+      x.restore();
       // the score stamp: a rust ring, slightly out of round, set at an angle
-      var sc = score.replace(/ points$/, "").replace(/ of 100$/, ""), sub = /points$/.test(score) ? "POINTS" : / of 100$/.test(score) ? "OF 100" : "";
+      var sm = /^([\d,.\/]+)\s*(.*)$/.exec(score) || [0, score, ""], sc = sm[1], sub = sm[2].toUpperCase();
       x.save(); x.translate(800, 1000); x.rotate(-.2);
       x.fillStyle = "#A8442E"; x.strokeStyle = "#000"; x.lineWidth = 8; x.beginPath();
       for (var i = 0; i <= 24; i++) { var a = i / 24 * Math.PI * 2, r = 165 * (1 + (rnd() - .5) * .06); x[i ? "lineTo" : "moveTo"](Math.cos(a) * r, Math.sin(a) * r * .92); } x.closePath(); x.fill(); x.stroke();
@@ -419,7 +480,8 @@
       // the caption box: cream, inked border, hand lettering
       x.fillStyle = "#000"; x.fillRect(118, 1150, 640, 110); x.fillStyle = "#EFE6CF"; x.fillRect(110, 1142, 640, 110);
       wob([[104, 1144], [756, 1140]], 4, "#14110d"); wob([[752, 1136], [754, 1258]], 4, "#14110d"); wob([[758, 1252], [106, 1256]], 4, "#14110d"); wob([[110, 1260], [108, 1136]], 4, "#14110d");
-      x.fillStyle = "#14110d"; x.font = "44px 'Patrick Hand SC', cursive"; x.fillText((ask || "To be continued...").slice(0, 30), 132, 1192);
+      var cap = ask || "To be continued...", cs = 44; x.font = cs + "px 'Patrick Hand SC', cursive"; while (x.measureText(cap).width > 600 && cs > 26) { cs -= 2; x.font = cs + "px 'Patrick Hand SC', cursive"; }
+      x.fillStyle = "#14110d"; x.fillText(cap, 132, 1192);
       x.fillStyle = "#7a2d1c"; x.font = "38px 'Patrick Hand SC', cursive"; x.fillText(url || "mapelago.com", 132, 1236);
       return c;
     };
@@ -1061,6 +1123,16 @@
     });
   }
   // each game's small comic panel: in its header, and on its card on the home page
+  // the game cards (home page, Today's games under every game) show each game's panel instead of an emoji
+  function inkIcons() {
+    var base = inkBase();
+    document.querySelectorAll("a[data-game] > .ic, .mx-card a > .ic").forEach(function (ic) {
+      var u = ic.parentNode.getAttribute("data-game") || ic.parentNode.getAttribute("href");
+      var g = GAMES.filter(function (x) { return x.url === u; })[0];
+      if (!g || ic.querySelector("img")) return;
+      ic.innerHTML = '<img src="' + base + "ink/art/" + (g.parent || g.id) + '.svg" alt="" width="60" height="42" decoding="async">'; ic.classList.add("ink-ic");
+    });
+  }
   function inkArt() {
     var base = inkBase(), me = here(), page = (location.pathname.split("/").pop() || "index.html");
     var id = me ? me.id : /^daily/.test(page) ? "daily" : /^(index\.html)?$/.test(page) ? "home" : null;
@@ -1080,11 +1152,7 @@
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
       if (window.ResizeObserver) { var busy = false; new ResizeObserver(function () { if (busy) return; busy = true; fit(); requestAnimationFrame(function () { busy = false; }); }).observe(top); }
     }
-    document.querySelectorAll("a[data-game] .ic, a[data-game] > .ic").forEach(function (ic) {
-      var g = GAMES.filter(function (x) { return x.url === ic.parentNode.getAttribute("data-game"); })[0];
-      if (!g || ic.querySelector("img")) return;
-      ic.innerHTML = '<img src="' + base + "ink/art/" + g.id + '.svg" alt="" width="60" height="42" decoding="async">'; ic.classList.add("ink-ic");
-    });
+    inkIcons();
     // the home page: "To be continued..." and how many games are left today
     var home = id === "home" && document.querySelector(".app, main");
     if (home && !document.getElementById("inkTbc")) {
@@ -1102,7 +1170,7 @@
     // the textures (map hatching, blots, paper grain) wait until the page has loaded, so they never slow the first move
     var ready = false, settle = function () { ready = true; document.documentElement.classList.add("ink-ready"); inkMaps(); };
     if (document.readyState === "complete") setTimeout(settle, 200); else window.addEventListener("load", function () { setTimeout(settle, 200); });
-    var t = null; new MutationObserver(function (ms) { if (ms.every(function (m) { return m.target.closest && m.target.closest("[data-ink-copy]") || Array.prototype.every.call(m.addedNodes, function (n) { return n.nodeType === 1 && n.hasAttribute("data-ink-copy"); }) && m.addedNodes.length; })) return; clearTimeout(t); t = setTimeout(function () { inkFrames(); if (ready) inkMaps(); }, 250); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
+    var t = null; new MutationObserver(function (ms) { if (ms.every(function (m) { return m.target.closest && m.target.closest("[data-ink-copy]") || Array.prototype.every.call(m.addedNodes, function (n) { return n.nodeType === 1 && n.hasAttribute("data-ink-copy"); }) && m.addedNodes.length; })) return; clearTimeout(t); t = setTimeout(function () { inkFrames(); inkIcons(); if (ready) inkMaps(); }, 250); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
     window.addEventListener("load", function () { setTimeout(inkFrames, 300); });
   }
 

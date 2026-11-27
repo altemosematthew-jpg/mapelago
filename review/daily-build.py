@@ -79,6 +79,7 @@ BODY = '''
 <div id="toast" role="status"></div>
 <script src="site.js?v=VER"></script>
 <script src="daily-data.js?v=VER"></script>
+<script src="bigger-data.js?v=VER"></script>
 <script src="daily.js?v=VER"></script>
 <script src="analytics.js?v=VER" defer></script>
 </body>
