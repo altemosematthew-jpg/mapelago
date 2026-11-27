@@ -134,6 +134,35 @@ async function page(b, url, opts = {}) {
       await old.ctx.close();
     }
 
+    // 1g. the five strongest games: a first-time player can move at once, and the result card is worth posting
+    {
+      for (const [f, first] of [["daily.html", "#pinmap"], ["crossings.html", "#cin"], ["dead-reckoning.html", ".mapwrap"], ["ballast.html", "#sea"], ["fathoms.html", "input"]]) {
+        const { ctx, p } = await page(b, U + f, { ctx: { viewport: { width: 375, height: 667 } }, wait: 300 });
+        const t0 = Date.now(); await p.waitForSelector(first, { state: "visible" }); const ms = Date.now() - t0 + 300;
+        const r = await p.evaluate((first) => ({ dialogs: [...document.querySelectorAll(".modal:not([hidden]), dialog[open]")].filter((e) => e.offsetParent || e.open).length, top: Math.round(document.querySelector(first).getBoundingClientRect().top),
+          words: ((document.querySelector(".lede") || {}).textContent || "").trim().split(/\s+/).length }), first);
+        check(!r.dialogs && r.top < 667 && r.words <= 20 && ms < 10000, `first visit: ${f} opens straight onto the game (no dialog, the first control on the first screen, a short instruction)`, JSON.stringify([r, ms]));
+        await ctx.close();
+      }
+      const T = { daily: "Mapelago Daily Voyage No. 20 \u{1F422} 78 of 100\n⚓\u{1F9ED}⚓\u{1F30A}\nFour stops, one voyage. mapelago.com/daily.html",
+        crossings: "Mapelago Crossings No. 20 \u{1F422} 850 points\n\u{1F9ED}\u{1F97E}\u{1F9ED}\nLatvia to Saudi Arabia · par 4 countries · 3 guesses\nCan you cross it? mapelago.com/crossings.html",
+        reckoning: "Mapelago Dead Reckoning No. 20 \u{1F422} 742 of 1,000\n\u{1F3AF}\u{1F4CD}\u{1F9ED}⛵\u{1F3AF}\nFive pins on a blank map. How close can you get? mapelago.com/dead-reckoning.html",
+        fathoms: "Mapelago Fathoms No. 20 \u{1F422} 5,420 fathoms\n\u{1F7E9}\u{1F7E8}\u{1F41F}\u{1F7E5}\u{1F419}\u{1F7E7}\u{1F7E8}\nHow deep can you go? mapelago.com/fathoms.html",
+        bigger: "Mapelago Bigger? No. 20 \u{1F422} 7/10\n\u{1F3D9}️\u{1F5FA}️⬜\u{1F3D9}️\u{1F5FA}️⬜\u{1F3D9}️\u{1F5FA}️⬜\u{1F5FA}️\nCity or country, which is bigger? mapelago.com/bigger.html" };
+      const { ctx, p } = await page(b, U + "fathoms.html", { wait: 800 });
+      const cards = await p.evaluate(async (T) => { const out = {}; for (const id of Object.keys(T)) { const c = await MXS.card(T[id], id), g = c.getContext("2d"), d = g.getImageData(150, 520, 1, 1).data; out[id] = [c.width, c.height, d[0], d[1], d[2]]; } return out; }, T);
+      const paper = (v) => v[0] === 1080 && v[1] === 1350 && v[2] > 170 && v[3] > 150 && v[4] > 100 && v[4] < 190;
+      check(Object.values(cards).every(paper), "result cards: each of the five draws its own picture on chart paper (from the share line, never the answers)", JSON.stringify(cards));
+      await ctx.close();
+      const dv = await page(b, U + "daily.html#day-21", { storage: { "dailycity:dailyvoyage:v1": JSON.stringify({ results: {}, game: { n: 21, at: 1, pts: [10], tries: 0 } }) }, wait: 900 });
+      const w = await dv.p.evaluate(() => { const L = __dv.LEGS[1]; return L.pair[0].area > L.pair[1].area ? 0 : 1; });
+      await dv.p.click(`#leg .opt[data-i="${w}"]`); await dv.p.waitForTimeout(1500);
+      const o = await dv.p.evaluate(() => ({ pos: [...document.querySelectorAll("#leg .opt")].map((x) => getComputedStyle(x).position), ask: document.querySelector("#ask").textContent, map: !!document.querySelector("#play canvas.mx-mini:not([hidden])") }));
+      check(o.pos.join() === "static,static" && o.ask === "Which city has more people?" && o.map, "daily voyage: from No. 17 the Bigger stop can be cities (Bigger?'s rule); after an answer both cards stay put and a map shows where they are", JSON.stringify(o));
+      await dv.ctx.close();
+      check(/class="act plain" id="hintBtn"/.test(fs.readFileSync(path.join(__dirname, "../crossings.html"), "utf8")), "crossings: the hint is a secondary button, not the main action");
+    }
+
     // 2. the daily schedule never changes by accident
     const now = {};
     const ctx = await b.newContext(PHONE); const p = await ctx.newPage();

@@ -129,7 +129,7 @@
     } else if (L.kind === "pair") {
       box.innerHTML = L.pair.map(function (c, i) { return '<button class="opt big" data-i="' + i + '"><b>' + c.name + "</b><span>" + c.cont + "</span></button>"; }).join("");
       box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy) return; var i = +bt.dataset.i, w = L.pair[0].area > L.pair[1].area ? 0 : 1, ok = i === w, q = L.pair[w].area / L.pair[1 - w].area;
-        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "x"); o.querySelector("span").textContent = Math.round(L.pair[k].area).toLocaleString("en-US") + (L.city ? " people" : " km²"); });
+        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "other"); o.querySelector("span").textContent = Math.round(L.pair[k].area).toLocaleString("en-US") + (L.city ? " people" : " km²"); });
         finishLeg(ok ? 25 : 0, (ok ? "Right: " : "No: ") + the(L.pair[w].name) + " is " + (q >= 1.995 ? q.toFixed(1) + " times" : Math.round((q - 1) * 100) + "%") + (L.city ? " bigger by people (urban areas, UN 2025)." : " bigger."), L.city ? [L.pair[0].cont, L.pair[1].cont] : [L.pair[0].name, L.pair[1].name]); box.onclick = null; };
     } else if (L.kind === "cross") {
       box.innerHTML = L.cross.opts.map(function (cc) { return '<button class="opt" data-cc="' + cc + '">' + byCC[cc].name + "</button>"; }).join("");
@@ -155,7 +155,7 @@
     } else {
       box.innerHTML = L.ev.map(function (ev, i) { return '<button class="opt" data-i="' + i + '">' + ev[1] + "</button>"; }).join("");
       box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy) return; var i = +bt.dataset.i, w = L.ev[0][0] < L.ev[1][0] ? 0 : 1, ok = i === w;
-        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "x"); o.insertAdjacentHTML("beforeend", " <b>" + L.ev[k][0] + "</b>"); });
+        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "other"); o.insertAdjacentHTML("beforeend", " <b>" + L.ev[k][0] + "</b>"); });
         finishLeg(ok ? 25 : 0, ok ? "Right." : "No: the other came first."); box.onclick = null; };
     }
   }

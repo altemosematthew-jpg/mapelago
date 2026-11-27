@@ -21,7 +21,7 @@ CSS = r'''
 .dvhead{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 6px}.dvhead b{font-size:22px}
 #leg{display:grid;gap:8px;margin:8px 0 0}#leg .opt{min-height:48px;padding:6px 10px;font:700 16px var(--font);text-align:left;background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:var(--r-btn)}
 #leg .opt.big{display:flex;justify-content:space-between;align-items:center;min-height:58px}#leg .opt.big span{font-weight:600;font-size:14px;color:var(--ink-2)}
-#leg .opt.right{background:var(--accent);color:var(--on-accent)}#leg .opt.wrong{border-style:dashed;opacity:.8}#leg .opt.x{opacity:.6}
+#leg .opt.right{background:var(--accent);color:var(--on-accent)}#leg .opt.wrong{border-style:dashed;opacity:.8}#leg .opt.other{opacity:.6}
 #pinmap{display:block;width:100%;aspect-ratio:2/1.15;border:var(--bw) solid var(--line);border-radius:var(--r);cursor:crosshair;touch-action:manipulation}
 #din{width:100%;height:50px;box-sizing:border-box;padding:0 12px;font:600 17px var(--font);border:2px solid var(--ink);border-radius:var(--r-btn)}
 #say{min-height:22px;margin:8px 0 4px;font-weight:800}
