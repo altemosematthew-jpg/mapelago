@@ -33,7 +33,7 @@ BLOCK B
 1828 | Uruguay becomes independent between Brazil and Argentina | Uruguay, Brazil, Argentina
 1829 | Swan River Colony founded in Western Australia | Australia, United Kingdom
 1830 | Belgium declares independence from the Netherlands | Belgium, Netherlands
-1830 | London Protocol recognises Greece as independent | Greece, Turkiye
+1830 | London Protocol recognises Greece as independent | Greece, Türkiye
 1830 | France captures Algiers | Algeria, France
 1830 | Ecuador separates from Gran Colombia | Ecuador, Colombia
 1832 | Rideau Canal opens | Canada
@@ -80,7 +80,7 @@ BLOCK B
 1874 | Fiji ceded to Britain | Fiji, United Kingdom
 1874 | Gold Coast becomes a British crown colony | Ghana, United Kingdom
 1877 | Britain annexes the Transvaal | South Africa, United Kingdom
-1878 | Treaty of Berlin recognises Romania, Serbia and Montenegro | Romania, Serbia, Montenegro, Turkiye
+1878 | Treaty of Berlin recognises Romania, Serbia and Montenegro | Romania, Serbia, Montenegro, Türkiye
 1879 | Japan annexes the Ryukyu Kingdom | Japan
 1881 | Tunisia becomes a French protectorate | Tunisia, France
 1881 | Argentina and Chile sign a boundary treaty | Argentina, Chile
@@ -90,7 +90,7 @@ BLOCK B
 1884 | Germany claims north-eastern New Guinea | Papua New Guinea, Germany
 1884 | Britain proclaims protectorate over south-eastern New Guinea | Papua New Guinea, United Kingdom
 1885 | Congo Free State established under Leopold II | Democratic Republic of the Congo, Belgium
-1885 | Eastern Rumelia unites with Bulgaria | Bulgaria, Turkiye
+1885 | Eastern Rumelia unites with Bulgaria | Bulgaria, Türkiye
 1886 | Britain annexes Burma | Myanmar, United Kingdom
 1888 | Chile annexes Easter Island | Chile
 1889 | Brazil becomes a republic | Brazil
@@ -121,14 +121,14 @@ BLOCK B
 1907 | New Zealand becomes a dominion | New Zealand, United Kingdom
 1907 | Oklahoma becomes the 46th US state | United States
 1908 | Belgium annexes the Congo Free State as Belgian Congo | Democratic Republic of the Congo, Belgium
-1908 | Bulgaria declares independence from the Ottoman Empire | Bulgaria, Turkiye
-1908 | Austria-Hungary annexes Bosnia and Herzegovina | Bosnia and Herzegovina, Austria, Hungary, Turkiye
+1908 | Bulgaria declares independence from the Ottoman Empire | Bulgaria, Türkiye
+1908 | Austria-Hungary annexes Bosnia and Herzegovina | Bosnia and Herzegovina, Austria, Hungary, Türkiye
 1909 | Anglo-Siamese Treaty: Siam cedes four Malay states to Britain | Thailand, Malaysia, United Kingdom
 1910 | Union of South Africa formed from four British colonies | South Africa, United Kingdom
 1910 | Japan annexes Korea | Japan, South Korea, North Korea
 1911 | New South Wales transfers Federal Capital Territory to Australia | Australia
-1912 | Treaty of Ouchy: Ottoman Empire cedes Libya to Italy | Libya, Italy, Turkiye
-1912 | Albania declares independence from the Ottoman Empire | Albania, Turkiye
+1912 | Treaty of Ouchy: Ottoman Empire cedes Libya to Italy | Libya, Italy, Türkiye
+1912 | Albania declares independence from the Ottoman Empire | Albania, Türkiye
 1912 | Treaty of Fez makes Morocco a French protectorate | Morocco, France
 1912 | Republic of China proclaimed, ending Qing imperial rule | China
 1912 | Arizona becomes 48th and last contiguous US state | United States
@@ -155,8 +155,8 @@ BLOCK B
 1922 | Irish Free State established | Ireland, United Kingdom
 1922 | Britain declares Egypt independent, ending its protectorate | Egypt, United Kingdom
 1922 | Soviet Union formed by four founding republics | Russia, Ukraine, Belarus, Georgia, Armenia, Azerbaijan
-1923 | Turkiye moves its capital from Istanbul to Ankara | Turkiye
-1923 | Treaty of Lausanne sets the borders of modern Turkiye | Turkiye, Greece, United Kingdom, France, Italy
+1923 | Türkiye moves its capital from Istanbul to Ankara | Türkiye
+1923 | Treaty of Lausanne sets the borders of modern Türkiye | Türkiye, Greece, United Kingdom, France, Italy
 1923 | Britain annexes Southern Rhodesia as a self-governing colony | Zimbabwe, United Kingdom
 1924 | Petrograd renamed Leningrad | Russia
 1925 | Svalbard Treaty takes effect under Norwegian sovereignty | Norway
@@ -290,7 +290,7 @@ BLOCK B
 2008 | Nigeria completes handover of Bakassi peninsula to Cameroon | Cameroon, Nigeria
 2008 | Russia transfers part of Bolshoy Ussuriysky Island to China | China, Russia
 2009 | New constitution renames Bolivia the Plurinational State of Bolivia | Bolivia
-2010 | Netherlands Antilles dissolved; Curacao and Sint Maarten become countries | Netherlands
+2010 | Netherlands Antilles dissolved; Curaçao and Sint Maarten become countries | Netherlands
 2011 | South Sudan becomes independent from Sudan | South Sudan, Sudan
 2011 | Samoa crosses International Date Line, skipping 30 December | Samoa
 2015 | India and Bangladesh exchange their border enclaves | India, Bangladesh
@@ -300,7 +300,7 @@ BLOCK B
 2019 | Burundi makes Gitega its political capital instead of Bujumbura | Burundi
 2019 | Prespa Agreement in force; Macedonia renamed North Macedonia | North Macedonia, Greece
 2019 | Kazakhstan renames its capital Astana to Nur-Sultan | Kazakhstan
-2022 | United Nations adopts Turkiye as the country's name | Turkiye
+2022 | United Nations adopts Türkiye as the country's name | Türkiye
 2022 | Canada and Denmark agree to split Hans Island between them | Canada, Denmark
 2022 | Peljesac Bridge opens, linking Dubrovnik area to rest of Croatia | Croatia
 2022 | Kazakhstan's capital Nur-Sultan renamed back to Astana | Kazakhstan

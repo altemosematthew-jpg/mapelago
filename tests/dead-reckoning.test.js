@@ -19,7 +19,7 @@ module.exports = async function ({ b, U, page, check }) {
         if (new Set(cities.map((x) => D.P[x].country)).size !== cities.length) sameCountry++;
         five.forEach((x) => { if (last[x] !== undefined && n - last[x] <= 60) repeats++; last[x] = n; });
       });
-      const tiersOk = days.every((five) => five.every((x, i) => D.P[x].lm || D.P[x].tier === i + 1));
+      const tiersOk = days.every((five, k) => five.every((x, i) => D.P[x].lm || D.P[x].tier === (k + 1 >= D.HARD_FROM ? D.TIERS[(k + 6) % 7][i] : i + 1)));
       // landmarks: none before No. 14; from then one or two a day, easy in round 1 or 2, medium in 3 or 4, hard in 5
       const SLOT = { 1: [0, 1], 2: [2, 3], 3: [4] }, DROP = ["Christ the Redeemer", "Hollywood Sign", "Golden Gate Bridge", "Hiroshima Peace Memorial", "Pearl Harbor", "Table Mountain", "Robben Island", "Alhambra", "Potala Palace", "Leaning Tower of Pisa"];
       let lmEarly = 0, lmCount = 0, lmSlot = 0, lmDropped = 0; const lmSeen = new Set();
@@ -35,7 +35,7 @@ module.exports = async function ({ b, U, page, check }) {
     check(r.km >= 340 && r.km <= 348, "dead reckoning: great-circle distance (London to Paris)", String(r.km));
     check(r.repeats === 0 && r.short === 0, "dead reckoning: five different places a day, none repeat within 60 days (800 days)", JSON.stringify([r.repeats, r.short]));
     check(r.sameCountry === 0, "dead reckoning: never two places in one country on a day", String(r.sameCountry));
-    check(r.tiersOk && r.fame.every((f, i) => !i || f < r.fame[i - 1]), "dead reckoning: rounds run from best known to least known", JSON.stringify(r.fame));
+    check(r.tiersOk && r.fame.every((f, i) => !i || f < r.fame[i - 1]), "dead reckoning: rounds run from best known to least known (from No. 16 by the weekday's tiers)", JSON.stringify(r.fame));
     check(r.pools.every((n) => n > 61), "dead reckoning: every round has more than 60 places", JSON.stringify(r.pools));
     const fp13 = require("crypto").createHash("sha256").update(JSON.stringify(r.first13)).digest("hex").slice(0, 16);
     check(fp13 === "4be94a0b7ccd016d" && r.lmEarly === 0, "dead reckoning: Nos. 1 to 13 unchanged by the landmarks (none before No. 14)", fp13 + " " + r.lmEarly);

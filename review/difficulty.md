@@ -81,3 +81,22 @@ Sunday is "medium" in the two Bigger games; it has no special round there.
 - Voyage: harbors at 1, 3, 5, 6 and 8 on Monday and Tuesday; 1, 3, 6 and 8 midweek and Sunday; 1, 3 and 6 on Friday and Saturday.
 - Dead Reckoning: the same places; the distance a pin may be off for the same points is 30% more on Monday, 20% less on Saturday.
 - Mystery country, Fathoms, Stamps: the day's level in words only. A real dial needs their schedules reworked (Mystery country's cycle, Fathoms' deck, Stamps' wedges), so it waits for new content.
+
+## Scorecard 3 retune (0.15.67, every change from No. 16)
+Target: a simple player's median between 60 and 80% of the top score, with Friday and Saturday clearly hardest. The "bots" are the scripts described below; they are models of a player, not real players.
+
+| Game | What changed | Simple player, before → after |
+|---|---|---|
+| Crossings | each weekday has its own pairs, Saturday the longest and least known; extra guesses cost 250 (was 100) and four are allowed (was six) | median 1,000 → 750 of 1,000; Mon–Wed 1,000, Thu/Fri/Sun 750, Sat 500 |
+| Logbook | the closest-dates tolerance narrows by weekday: 3, 5, 4, 4, 3, 3, 2 years (Sun to Sat) | 630 → 620 of 800 (78%); Mon 645, Sat 550. The event schedule itself is fixed, so this is as far as it goes without new content |
+| Stamps | the wheel's order depends on the day: Monday to Wednesday best-known first, Thursday to Sunday least-known first | median 4 of 6 (67%) either way; Mon and Wed 5, Thu, Sat and Sun 3 |
+| Bigger? | every pair's gap is cut by the day's share (Mon 0.9 down to Sat 0.24), and the closest pairs may be 6% apart (was 15%) | expected right of 10: 8.2 → 7.4 median; Mon 8.1, Sat 6.3 |
+| Ballast | from level 2 no single piece is as tall as the load line (a too-long piece is swapped for the country nearest its size that fits under it, in the same region; where the region has no such country the line goes just above it); the line is a share of the cargo that grows 7% a level | a plain bot (drop from the middle, flat or not) still clears 70 of 72 levels on days 16–24, so most of the challenge is now in the naming questions and the hold |
+| Daily Voyage | every stop is tuned to the day (H = 0 on Monday to 1 on Saturday): Pin from better-known cities early in the week to less-known places later, scored on 1,380 km down to 900 km; Bigger pairs 1.56× down to 1.06× apart; Crossing between top-70 countries on Monday, ranks 90–160 on Saturday; the mark's wrong cities nearer (600–3,000 km on Saturday); Logbook dates 25–120 years apart on Monday, 8–30 on Saturday; the Fathoms stop uses Fathoms' rule for the smallest countries | not measured with a bot |
+| Dead Reckoning | the five cities come from less-known tiers later in the week: Monday to Wednesday tiers 1–5 (one per round), Thursday 1,3,3,4,5, Friday 2,3,4,4,5, Saturday 3,4,4,5,5, Sunday 2,3,3,4,5 (tier 5 is used at most eight times a week, so its 83 places still rest 60 days) | not measured with a bot (scoring by distance needs a model of where people tap) |
+| Fathoms | depth is still each answer's place in that prompt's own list; the ten smallest countries by area (Vatican City, Monaco, Nauru, Tuvalu, San Marino, Liechtenstein, Marshall Islands, Saint Kitts and Nevis, Maldives, Malta) now sit halfway down instead of at the bottom | naming the tiniest country no longer wins every prompt it fits |
+
+Bots: Crossings and Logbook play with fame (the best-known answer first); Stamps is certain on the best-known subject and guesses one in four on the least known; Bigger? is sure when one is twice the other and tosses a coin when they are equal; Ballast drops every piece from the middle.
+
+### One population figure
+Every city population the site shows is the UN WUP 2025 urban-area figure (un-cities.js) or none. Dead Reckoning now uses it (a city without a UN figure gets no number). Fathoms no longer prints a largest-city figure from No. 16; its order still comes from the older largest-city sizes, because the UN table in the repo covers only the 315 cities the games use. Fixing that needs the full WUP 2025 Cities file (population.un.org), which this build machine cannot reach.

@@ -110,7 +110,49 @@
   }
   // The weekly arc (from No. 17): the same cargo, with the load line a little lower on Monday and a little higher on Saturday.
   function arc(day) { return day >= NR && window.MXS && MXS.weekLevel ? MXS.weekLevel(day) : null; }
-  function dailyLevel(day, n) { var lv = genLevel(day, n, 0, dailyVariant(day, n)), a = arc(day); if (a) { lv.lineKm = Math.round(lv.lineKm * (1 + (1 - a.f) * 0.2)); lv.arc = a; } return lv; }
+  // From No. 16 (scorecard 3: one tall piece could clear a level). From level 2 no piece reaches the line on its own: a
+  // piece whose long side comes within 10% of it is swapped for the country nearest its size whose long side sits well under the line, from the same
+  // region (where the region has none, the line is raised to just above that piece instead). And the line climbs steadily: it is a share of the cargo (the sum of the pieces' sizes) that grows 7% a level.
+  var LINE_FROM = 16, lineMemo = {};
+  function longSide(cc) { var s = byCC[cc]; return Math.sqrt(s.a * longness(s)); }
+  function tallest(lv) { return lv.list.reduce(function (t, cc) { return Math.max(t, longSide(cc)); }, 0); }
+  // Swapping pieces can make a set of countries another day already had, so from No. 16 the days are worked through in
+  // order (as for the variants) and a repeated set has one more piece swapped until it is new, or failing that the
+  // level takes its next variant.
+  var setUsed = {}, setAt = 0, setKey = function (l) { return l.slice().sort().join(""); };
+  function dailyLevel(day, n) {
+    var key = day + ":" + n; if (lineMemo[key]) return lineMemo[key];
+    if (day < LINE_FROM || n > NRL) return buildLevel(day, n);
+    for (; setAt < day;) { setAt++; for (var l = 1; l <= NRL; l++) { var v0 = dailyVariant(setAt, l), lv = buildLevel(setAt, l, v0); for (var vv = 1; setAt >= LINE_FROM && vv < 60 && setUsed[setKey(lv.list)]; vv++) lv = buildLevel(setAt, l, v0 + vv); if (setAt >= LINE_FROM) lineMemo[setAt + ":" + l] = lv; setUsed[setKey(lv.list)] = 1; } }
+    return lineMemo[key];
+  }
+  function buildLevel(day, n, variant) {
+    var lv = genLevel(day, n, 0, variant === undefined ? dailyVariant(day, n) : variant), a = arc(day), af = a ? 1 + (1 - a.f) * 0.2 : 1;
+    if (day < LINE_FROM) { lv.lineKm = Math.round(lv.lineKm * af); if (a) lv.arc = a; return lv; }
+    if (a) lv.arc = a;
+    var share = 0.27 * 0.89 * Math.pow(1.07, n - 1); share = Math.min(0.6, share);
+    var reg = function (s) { return lv.region === "World" ? true : (day >= 17 ? region2(s) : regionOf(s)) === lv.region; };
+    var line = function () { var e = 0; lv.list.forEach(function (cc) { e += Math.sqrt(byCC[cc].a); }); return Math.round(e * share * af); };
+    var target = lv.lineKm = line(), raised = 0;
+    var fits = function (w) { return SHAPES.filter(function (s) { return s.a >= 15000 && (n < 2 || longSide(s.cc) * 1.1 <= target) && lv.list.indexOf(s.cc) < 0 && reg(s); })
+      .sort(function (x, y) { return Math.abs(Math.log(x.a / w.a)) - Math.abs(Math.log(y.a / w.a)); }); };
+    for (var k = 0; n >= 2 && k < 12 && tallest(lv) * 1.1 > target; k++) {
+      var worst = lv.list.reduce(function (m, cc) { return longSide(cc) > longSide(m) ? cc : m; }, lv.list[0]), alt = fits(byCC[worst])[0];
+      if (!alt) { raised = Math.round(tallest(lv) * 1.05); break; }
+      lv.list[lv.list.indexOf(worst)] = alt.cc;
+    }
+    // a set another day already had: swap one more piece (the last first) for the nearest in size that makes it new
+    for (var p = lv.list.length - 1; p >= 1 && setUsed[setKey(lv.list)]; p--) {
+      var was = lv.list[p], c = fits(byCC[was]);
+      for (var q = 0; q < c.length; q++) { lv.list[p] = c[q].cc; if (!setUsed[setKey(lv.list)]) break; }
+      if (setUsed[setKey(lv.list)]) lv.list[p] = was;
+    }
+    if (raised) { lv.lineKm = Math.max(raised, Math.round(tallest(lv) * 1.05)); return lv; }
+    // the line never asks more than 60% of the cargo's total size
+    var est = 0; lv.list.forEach(function (cc) { est += Math.sqrt(byCC[cc].a); });
+    lv.lineKm = Math.min(target, Math.round(est * 0.6 * af));
+    return lv;
+  }
   // the five tutorial levels, shown once: each teaches one thing on one screen
   var TUTORIAL = [
     R("t1", "Tutorial", "1 of 5: Drop", ["FR", "ES", "DE"], { tip: "Drag the country, let go to drop it, and hold the stack above the dashed line for 2 seconds.", name: "none", line: 0, lineKm: 900, endAtLine: true, tut: 1 }),
@@ -120,6 +162,7 @@
     R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck, so keep the stack low and in the middle.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
   ];
   var RUN = null; // { mode: "daily" | "practice" | "tut", seed, lvl, lives, cleared, named, lost, marks: [], attempt }
+  var pendT = 0; // the next level of a run, waiting to start
   function newRun(mode, seed) { return { mode: mode, seed: seed, lvl: 1, lives: 3, cleared: 0, named: 0, lost: 0, marks: [], attempt: 0 }; }
   function runPoints(r) { return r.cleared * 100 + r.named * 10; }
   function cargoPreview(seed) { var l = dailyLevel(seed, 1); return "Today's cargo starts in " + (l.region === "World" ? "every corner of the world" : l.region === "Americas" ? "the Americas" : l.region) + "."; }
@@ -234,6 +277,8 @@
     next();
     fit(); resize(); // again now that the readouts are filled in
     if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); }
+    // a voyage starts from the chart further down the page: bring the board up to the top of the screen
+    if (!RUN) setTimeout(function () { var p = $("#play"); if (p && p.scrollIntoView) p.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" }); }, 30);
   }
   function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; if (engine) M.Engine.clear(engine); engine = null; }
   function estimateLine(level) {
@@ -247,7 +292,9 @@
   var asked = null; // { s, answer: null | true | false, body }
   function lastCall() { // the load is over: one last chance to name the final country, then Continue
     hover = null;
-    if (asked && asked.answer === null && L.name !== "none" && L.name !== "earn") markName(false, true); // naming never holds up the load
+    if (asked && asked.answer === null && L.name !== "none" && L.name !== "earn") { // the question stays open: answer it or skip it, then on
+      state = "last"; $("#dropBtn").hidden = true; $("#contBtn").hidden = false; renderHud(); return;
+    }
     finish();
   }
   function cont() { if (state !== "last") return; if (asked && asked.answer === null) markName(false, true); $("#contBtn").hidden = true; $("#dropBtn").hidden = false; finish(); }
@@ -342,7 +389,7 @@
     var h = heightKm(); S.height = h;
     if (S.lost.length > L.spare) { S.cause = "overboard"; endLevel(false); return; }
     // the goal: the stack must stand above the line for two seconds
-    if (h >= L.lineKm && aboard() >= need() && state !== "fall") holdT += dt; else if (h < L.lineKm || state !== "fall") holdT = 0;
+    if (h >= L.lineKm && aboard() >= need() && state !== "fall" && state !== "earn") holdT += dt; else if (h < L.lineKm || state !== "fall") holdT = 0; // never while a question is open
     if (holdT >= HOLD) { endLevel(true); return; }
     if (state === "wait") { stillT = settled() ? stillT + dt : 0; if (stillT > 1200 && (h < L.lineKm || aboard() < need())) { if (h >= L.lineKm) S.cause = "overboard"; /* all loaded and settled: below the line, or too few left aboard */ endLevel(false); return; } }
     if ((time / (1000 / 60) | 0) % 6 === 0) renderHud();
@@ -612,6 +659,7 @@
     $("#nin").disabled = true;
     if (!skipped) (ok ? SFX.right : SFX.wrong)();
     renderHud();
+    if (state === "last") setTimeout(function () { if (state === "last") cont(); }, 900); // answered after the load: on to the next level
   }
   // ---------- voyages: each piece is earned with a question about that country ----------
   // Four choices. A right answer gives you the country; a wrong one costs nothing but gives a plain crate, about a third
@@ -709,12 +757,12 @@
         var nl = $("#nextLvl"); nl.hidden = false; nl.textContent = "Play today's Daily Ballast"; nl.onclick = function () { nl.onclick = nextVoyage; startDaily(); };
         showDone(); return;
       }
-      setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
+      pendT = setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
     }
     if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
     else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast((S.cause === "overboard" ? "Too many overboard. " : "Below the line. ") + r.lives + (r.lives === 1 ? " life" : " lives") + " left: the same cargo again for level " + r.lvl + "."); }
     if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt, pic: r.pic }; store(); }
-    if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
+    if (r.lives > 0) { pendT = setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
     endRun();
   }
   function endRun() {
@@ -798,7 +846,7 @@
   function startPractice() { RUN = newRun("practice", Math.floor(Math.random() * 1e9)); start(genLevel(RUN.seed, 1, 0)); }
   function startTutorial() { RUN = newRun("tut", 0); start(TUTORIAL[0]); }
   function home() {
-    stop(); RUN = null; clearToast(); $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
+    stop(); clearTimeout(pendT); RUN = null; clearToast(); $("#lvlTitle").textContent = ""; $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
     var r = save.results[dayNo], d = $("#dailyBtn");
     d.disabled = !!r; d.textContent = r ? "Daily Ballast done: " + r.lvl + (r.lvl === 1 ? " level" : " levels") + " cleared" : save.run && save.run.day === dayNo ? "Carry on today's Daily Ballast (level " + save.run.lvl + ")" : "Play today's Daily Ballast";
     $("#dailyNote").hidden = false;
@@ -905,7 +953,7 @@
     if ($("#flagBtn")) { lookBtns(); $("#flagBtn").onclick = function () { save.look.flags = !save.look.flags; store(); lookBtns(); }; $("#stowBtn").onclick = function () { save.look.stow = !save.look.stow; store(); lookBtns(); }; }
     $("#practiceBtn").onclick = startPractice; if ($("#captainBtn")) $("#captainBtn").onclick = startCaptain;
     $("#tutBtn").onclick = startTutorial;
-    $("#skipTut").onclick = function () { save.tut = 1; store(); RUN = null; startDaily(); };
+    $("#skipTut").onclick = function () { clearTimeout(pendT); save.tut = 1; store(); RUN = null; $("#lvlTitle").textContent = ""; startDaily(); }; // nothing of the tutorial is left waiting
     $("#homeShareBtn").onclick = async function () { var t = $("#homeShareText").textContent, b = this; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); } };
     // a new day while the page is open: offer it, never interrupt a run
     setInterval(function () { if (today() !== dayNo && !dm) { $("#fresh").hidden = false; } else if (!$("#chart").hidden && save.results[dayNo]) $("#dailyNote").textContent = "Next climb in " + untilMidnight() + ". " + statsLine(); }, 30000);
@@ -921,7 +969,7 @@
       // run the physics (no frames needed) until the dropped piece has landed and any hold countdown or final judging is over
       settle: function () { for (var n = 0; n < 1500 && !S.over && (state === "fall" || state === "wait" || state === "cheer" || holdT > 0); n++) step(1000 / 60); return state; },
       earn: function (right) { if (state === "earn") earn(right === false ? earnQ.all.findIndex(function (o) { return o !== earnQ.right; }) : earnQ.all.indexOf(earnQ.right)); }, earnQ: function () { return earnQ; }, hold: function () { return holdT; }, zoom: function () { return zoom; },
-      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, look: function () { return save.look; }, crew: function () { return [crew.s, deckStow.length, ripples.length, wobbling]; }, stowFor: stowFor, daily: dailyLevel, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
+      L: function () { return L; }, S: function () { return S; }, LEVELS: LEVELS, start: start, gen: genLevel, dailyLevel: dailyLevel, tallest: function (lv) { return tallest(lv); }, run: function () { return RUN; }, voyage: function (i) { RUN = null; start(LEVELS[i]); }, hover: function () { return hover ? [hover.x, hover.ang, hoverPos().y, !!hover.crate] : null; }, cont: cont, asked: function () { return asked && asked.answer === null ? asked.s.cc : null; }, ghost: function () { return hover ? landY() : null; }, until: untilMidnight, tick: function (n) { for (var i = 0; i < n; i++) step(1000 / 60); }, shipAngle: function () { return ship.angle; }, fps: function () { return fpsNow; }, startDaily: startDaily, hint: function () { return state === "aim" && L.tut === 1 && S.i === 0 && !touched; }, startPractice: startPractice, startTutorial: startTutorial, home: home, TUTORIAL: TUTORIAL, drop: drop, answer: answer, move: move, turn: turn, state: function () { return state; }, height: heightKm, pieces: function () { return pieces; }, finish: finish, look: function () { return save.look; }, crew: function () { return [crew.s, deckStow.length, ripples.length, wobbling]; }, stowFor: stowFor, daily: dailyLevel, needs: need, list: function () { return [listA, sinkV]; }, draw: draw, captain: function () { return [isSunday(dayNo), save.captain || {}]; }, startCaptain: startCaptain, sunday: isSunday, shot: stackShot, drawShot: drawShot, save: function () { return save; } };
   }
   var dayNo = today();
   var dm = /^#day-(\d+)$/.exec(location.hash);

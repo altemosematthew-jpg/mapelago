@@ -179,7 +179,7 @@ Togo | 1960 | France | French Togoland (1916-1960) | none
 Tonga | don't ask | never colonised | none | none
 Trinidad and Tobago | 1962 | United Kingdom | none | none
 Tunisia | 1956 | France | none | none
-Turkiye | 1923 | Ottoman Empire (successor republic) | none | Istanbul to Ankara (1923)
+Türkiye | 1923 | Ottoman Empire (successor republic) | none | Istanbul to Ankara (1923)
 Turkmenistan | 1991 | Soviet Union (dissolution) | Turkmenia (to 1991) | none
 Tuvalu | 1978 | United Kingdom | Ellice Islands (to 1975) | none
 Uganda | 1962 | United Kingdom | none | Entebbe to Kampala (1962)

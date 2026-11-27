@@ -23,6 +23,7 @@ CSS = r'''
 #leg .opt.big{display:flex;justify-content:space-between;align-items:center;min-height:58px}#leg .opt.big span{font-weight:600;font-size:14px;color:var(--ink-2)}
 #leg .opt.right{background:var(--accent);color:var(--on-accent)}#leg .opt.wrong{border-style:dashed;opacity:.8}#leg .opt.other{opacity:.6}
 #pinmap{display:block;width:100%;aspect-ratio:2/1.15;border:var(--bw) solid var(--line);border-radius:var(--r);cursor:crosshair;touch-action:manipulation}
+.dvmap{position:relative}.dvzoom{position:absolute;right:8px;top:8px;display:grid;gap:6px}.dvzoom button{width:40px;height:40px;padding:0;font:800 22px var(--font);background:var(--paper);color:var(--ink);border:2px solid var(--line);border-radius:var(--r-btn);cursor:pointer}
 #din{width:100%;height:50px;box-sizing:border-box;padding:0 12px;font:600 17px var(--font);border:2px solid var(--ink);border-radius:var(--r-btn)}
 #say{min-height:22px;margin:8px 0 4px;font-weight:800}
 #next{margin-top:4px}#next[hidden]{display:none}

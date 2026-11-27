@@ -69,6 +69,10 @@
     return { k: "m", q: item[1], opts: item[2], ans: item[3] };
   }
   var QS = ITEMS.map(make);
+  // From No. 16 (scorecard 3: the hard days were too easy) a year question counts when it is within TOL years, by weekday on
+  // the site's arc: 5 on Monday down to 2 on Saturday (it was 5 every day). The day's level in words follows the same arc.
+  var TOL = dayNo >= 16 ? [3, 5, 4, 4, 3, 3, 2][weekday(dayNo)] : 5;
+  BANDS[1].max = TOL;
   var MC_KIND = { name: "What was it called?", nameof: "What was it called?", from: "Independent from whom?", capto: "Capital on the move", capfrom: "Capital on the move", capwho: "Capital on the move", city: "What was this city called?", cityof: "What was this city called?" };
   function changed(mq) { return (mq[0] === "city" || mq[0] === "cityof") && mq[5] ? mq[5].charAt(0).toUpperCase() + mq[5].slice(1) + "." : ""; }   // Block C's "what changed", as written
   function kindName(q) {
@@ -93,11 +97,11 @@
       var g = a.g || [];
       if (!g.length) return { done: false };
       var d1 = Math.abs(g[0] - q.ans), b1 = band(d1);
-      if (d1 <= 5) return { done: true, right: true, pts: b1.p1, mark: b1.e, diff: d1, tries: 1, b: b1 };
+      if (d1 <= TOL) return { done: true, right: true, pts: b1.p1, mark: b1.e, diff: d1, tries: 1, b: b1 };
       if (g.length < 2) return { done: false, first: b1, d1: d1, dir: q.ans > g[0] ? 1 : -1 };
       var d2 = Math.abs(g[1] - q.ans), b2 = band(d2);
       // a second try is marked one step cooler than its band, so 100 (first try, bang on) and 75 (second try) never share a mark
-      return { done: true, right: d2 <= 5, pts: b2.p2, mark: BANDS[Math.min(BANDS.length - 1, BANDS.indexOf(b2) + 1)].e, diff: d2, tries: 2, b: b2, first: b1 };
+      return { done: true, right: d2 <= TOL, pts: b2.p2, mark: BANDS[Math.min(BANDS.length - 1, BANDS.indexOf(b2) + 1)].e, diff: d2, tries: 2, b: b2, first: b1 };
     }
     if (a.p == null) return { done: false };
     var r = a.p === q.ans;
@@ -195,7 +199,7 @@
       var start = gap ? 50 : Math.round((q.lo + q.hi) / 2);
       if (j.first) start = mine.a[i].g[0];
       body.innerHTML = (gap ? q.f.map(function (f) { return '<p class="ev">' + esc(F[f][1]) + "</p>"; }).join("") : '<p class="ev">' + esc(F[q.f[0]][1]) + "</p>")
-        + '<p class="hint">Within 5 years counts. You get two tries.</p>'
+        + '<p class="hint">Within ' + yrs(TOL) + ' counts. You get two tries.</p>'
         + '<div class="tl"><div class="yearbig" aria-hidden="true"><b id="yr"></b>' + (gap ? "<span>years</span>" : "") + "</div>"
         + '<div class="rail"><input type="range" id="slider" min="' + q.lo + '" max="' + q.hi + '" step="1" value="' + start + '" aria-label="' + (gap ? "Years apart" : "Year") + '"></div>'
         + '<div class="ends" aria-hidden="true"><span>' + q.lo + (gap ? " years" : "") + "</span><span>" + q.hi + (gap ? " years" : "") + "</span></div>"
@@ -295,7 +299,7 @@
       var truth = q.k === "g" ? "They were " + yrs(q.ans) + " apart (" + yearOf(q.f[0]) + " and " + yearOf(q.f[1]) + ")." : "It was " + q.ans + ".";
       s.className = "qsay heat";
       s.innerHTML = '<span class="big" aria-hidden="true">' + j.b.e + "</span>" + (j.diff === 0 ? "Bang on! " + truth : j.b.w + ": " + yrs(j.diff) + " off. " + truth)
-        + "<small>" + (j.right ? (j.tries === 1 ? "First try" : "Second try") + ", within 5 years: it counts. " : "") + "+" + j.pts + " points</small>";
+        + "<small>" + (j.right ? (j.tries === 1 ? "First try" : "Second try") + ", within " + yrs(TOL) + ": it counts. " : "") + "+" + j.pts + " points</small>";
     } else {
       body.querySelectorAll(".opt").forEach(function (b) {
         var k = Number(b.dataset.k); b.disabled = true; b.classList.add("done");
@@ -358,7 +362,7 @@
     if (window.MXS && !past) {
       var s = MXS.streak(save.results, today);
       $("#streakNote").hidden = false;
-      $("#streakNote").textContent = "Streak: " + s.cur + (s.cur === 1 ? " day" : " days") + ". Best: " + s.best + "." + (s.freezes ? " \u{1F9CA} " + s.freezes + (s.freezes === 1 ? " freeze" : " freezes") + " ready." : "");
+      $("#streakNote").textContent = "Logbook streak: " + s.cur + (s.cur === 1 ? " day" : " days") + ". Best: " + s.best + "." + (s.freezes ? " \u{1F9CA} " + s.freezes + (s.freezes === 1 ? " freeze" : " freezes") + " ready." : "");
     }
     drawDots();
     $("#done").hidden = false;
@@ -466,7 +470,7 @@
   }
 
   function init() {
-    $("#num").textContent = "No. " + dayNo + " · " + WEEK[weekday(dayNo)] + " · " + D.level[weekday(dayNo)] + (MODE === "past" ? " · archive" : "");
+    $("#num").textContent = "No. " + dayNo + " · " + WEEK[weekday(dayNo)] + " · " + (dayNo >= 16 && window.MXS && MXS.weekLevel ? MXS.weekLevel(dayNo).word : D.level[weekday(dayNo)]) + (MODE === "past" ? " · archive" : "");
     if (MODE === "past") $("#lede").textContent = "An earlier logbook, No. " + dayNo + ". It doesn't count toward your streak or stats.";
     $("#statsBtn").onclick = openStats; $("#statsLink").onclick = openStats;
     $("#closeStats").onclick = function () { $("#statsSheet").hidden = true; };

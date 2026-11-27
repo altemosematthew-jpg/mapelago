@@ -84,6 +84,9 @@
         q.hard = obscurity(pool[i]); // 0 for the best-known country, 1 for the least known
         return q;
       });
+      // From No. 16 (scorecard 3: the hard days were too easy) the one question asked per wedge is the less-known of the
+      // day's two on medium and hard days, and the better-known on the gentle ones (Monday to Wednesday).
+      if (t >= 16) { var wf = window.MXS && MXS.weekLevel ? MXS.weekLevel(t).f : 1; out[cat].sort(function (a, b) { return wf > 1.05 ? a.hard - b.hard : b.hard - a.hard; }); }
     });
     return out;
   }
