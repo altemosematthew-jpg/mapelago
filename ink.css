@@ -1,0 +1,85 @@
+/* Ink & Lantern: the standard look (it replaces Chart room). A hand-inked night page, cream panel borders,
+   comic captions, one warm lantern top right; play surfaces stay light (chart paper, sea wash, ochre land).
+   Textures are static files baked by tools/ink-build.py. Other looks are untouched: everything here is scoped
+   to the standard look, and pages without the look switch (About and the like) get it too. */
+@font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/anton-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/anton-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Patrick Hand SC";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/patrick-hand-sc-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Patrick Hand SC";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/patrick-hand-sc-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/patrick-hand-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/patrick-hand-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+/* 1. the palette: dark frame, cream ink, rust for the one main action; the play surfaces stay light */
+html[data-look="chart"],html:not([data-look]){
+  --font:"Patrick Hand","Comic Sans MS","Chalkboard SE",cursive;--hand:"Patrick Hand SC","Patrick Hand",cursive;--title:"Anton","Impact","Arial Narrow",sans-serif;--num-style:normal;
+  --ground:#101316;--ground-ink:#EFE6CF;--ground-ink-2:#cfc4a8;--paper:#1a1d20;--ink:#EFE6CF;--ink-2:#cfc4a8;
+  --accent:#A8442E;--on-accent:#F6EEDC;--accent-ink:#E58A6E;--accent-lip:#000;--focus:#F0B070;
+  --line:#EFE6CF;--tile-line:#14110d;--bw:2px;--lip:4px;--tint:#24282b;--tint-2:#30363a;--grid:#2a2f33;--rule:#2c3236;
+  --muted:#8f8672;--muted-ink:#b9ae94;--board:#CDB98E;--cell:rgba(20,17,13,.07);--deco:block;
+  --sea:#7E9C93;--land:#C9A257;--land-line:#8C6B30;--grat:rgba(20,17,13,.22);--turtle:#7d9a5a;--turtle-2:#4f6b38;--shell:#EFE6CF;
+  --r:3px;--r-tile:4px;--r-board:4px;--r-tool:3px;--r-btn:3px;--scrim:rgba(0,0,0,.62);
+  --t2:#F3EAD3;--t2-ink:#14110d;--t2-lip:#14110d;--t4:#E3D3A8;--t4-ink:#14110d;--t4-lip:#14110d;--t8:#CDB98E;--t8-ink:#14110d;--t8-lip:#14110d;
+  --t16:#9FB39A;--t16-ink:#14110d;--t16-lip:#14110d;--t32:#D9A55B;--t32-ink:#14110d;--t32-lip:#14110d;--t64:#A8442E;--t64-ink:#F6EEDC;--t64-lip:#14110d;
+  --t128:#14110d;--t128-ink:#F3EAD3;--t128-lip:#000;--ground-art:none;
+  --paper-tex:url(ink/paper.jpg);--hatch:url(ink/hatch.svg);
+  color-scheme:dark
+}
+
+/* 2. the page: one warm lantern top right, darkness only at the very edges, ink blots in the margins */
+html[data-look="chart"] body,html:not([data-look]) body{background:#101316;color:var(--ink)}
+html[data-look="chart"] body::before,html:not([data-look]) body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at 94% 2%,rgba(255,196,120,.26),rgba(255,170,90,.08) 32%,transparent 58%),
+    radial-gradient(ellipse 120% 90% at 50% 45%,transparent 70%,rgba(0,0,0,.55) 100%),#101316}
+/* the ink blots and paper grain arrive after the page has loaded, so they never slow the first move */
+html.ink-ready body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(ink/blots.svg) center top/1200px auto no-repeat}
+
+/* 3. titles: Anton, each letter set by hand (site.js tilts them a degree or two) */
+:is(html[data-look="chart"],html:not([data-look])) .top .word,:is(html[data-look="chart"],html:not([data-look])) .about-h,:is(html[data-look="chart"],html:not([data-look])) #done h2,:is(html[data-look="chart"],html:not([data-look])) .panel h2,:is(html[data-look="chart"],html:not([data-look])) h1,
+html:not([data-look]) h1,html:not([data-look]) h2{font-family:var(--title);font-weight:400;font-style:normal;letter-spacing:.03em;text-transform:none}
+:is(html[data-look="chart"],html:not([data-look])) .top .word{font-size:1.55em;line-height:1.05;color:#F3EAD3;text-shadow:2px 2px 0 #000}
+.ink-l{display:inline-block;transform:rotate(var(--t,0deg)) translateY(var(--y,0px))}
+:is(html[data-look="chart"],html:not([data-look])) .top .no{font-family:var(--hand);letter-spacing:.04em;color:#F0B070}
+
+/* 4. panels: hand-drawn cream borders (site.js marks them), slightly crooked, the strokes run past the corners */
+:is(html[data-look="chart"],html:not([data-look])) .ink-frame,html:not([data-look]) .ink-frame{border-color:transparent!important;border-image:url(ink/frame.svg) 12 stretch;border-image-outset:5px;border-radius:2px}
+
+/* 5. captions: instructions and feedback in cream comic caption boxes */
+:is(html[data-look="chart"],html:not([data-look])) .lede,:is(html[data-look="chart"],html:not([data-look])) .ink-cap,:is(html[data-look="chart"],html:not([data-look])) #say:not(:empty),:is(html[data-look="chart"],html:not([data-look])) .toast,:is(html[data-look="chart"],html:not([data-look])) #toast{
+  background:#EFE6CF;color:#14110d;font-family:var(--hand);font-size:.98em;letter-spacing:.01em;line-height:1.18;
+  border:2px solid transparent;border-image:url(ink/frame-ink.svg) 12 stretch;border-image-outset:4px;border-radius:0;box-shadow:3px 3px 0 #000;padding:4px 9px}
+:is(html[data-look="chart"],html:not([data-look])) .lede a,:is(html[data-look="chart"],html:not([data-look])) .ink-cap a{color:#7a2d1c}
+
+/* 6. buttons: rust for the main action, a hard black offset shadow; the rest cream-lined */
+:is(html[data-look="chart"],html:not([data-look])) .act,:is(html[data-look="chart"],html:not([data-look])) button.go,:is(html[data-look="chart"],html:not([data-look])) .go,:is(html[data-look="chart"],html:not([data-look])) #dvGo{font-family:var(--title);font-weight:400;letter-spacing:.05em;text-transform:none;font-style:normal}
+:is(html[data-look="chart"],html:not([data-look])) .act:not(.plain):not(:disabled),:is(html[data-look="chart"],html:not([data-look])) #dvGo{background:#A8442E!important;color:#F6EEDC!important;border:2px solid #000!important;box-shadow:4px 4px 0 #000!important;border-radius:3px!important}
+:is(html[data-look="chart"],html:not([data-look])) .act:not(.plain):not(:disabled):active,:is(html[data-look="chart"],html:not([data-look])) #dvGo:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #000!important}
+:is(html[data-look="chart"],html:not([data-look])) .act:disabled{background:transparent!important;color:#b9ae94!important;border:2px dashed rgba(239,230,207,.5)!important;box-shadow:none!important;opacity:1}
+:is(html[data-look="chart"],html:not([data-look])) .act.plain{background:transparent!important;color:#EFE6CF!important;border:2px solid #EFE6CF!important;box-shadow:3px 3px 0 #000!important}
+
+/* 7. play surfaces stay light: boards and map frames sit on aged chart paper */
+:is(html[data-look="chart"],html:not([data-look])) .board,:is(html[data-look="chart"],html:not([data-look])) #board{background:#CDB98E}
+html.ink-ready .board,html.ink-ready #board{background-image:var(--paper-tex)!important}
+:is(html[data-look="chart"],html:not([data-look])) :focus-visible{outline:3px solid #F0B070;outline-offset:2px}
+
+/* the About page and other plain pages */
+html:not([data-look]) a{color:#F0B070}
+html:not([data-look]) main,html:not([data-look]) .page{color:var(--ink)}
+
+:is(html[data-look="chart"],html:not([data-look])) .board .chart .shoal{fill:#7E9C93;opacity:.6}
+:is(html[data-look="chart"],html:not([data-look])) .board .chart .depth{stroke:#4f6a62}
+:is(html[data-look="chart"],html:not([data-look])) [data-ink-copy]{pointer-events:none}
+
+/* the game's comic panel in its header and on its home card */
+:is(html[data-look="chart"],html:not([data-look])) .top .mark .ink-art{width:51px;height:36px;flex:none;margin-left:8px;transform:rotate(-1.5deg);box-shadow:3px 3px 0 #000;align-self:center}
+:is(html[data-look="chart"],html:not([data-look])) svg.mx-emb{display:none}
+:is(html[data-look="chart"],html:not([data-look])) .ic.ink-ic{width:60px;height:42px;flex:none;font-size:0;line-height:0}
+:is(html[data-look="chart"],html:not([data-look])) .ic.ink-ic img{width:60px;height:42px;display:block;transform:rotate(-1deg);box-shadow:2px 2px 0 #000}
+:is(html[data-look="chart"],html:not([data-look])) .ink-tbc{font-family:var(--title);font-size:1.5em;letter-spacing:.04em;color:#F0B070;text-align:right;margin:22px 4px 8px;transform:rotate(-1deg);text-shadow:2px 2px 0 #000}
+@media (max-width:359px){:is(html[data-look="chart"],html:not([data-look])) .top .mark .ink-art{display:none}}
+
+/* map labels keep the compact face their placement was measured with, so neighbours' names keep clear */
+:is(html[data-look="chart"],html:not([data-look])) #map text,:is(html[data-look="chart"],html:not([data-look])) .map text{font-family:"Overpass","Helvetica Neue",Arial,sans-serif!important}
+
+/* the small panels on the game cards under every game */
+:is(html[data-look="chart"],html:not([data-look])) .mx-card .ic.ink-ic{width:48px;height:34px;flex:none;font-size:0;line-height:0}
+:is(html[data-look="chart"],html:not([data-look])) .mx-card .ic.ink-ic img{width:48px;height:34px;display:block;box-shadow:2px 2px 0 #000}

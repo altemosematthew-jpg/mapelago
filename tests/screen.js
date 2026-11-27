@@ -45,11 +45,11 @@ const GAMES = [
       await p.click("#nameOpts .opt"); await m("after an answer");
       await p.evaluate(() => { const B = __ballast; B.run().lives = 1; B.run().cleared = 3; B.run().lvl = 4; B.S().cleared = false; B.finish(); }); await p.waitForTimeout(500); await m("finish"); await m("finish: the daily line", ["#doneTitle", "#shareBtn", ".mx-daily"]);
     } },
-  { id: "bigger", name: "Bigger city?", page: "bigger.html", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async (p, m) => {
+  { id: "bigger", name: "Bigger?", page: "bigger.html", at: "2026-11-30T12:00:00", /* No. 17, its first day */ first: "#pick0", read: ".lede", ready: "!!window.__big", states: async (p, m) => {
       for (let i = 0; i < 40; i++) { const st = await p.evaluate(() => { const d = document.querySelector("#done"); if (d && !d.hidden) return "done"; const n = [...document.querySelectorAll("#play button")].find((x) => x.offsetParent && !x.disabled && !/^pick/.test(x.id)); if (n) { n.click(); return "next"; } const b = document.querySelector("#pick0"); if (b && b.offsetParent && !b.disabled) { b.click(); return "pick"; } return "wait"; }); if (st === "done") break; await p.waitForTimeout(450); if (i === 0) await m("after an answer"); }
       await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", ".mx-daily"]);
     } },
-  { id: "bigcountry", name: "Bigger country?", page: "bigger-country.html", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async (p, m) => {
+  { id: "bigcountry", name: "Bigger country? (until No. 16)", page: "bigger-country.html#day-14", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async (p, m) => {
       for (let i = 0; i < 40; i++) { const st = await p.evaluate(() => { const d = document.querySelector("#done"); if (d && !d.hidden) return "done"; const n = [...document.querySelectorAll("#play button")].find((x) => x.offsetParent && !x.disabled && !/^pick/.test(x.id)); if (n) { n.click(); return "next"; } const b = document.querySelector("#pick0"); if (b && b.offsetParent && !b.disabled) { b.click(); return "pick"; } return "wait"; }); if (st === "done") break; await p.waitForTimeout(450); if (i === 0) await m("after an answer"); }
       await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", ".mx-daily"]);
     } },
@@ -72,7 +72,7 @@ const GAMES = [
       await far(0); await p.waitForTimeout(1300); await m("after a miss"); await far(10); await p.waitForTimeout(1300); await m("after two misses");
       await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2500); await m("finish", ["#endTitle", "#endBody .place", "#endBody .score", "#endBody .row2", "#endBody .also", ".mx-daily"]);
     } },
-  { id: "voyage", name: "Voyage", page: "voyage.html", strict: true, first: "#opts button", read: ".lede, .note", ready: "!!window.__voy",
+  { id: "voyage", name: "Voyage (until No. 16)", page: "voyage.html", at: "2026-11-27T12:00:00", strict: true, first: "#opts button", read: ".lede, .note", ready: "!!window.__voy",
     states: async (p, m) => {
       const pick = (right) => p.evaluate((right) => { const S = __voy.S(), q = S.qs[S.g.at], want = q.options[q.answer]; const b = [...document.querySelectorAll("#opts button")].find((x) => (x.textContent.trim() === want) === right); b.click(); }, right);
       await pick(true); await p.waitForTimeout(1200); await m("after an answer");
@@ -132,6 +132,7 @@ const SLOW = [];
   for (const g of GAMES) { if (only && g.id !== only) continue;
     const row = { g, A: [], B: [], D: ["no finish screen reached"], F: 0, errs: [] };
     let ctx = await b.newContext({ viewport: { width: W, height: H }, hasTouch: true, isMobile: true, serviceWorkers: "block" }), p = await ctx.newPage(); p.on("pageerror", (e) => row.errs.push(e.message));
+    if (g.at) await p.clock.install({ time: new Date(g.at) });
     await p.goto(srv.url + g.page, { waitUntil: "load" }); await ready(p, g).catch(() => {}); await p.waitForTimeout(1100);
     row.A = (await first(p, g)).why;
     const m = async (state, must) => {
@@ -144,8 +145,10 @@ const SLOW = [];
     await ctx.close();
     ctx = await b.newContext({ viewport: { width: W, height: H }, hasTouch: true, isMobile: true, serviceWorkers: "block" }); p = await ctx.newPage(); const c = await ctx.newCDPSession(p);
     await c.send("Network.enable"); await c.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 1.6e6 / 8, uploadThroughput: 750e3 / 8 }); await c.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+    if (g.at) await p.clock.install({ time: new Date(g.at) });
     const t0 = Date.now(); await p.goto(srv.url + g.page, { waitUntil: "commit", timeout: 60000 }); await ready(p, g).catch(() => {}); row.F = Date.now() - t0; await ctx.close();
     ctx = await b.newContext({ viewport: { width: W, height: H }, hasTouch: true, isMobile: true, serviceWorkers: "block" }); p = await ctx.newPage();
+    if (g.at) await p.clock.install({ time: new Date(g.at) });
     await p.goto(srv.url + g.page, { waitUntil: "load" }); await ready(p, g).catch(() => {}); await p.waitForTimeout(900);
     row.R = await p.evaluate((act) => new Promise((done) => {
       const app = document.querySelector(".app"), snap = () => app.innerHTML.length + "|" + [...app.querySelectorAll("[class]")].map((e) => e.className.length || 0).join("") + "|" + (window.__ballast ? __ballast.state() : ""), before = snap(), t0 = performance.now();

@@ -24,6 +24,7 @@
 <meta property="og:image:alt" content="Mapelago: a turtle, six colored tiles and the words Can you find today's city?">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="../ink.css?v=0.15.64">
 </head>
 <body>
 <div class="wrap">
@@ -44,13 +45,13 @@
 </svg><span class="word">Mapelago</span></a></header>
   <main>
 <h1>About Mapelago</h1>
-<p class="lede">Mapelago is a set of free daily geography games made in Nashville, Tennessee. Eleven games a day, the same for everyone: Mystery city, Mystery country, Bigger city?, Bigger country?, Voyage, Fathoms, Stamps, Crossings, Logbook, Dead Reckoning and Ballast.</p>
+<p class="lede">Mapelago is a set of free daily geography games made in Nashville, Tennessee. A Daily Voyage and eight games a day, the same for everyone: Mystery (a city or a country), Bigger?, Crossings, Dead Reckoning, Ballast, Fathoms, Stamps and Logbook.</p>
 
 <h2>The idea</h2>
-<p>Eleven small games, one idea: geography you work out, not look up. In the two mystery games you earn each clue by sliding tiles, so every round is a small decision: one more clue, or pin now. The others each take one question and turn it into a few minutes of play: which is bigger, what borders what, how do you get from one country to another overland, where on a blank map is this place, when did the map change, and how high can you load real country outlines before the stack tips.</p>
+<p>Small games, one idea: geography you work out, not look up. In Mystery you earn each clue by sliding tiles, so every round is a small decision: one more clue, or pin now. The others each take one question and turn it into a few minutes of play: which is bigger, what borders what, how do you get from one country to another overland, where on a blank map is this place, when did the map change, and how high can you load real country outlines before the stack tips.</p>
 <p>Everyone in the world gets the same puzzles each day, so they're made for comparing notes. Nothing needs an account, and your streaks stay on your own device.</p>
-<p>The name is map plus archipelago. The look comes from sea charts: white for deep water, blue for the shallows, buff for land, and magenta for anything a navigator needs to notice.</p>
-<p>That's the standard look, called Chart room. The game has five other looks you can switch to, from the same chart at night to a transit map.</p>
+<p>The name is map plus archipelago. The look is a hand-inked graphic novel read by lantern light: cream panels on a dark page, captions in hand lettering, maps on old chart paper with ochre land and a sea-green wash, and rust for the one thing to press. Each day is an episode.</p>
+<p>That's the standard look, called Ink &amp; Lantern. The game has five other looks you can switch to, from the same chart at night to a transit map.</p>
 
 <h2>How it was made</h2>
 <p>One person designed and directed the game. The code was written with AI coding tools (Claude, by Anthropic), then tested by playing full games in a browser.</p>
@@ -62,12 +63,14 @@
 <ul>
   <li>Cities: <a href="https://www.geonames.org/">GeoNames</a>, licensed CC BY 4.0.</li>
   <li>Coastlines and country shapes: <a href="https://www.naturalearthdata.com/">Natural Earth</a>, public domain.</li>
+  <li>Lettering: Anton and Patrick Hand SC (SIL Open Font License; the licences are in fonts/).</li>
   <li>Flags in Ballast: <a href="https://github.com/lipis/flag-icons">flag-icons</a> by Panayiotis Lipiridis, MIT licence (the licence is in ballast/flags/LICENSE.txt). Every Ballast country has a matching flag.</li>
-  <li>City populations (from No. 17, in Bigger city?, Voyage and Mystery city): UN DESA, <a href="https://population.un.org/wup/downloads">World Urbanization Prospects 2025</a>, WUP2025-F21-DEGURBA-Cities_Pop.xlsx, Cities tab, 2025 estimates. Each figure is the urban centre (Degree of Urbanisation: the built-up urban area, not city limits), so every comparison uses one definition. Bigger city? plays only the cities in that table. Mystery city keeps its earlier figure for a city the table does not list.</li>
+  <li>Country areas in Bigger? (from No. 17) and the Daily Voyage: UN Statistics Division, Demographic Yearbook 2023, as below. On No. 17 Bigger city? and Bigger country? became one game, Bigger?; Mystery city and Mystery country became Mystery, with a City and a Country switch; and Voyage retired, its best question becoming a Daily Voyage stop. Every old address still works.</li>
+  <li>City populations (from No. 17, in Bigger?, the Daily Voyage and Mystery): UN DESA, <a href="https://population.un.org/wup/downloads">World Urbanization Prospects 2025</a>, WUP2025-F21-DEGURBA-Cities_Pop.xlsx, Cities tab, 2025 estimates. Each figure is the urban centre (Degree of Urbanisation: the built-up urban area, not city limits), so every comparison uses one definition. Bigger? plays only the cities in that table. Mystery keeps its earlier figure for a city the table does not list.</li>
   <li>Country areas (from No. 17): UN Statistics Division, Demographic Yearbook 2023, Table 3, surface area in km². Sudan, Kosovo and Taiwan are not in that table and keep an earlier figure.</li>
   <li>The maps of 1914, 1950 and 1980 are Mapelago's own: a table of who ruled each of today's countries in those years, drawn on the same Natural Earth shapes. They are a simplification.</li>
   <li>Country facts: the countries-list project, MIT license.</li>
-  <li>Lettering: Overpass by Delve Withrington, SIL Open Font License. It's modeled on the lettering of US road signs.</li> <!-- style-ok: Delve is the type designer's first name -->
+  <li>Map labels: Overpass by Delve Withrington, SIL Open Font License. It's modeled on the lettering of US road signs.</li> <!-- style-ok: Delve is the type designer's first name -->
   <li>Lettering in the other looks: Baloo 2 (The Baloo 2 Project Authors), Zilla Slab (The Mozilla Foundation), Patrick Hand (Patrick Wagesreiter), Barlow (The Barlow Project Authors) and Jersey 20 (The Soft Type Project Authors). All use the SIL Open Font License.</li>
   <li>Map drawing: D3, ISC license.</li>
 </ul>
@@ -75,11 +78,8 @@
 <a class="play" href="../">Play today's city</a>
   </main>
   <nav class="foot" aria-label="Site">
-    <a href="../city.html">Mystery city</a>
-      <a href="../country.html">Mystery country</a>
-      <a href="../bigger.html">Bigger city?</a>
-      <a href="../bigger-country.html">Bigger country?</a>
-      <a href="../voyage.html">Voyage</a>
+    <a href="../daily.html">Daily Voyage</a> <a href="../city.html">Mystery</a>
+      <a href="../bigger.html">Bigger?</a>
       <a href="../fathoms.html">Fathoms</a>
       <a href="../stamps.html">Stamps</a>
       <a href="../crossings.html">Crossings</a>
@@ -94,6 +94,6 @@
     <a href="../privacy/">Privacy</a>
   </nav>
 </div>
-<script src="../analytics.js?v=0.15.59" defer></script>
+<script src="../analytics.js?v=0.15.64" defer></script>
 </body>
 </html>

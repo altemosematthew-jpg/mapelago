@@ -3,12 +3,12 @@
 <head>
 <script>/* links made for the Mystery city game when it lived here (shares, archive days, #day-N) go on to it */
 if (location.hash.length > 1 || /[?&](q|city)=/.test(location.search)) location.replace("city.html" + location.search + location.hash);</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Mapelago","url":"https://mapelago.com/","description":"Eleven free daily geography games: Mystery city, Mystery country, Bigger city?, Bigger country?, Voyage, Fathoms, Stamps, Crossings, Logbook, Dead Reckoning and Ballast, and a Daily Voyage that strings four of them together."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Mapelago","url":"https://mapelago.com/","description":"Eight free daily geography games: Mystery (a city or a country), Bigger?, Crossings, Dead Reckoning, Ballast, Fathoms, Stamps and Logbook, and a Daily Voyage that strings four of them together."}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mapelago: free daily geography games</title>
 
-<meta name="description" content="Today's Daily Voyage, four stops in a few minutes, and eleven free daily geography games: find a city, cross borders, pin places on a blank map and more. The same puzzles for everyone, nothing to sign up for.">
+<meta name="description" content="Today's Daily Voyage, four stops in a few minutes, and eight free daily geography games: find a city, cross borders, pin places on a blank map and more. The same puzzles for everyone, nothing to sign up for.">
 <link rel="canonical" href="https://mapelago.com/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -20,7 +20,7 @@ if (location.hash.length > 1 || /[?&](q|city)=/.test(location.search)) location.
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Mapelago">
 <meta property="og:title" content="Mapelago: free daily geography games">
-<meta property="og:description" content="Today's Daily Voyage, four stops in a few minutes, and eleven free daily geography games: find a city, cross borders, pin places on a blank map and more. The same puzzles for everyone, nothing to sign up for.">
+<meta property="og:description" content="Today's Daily Voyage, four stops in a few minutes, and eight free daily geography games: find a city, cross borders, pin places on a blank map and more. The same puzzles for everyone, nothing to sign up for.">
 <meta property="og:url" content="https://mapelago.com/">
 <meta property="og:image" content="https://mapelago.com/og-voyage.png">
 <meta property="og:image:width" content="1200">
@@ -409,6 +409,7 @@ h2.sec{font-size:18px;margin:0 0 8px}
 .more{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 18px}.more a{grid-template-columns:auto 1fr;padding:10px}.more b{font-size:15px}.more span{font-size:12.5px}
 @media (min-width:900px){.app{max-width:760px}.feat{grid-template-columns:repeat(3,1fr)}.more{grid-template-columns:repeat(4,1fr)}}
 </style>
+<link rel="stylesheet" href="ink.css?v=0.15.64">
 </head>
 <body>
 <div class="app">
@@ -436,9 +437,9 @@ h2.sec{font-size:18px;margin:0 0 8px}
     <a class="act" id="dvGo" href="daily.html">Play today's Daily Voyage</a>
   </section>
   <h2 class="sec">Featured games</h2>
-  <nav class="feat" aria-label="Featured games"><a href="crossings.html" data-game="crossings.html"><span class="ic" aria-hidden="true">🧭</span><b>Crossings</b><span>Get from one country to another, border by border.</span></a><a href="dead-reckoning.html" data-game="dead-reckoning.html"><span class="ic" aria-hidden="true">📍</span><b>Dead Reckoning</b><span>Five places, a blank map, the closer the better.</span></a><a href="city.html" data-game="city.html"><span class="ic" aria-hidden="true">🏙️</span><b>Mystery city</b><span>Slide tiles for clues, then pin today's city.</span></a></nav>
+  <nav class="feat" aria-label="Featured games"><a href="crossings.html" data-game="crossings.html"><span class="ic" aria-hidden="true">🧭</span><b>Crossings</b><span>Get from one country to another, border by border.</span></a><a href="dead-reckoning.html" data-game="dead-reckoning.html"><span class="ic" aria-hidden="true">📍</span><b>Dead Reckoning</b><span>Five places, a blank map, the closer the better.</span></a><a href="city.html" data-game="city.html"><span class="ic" aria-hidden="true">🏙️</span><b>Mystery</b><span>Slide tiles for clues, then pin today's city or country.</span></a></nav>
   <h2 class="sec">More games</h2>
-  <nav class="more" aria-label="More games"><a href="country.html" data-game="country.html"><span class="ic" aria-hidden="true">🌍</span><b>Mystery country</b><span>Clues, then pin the country.</span></a><a href="bigger.html" data-game="bigger.html"><span class="ic" aria-hidden="true">👥</span><b>Bigger city?</b><span>Ten pairs: which has more people?</span></a><a href="bigger-country.html" data-game="bigger-country.html"><span class="ic" aria-hidden="true">🗺️</span><b>Bigger country?</b><span>Ten pairs: which covers more land?</span></a><a href="voyage.html" data-game="voyage.html"><span class="ic" aria-hidden="true">⚓</span><b>Voyage</b><span>Ten islands, sail on or drop anchor.</span></a><a href="fathoms.html" data-game="fathoms.html"><span class="ic" aria-hidden="true">🐙</span><b>Fathoms</b><span>Name a country nobody else would.</span></a><a href="stamps.html" data-game="stamps.html"><span class="ic" aria-hidden="true">📮</span><b>Stamps</b><span>Spin the wheel, fill six stamps.</span></a><a href="history.html" data-game="history.html"><span class="ic" aria-hidden="true">📜</span><b>Logbook</b><span>How the map changed since 1800.</span></a><a href="ballast.html" data-game="ballast.html"><span class="ic" aria-hidden="true">🚢</span><b>Ballast</b><span>Stack real countries on a rocking ship.</span></a></nav>
+  <nav class="more" aria-label="More games"><a href="bigger.html" data-game="bigger.html"><span class="ic" aria-hidden="true">👥</span><b>Bigger?</b><span>Cities by people, countries by land: tap the bigger one.</span></a><a href="ballast.html" data-game="ballast.html"><span class="ic" aria-hidden="true">🚢</span><b>Ballast</b><span>Stack real countries on a rocking ship.</span></a><a href="fathoms.html" data-game="fathoms.html"><span class="ic" aria-hidden="true">🐙</span><b>Fathoms</b><span>Name a country nobody else would.</span></a><a href="stamps.html" data-game="stamps.html"><span class="ic" aria-hidden="true">📮</span><b>Stamps</b><span>Spin the wheel, fill six stamps.</span></a><a href="history.html" data-game="history.html"><span class="ic" aria-hidden="true">📜</span><b>Logbook</b><span>How the map changed since 1800.</span></a></nav>
   <footer class="about">
     <nav aria-label="Site">
       <a href="games/">All games</a>
@@ -450,7 +451,7 @@ h2.sec{font-size:18px;margin:0 0 8px}
   </footer>
 </div>
 <div id="toast" role="status"></div>
-<script src="site.js?v=0.15.59"></script>
+<script src="site.js?v=0.15.64"></script>
 <script>
 // a tick on the games already played today, and the voyage button says when today's is done
 (function () { try {
@@ -459,6 +460,6 @@ h2.sec{font-size:18px;margin:0 0 8px}
   if (r) { document.getElementById("dvGo").textContent = "Today's voyage: " + r.score + " of 100. See it"; document.getElementById("dvLine").textContent = "Done for today. A new voyage in " + (MXS.untilNext ? MXS.untilNext() : "the morning") + "."; }
 } catch (e) {} })();
 </script>
-<script src="analytics.js?v=0.15.59" defer></script>
+<script src="analytics.js?v=0.15.64" defer></script>
 </body>
 </html>

@@ -54,7 +54,7 @@ for gid, g in C['games'].items():
     tag = f'<!-- rules:{gid} -->'
     if tag not in s: continue
     url = '../' + g['file']
-    name = {'bigger': 'Bigger city?', 'bigcountry': 'Bigger country?'}.get(gid, g['title'].split(':')[0])
+    name = {'bigger': 'Bigger?', 'biggercity': 'Bigger city?', 'bigcountry': 'Bigger country?'}.get(gid, g['title'].split(':')[0])
     text = esc(g['explainer'])
     linked = text.replace(esc(name), f'<a href="{url}">{esc(name)}</a>', 1) if esc(name) in text else f'<a href="{url}">{esc(name)}</a>: ' + text
     s = re.sub(re.escape(tag) + r'.*?<!-- /rules:' + re.escape(gid) + ' -->', lambda m: f'{tag}\n<p>{linked}</p>\n<!-- /rules:{gid} -->', s, count=1, flags=re.S)

@@ -434,12 +434,23 @@
     var wave = reduce ? 0 : 3 * Math.sin(time / 600);
     cx.fillStyle = css("--tint-2", "#a9d3e8");
     cx.beginPath(); cx.moveTo(0, Y(WATER + wave)); for (var sx = -VW; sx <= VW; sx += 20) cx.lineTo(X(sx), Y(WATER + wave + (reduce ? 0 : 2.5 * Math.sin(sx / 30 + time / 500)))); cx.lineTo(W, H); cx.lineTo(0, H); cx.closePath(); cx.fill();
+    var inkd = (function () { var l = document.documentElement.getAttribute("data-look"); return !l || l === "chart"; })();
+    if (inkd) { // Ink & Lantern: the water gets inked wave strokes at fixed places, so nothing flickers
+      cx.save(); cx.strokeStyle = "rgba(20,17,13,.45)"; cx.lineWidth = 1.4; cx.lineCap = "round";
+      for (var wi = 0; wi < 26; wi++) { var wx = ((wi * 97) % 100) / 100 * W, wy = Y(WATER + wave) + 10 + ((wi * 53) % 100) / 100 * Math.max(10, H - Y(WATER + wave) - 14), wl = 10 + (wi * 31) % 16;
+        cx.beginPath(); cx.moveTo(wx, wy); cx.quadraticCurveTo(wx + wl / 2, wy - 4, wx + wl, wy); cx.stroke(); }
+      cx.restore(); }
     // the ship
     shipFrame();
     var dk = ship.parts[1]; cx.save(); cx.translate(X(dk.position.x), Y(dk.position.y)); cx.rotate(ship.angle);
     var dw = deckW() * kz, u = kz;
     cx.fillStyle = "#8a5a2b"; cx.strokeStyle = ink; cx.lineWidth = 2 * k / 1.2;
     cx.beginPath(); cx.moveTo(-dw / 2 - 10 * u, -7 * u); cx.lineTo(dw / 2 + 16 * u, -7 * u); cx.lineTo(dw / 2 - 6 * u, 34 * u); cx.lineTo(-dw / 2 + 4 * u, 34 * u); cx.closePath(); cx.fill(); cx.stroke();
+    if (inkd) { // planks, and hatching on the shadow side (the lantern is top right), with a heavier line
+      cx.save(); cx.clip(); cx.strokeStyle = "rgba(20,17,13,.5)"; cx.lineWidth = 1.2;
+      for (var pk = 1; pk < 4; pk++) { cx.beginPath(); cx.moveTo(-dw / 2 - 10 * u, (-7 + pk * 10) * u); cx.lineTo(dw / 2 + 16 * u, (-7 + pk * 10) * u); cx.stroke(); }
+      for (var hh = 0; hh < 14; hh++) { var hx = -dw / 2 + (hh * 0.37 % 1) * dw * 0.45, hy = (-2 + (hh * 0.61 % 1) * 34) * u; cx.beginPath(); cx.moveTo(hx, hy); cx.lineTo(hx + 7 * u, hy - 5 * u); cx.stroke(); }
+      cx.restore(); cx.lineWidth = 3 * k / 1.2; cx.stroke(); }
     cx.fillStyle = "#c08a50"; cx.fillRect(-dw / 2, -7 * u, dw, 6 * u); cx.strokeRect(-dw / 2, -7 * u, dw, 6 * u);
     [-1, 1].forEach(function (sd) { cx.fillRect(sd * (dw / 2 - 3 * u) - 3 * u, -23 * u, 6 * u, 16 * u); cx.strokeRect(sd * (dw / 2 - 3 * u) - 3 * u, -23 * u, 6 * u, 16 * u); });
     var ct = time - crew.t, cs = crew.s; if (cs !== "watch" && ct > (cs === "cheer" ? 1400 : 700)) { crew.s = cs = "watch"; }
@@ -484,6 +495,14 @@
     wobbling = false; pieces.forEach(function (b) { if (!b.mxGone && !(b === lastBody && state === "fall") && b.speed > 0.6) wobbling = true; });
     if (wobbling && crew.s === "watch" && !cleared2) crewDo("wince");
     var shiv = !reduce && wobbling && !cleared2 ? 0.6 : 0;
+    // Ink & Lantern: each piece casts a hard shadow to the lower left (the lantern is top right)
+    var inked = (function () { var l = document.documentElement.getAttribute("data-look"); return !l || l === "chart"; })();
+    if (inked) pieces.forEach(function (b) {
+      if (b.mxGone) return;
+      cx.save(); cx.translate(X(b.position.x) - 2.2, Y(b.position.y) + 2.2); cx.rotate(b.angle);
+      cx.beginPath(); b.mxOutline.forEach(function (v, i) { (i ? cx.lineTo : cx.moveTo).call(cx, v.x * kz, v.y * kz); }); cx.closePath();
+      cx.fillStyle = "rgba(20,17,13,.75)"; cx.fill(); cx.restore();
+    });
     pieces.forEach(function (b) {
       if (b.mxGone) return;
       var jx = shiv ? Math.sin(time / 23 + b.id) * shiv : 0, sq = !reduce && b.mxLand != null && time - b.mxLand < 220 ? 1 - (time - b.mxLand) / 220 : 0;
@@ -495,7 +514,17 @@
         var bw = (bx[2] - bx[0]) * kz, bh = (bx[3] - bx[1]) * kz, f = Math.max(bw / 4, bh / 3);
         cx.save(); cx.clip(); cx.drawImage(im, bx[0] * kz + bw / 2 - 2 * f, bx[1] * kz + bh / 2 - 1.5 * f, 4 * f, 3 * f); cx.restore();
       } else { cx.fillStyle = b.mxCrate ? "#d9c7a3" : land; cx.fill(); }
-      cx.lineJoin = "round"; cx.strokeStyle = ink; cx.lineWidth = (im ? 2.2 : 1.6) * k / 1.2; cx.stroke(); cx.restore();
+      if (inked) {
+        // hand-placed hatching, drawn once per piece (its own angles and lengths), kept inside the outline
+        if (!b.mxHatch) {
+          var hb = b.mxOutline.reduce(function (m, v) { return [Math.min(m[0], v.x), Math.min(m[1], v.y), Math.max(m[2], v.x), Math.max(m[3], v.y)]; }, [1e9, 1e9, -1e9, -1e9]);
+          var hs = b.id * 9301 + 49297, hr = function () { hs = (hs * 9301 + 49297) % 233280; return hs / 233280; };
+          b.mxHatch = []; for (var hi = 0; hi < 14; hi++) { var ha = -0.7 + (hr() - 0.5) * 0.4, hl = 0.06 + hr() * 0.08, hx = hb[0] + hr() * (hb[2] - hb[0]) * 0.6, hy = hb[1] + (0.35 + hr() * 0.65) * (hb[3] - hb[1]); b.mxHatch.push([hx, hy, Math.cos(ha) * hl * (hb[2] - hb[0]), Math.sin(ha) * hl * (hb[2] - hb[0])]); }
+        }
+        cx.save(); cx.clip(); cx.strokeStyle = "rgba(20,17,13,.45)"; cx.lineWidth = 1; cx.beginPath();
+        b.mxHatch.forEach(function (h) { cx.moveTo(h[0] * kz, h[1] * kz); cx.lineTo((h[0] + h[2]) * kz, (h[1] - h[3]) * kz); }); cx.stroke(); cx.restore();
+      }
+      cx.lineJoin = "round"; cx.strokeStyle = ink; cx.lineWidth = (im ? 2.2 : 1.6) * k / 1.2 * (inked ? 1.35 : 1); cx.stroke(); cx.restore();
     });
     if (save.look.stow) {
       pieces.forEach(function (b) {

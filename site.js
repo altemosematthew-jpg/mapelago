@@ -95,11 +95,17 @@
 
   // ---------- 3. streaks across all the games (5.1, 5.2, 5.3, 5.4) ----------
   var GAMES = [
-    { id: "city", name: "Mystery city", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
-    { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "The same, with a country to find." },
-    { id: "bigger", name: "Bigger city?", key: "dailycity:bigger:v1", url: "bigger.html", icon: "\u{1F465}", about: "Ten pairs: tap the city where more people live." },
-    { id: "bigcountry", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
-    { id: "voyage", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
+    // Mystery: one game with a City and a Country mode. Each mode keeps its own daily puzzle and save; the Country mode's
+    // days count toward Mystery's one streak and stats.
+    { id: "city", name: "Mystery", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city, or switch to today's country." },
+    { id: "country", parent: "city", name: "Mystery (Country)", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "Mystery's Country mode: the same, with a country to find." },
+    { id: "daily", name: "Daily Voyage", key: "dailycity:dailyvoyage:v1", url: "daily.html", icon: "\u2693", about: "Four stops from the best games, one score out of 100." },
+    // Bigger? (from No. 17) is Bigger city? and Bigger country? as one game: it saves where Bigger city? did, and Bigger
+    // country?'s days count toward its streak and stats. The old pages still play Nos. 1 to 16.
+    { id: "bigger", name: "Bigger?", key: "dailycity:bigger:v1", url: "bigger.html", pages: ["bigger-city.html"], icon: "\u{1F465}", about: "Ten pairs, cities and countries in turn: tap the bigger one." },
+    { id: "bigcountry", parent: "bigger", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
+    // Voyage retires on No. 17: its best question is a Daily Voyage stop, and its days count toward the Daily Voyage streak
+    { id: "voyage", parent: "daily", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
     { id: "fathoms", name: "Fathoms", key: "dailycity:fathoms:v1", url: "fathoms.html", icon: "\u{1F30A}", about: "Name the least obvious right answer." },
     { id: "stamps", name: "Stamps", key: "dailycity:stamps:v1", url: "stamps.html", icon: "\u{1F4EE}", about: "Spin, answer, and fill a page of stamps." },
     { id: "crossings", name: "Crossings", key: "dailycity:crossings:v1", url: "crossings.html", icon: "\u{1F9ED}", about: "Name the countries between two others, border by border." }
@@ -132,10 +138,13 @@
   function read(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
   function plural(n, a, b) { return n + " " + (n === 1 ? a : b); }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  // a game that became part of another (it has a parent) is not listed on its own: its days count for the parent
+  function results(g) { var save = read(g.key); return (save && save.results) || {}; }
   function info() {
     var now = today();
-    return GAMES.map(function (g) {
-      var save = read(g.key), res = (save && save.results) || {};
+    return GAMES.filter(function (g) { return !g.parent; }).map(function (g) {
+      var res = results(g), kids = GAMES.filter(function (k) { return k.parent === g.id; });
+      if (kids.length) { var all = {}; kids.forEach(function (k) { var r = results(k); Object.keys(r).forEach(function (d) { if (r[d]) all[d] = r[d]; }); }); Object.keys(res).forEach(function (d) { if (res[d]) all[d] = res[d]; }); res = all; }
       var s = streak(res, now);
       s.game = g; s.doneToday = !!res[now]; s.res = res;
       return s;
@@ -227,7 +236,7 @@
     if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
     if (p.textContent !== t) p.textContent = t;
   }
-  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay, shareCard: function () { return shareImageClick({ id: "daily" }); } };
+  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay, shareCard: function () { return shareImageClick({ id: "daily" }); }, card: function (t, id) { return inkCard(t, id); }, inkOn: function () { return isInk(); } };
 
   var CSS = '.mx-risk{display:block;margin:0 0 10px;line-height:1.45;padding:8px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000);font-size:14px;font-weight:600}'
     + '.mx-risk a{color:inherit;font-weight:800}'
@@ -258,17 +267,18 @@
 
   // Addresses come with or without ".html" (mapelago.com/bigger and the previews' /bigger work too), and the home
   // page as "/", "/index" or "/index.html". Pages inside a folder (/games/, /about/) are not games.
+  function topId(g) { return g && (g.parent || g.id); } // a mode of another game (Mystery's Country) counts as that game
   function pageKey(p) { p = String(p || "").replace(/^\.?\//, "").replace(/\.html$/, ""); return p === "index" ? "" : p; } // the home page ("" or index) is the hub, not a game
   function here() {
     var parts = location.pathname.split("/"), f = parts.pop();
     if (parts.filter(Boolean).length) return undefined;
-    return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(f); })[0];
+    return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(f) || (g.pages || []).some(function (u) { return pageKey(u) === pageKey(f); }); })[0];
   }
 
   // 5.2 a note on every game page when another game's streak is waiting for today
   function riskNote(app) {
     var me = here();
-    var risk = info().filter(function (s) { return s.cur >= 3 && !s.doneToday && (!me || s.game.id !== me.id); });
+    var risk = info().filter(function (s) { return s.cur >= 3 && !s.doneToday && (!me || s.game.id !== topId(me)); });
     if (!risk.length) return;
     var el = document.createElement("p");
     el.className = "mx-risk"; el.setAttribute("role", "status");
@@ -375,7 +385,119 @@
 
   // 18.6 a share image for the games that had none, drawn from their own share text
   var TURTLE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200"><g fill="#9fc98b" stroke="#000000" stroke-width="2.2" stroke-linejoin="round"><path d="M45.5 24h9v12h-9z"/><path d="M50 8c6 0 9.5 5 9.5 10.5S56 28 50 28s-9.5-4-9.5-9.5S44 8 50 8z"/><path d="M32 41C21 30 9 30 8.5 37.5c-.4 5.6 9 10 23.5 12z"/><path d="M68 41c11-11 23-11 23.5-3.5.4 5.6-9 10-23.5 12z"/><path d="M35 73c-9 4-16 11-12 15 4.5 3.8 12-3 17-10z"/><path d="M65 73c9 4 16 11 12 15-4.5 3.8-12-3-17-10z"/><path d="M46.5 80 50 91l3.5-11z"/></g><circle cx="46" cy="16.5" r="1.8" fill="#000000"/><circle cx="54" cy="16.5" r="1.8" fill="#000000"/><rect x="29" y="34" width="42" height="43" rx="15" fill="#ffffff" stroke="#000000" stroke-width="2.4"/><rect x="34.2" y="39.2" width="10.8" height="10.8" fill="#ffffff" stroke="#000000" stroke-width="1.4"/><rect x="45" y="39.2" width="10.8" height="10.8" fill="#dcedf5" stroke="#000000" stroke-width="1.4"/><rect x="55.800000000000004" y="39.2" width="10.8" height="10.8" fill="#a9d3e8" stroke="#000000" stroke-width="1.4"/><rect x="34.2" y="50" width="10.8" height="10.8" fill="#9fc98b" stroke="#000000" stroke-width="1.4"/><rect x="45" y="50" width="10.8" height="10.8" fill="#b4237d" stroke="#000000" stroke-width="1.4"/><path d="M50.4 58.9c-.7-1.4-3-3.3-3-5.2a3 3 0 0 1 6 0c0 1.9-2.3 3.8-3 5.2z" fill="#ffffff"/><circle cx="50.4" cy="53.8" r="1" fill="#b4237d"/><rect x="55.800000000000004" y="50" width="10.8" height="10.8" fill="#f3d98a" stroke="#000000" stroke-width="1.4"/><rect x="34.2" y="60.800000000000004" width="10.8" height="10.8" fill="#a9d3e8" stroke="#000000" stroke-width="1.4"/><rect x="45" y="60.800000000000004" width="10.8" height="10.8" fill="#dcedf5" stroke="#000000" stroke-width="1.4"/><rect x="55.800000000000004" y="60.800000000000004" width="10.8" height="10.8" fill="#ffffff" stroke="#000000" stroke-width="1.4"/></svg>';
+  // Ink & Lantern share card: a dark episode cover with the game's panel and a rust score stamp, the same for everyone
+  function inkBase() { var l = document.querySelector('link[href*="ink.css"]'); return l ? l.getAttribute("href").replace(/ink\.css.*$/, "") : ""; }
+  // The picture on each result card, drawn from the player's own share line (its marks per round, never an answer):
+  // the Daily Voyage's route, Crossings' stepping stones, Dead Reckoning's pins, Fathoms' depths, Bigger?'s ten tiles and
+  // Ballast's own stack. On aged chart paper, inked; false when a game has no picture of its own.
+  var INK_MARK = { "⚓": "#9FB39A", "\u{1F9ED}": "#D9A55B", "\u{1F30A}": "#7E9C93", "\u{1F3AF}": "#A8442E", "\u{1F4CD}": "#D9A55B", "⛵": "#E3D3A8",
+    "\u{1F7E9}": "#9FB39A", "\u{1F7E8}": "#D9A55B", "\u{1F7E7}": "#C9773A", "\u{1F7E5}": "#A8442E", "⬜": "#EFE6CF", "\u{1F7E6}": "#7E9C93", "\u{1F419}": "#3d5650",
+    "\u{1F41F}": "#7E9C93", "\u{1F4A1}": "#F3C46B", "\u{1F4E6}": "#C9A257", "\u{1F3D9}": "#D9A55B", "\u{1F5FA}": "#9FB39A", "✅": "#A8442E", "\u{1F97E}": "#C9A257", "❌": "#3a3530" };
+  function inkMarks(line) { return Array.from(line || "").filter(function (c) { return /\S/.test(c) && c !== "️" && c !== "‍"; }); }
+  function inkArtFor(id, x, W, H, lines, rnd) {
+    var marks = inkMarks(lines[1]), col = function (m) { return INK_MARK[m] || "#C9A257"; };
+    var paper = function () {
+      x.fillStyle = "#CDB98E"; x.fillRect(0, 0, W, H);
+      x.strokeStyle = "rgba(20,17,13,.16)"; x.lineWidth = 1.5; for (var gx = 0; gx <= W; gx += 86) { x.beginPath(); x.moveTo(gx, 0); x.lineTo(gx, H); x.stroke(); } for (var gy = 0; gy <= H; gy += 86) { x.beginPath(); x.moveTo(0, gy); x.lineTo(W, gy); x.stroke(); }
+      x.strokeStyle = "rgba(90,69,32,.35)"; x.lineWidth = 1.2; for (var i = 0; i < 160; i++) { var hx = rnd() * W, hy = rnd() * H, a = -0.7 + (rnd() - .5) * .4, l = 6 + rnd() * 10; x.beginPath(); x.moveTo(hx, hy); x.lineTo(hx + Math.cos(a) * l, hy + Math.sin(a) * l); x.stroke(); }
+    };
+    var blob = function (cx, cy, r, fill) { x.beginPath(); for (var i = 0; i <= 14; i++) { var a = i / 14 * Math.PI * 2, rr = r * (1 + (rnd() - .5) * .12); x[i ? "lineTo" : "moveTo"](cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); } x.closePath();
+      x.save(); x.translate(-4, 4); x.fillStyle = "rgba(20,17,13,.55)"; x.fill(); x.restore(); x.fillStyle = fill; x.fill(); x.lineWidth = 5; x.strokeStyle = "#14110d"; x.stroke(); };
+    var label = function (t, tx, ty, size, align) { x.font = (size || 34) + "px 'Patrick Hand SC', cursive"; x.textAlign = align || "center"; x.lineWidth = 7; x.strokeStyle = "#EFE6CF"; x.strokeText(t, tx, ty); x.fillStyle = "#14110d"; x.fillText(t, tx, ty); x.textAlign = "left"; };
+    if (id === "ballast" && window.MX_SHARE_ART) { paper(); try { if (MX_SHARE_ART(x, { x: 40, y: 30, w: W - 80, h: H - 60 })) return true; } catch (e) {} return false; }
+    if (!marks.length || !/^(daily|crossings|reckoning|fathoms|bigger)$/.test(id || "")) return false;
+    paper();
+    if (id === "daily" || id === "crossings") {
+      // a dashed route across the chart, one stop per mark
+      var n = marks.length, pts = [];
+      for (var i = 0; i < n + (id === "crossings" ? 2 : 0); i++) { var t = (i + .5) / (n + (id === "crossings" ? 2 : 0)); pts.push([60 + t * (W - 120), H * .52 + Math.sin(t * Math.PI * 2.2) * H * .2]); }
+      x.setLineDash([18, 14]); x.lineWidth = 6; x.strokeStyle = "#14110d"; x.beginPath(); pts.forEach(function (p, i) { x[i ? "lineTo" : "moveTo"](p[0], p[1]); }); x.stroke(); x.setLineDash([]);
+      if (id === "crossings") {
+        var ends = /^(.*) to (.*?) ·/.exec(lines[2] || "") || [];
+        blob(pts[0][0], pts[0][1], 40, "#C9A257"); blob(pts[pts.length - 1][0], pts[pts.length - 1][1], 40, "#C9A257");
+        if (ends[1]) label(ends[1], pts[0][0] - 30, pts[0][1] - 60, 34, "left"); if (ends[2]) label(ends[2], pts[pts.length - 1][0] + 30, pts[pts.length - 1][1] - 60, 34, "right");
+        marks.forEach(function (m, i) { var p = pts[i + 1]; blob(p[0], p[1], 26, col(m)); });
+      } else {
+        var names = ["PIN", "BIGGER", "CROSSING", (lines[0] || "").length ? "STOP 4" : ""];
+        marks.forEach(function (m, i) { var p = pts[i]; blob(p[0], p[1], 44, col(m)); label(String(i + 1), p[0], p[1] + 12, 40); label(names[i], p[0], p[1] + 92, 30); });
+      }
+      return true;
+    }
+    if (id === "reckoning") {
+      // five pins pushed into the chart, each ringed by how close it landed
+      var spots = [[.16, .35], [.36, .62], [.52, .3], [.7, .58], [.86, .36]], q = { "\u{1F3AF}": 3, "\u{1F4CD}": 2, "\u{1F9ED}": 1 };
+      marks.slice(0, 5).forEach(function (m, i) {
+        var cx = spots[i][0] * W, cy = spots[i][1] * H, rings = q[m] || 0;
+        for (var r = 3; r >= 1; r--) { x.beginPath(); x.arc(cx, cy, 22 * r, 0, Math.PI * 2); x.strokeStyle = r <= rings ? "#14110d" : "rgba(20,17,13,.25)"; x.lineWidth = r <= rings ? 4 : 2; x.stroke(); }
+        x.lineWidth = 5; x.strokeStyle = "#14110d"; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + 26, cy - 70); x.stroke(); blob(cx + 30, cy - 80, 20, col(m));
+      });
+      return true;
+    }
+    if (id === "fathoms") {
+      // one line sounded per prompt: the deeper the answer, the longer the line
+      var deep = { "\u{1F7E9}": .25, "\u{1F7E8}": .45, "\u{1F7E7}": .6, "\u{1F7E5}": .75, "\u{1F41F}": .85, "\u{1F419}": 1, "\u{1F30A}": .15 };
+      x.fillStyle = "rgba(126,156,147,.55)"; x.fillRect(0, H * .18, W, H * .82);
+      marks.forEach(function (m, i) { var cx = 70 + i * ((W - 140) / Math.max(1, marks.length - 1)), d = (deep[m] != null ? deep[m] : .5) * H * .72;
+        x.strokeStyle = "#14110d"; x.lineWidth = 4; x.beginPath(); x.moveTo(cx, H * .1); x.lineTo(cx, H * .18 + d); x.stroke(); blob(cx, H * .18 + d + 16, 18, col(m)); });
+      return true;
+    }
+    // Bigger?: ten tiles, cities and countries in turn
+    marks.slice(0, 10).forEach(function (m, i) { var cx = 70 + (i % 5) * ((W - 140) / 4), cy = H * (i < 5 ? .32 : .7); x.save(); x.translate(cx, cy); x.rotate((rnd() - .5) * .12);
+      x.fillStyle = "rgba(20,17,13,.55)"; x.fillRect(-56, -48, 120, 104); x.fillStyle = col(m); x.fillRect(-60, -52, 120, 104); x.lineWidth = 5; x.strokeStyle = "#14110d"; x.strokeRect(-60, -52, 120, 104); x.restore(); });
+    return true;
+  }
+  function inkCard(text, id) {
+    var lines = text.split("\n"), W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+    var x = c.getContext("2d"), rnd = inkRand(1126);
+    var head = lines[0].split(" \u{1F422} "), title = head[0].replace(/^Mapelago /, ""), score = head[1] || "";
+    var no = (title.match(/No\. (\d+)/) || [0, ""])[1], game = title.replace(/ No\. \d+.*$/, "");
+    var last = lines[lines.length - 1] || "", ask = last.replace(/\s*\S+$/, ""), url = (last.match(/\S+$/) || [""])[0].replace(/#.*$/, "");
+    var wob = function (pts, w, col) { x.beginPath(); x.lineWidth = w; x.strokeStyle = col; x.lineCap = "round"; pts.forEach(function (p, i) { var px = p[0] + (rnd() - .5) * 5, py = p[1] + (rnd() - .5) * 5; if (i) x.quadraticCurveTo((px + p[0]) / 2 + (rnd() - .5) * 6, (py + p[1]) / 2 + (rnd() - .5) * 6, px, py); else x.moveTo(px, py); }); x.stroke(); };
+    var draw = function (art) {
+      x.fillStyle = "#101316"; x.fillRect(0, 0, W, H);
+      var g = x.createRadialGradient(W * .94, H * .02, 10, W * .94, H * .02, W * .9); g.addColorStop(0, "rgba(255,196,120,.34)"); g.addColorStop(.4, "rgba(255,170,90,.1)"); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(0, 0, W, H);
+      // the panel's border, inked by hand: each side overshoots the corner
+      wob([[30, 58], [W - 40, 50]], 7, "#EFE6CF"); wob([[W - 52, 34], [W - 58, H - 40]], 8, "#EFE6CF"); wob([[W - 30, H - 58], [36, H - 52]], 8, "#EFE6CF"); wob([[54, H - 32], [60, 36]], 7, "#EFE6CF");
+      // ink blots in the corners
+      [[86, 1270, 22], [1010, 120, 14], [990, 1250, 9]].forEach(function (b) { x.fillStyle = "rgba(0,0,0,.75)"; x.beginPath(); for (var i = 0; i < 12; i++) { var a = i / 12 * Math.PI * 2, r = b[2] * (.7 + rnd() * .6); x[i ? "lineTo" : "moveTo"](b[0] + Math.cos(a) * r, b[1] + Math.sin(a) * r); } x.fill(); });
+      x.textBaseline = "alphabetic";
+      x.fillStyle = "#F0B070"; x.font = "56px 'Patrick Hand SC', cursive"; x.fillText("MAPELAGO", 110, 170);
+      var ep = no ? "EPISODE " + no : "EPISODE"; x.font = "150px Anton, Impact, sans-serif"; var cx = 110;
+      Array.from(ep).forEach(function (ch) { x.save(); x.translate(cx, 320); x.rotate((rnd() - .5) * .07); x.fillStyle = "#000"; x.fillText(ch, 6, 6); x.fillStyle = "#F3EAD3"; x.fillText(ch, 0, 0); x.restore(); cx += x.measureText(ch).width + 2; });
+      x.fillStyle = "#EFE6CF"; x.font = "78px Anton, Impact, sans-serif"; x.fillText(game, 112, 420);
+      x.save(); x.translate(110, 470); x.rotate(-.012); x.fillStyle = "#000"; x.fillRect(14, 14, 860, 602);
+      if (!inkArtFor(id, x, 860, 602, lines, rnd) && art) x.drawImage(art, 0, 0, 860, 602);
+      x.restore();
+      // the score stamp: a rust ring, slightly out of round, set at an angle
+      var sm = /^([\d,.\/]+)\s*(.*)$/.exec(score) || [0, score, ""], sc = sm[1], sub = sm[2].toUpperCase();
+      x.save(); x.translate(800, 1000); x.rotate(-.2);
+      x.fillStyle = "#A8442E"; x.strokeStyle = "#000"; x.lineWidth = 8; x.beginPath();
+      for (var i = 0; i <= 24; i++) { var a = i / 24 * Math.PI * 2, r = 165 * (1 + (rnd() - .5) * .06); x[i ? "lineTo" : "moveTo"](Math.cos(a) * r, Math.sin(a) * r * .92); } x.closePath(); x.fill(); x.stroke();
+      x.strokeStyle = "#F6EEDC"; x.lineWidth = 4; x.beginPath(); for (i = 0; i <= 24; i++) { a = i / 24 * Math.PI * 2; r = 138 * (1 + (rnd() - .5) * .05); x[i ? "lineTo" : "moveTo"](Math.cos(a) * r, Math.sin(a) * r * .92); } x.stroke();
+      x.fillStyle = "#F6EEDC"; x.textAlign = "center"; x.font = (sc.length > 6 ? 70 : sc.length > 4 ? 92 : 120) + "px Anton, Impact, sans-serif"; x.fillText(sc, 0, sub ? 28 : 40);
+      if (sub) { x.font = "40px 'Patrick Hand SC', cursive"; x.fillText(sub, 0, 82); }
+      x.restore(); x.textAlign = "left";
+      // the caption box: cream, inked border, hand lettering
+      x.fillStyle = "#000"; x.fillRect(118, 1150, 640, 110); x.fillStyle = "#EFE6CF"; x.fillRect(110, 1142, 640, 110);
+      wob([[104, 1144], [756, 1140]], 4, "#14110d"); wob([[752, 1136], [754, 1258]], 4, "#14110d"); wob([[758, 1252], [106, 1256]], 4, "#14110d"); wob([[110, 1260], [108, 1136]], 4, "#14110d");
+      var cap = ask || "To be continued...", cs = 44; x.font = cs + "px 'Patrick Hand SC', cursive"; while (x.measureText(cap).width > 600 && cs > 26) { cs -= 2; x.font = cs + "px 'Patrick Hand SC', cursive"; }
+      x.fillStyle = "#14110d"; x.fillText(cap, 132, 1192);
+      x.fillStyle = "#7a2d1c"; x.font = "38px 'Patrick Hand SC', cursive"; x.fillText(url || "mapelago.com", 132, 1236);
+      return c;
+    };
+    var fonts = document.fonts && document.fonts.load ? Promise.all(["150px Anton", "40px 'Patrick Hand SC'"].map(function (f) { return document.fonts.load(f); })).catch(function () {}) : Promise.resolve();
+    return fonts.then(function () {
+      return new Promise(function (done) {
+        var finish = function (img) { done(draw(img)); };
+        fetch(inkBase() + "ink/art/" + (id || "home") + ".svg").then(function (r) { return r.text(); }).then(function (svg) {
+          var img = new Image(); img.onload = function () { finish(img); }; img.onerror = function () { finish(null); };
+          img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+        }).catch(function () { finish(null); });
+      });
+    });
+  }
   function shareImage(text, me) {
+    if (isInk()) return inkCard(text, me && me.id);
     var lines = text.split("\n"), W = 1080, H = 1350, c = document.createElement("canvas");
     c.width = W; c.height = H;
     var x = c.getContext("2d"), font = "Overpass, 'Helvetica Neue', Arial, sans-serif";
@@ -448,6 +570,7 @@
       var id = s.game.id, v =
         id === "city" || id === "country" ? (r.q ? (r.won ? r.pins + "/5 quick" : "X/5 quick") : r.score != null ? r.score : "✓") :
         id === "bigger" || id === "bigcountry" ? (r.score != null ? r.score + "/10" : "✓") :
+        id === "daily" ? (r.score != null ? r.score + "/100" : "✓") :
         id === "fathoms" ? (r.total != null ? Number(r.total).toLocaleString("en-US") : "✓") :
         id === "stamps" ? (r.got != null ? r.got + "/6" : "✓") :
         id === "crossings" ? (r.score != null ? r.score : "✓") : id === "reckoning" ? (r.total != null ? r.total : "✓") :
@@ -523,10 +646,10 @@
     var me = here(), all = info();
     var sec = document.createElement("section");
     sec.className = "mx-today"; sec.setAttribute("aria-labelledby", "mxTodayH");
-    var next = nextUp(all, me), meLeft = me && all.some(function (s) { return s.game.id === me.id && !s.doneToday; });
+    var next = nextUp(all, me), meLeft = me && all.some(function (s) { return s.game.id === topId(me) && !s.doneToday; });
     var homeCopy = me && me.id === "city" && window.MXCOPY && MXCOPY.home;
     sec.innerHTML = (homeCopy ? '<h2 id="mxTodayH">' + esc(homeCopy.headline) + '</h2><p class="mx-next">' + esc(homeCopy.line) + "</p>" : '<h2 id="mxTodayH">Today\'s games</h2>') + '<ul class="mx-cards">' + all.map(function (s) {
-      var g = s.game, isMe = me && g.id === me.id;
+      var g = s.game, isMe = me && g.id === topId(me);
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
       return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
     }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">' + (meLeft ? "This is the last game left today." : "Every game done today. See you tomorrow.") + '</p>');
@@ -551,7 +674,7 @@
   }
 
   // 18.5 a friend's challenge link (#c-<number>-<score>) on the games that had none
-  var UNIT = { bigger: function (n) { return n + " of 10"; }, bigcountry: function (n) { return n + " of 10"; }, voyage: function (n) { return n + " points"; },
+  var UNIT = { daily: function (n) { return n + " of 100"; }, bigger: function (n) { return n + " of 10"; }, bigcountry: function (n) { return n + " of 10"; }, voyage: function (n) { return n + " points"; },
     fathoms: function (n) { return Number(n).toLocaleString("en-US") + " fathoms"; }, stamps: function (n) { return n + " of 6 stamps"; }, crossings: function (n) { return n + " points"; } };
   function challenge(app) {
     var me = here(), m = /^#c-(\d+)-(\d+)$/.exec(location.hash);
@@ -595,7 +718,7 @@
   // ---------- Ballast: end ----------
 
   // The first game not yet played today, in menu order, leaving out the one you're on.
-  function nextUp(all, me) { return (all || info()).filter(function (s) { return !s.doneToday && (!me || s.game.id !== me.id); })[0]; }
+  function nextUp(all, me) { return (all || info()).filter(function (s) { return !s.doneToday && (!me || s.game.id !== topId(me)); })[0]; }
   // Every result's "play next" button goes to the first unplayed game (or to All games once everything is done).
   function nextButtons() {
     var me = here(); if (!me) return;
@@ -855,7 +978,26 @@
         cv.hidden = false; cv.setAttribute("aria-label", "Map: " + hi.map(function (f) { return f.name; }).join(", ")); requestAnimationFrame(function () { draw(cv, hi); });
       });
     }
-    return { show: show, namesIn: namesIn, load: load };
+    // one country's outline, fitted to a small canvas (Bigger?'s country cards): land colour, a darker rim on the shadow side
+    function outline(cv, cid) {
+      if (!cv) return;
+      load(function () {
+        decode(); var f = feats.filter(function (x) { return x.id === +cid; })[0]; if (!f || !cv.isConnected) return;
+        var w = cv.clientWidth || 80, h = cv.clientHeight || 56, dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = w * dpr; cv.height = h * dpr;
+        var g = cv.getContext("2d"), cs = getComputedStyle(document.documentElement), col = function (v, d) { return (cs.getPropertyValue(v) || "").trim() || d; };
+        // the largest part decides the frame, so a far-off island does not shrink the mainland to a speck
+        var big = f.polys.map(function (p) { var b = [1e9, 1e9, -1e9, -1e9]; p[0].forEach(function (q) { b[0] = Math.min(b[0], q[0]); b[1] = Math.min(b[1], q[1]); b[2] = Math.max(b[2], q[0]); b[3] = Math.max(b[3], q[1]); }); return b; }).sort(function (a, b) { return (b[2] - b[0]) * (b[3] - b[1]) - (a[2] - a[0]) * (a[3] - a[1]); })[0];
+        if (!big) return;
+        var my = (big[1] + big[3]) / 2, cos = Math.cos(my * Math.PI / 180), bw = Math.max(0.2, (big[2] - big[0]) * cos), bh = Math.max(0.2, big[3] - big[1]);
+        var k = Math.min((w - 8) / bw, (h - 8) / bh), mx = (big[0] + big[2]) / 2;
+        var P = function (q) { return [w / 2 + (q[0] - mx) * cos * k, h / 2 - (q[1] - my) * k]; };
+        g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h); g.lineJoin = "round";
+        var path = function (dx, dy) { g.beginPath(); f.polys.forEach(function (p) { p.forEach(function (r) { r.forEach(function (q, i) { var s = P(q); if (i) g.lineTo(s[0] + dx, s[1] + dy); else g.moveTo(s[0] + dx, s[1] + dy); }); g.closePath(); }); }); };
+        path(-1.4, 1.4); g.fillStyle = col("--land-line", "#6f5d22"); g.fill();
+        path(0, 0); g.fillStyle = col("--land", "#f3d98a"); g.fill(); g.strokeStyle = col("--ink", "#000"); g.lineWidth = 1.1; g.stroke();
+      });
+    }
+    return { show: show, namesIn: namesIn, load: load, outline: outline };
   })();
   window.MXMAP = MXMAP;
   // which text names the answer, and where the map goes, in each game
@@ -900,6 +1042,138 @@
     reckoning: '<path d="M12 22s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12z"/><circle cx="12" cy="10" r="2.5"/>',
     ballast: '<path d="M2 14h20l-3 6H5zM12 14V3M12 3l7 9h-7"/>'
   };
+  // Ink & Lantern (the standard look): hand-set titles, inked panel borders, "Episode N", the lantern's page colour
+  function isInk() { var l = document.documentElement.getAttribute("data-look"); return !l || l === "chart"; }
+  function inkRand(seed) { var a = seed | 0; return function () { a = a + 0x6d2b79f5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function inkTitle(el) {
+    if (!el || el.getAttribute("data-ink")) return;
+    el.setAttribute("data-ink", "1");
+    var rnd = inkRand(el.textContent.length * 131 + 7);
+    Array.prototype.slice.call(el.childNodes).forEach(function (n) {
+      if (n.nodeType !== 3 || !n.nodeValue.trim()) return;
+      var f = document.createDocumentFragment(), label = n.nodeValue;
+      var wrap = document.createElement("span"); wrap.setAttribute("aria-label", label.trim()); wrap.setAttribute("role", "text");
+      label.split(/( +)/).forEach(function (word) {
+        if (!word) return;
+        if (/^ +$/.test(word)) { wrap.appendChild(document.createTextNode(" ")); return; }
+        var w = document.createElement("span"); w.style.whiteSpace = "nowrap"; // a word never breaks between its letters
+        Array.from(word).forEach(function (ch) {
+          var s = document.createElement("span"); s.className = "ink-l"; s.setAttribute("aria-hidden", "true"); s.textContent = ch;
+          s.style.setProperty("--t", ((rnd() - 0.5) * 7).toFixed(1) + "deg"); s.style.setProperty("--y", ((rnd() - 0.5) * 2.4).toFixed(1) + "px");
+          w.appendChild(s);
+        });
+        wrap.appendChild(w);
+      });
+      f.appendChild(wrap); el.replaceChild(f, n);
+    });
+  }
+  function inkFrames() {
+    var all = document.body.querySelectorAll("div,section,article,aside,ol,ul,li,p,pre,figure,details,form,fieldset,label,a,dialog,table");
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i]; if (el.classList.contains("ink-frame") || el.classList.contains("lede") || el.closest(".ink-cap")) continue;
+      if (el.offsetWidth < 70 || el.offsetHeight < 30) continue;
+      var cs = getComputedStyle(el);
+      if (parseFloat(cs.borderTopWidth) >= 1.5 && cs.borderTopStyle === "solid" && cs.borderTopColor === "rgb(239, 230, 207)" && parseFloat(cs.borderLeftWidth) >= 1.5) el.classList.add("ink-frame");
+    }
+  }
+  function inkEpisode() {
+    var n = document.getElementById("num"); if (!n) return;
+    var fix = function () { var t = n.textContent; if (/^No\. \d/.test(t)) n.textContent = t.replace(/^No\. /, "Episode "); };
+    fix(); new MutationObserver(fix).observe(n, { childList: true, characterData: true, subtree: true });
+  }
+  // Ink & Lantern maps: every land shape in an SVG map gets a darker rim on its shadow side (light from the top right,
+  // drawn as an offset copy underneath, so the outline is heavier there) and hand-placed hatching on top (a fill from
+  // the baked ink/hatch.svg). No live filters. Land is found by its colour, so every game's maps take part.
+  var INK_LAND = "rgb(201, 162, 87)", inkId = 0;
+  function inkMaps() {
+    document.querySelectorAll("svg").forEach(function (svg) {
+      if (svg.hasAttribute("data-ink-copy") || svg.closest("[data-ink-copy]")) return;
+      var land = Array.prototype.filter.call(svg.querySelectorAll("path,polygon"), function (p) { return !p.closest("[data-ink-copy]") && getComputedStyle(p).fill === INK_LAND; });
+      var byParent = new Map();
+      land.forEach(function (p) { var g = p.parentNode; if (!byParent.has(g)) byParent.set(g, []); byParent.get(g).push(p); });
+      byParent.forEach(function (ps, g) {
+        var key = ps.length + ":" + ps.map(function (p) { return (p.getAttribute("d") || "").length; }).join(",").length;
+        if (g.getAttribute("data-ink-n") === key) return;
+        Array.prototype.slice.call(g.querySelectorAll(":scope > [data-ink-copy]")).forEach(function (c) { c.remove(); });
+        var ctm = g.getScreenCTM && g.getScreenCTM(), k = ctm && ctm.a ? 1 / Math.abs(ctm.a) : 1;
+        var NS = "http://www.w3.org/2000/svg", id = svg.getAttribute("data-ink-pat");
+        if (!id) {
+          id = "inkHatch" + (++inkId); svg.setAttribute("data-ink-pat", id);
+          var defs = document.createElementNS(NS, "defs"), pat = document.createElementNS(NS, "pattern"), img = document.createElementNS(NS, "image");
+          pat.setAttribute("id", id); pat.setAttribute("patternUnits", "userSpaceOnUse"); pat.setAttribute("width", "900"); pat.setAttribute("height", "900");
+          img.setAttribute("href", (document.querySelector('link[href*="ink.css"]') || { getAttribute: function () { return ""; } }).getAttribute("href").replace(/ink\.css.*$/, "") + "ink/hatch.svg");
+          img.setAttribute("width", "900"); img.setAttribute("height", "900");
+          pat.appendChild(img); defs.appendChild(pat); defs.setAttribute("data-ink-copy", "1"); svg.insertBefore(defs, svg.firstChild);
+        }
+        svg.querySelector("#" + id).setAttribute("patternTransform", "scale(" + k.toFixed(4) + ")");
+        var rim = document.createElementNS(NS, "g"), hat = document.createElementNS(NS, "g");
+        rim.setAttribute("data-ink-copy", "1"); hat.setAttribute("data-ink-copy", "1");
+        rim.setAttribute("transform", "translate(" + (-1.3 * k).toFixed(3) + " " + (1.3 * k).toFixed(3) + ")");
+        rim.setAttribute("style", "fill:#8C6B30;stroke:#5e4520;stroke-width:" + (1.1 * k).toFixed(3));
+        hat.setAttribute("style", "fill:url(#" + id + ");stroke:none");
+        ps.forEach(function (p) {
+          var a = p.cloneNode(false), b = p.cloneNode(false);
+          [a, b].forEach(function (c) { c.removeAttribute("id"); c.removeAttribute("class"); c.removeAttribute("style"); c.removeAttribute("fill"); c.removeAttribute("stroke"); c.setAttribute("aria-hidden", "true"); });
+          rim.appendChild(a); hat.appendChild(b);
+        });
+        g.insertBefore(rim, ps[0]);
+        g.appendChild(hat);
+        g.setAttribute("data-ink-n", key);
+      });
+    });
+  }
+  // each game's small comic panel: in its header, and on its card on the home page
+  // the game cards (home page, Today's games under every game) show each game's panel instead of an emoji
+  function inkIcons() {
+    var base = inkBase();
+    document.querySelectorAll("a[data-game] > .ic, .mx-card a > .ic").forEach(function (ic) {
+      var u = ic.parentNode.getAttribute("data-game") || ic.parentNode.getAttribute("href");
+      var g = GAMES.filter(function (x) { return x.url === u; })[0];
+      if (!g || ic.querySelector("img")) return;
+      ic.innerHTML = '<img src="' + base + "ink/art/" + (g.parent || g.id) + '.svg" alt="" width="60" height="42" decoding="async">'; ic.classList.add("ink-ic");
+    });
+  }
+  function inkArt() {
+    var base = inkBase(), me = here(), page = (location.pathname.split("/").pop() || "index.html");
+    var id = me ? me.id : /^daily/.test(page) ? "daily" : /^(index\.html)?$/.test(page) ? "home" : null;
+    var mark = document.querySelector(".top .mark");
+    if (id && mark && !mark.querySelector(".ink-art")) {
+      var im = document.createElement("img"); im.className = "ink-art"; im.alt = ""; im.width = 51; im.height = 36; im.decoding = "async";
+      im.src = base + "ink/art/" + id + ".svg";
+      // the drawing only stays if the header keeps its height (on a crowded phone header the game name comes first)
+      var top = mark.closest(".top") || mark; mark.appendChild(im);
+      var word = mark.querySelector(".word") || top;
+      var fit = function () {
+        im.style.display = "none"; var h0 = top.offsetHeight, w0 = word.offsetHeight; im.style.display = "";
+        var line = parseFloat(getComputedStyle(word).lineHeight) || 26; // the drawing stays only beside a one-line title
+        if (h0 && (top.offsetHeight > h0 + 2 || word.offsetHeight > w0 + 2 || word.offsetHeight > line * 1.5)) im.style.display = "none";
+      };
+      fit(); setTimeout(fit, 700); window.addEventListener("load", function () { setTimeout(fit, 400); }); window.addEventListener("resize", fit);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+      if (window.ResizeObserver) { var busy = false; new ResizeObserver(function () { if (busy) return; busy = true; fit(); requestAnimationFrame(function () { busy = false; }); }).observe(top); }
+    }
+    inkIcons();
+    // the home page: "To be continued..." and how many games are left today
+    var home = id === "home" && document.querySelector(".app, main");
+    if (home && !document.getElementById("inkTbc")) {
+      var t = today(), left = info().filter(function (s) { return !s.res[t]; }).length;
+      var p = document.createElement("p"); p.id = "inkTbc"; p.className = "ink-tbc";
+      p.textContent = left ? "To be continued... " + left + " more game" + (left === 1 ? "" : "s") + " today." : "To be continued... tomorrow.";
+      var foot = home.querySelector("footer"); if (foot) foot.parentNode.insertBefore(p, foot); else home.appendChild(p);
+    }
+  }
+  function ink() {
+    if (!isInk()) return;
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", "#101316");
+    document.querySelectorAll(".top .word, .about-h").forEach(inkTitle);
+    inkEpisode(); inkFrames(); inkArt();
+    // the textures (map hatching, blots, paper grain) wait until the page has loaded, so they never slow the first move
+    var ready = false, settle = function () { ready = true; document.documentElement.classList.add("ink-ready"); inkMaps(); };
+    if (document.readyState === "complete") setTimeout(settle, 200); else window.addEventListener("load", function () { setTimeout(settle, 200); });
+    var t = null; new MutationObserver(function (ms) { if (ms.every(function (m) { return m.target.closest && m.target.closest("[data-ink-copy]") || Array.prototype.every.call(m.addedNodes, function (n) { return n.nodeType === 1 && n.hasAttribute("data-ink-copy"); }) && m.addedNodes.length; })) return; clearTimeout(t); t = setTimeout(function () { inkFrames(); inkIcons(); if (ready) inkMaps(); }, 250); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
+    window.addEventListener("load", function () { setTimeout(inkFrames, 300); });
+  }
+
   function emblem() {
     var me = here(), w = document.querySelector("header.top .word"); if (!me || !w || !EMBLEM[me.id] || w.querySelector(".mx-emb")) return;
     w.insertAdjacentHTML("beforeend", ' <svg class="mx-emb" viewBox="0 0 24 24" aria-hidden="true">' + EMBLEM[me.id] + "</svg>");
@@ -915,7 +1189,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps(); answerMotion(); emblem();
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps(); answerMotion(); emblem(); ink();
     // the day's level in words on the games whose own dial is not set yet (from No. 19)
     var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
     setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own

@@ -27,7 +27,12 @@
   // 2. a pair of countries: further apart on Monday, closer on Saturday
   var lo = 1 + 0.4 * W.f, hi = lo + 0.6, pair = null;
   for (var t = 0; t < 4000 && !pair; t++) { var a = pick(famous), b = pick(famous), q = Math.max(a.area, b.area) / Math.min(a.area, b.area); if (a !== b && q >= lo && q <= hi) pair = [a, b]; }
-  LEGS.push({ kind: "pair", name: "Bigger", pair: pair, ask: "Which covers more land?" });
+  if (N >= 17 && N % 2 && window.BQ_DATA) {
+    // from No. 17 the Bigger stop follows Bigger?: on odd numbers a pair of cities, by the UN's urban-area figures
+    var CT = BQ_DATA.city, cp = null;
+    for (t = 0; t < 4000 && !cp; t++) { var ca = pick(CT), cb = pick(CT), cq = Math.max(ca[2], cb[2]) / Math.min(ca[2], cb[2]); if (ca !== cb && ca[1] !== cb[1] && cq >= lo && cq <= hi) cp = [ca, cb]; }
+    LEGS.push({ kind: "pair", name: "Bigger", city: true, pair: cp.map(function (c) { return { name: c[0], cont: c[1], area: c[2] }; }), ask: "Which city has more people?" });
+  } else LEGS.push({ kind: "pair", name: "Bigger", pair: pair, ask: "Which covers more land?" });
   // 3. a crossing with one country between: which one links them?
   var cross = null;
   for (t = 0; t < 4000 && !cross; t++) {
@@ -42,8 +47,16 @@
     cross = { a: A, b: B, links: links, opts: opts };
   }
   LEGS.push({ kind: "cross", name: "Crossing", cross: cross, ask: "Which country lies between " + the(cross.a.name) + " and " + the(cross.b.name) + "?" });
-  // 4. rotating: a Fathoms prompt on odd days, a Logbook pair on even days
-  if (N % 2) {
+  // 4. rotating: a Fathoms prompt on odd days, a Logbook pair on even days; from No. 17 three in turn, the third being
+  //    Voyage's best question (Voyage itself retires): which city is at the mark?
+  var ROT = N >= 17 ? ["deep", "first", "mark"][N % 3] : N % 2 ? "deep" : "first";
+  if (ROT === "mark") {
+    var cities = D.P.filter(function (p) { return p[4] === "city"; }), at = pick(cities), near = [];
+    var far = cities.filter(function (p) { var d = km([p[2], p[3]], [at[2], at[3]]); return d > 1500 && d < 7000 && p[1] !== at[1]; });
+    while (near.length < 3 && far.length) { var c3 = far.splice(Math.floor(r() * far.length), 1)[0]; if (near.every(function (x) { return km([x[2], x[3]], [c3[2], c3[3]]) > 800; })) near.push(c3); }
+    var mopts = [at].concat(near); for (var mi = 3; mi > 0; mi--) { var mj = Math.floor(r() * (mi + 1)), mt = mopts[mi]; mopts[mi] = mopts[mj]; mopts[mj] = mt; }
+    LEGS.push({ kind: "mark", name: "Voyage", ask: "Which city is at the mark?", at: at, opts: mopts });
+  } else if (ROT === "deep") {
     var fam = pick(D.FAM), ans = fam[1].filter(function (c) { return byCC[c]; }).sort(function (x, y) { return byCC[y].fame - byCC[x].fame; });
     LEGS.push({ kind: "deep", name: "Fathoms", ask: fam[0], answers: ans });
   } else {
@@ -89,19 +102,22 @@
     var dot = function (p, c) { var s = P(p[0], p[1]); g.beginPath(); g.arc(s[0], s[1], 6, 0, 6.2832); g.fillStyle = c; g.fill(); g.lineWidth = 2; g.strokeStyle = col("--ink", "#000"); g.stroke(); return s; };
     if (pin && ans) { var s1 = P(pin[0], pin[1]), s2 = P(ans[0], ans[1]); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(s1[0], s1[1]); g.lineTo(s2[0], s2[1]); g.strokeStyle = col("--ink", "#000"); g.stroke(); g.setLineDash([]); }
     if (pin) dot(pin, col("--accent", "#b4237d")); if (ans) dot(ans, "#1a7f37");
+    if (cv.mxMark) { var mk = P(cv.mxMark[0], cv.mxMark[1]); g.lineWidth = 3; g.strokeStyle = col("--accent", "#b4237d"); g.beginPath(); g.arc(mk[0], mk[1], 9, 0, 6.2832); g.stroke(); g.beginPath(); g.moveTo(mk[0] - 14, mk[1]); g.lineTo(mk[0] - 5, mk[1]); g.moveTo(mk[0] + 5, mk[1]); g.lineTo(mk[0] + 14, mk[1]); g.moveTo(mk[0], mk[1] - 14); g.lineTo(mk[0], mk[1] - 5); g.moveTo(mk[0], mk[1] + 5); g.lineTo(mk[0], mk[1] + 14); g.stroke(); }
     cv.mxP = function (x, y) { return [82 - y / h * 140, x / w * 360 - 180]; };
   }
 
   // ---------- the legs ----------
   var busy = false;
   function say(t) { $("#say").textContent = t; }
-  function finishLeg(p, why) {
+  function finishLeg(p, why, names) {
     G.pts.push(p); G.tries = 0; busy = true; say(why + " +" + p); keep(); chart();
+    if (names && names.length && window.MXMAP) MXMAP.show($("#say"), names.join(" ")); // where the answer is
     $("#next").hidden = false; $("#next").textContent = G.pts.length < 4 ? "Sail on to stop " + (G.pts.length + 1) : "See the voyage";
     $("#next").focus({ preventScroll: true });
   }
   function show() {
     busy = false; $("#next").hidden = true; say(""); chart();
+    var mm = document.querySelector("#play canvas.mx-mini"); if (mm) mm.hidden = true;
     if (save.results[N] || G.at >= 4) return done();
     var L = LEGS[G.at], box = $("#leg"); $("#ask").textContent = L.ask; $("#kind").textContent = "Stop " + (G.at + 1) + " of 4 · " + L.name;
     if (L.kind === "pin") {
@@ -113,14 +129,22 @@
     } else if (L.kind === "pair") {
       box.innerHTML = L.pair.map(function (c, i) { return '<button class="opt big" data-i="' + i + '"><b>' + c.name + "</b><span>" + c.cont + "</span></button>"; }).join("");
       box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy) return; var i = +bt.dataset.i, w = L.pair[0].area > L.pair[1].area ? 0 : 1, ok = i === w, q = L.pair[w].area / L.pair[1 - w].area;
-        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "x"); o.querySelector("span").textContent = Math.round(L.pair[k].area).toLocaleString("en-US") + " km²"; });
-        finishLeg(ok ? 25 : 0, (ok ? "Right: " : "No: ") + the(L.pair[w].name) + " is " + (q >= 1.995 ? q.toFixed(1) + " times" : Math.round((q - 1) * 100) + "%") + " bigger."); box.onclick = null; };
+        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "other"); o.querySelector("span").textContent = Math.round(L.pair[k].area).toLocaleString("en-US") + (L.city ? " people" : " km²"); });
+        finishLeg(ok ? 25 : 0, (ok ? "Right: " : "No: ") + the(L.pair[w].name) + " is " + (q >= 1.995 ? q.toFixed(1) + " times" : Math.round((q - 1) * 100) + "%") + (L.city ? " bigger by people (urban areas, UN 2025)." : " bigger."), L.city ? [L.pair[0].cont, L.pair[1].cont] : [L.pair[0].name, L.pair[1].name]); box.onclick = null; };
     } else if (L.kind === "cross") {
       box.innerHTML = L.cross.opts.map(function (cc) { return '<button class="opt" data-cc="' + cc + '">' + byCC[cc].name + "</button>"; }).join("");
       box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy || bt.disabled) return; var ok = L.cross.links.indexOf(bt.dataset.cc) >= 0; bt.disabled = true;
-        if (ok) { bt.classList.add("right"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; }); finishLeg(G.tries ? 12 : 25, "Right: " + the(byCC[bt.dataset.cc].name) + " borders both."); box.onclick = null; }
+        if (ok) { bt.classList.add("right"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; }); finishLeg(G.tries ? 12 : 25, "Right: " + the(byCC[bt.dataset.cc].name) + " borders both.", [L.cross.a.name, byCC[bt.dataset.cc].name, L.cross.b.name]); box.onclick = null; }
         else if (!G.tries) { bt.classList.add("wrong"); G.tries = 1; say(the(byCC[bt.dataset.cc].name) + " doesn't border both. One more try."); }
-        else { bt.classList.add("wrong"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; if (L.cross.links.indexOf(o.dataset.cc) >= 0) o.classList.add("right"); }); finishLeg(0, "It was " + the(byCC[L.cross.links[0]].name) + "."); box.onclick = null; } };
+        else { bt.classList.add("wrong"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; if (L.cross.links.indexOf(o.dataset.cc) >= 0) o.classList.add("right"); }); finishLeg(0, "It was " + the(byCC[L.cross.links[0]].name) + ".", [L.cross.a.name, byCC[L.cross.links[0]].name, L.cross.b.name]); box.onclick = null; } };
+    } else if (L.kind === "mark") {
+      box.innerHTML = '<canvas id="pinmap" role="img" aria-label="A world map with one city marked"></canvas>' + L.opts.map(function (p, i) { return '<button class="opt" data-i="' + i + '">' + p[0] + ", " + p[1] + "</button>"; }).join("");
+      var mcv = $("#pinmap"); mcv.mxMark = [L.at[2], L.at[3]]; var mgo = function () { drawMap(mcv); };
+      if (window.__WORLD) mgo(); else { var ms = document.createElement("script"); ms.src = document.querySelector('script[src*="daily.js"]').src.replace("daily.js", "world-lite.js"); ms.onload = mgo; document.head.appendChild(ms); mgo(); }
+      box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy || bt.disabled) return; var p = L.opts[+bt.dataset.i], ok = p === L.at; bt.disabled = true;
+        if (ok) { bt.classList.add("right"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; }); finishLeg(G.tries ? 12 : 25, "Right: that's " + L.at[0] + "."); box.onclick = null; }
+        else if (!G.tries) { bt.classList.add("wrong"); G.tries = 1; say("Not " + p[0] + ". One more try."); }
+        else { bt.classList.add("wrong"); box.querySelectorAll(".opt").forEach(function (o) { o.disabled = true; if (L.opts[+o.dataset.i] === L.at) o.classList.add("right"); }); finishLeg(0, "It was " + L.at[0] + ", " + L.at[1] + "."); box.onclick = null; } };
     } else if (L.kind === "deep") {
       box.innerHTML = '<input id="din" list="dlist" autocomplete="off" placeholder="Type a country"><datalist id="dlist">' + D.C.map(function (c) { return "<option value=\"" + c[1] + "\">"; }).join("") + '</datalist><button class="act" id="dgo">Answer</button>';
       var go2 = function () { if (busy) return; var v = $("#din").value.trim().toLowerCase(), c = D.C.filter(function (x) { return x[1].toLowerCase() === v; })[0]; if (!c) { say("Pick a country from the list."); return; }
@@ -131,7 +155,7 @@
     } else {
       box.innerHTML = L.ev.map(function (ev, i) { return '<button class="opt" data-i="' + i + '">' + ev[1] + "</button>"; }).join("");
       box.onclick = function (e) { var bt = e.target.closest(".opt"); if (!bt || busy) return; var i = +bt.dataset.i, w = L.ev[0][0] < L.ev[1][0] ? 0 : 1, ok = i === w;
-        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "x"); o.insertAdjacentHTML("beforeend", " <b>" + L.ev[k][0] + "</b>"); });
+        box.querySelectorAll(".opt").forEach(function (o, k) { o.disabled = true; o.classList.add(k === w ? "right" : k === i ? "wrong" : "other"); o.insertAdjacentHTML("beforeend", " <b>" + L.ev[k][0] + "</b>"); });
         finishLeg(ok ? 25 : 0, ok ? "Right." : "No: the other came first."); box.onclick = null; };
     }
   }
@@ -141,13 +165,14 @@
   function shareText() { var res = save.results[N]; return "Mapelago Daily Voyage No. " + N + " \u{1F422} " + res.score + " of 100\n" + res.pts.map(mark).join("") + "\nFour stops, one voyage. mapelago.com/daily.html"; }
   function done() {
     if (!save.results[N]) { save.results[N] = { score: total(), pts: G.pts.slice() }; delete save.game; store(); ping("done"); }
-    var res = save.results[N], st = window.MXS ? MXS.streak(save.results, N) : { cur: 1, best: 1 };
+    // one streak with the retired Voyage's days in it (site.js counts them for the Daily Voyage)
+    var res = save.results[N], mine = window.MXS && MXS.info ? MXS.info().filter(function (x) { return x.game.id === "daily"; })[0] : null, st = mine || (window.MXS ? MXS.streak(save.results, N) : { cur: 1, best: 1 });
     $("#play").hidden = true; $("#done").hidden = false; chart();
     $("#big").textContent = res.score; $("#grid").textContent = res.pts.map(mark).join(" ");
     $("#legs").innerHTML = res.pts.map(function (p, i) { return "<li>" + LEGS[i].name + ": " + p + " of 25</li>"; }).join("");
     $("#shareText").textContent = shareText();
     var best = Math.max.apply(null, Object.keys(save.results).map(function (k) { return save.results[k].score; })), y = save.results[N - 1];
-    $("#streak").textContent = "Voyage streak: " + st.cur + (st.cur === 1 ? " day" : " days") + ". Your best: " + best + "." + (y ? (res.score > y.score ? " Beat yesterday's " + y.score + "." : " Yesterday: " + y.score + ".") : "") + (window.MXS && MXS.untilNext ? " Next voyage in " + MXS.untilNext() + "." : "");
+    $("#streak").textContent = "Daily Voyage streak: " + st.cur + (st.cur === 1 ? " day" : " days") + ". Your best: " + best + "." + (y ? (res.score > y.score ? " Beat yesterday's " + y.score + "." : " Yesterday: " + y.score + ".") : "") + (window.MXS && MXS.untilNext ? " Next voyage in " + MXS.untilNext() + "." : "");
   }
   $("#imgBtn").onclick = function () { if (window.MXS && MXS.shareCard) MXS.shareCard(); };
   $("#shareBtn").onclick = function () { var t = shareText(); if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { say("Copied."); $("#shareBtn").textContent = "Copied"; }, function () {}); };
