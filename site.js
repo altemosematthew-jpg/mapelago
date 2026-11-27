@@ -227,7 +227,7 @@
     if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
     if (p.textContent !== t) p.textContent = t;
   }
-  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay, shareCard: function () { return shareImageClick({ id: "daily" }); } };
+  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay, shareCard: function () { return shareImageClick({ id: "daily" }); }, card: function (t, id) { return inkCard(t, id); }, inkOn: function () { return isInk(); } };
 
   var CSS = '.mx-risk{display:block;margin:0 0 10px;line-height:1.45;padding:8px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000);font-size:14px;font-weight:600}'
     + '.mx-risk a{color:inherit;font-weight:800}'
@@ -375,7 +375,57 @@
 
   // 18.6 a share image for the games that had none, drawn from their own share text
   var TURTLE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200"><g fill="#9fc98b" stroke="#000000" stroke-width="2.2" stroke-linejoin="round"><path d="M45.5 24h9v12h-9z"/><path d="M50 8c6 0 9.5 5 9.5 10.5S56 28 50 28s-9.5-4-9.5-9.5S44 8 50 8z"/><path d="M32 41C21 30 9 30 8.5 37.5c-.4 5.6 9 10 23.5 12z"/><path d="M68 41c11-11 23-11 23.5-3.5.4 5.6-9 10-23.5 12z"/><path d="M35 73c-9 4-16 11-12 15 4.5 3.8 12-3 17-10z"/><path d="M65 73c9 4 16 11 12 15-4.5 3.8-12-3-17-10z"/><path d="M46.5 80 50 91l3.5-11z"/></g><circle cx="46" cy="16.5" r="1.8" fill="#000000"/><circle cx="54" cy="16.5" r="1.8" fill="#000000"/><rect x="29" y="34" width="42" height="43" rx="15" fill="#ffffff" stroke="#000000" stroke-width="2.4"/><rect x="34.2" y="39.2" width="10.8" height="10.8" fill="#ffffff" stroke="#000000" stroke-width="1.4"/><rect x="45" y="39.2" width="10.8" height="10.8" fill="#dcedf5" stroke="#000000" stroke-width="1.4"/><rect x="55.800000000000004" y="39.2" width="10.8" height="10.8" fill="#a9d3e8" stroke="#000000" stroke-width="1.4"/><rect x="34.2" y="50" width="10.8" height="10.8" fill="#9fc98b" stroke="#000000" stroke-width="1.4"/><rect x="45" y="50" width="10.8" height="10.8" fill="#b4237d" stroke="#000000" stroke-width="1.4"/><path d="M50.4 58.9c-.7-1.4-3-3.3-3-5.2a3 3 0 0 1 6 0c0 1.9-2.3 3.8-3 5.2z" fill="#ffffff"/><circle cx="50.4" cy="53.8" r="1" fill="#b4237d"/><rect x="55.800000000000004" y="50" width="10.8" height="10.8" fill="#f3d98a" stroke="#000000" stroke-width="1.4"/><rect x="34.2" y="60.800000000000004" width="10.8" height="10.8" fill="#a9d3e8" stroke="#000000" stroke-width="1.4"/><rect x="45" y="60.800000000000004" width="10.8" height="10.8" fill="#dcedf5" stroke="#000000" stroke-width="1.4"/><rect x="55.800000000000004" y="60.800000000000004" width="10.8" height="10.8" fill="#ffffff" stroke="#000000" stroke-width="1.4"/></svg>';
+  // Ink & Lantern share card: a dark episode cover with the game's panel and a rust score stamp, the same for everyone
+  function inkBase() { var l = document.querySelector('link[href*="ink.css"]'); return l ? l.getAttribute("href").replace(/ink\.css.*$/, "") : ""; }
+  function inkCard(text, id) {
+    var lines = text.split("\n"), W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+    var x = c.getContext("2d"), rnd = inkRand(1126);
+    var head = lines[0].split(" \u{1F422} "), title = head[0].replace(/^Mapelago /, ""), score = head[1] || "";
+    var no = (title.match(/No\. (\d+)/) || [0, ""])[1], game = title.replace(/ No\. \d+.*$/, "");
+    var last = lines[lines.length - 1] || "", ask = last.replace(/\s*\S+$/, ""), url = (last.match(/\S+$/) || [""])[0].replace(/#.*$/, "");
+    var wob = function (pts, w, col) { x.beginPath(); x.lineWidth = w; x.strokeStyle = col; x.lineCap = "round"; pts.forEach(function (p, i) { var px = p[0] + (rnd() - .5) * 5, py = p[1] + (rnd() - .5) * 5; if (i) x.quadraticCurveTo((px + p[0]) / 2 + (rnd() - .5) * 6, (py + p[1]) / 2 + (rnd() - .5) * 6, px, py); else x.moveTo(px, py); }); x.stroke(); };
+    var draw = function (art) {
+      x.fillStyle = "#101316"; x.fillRect(0, 0, W, H);
+      var g = x.createRadialGradient(W * .94, H * .02, 10, W * .94, H * .02, W * .9); g.addColorStop(0, "rgba(255,196,120,.34)"); g.addColorStop(.4, "rgba(255,170,90,.1)"); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(0, 0, W, H);
+      // the panel's border, inked by hand: each side overshoots the corner
+      wob([[30, 58], [W - 40, 50]], 7, "#EFE6CF"); wob([[W - 52, 34], [W - 58, H - 40]], 8, "#EFE6CF"); wob([[W - 30, H - 58], [36, H - 52]], 8, "#EFE6CF"); wob([[54, H - 32], [60, 36]], 7, "#EFE6CF");
+      // ink blots in the corners
+      [[86, 1270, 22], [1010, 120, 14], [990, 1250, 9]].forEach(function (b) { x.fillStyle = "rgba(0,0,0,.75)"; x.beginPath(); for (var i = 0; i < 12; i++) { var a = i / 12 * Math.PI * 2, r = b[2] * (.7 + rnd() * .6); x[i ? "lineTo" : "moveTo"](b[0] + Math.cos(a) * r, b[1] + Math.sin(a) * r); } x.fill(); });
+      x.textBaseline = "alphabetic";
+      x.fillStyle = "#F0B070"; x.font = "56px 'Patrick Hand SC', cursive"; x.fillText("MAPELAGO", 110, 170);
+      var ep = no ? "EPISODE " + no : "EPISODE"; x.font = "150px Anton, Impact, sans-serif"; var cx = 110;
+      Array.from(ep).forEach(function (ch) { x.save(); x.translate(cx, 320); x.rotate((rnd() - .5) * .07); x.fillStyle = "#000"; x.fillText(ch, 6, 6); x.fillStyle = "#F3EAD3"; x.fillText(ch, 0, 0); x.restore(); cx += x.measureText(ch).width + 2; });
+      x.fillStyle = "#EFE6CF"; x.font = "78px Anton, Impact, sans-serif"; x.fillText(game, 112, 420);
+      if (art) { x.save(); x.translate(110, 470); x.rotate(-.012); x.fillStyle = "#000"; x.fillRect(14, 14, 860, 602); x.drawImage(art, 0, 0, 860, 602); x.restore(); }
+      // the score stamp: a rust ring, slightly out of round, set at an angle
+      var sc = score.replace(/ points$/, "").replace(/ of 100$/, ""), sub = /points$/.test(score) ? "POINTS" : / of 100$/.test(score) ? "OF 100" : "";
+      x.save(); x.translate(800, 1000); x.rotate(-.2);
+      x.fillStyle = "#A8442E"; x.strokeStyle = "#000"; x.lineWidth = 8; x.beginPath();
+      for (var i = 0; i <= 24; i++) { var a = i / 24 * Math.PI * 2, r = 165 * (1 + (rnd() - .5) * .06); x[i ? "lineTo" : "moveTo"](Math.cos(a) * r, Math.sin(a) * r * .92); } x.closePath(); x.fill(); x.stroke();
+      x.strokeStyle = "#F6EEDC"; x.lineWidth = 4; x.beginPath(); for (i = 0; i <= 24; i++) { a = i / 24 * Math.PI * 2; r = 138 * (1 + (rnd() - .5) * .05); x[i ? "lineTo" : "moveTo"](Math.cos(a) * r, Math.sin(a) * r * .92); } x.stroke();
+      x.fillStyle = "#F6EEDC"; x.textAlign = "center"; x.font = (sc.length > 6 ? 70 : sc.length > 4 ? 92 : 120) + "px Anton, Impact, sans-serif"; x.fillText(sc, 0, sub ? 28 : 40);
+      if (sub) { x.font = "40px 'Patrick Hand SC', cursive"; x.fillText(sub, 0, 82); }
+      x.restore(); x.textAlign = "left";
+      // the caption box: cream, inked border, hand lettering
+      x.fillStyle = "#000"; x.fillRect(118, 1150, 640, 110); x.fillStyle = "#EFE6CF"; x.fillRect(110, 1142, 640, 110);
+      wob([[104, 1144], [756, 1140]], 4, "#14110d"); wob([[752, 1136], [754, 1258]], 4, "#14110d"); wob([[758, 1252], [106, 1256]], 4, "#14110d"); wob([[110, 1260], [108, 1136]], 4, "#14110d");
+      x.fillStyle = "#14110d"; x.font = "44px 'Patrick Hand SC', cursive"; x.fillText((ask || "To be continued...").slice(0, 30), 132, 1192);
+      x.fillStyle = "#7a2d1c"; x.font = "38px 'Patrick Hand SC', cursive"; x.fillText(url || "mapelago.com", 132, 1236);
+      return c;
+    };
+    var fonts = document.fonts && document.fonts.load ? Promise.all(["150px Anton", "40px 'Patrick Hand SC'"].map(function (f) { return document.fonts.load(f); })).catch(function () {}) : Promise.resolve();
+    return fonts.then(function () {
+      return new Promise(function (done) {
+        var finish = function (img) { done(draw(img)); };
+        fetch(inkBase() + "ink/art/" + (id || "home") + ".svg").then(function (r) { return r.text(); }).then(function (svg) {
+          var img = new Image(); img.onload = function () { finish(img); }; img.onerror = function () { finish(null); };
+          img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+        }).catch(function () { finish(null); });
+      });
+    });
+  }
   function shareImage(text, me) {
+    if (isInk()) return inkCard(text, me && me.id);
     var lines = text.split("\n"), W = 1080, H = 1350, c = document.createElement("canvas");
     c.width = W; c.height = H;
     var x = c.getContext("2d"), font = "Overpass, 'Helvetica Neue', Arial, sans-serif";
@@ -900,6 +950,129 @@
     reckoning: '<path d="M12 22s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12z"/><circle cx="12" cy="10" r="2.5"/>',
     ballast: '<path d="M2 14h20l-3 6H5zM12 14V3M12 3l7 9h-7"/>'
   };
+  // Ink & Lantern (the standard look): hand-set titles, inked panel borders, "Episode N", the lantern's page colour
+  function isInk() { var l = document.documentElement.getAttribute("data-look"); return !l || l === "chart"; }
+  function inkRand(seed) { var a = seed | 0; return function () { a = a + 0x6d2b79f5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function inkTitle(el) {
+    if (!el || el.getAttribute("data-ink")) return;
+    el.setAttribute("data-ink", "1");
+    var rnd = inkRand(el.textContent.length * 131 + 7);
+    Array.prototype.slice.call(el.childNodes).forEach(function (n) {
+      if (n.nodeType !== 3 || !n.nodeValue.trim()) return;
+      var f = document.createDocumentFragment(), label = n.nodeValue;
+      var wrap = document.createElement("span"); wrap.setAttribute("aria-label", label.trim()); wrap.setAttribute("role", "text");
+      label.split(/( +)/).forEach(function (word) {
+        if (!word) return;
+        if (/^ +$/.test(word)) { wrap.appendChild(document.createTextNode(" ")); return; }
+        var w = document.createElement("span"); w.style.whiteSpace = "nowrap"; // a word never breaks between its letters
+        Array.from(word).forEach(function (ch) {
+          var s = document.createElement("span"); s.className = "ink-l"; s.setAttribute("aria-hidden", "true"); s.textContent = ch;
+          s.style.setProperty("--t", ((rnd() - 0.5) * 7).toFixed(1) + "deg"); s.style.setProperty("--y", ((rnd() - 0.5) * 2.4).toFixed(1) + "px");
+          w.appendChild(s);
+        });
+        wrap.appendChild(w);
+      });
+      f.appendChild(wrap); el.replaceChild(f, n);
+    });
+  }
+  function inkFrames() {
+    var all = document.body.querySelectorAll("div,section,article,aside,ol,ul,li,p,pre,figure,details,form,fieldset,label,a,dialog,table");
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i]; if (el.classList.contains("ink-frame") || el.classList.contains("lede") || el.closest(".ink-cap")) continue;
+      if (el.offsetWidth < 70 || el.offsetHeight < 30) continue;
+      var cs = getComputedStyle(el);
+      if (parseFloat(cs.borderTopWidth) >= 1.5 && cs.borderTopStyle === "solid" && cs.borderTopColor === "rgb(239, 230, 207)" && parseFloat(cs.borderLeftWidth) >= 1.5) el.classList.add("ink-frame");
+    }
+  }
+  function inkEpisode() {
+    var n = document.getElementById("num"); if (!n) return;
+    var fix = function () { var t = n.textContent; if (/^No\. \d/.test(t)) n.textContent = t.replace(/^No\. /, "Episode "); };
+    fix(); new MutationObserver(fix).observe(n, { childList: true, characterData: true, subtree: true });
+  }
+  // Ink & Lantern maps: every land shape in an SVG map gets a darker rim on its shadow side (light from the top right,
+  // drawn as an offset copy underneath, so the outline is heavier there) and hand-placed hatching on top (a fill from
+  // the baked ink/hatch.svg). No live filters. Land is found by its colour, so every game's maps take part.
+  var INK_LAND = "rgb(201, 162, 87)", inkId = 0;
+  function inkMaps() {
+    document.querySelectorAll("svg").forEach(function (svg) {
+      if (svg.hasAttribute("data-ink-copy") || svg.closest("[data-ink-copy]")) return;
+      var land = Array.prototype.filter.call(svg.querySelectorAll("path,polygon"), function (p) { return !p.closest("[data-ink-copy]") && getComputedStyle(p).fill === INK_LAND; });
+      var byParent = new Map();
+      land.forEach(function (p) { var g = p.parentNode; if (!byParent.has(g)) byParent.set(g, []); byParent.get(g).push(p); });
+      byParent.forEach(function (ps, g) {
+        var key = ps.length + ":" + ps.map(function (p) { return (p.getAttribute("d") || "").length; }).join(",").length;
+        if (g.getAttribute("data-ink-n") === key) return;
+        Array.prototype.slice.call(g.querySelectorAll(":scope > [data-ink-copy]")).forEach(function (c) { c.remove(); });
+        var ctm = g.getScreenCTM && g.getScreenCTM(), k = ctm && ctm.a ? 1 / Math.abs(ctm.a) : 1;
+        var NS = "http://www.w3.org/2000/svg", id = svg.getAttribute("data-ink-pat");
+        if (!id) {
+          id = "inkHatch" + (++inkId); svg.setAttribute("data-ink-pat", id);
+          var defs = document.createElementNS(NS, "defs"), pat = document.createElementNS(NS, "pattern"), img = document.createElementNS(NS, "image");
+          pat.setAttribute("id", id); pat.setAttribute("patternUnits", "userSpaceOnUse"); pat.setAttribute("width", "900"); pat.setAttribute("height", "900");
+          img.setAttribute("href", (document.querySelector('link[href*="ink.css"]') || { getAttribute: function () { return ""; } }).getAttribute("href").replace(/ink\.css.*$/, "") + "ink/hatch.svg");
+          img.setAttribute("width", "900"); img.setAttribute("height", "900");
+          pat.appendChild(img); defs.appendChild(pat); defs.setAttribute("data-ink-copy", "1"); svg.insertBefore(defs, svg.firstChild);
+        }
+        svg.querySelector("#" + id).setAttribute("patternTransform", "scale(" + k.toFixed(4) + ")");
+        var rim = document.createElementNS(NS, "g"), hat = document.createElementNS(NS, "g");
+        rim.setAttribute("data-ink-copy", "1"); hat.setAttribute("data-ink-copy", "1");
+        rim.setAttribute("transform", "translate(" + (-1.3 * k).toFixed(3) + " " + (1.3 * k).toFixed(3) + ")");
+        rim.setAttribute("style", "fill:#8C6B30;stroke:#5e4520;stroke-width:" + (1.1 * k).toFixed(3));
+        hat.setAttribute("style", "fill:url(#" + id + ");stroke:none");
+        ps.forEach(function (p) {
+          var a = p.cloneNode(false), b = p.cloneNode(false);
+          [a, b].forEach(function (c) { c.removeAttribute("id"); c.removeAttribute("class"); c.removeAttribute("style"); c.removeAttribute("fill"); c.removeAttribute("stroke"); c.setAttribute("aria-hidden", "true"); });
+          rim.appendChild(a); hat.appendChild(b);
+        });
+        g.insertBefore(rim, ps[0]);
+        g.appendChild(hat);
+        g.setAttribute("data-ink-n", key);
+      });
+    });
+  }
+  // each game's small comic panel: in its header, and on its card on the home page
+  function inkArt() {
+    var base = inkBase(), me = here(), page = (location.pathname.split("/").pop() || "index.html");
+    var id = me ? me.id : /^daily/.test(page) ? "daily" : /^(index\.html)?$/.test(page) ? "home" : null;
+    var mark = document.querySelector(".top .mark");
+    if (id && mark && !mark.querySelector(".ink-art")) {
+      var im = document.createElement("img"); im.className = "ink-art"; im.alt = ""; im.width = 51; im.height = 36; im.decoding = "async";
+      im.src = base + "ink/art/" + id + ".svg";
+      // the drawing only stays if the header keeps its height (on a crowded phone header the game name comes first)
+      var top = mark.closest(".top") || mark; mark.appendChild(im);
+      var word = mark.querySelector(".word") || top;
+      var fit = function () {
+        im.style.display = "none"; var h0 = top.offsetHeight, w0 = word.offsetHeight; im.style.display = "";
+        var line = parseFloat(getComputedStyle(word).lineHeight) || 26; // the drawing stays only beside a one-line title
+        if (h0 && (top.offsetHeight > h0 + 2 || word.offsetHeight > w0 + 2 || word.offsetHeight > line * 1.5)) im.style.display = "none";
+      };
+      fit(); setTimeout(fit, 700); window.addEventListener("load", function () { setTimeout(fit, 400); }); window.addEventListener("resize", fit);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+      if (window.ResizeObserver) { var busy = false; new ResizeObserver(function () { if (busy) return; busy = true; fit(); requestAnimationFrame(function () { busy = false; }); }).observe(top); }
+    }
+    document.querySelectorAll("a[data-game] .ic, a[data-game] > .ic").forEach(function (ic) {
+      var g = GAMES.filter(function (x) { return x.url === ic.parentNode.getAttribute("data-game"); })[0];
+      if (!g || ic.querySelector("img")) return;
+      ic.innerHTML = '<img src="' + base + "ink/art/" + g.id + '.svg" alt="" width="60" height="42" decoding="async">'; ic.classList.add("ink-ic");
+    });
+    // the home page: "To be continued..." and how many games are left today
+    var home = id === "home" && document.querySelector(".app, main");
+    if (home && !document.getElementById("inkTbc")) {
+      var t = today(), left = info().filter(function (s) { return !s.res[t]; }).length;
+      var p = document.createElement("p"); p.id = "inkTbc"; p.className = "ink-tbc";
+      p.textContent = left ? "To be continued... " + left + " more game" + (left === 1 ? "" : "s") + " today." : "To be continued... tomorrow.";
+      var foot = home.querySelector("footer"); if (foot) foot.parentNode.insertBefore(p, foot); else home.appendChild(p);
+    }
+  }
+  function ink() {
+    if (!isInk()) return;
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", "#101316");
+    document.querySelectorAll(".top .word, .about-h").forEach(inkTitle);
+    inkEpisode(); inkFrames(); inkMaps(); inkArt();
+    var t = null; new MutationObserver(function (ms) { if (ms.every(function (m) { return m.target.closest && m.target.closest("[data-ink-copy]") || Array.prototype.every.call(m.addedNodes, function (n) { return n.nodeType === 1 && n.hasAttribute("data-ink-copy"); }) && m.addedNodes.length; })) return; clearTimeout(t); t = setTimeout(function () { inkFrames(); inkMaps(); }, 250); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
+    window.addEventListener("load", function () { setTimeout(function () { inkFrames(); inkMaps(); }, 300); });
+  }
+
   function emblem() {
     var me = here(), w = document.querySelector("header.top .word"); if (!me || !w || !EMBLEM[me.id] || w.querySelector(".mx-emb")) return;
     w.insertAdjacentHTML("beforeend", ' <svg class="mx-emb" viewBox="0 0 24 24" aria-hidden="true">' + EMBLEM[me.id] + "</svg>");
@@ -915,7 +1088,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps(); answerMotion(); emblem();
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps(); answerMotion(); emblem(); ink();
     // the day's level in words on the games whose own dial is not set yet (from No. 19)
     var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
     setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own

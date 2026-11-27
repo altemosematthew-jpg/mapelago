@@ -484,6 +484,14 @@
     wobbling = false; pieces.forEach(function (b) { if (!b.mxGone && !(b === lastBody && state === "fall") && b.speed > 0.6) wobbling = true; });
     if (wobbling && crew.s === "watch" && !cleared2) crewDo("wince");
     var shiv = !reduce && wobbling && !cleared2 ? 0.6 : 0;
+    // Ink & Lantern: each piece casts a hard shadow to the lower left (the lantern is top right)
+    var inked = (function () { var l = document.documentElement.getAttribute("data-look"); return !l || l === "chart"; })();
+    if (inked) pieces.forEach(function (b) {
+      if (b.mxGone) return;
+      cx.save(); cx.translate(X(b.position.x) - 2.2, Y(b.position.y) + 2.2); cx.rotate(b.angle);
+      cx.beginPath(); b.mxOutline.forEach(function (v, i) { (i ? cx.lineTo : cx.moveTo).call(cx, v.x * kz, v.y * kz); }); cx.closePath();
+      cx.fillStyle = "rgba(20,17,13,.75)"; cx.fill(); cx.restore();
+    });
     pieces.forEach(function (b) {
       if (b.mxGone) return;
       var jx = shiv ? Math.sin(time / 23 + b.id) * shiv : 0, sq = !reduce && b.mxLand != null && time - b.mxLand < 220 ? 1 - (time - b.mxLand) / 220 : 0;
@@ -495,7 +503,17 @@
         var bw = (bx[2] - bx[0]) * kz, bh = (bx[3] - bx[1]) * kz, f = Math.max(bw / 4, bh / 3);
         cx.save(); cx.clip(); cx.drawImage(im, bx[0] * kz + bw / 2 - 2 * f, bx[1] * kz + bh / 2 - 1.5 * f, 4 * f, 3 * f); cx.restore();
       } else { cx.fillStyle = b.mxCrate ? "#d9c7a3" : land; cx.fill(); }
-      cx.lineJoin = "round"; cx.strokeStyle = ink; cx.lineWidth = (im ? 2.2 : 1.6) * k / 1.2; cx.stroke(); cx.restore();
+      if (inked) {
+        // hand-placed hatching, drawn once per piece (its own angles and lengths), kept inside the outline
+        if (!b.mxHatch) {
+          var hb = b.mxOutline.reduce(function (m, v) { return [Math.min(m[0], v.x), Math.min(m[1], v.y), Math.max(m[2], v.x), Math.max(m[3], v.y)]; }, [1e9, 1e9, -1e9, -1e9]);
+          var hs = b.id * 9301 + 49297, hr = function () { hs = (hs * 9301 + 49297) % 233280; return hs / 233280; };
+          b.mxHatch = []; for (var hi = 0; hi < 14; hi++) { var ha = -0.7 + (hr() - 0.5) * 0.4, hl = 0.06 + hr() * 0.08, hx = hb[0] + hr() * (hb[2] - hb[0]) * 0.6, hy = hb[1] + (0.35 + hr() * 0.65) * (hb[3] - hb[1]); b.mxHatch.push([hx, hy, Math.cos(ha) * hl * (hb[2] - hb[0]), Math.sin(ha) * hl * (hb[2] - hb[0])]); }
+        }
+        cx.save(); cx.clip(); cx.strokeStyle = "rgba(20,17,13,.45)"; cx.lineWidth = 1; cx.beginPath();
+        b.mxHatch.forEach(function (h) { cx.moveTo(h[0] * kz, h[1] * kz); cx.lineTo((h[0] + h[2]) * kz, (h[1] - h[3]) * kz); }); cx.stroke(); cx.restore();
+      }
+      cx.lineJoin = "round"; cx.strokeStyle = ink; cx.lineWidth = (im ? 2.2 : 1.6) * k / 1.2 * (inked ? 1.35 : 1); cx.stroke(); cx.restore();
     });
     if (save.look.stow) {
       pieces.forEach(function (b) {

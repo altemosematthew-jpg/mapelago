@@ -59,6 +59,21 @@ async function page(b, url, opts = {}) {
       check(fs.readFileSync(path.join(__dirname, "../CNAME"), "utf8").trim() === "mapelago.com", "CNAME still says mapelago.com");
     }
 
+    // 1c. Ink & Lantern, the standard look: dark page, hand-set title, "Episode N", inked panels, rust main button,
+    // and land on the maps with its shadow rim and hatching; another look turns all of it off
+    {
+      const { ctx, p } = await page(b, U + "crossings.html", { wait: 1500 });
+      const k = await p.evaluate(() => ({ bg: getComputedStyle(document.body).backgroundColor, letters: document.querySelectorAll(".top .word .ink-l").length, num: document.querySelector("#num").textContent,
+        frames: document.querySelectorAll(".ink-frame").length, rim: document.querySelectorAll("#map [data-ink-copy] path").length, css: !!document.querySelector('link[href^="ink.css?v="]') }));
+      check(k.css && k.bg === "rgb(16, 19, 22)" && k.letters >= 9 && /^Episode \d+/.test(k.num) && k.frames >= 2 && k.rim > 50, "ink: the standard look is Ink & Lantern (dark page, hand-set title, Episode N, inked panels, shaded and hatched land)", JSON.stringify(k));
+      check(!p.errs.length, "ink: no errors", p.errs.join("; "));
+      await ctx.close();
+      const o = await page(b, U + "crossings.html", { storage: { "dailycity:look": "night" }, wait: 1200 });
+      const n = await o.p.evaluate(() => ({ letters: document.querySelectorAll(".top .word .ink-l").length, frames: document.querySelectorAll(".ink-frame").length, num: document.querySelector("#num").textContent }));
+      check(!n.letters && !n.frames && /^No\. \d+/.test(n.num), "ink: another look (Night watch) is left exactly as it was", JSON.stringify(n));
+      await o.ctx.close();
+    }
+
     // 2. the daily schedule never changes by accident
     const now = {};
     const ctx = await b.newContext(PHONE); const p = await ctx.newPage();
@@ -378,7 +393,7 @@ async function page(b, url, opts = {}) {
         check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
         // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
         const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
-        check(sh.share.startsWith("Mapelago Mystery country No. 12 \u{1F422} ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "No. 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        check(sh.share.startsWith("Mapelago Mystery country No. 12 \u{1F422} ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "Episode 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
         await ctx.close();
       }
       for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
@@ -409,7 +424,7 @@ async function page(b, url, opts = {}) {
         const p5 = await ctx.newPage(); await p5.goto(U + "country.html#day-5", { waitUntil: "domcontentloaded" }); await p5.waitForFunction(() => window.__lf);
         const g5 = await p5.evaluate(() => __lf.P.city); await p5.close();
         const a = await p.evaluate(() => ({ num: document.querySelector("#num").textContent, ban: !document.querySelector("#arcBan").hidden, name: __lf.P.city }));
-        check(a.num === "No. 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
+        check(a.num === "Episode 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
         await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
         const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
         check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mapelago Mystery country No. 5 (archive) \u{1F422}"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
