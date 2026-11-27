@@ -534,7 +534,7 @@ async function page(b, url, opts = {}) {
         check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
         // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
         const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
-        check(sh.share.startsWith("Mapelago Mystery country No. 12 \u{1F422} ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "Episode 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        check(sh.share.startsWith("Mapelago Mystery country No. 12 \u{1F422} ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && /^Episode 12 · [a-z ]+$/.test(sh.num) && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
         await ctx.close();
       }
       for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
@@ -565,7 +565,7 @@ async function page(b, url, opts = {}) {
         const p5 = await ctx.newPage(); await p5.goto(U + "country.html#day-5", { waitUntil: "domcontentloaded" }); await p5.waitForFunction(() => window.__lf);
         const g5 = await p5.evaluate(() => __lf.P.city); await p5.close();
         const a = await p.evaluate(() => ({ num: document.querySelector("#num").textContent, ban: !document.querySelector("#arcBan").hidden, name: __lf.P.city }));
-        check(a.num === "Episode 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
+        check(/^Episode 5 · [a-z ]+ · archive$/.test(a.num) && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
         await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
         const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
         check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mapelago Mystery country No. 5 (archive) \u{1F422}"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
@@ -1080,8 +1080,8 @@ async function page(b, url, opts = {}) {
         check(t[0] === "Name a country that borders the Democratic Republic of the Congo." && / than the United Kingdom\./.test(t[1]) && t[2] === "Name a country that borders Chad." && t[3] === "San Marino", "fathoms: 'borders the Democratic Republic of the Congo'; San Marino's capital is San Marino", JSON.stringify(t));
         await f.ctx.close();
       }
-      const o = await page(b, U + "fathoms.html#day-19", { wait: 600 });
-      check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 20 are dealt exactly as before");
+      const o = await page(b, U + "fathoms.html#day-15", { wait: 600 });
+      check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 16 are dealt exactly as before (Tuvalu joins from No. 16)");
       await o.ctx.close();
     }
 
