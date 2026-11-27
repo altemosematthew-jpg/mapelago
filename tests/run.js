@@ -245,7 +245,7 @@ async function page(b, url, opts = {}) {
         await ctx.close();
       }
       // easier to find: both mystery games side by side at the top of each, and first in the game list; the city's end card offers the country
-      for (const [f, key, cur] of [["", "dailycity:v2", "Mystery city"], ["country.html", "dailycity:country:v1", "Mystery country"]]) {
+      for (const [f, key, cur] of [["", "dailycity:v2", "City"], ["country.html", "dailycity:country:v1", "Country"]]) {
         const { ctx, p } = await page(b, U + f + "#day-12", { storage: { [key]: '{"games":{},"results":{},"seenHelp":true}' }, ctx: { viewport: { width: 375, height: 667 } } });
         const r = await p.evaluate(() => { const n = document.querySelector(".mx-find"); return { links: [...n.querySelectorAll("a")].map((a) => [a.getAttribute("href"), a.lastChild.textContent, a.getAttribute("aria-current")]), first: document.querySelector("header.top").nextElementSibling === n, bottom: n.getBoundingClientRect().bottom, cards: [...document.querySelectorAll(".mx-cards li b")].slice(0, 2).map((x) => x.textContent) }; });
         check(JSON.stringify(r.links.map((l) => [l[0], l[1]])) === JSON.stringify([["city.html", "City"], ["country.html", "Country"]]) && r.links.filter((l) => l[2] === "page").map((l) => l[1]).join() === cur && r.first && r.bottom < 160,
