@@ -586,8 +586,8 @@ a.act{text-decoration:none}
   function makeLists2() {
     lists2 = [[], [], [], [], [], [], []];
     for (var a = 0; a < N; a++) for (var b = a + 1; b < N; b++) { var L = dist[a][b]; if (L < 3) continue; var w = weekday2(L, obscurity(a, b)); if (w >= 0) lists2[w].push([a, b]); }
-    // pairs already played before No. 16 never come back
-    var played = {}; for (var d = 1; d < NEW; d++) { var q = daily(d); played[Math.min(q.from, q.to) + "-" + Math.max(q.from, q.to)] = 1; }
+    // the 15 pairs played before No. 16 (Nos. 1 to 15, by country code) never come back
+    var played = {}; [["NO","QA"],["TH","AE"],["MA","EG"],["LA","ID"],["TD","MZ"],["GQ","TN"],["QA","KZ"],["UZ","NL"],["ID","LT"],["CI","MA"],["RU","RS"],["KR","HU"],["BG","QA"],["LV","SA"],["AF","CH"]].forEach(function (q) { var a = at[q[0]], b = at[q[1]]; played[Math.min(a, b) + "-" + Math.max(a, b)] = 1; });
     lists2 = lists2.map(function (list) { return list.filter(function (p) { return !played[Math.min(p[0], p[1]) + "-" + Math.max(p[0], p[1])]; }); });
     lists2.forEach(function (list, w) { var r = rng(16001 + w * 7919); for (var i = list.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = list[i]; list[i] = list[j]; list[j] = t; } });
   }
