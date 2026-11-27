@@ -939,8 +939,9 @@ ${(C.end==="home"?"I made it home: all ten islands. Can you?":C.end==="wreck"?"H
 <script>/* the small world map first, so a map question is ready fast on a slow phone; the detailed one replaces it when it
    arrives (never the other way round: the finer map wins whichever loads first) */
 (function () { var cur = null; Object.defineProperty(window, "__WORLD", { configurable: true, get: function () { return cur; }, set: function (v) { if (!cur || !v || v.transform.scale[0] <= cur.transform.scale[0]) cur = v; } }); })();</script>
-<script async src="world-lite.js?v=0.15.59"></script>
-<script async src="world.js?v=0.15.59"></script>
+<script>/* then the detailed map, once the small one is in, so the two never share a slow connection */
+(function () { var full = function () { var t = document.createElement("script"); t.async = true; t.src = "world.js?v=0.15.59"; document.head.appendChild(t); };
+  var t = document.createElement("script"); t.async = true; t.src = "world-lite.js?v=0.15.59"; t.onload = t.onerror = full; document.head.appendChild(t); })();</script>
 <script src="analytics.js?v=0.15.59" defer></script>
 </body>
 </html>
