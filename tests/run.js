@@ -579,7 +579,7 @@ async function page(b, url, opts = {}) {
         await p.waitForTimeout(400);
         const end = await p.evaluate((BC) => ({ done: !document.querySelector("#done").hidden, score: document.querySelector("#bigScore").textContent, save: JSON.parse(localStorage.getItem(BC)),
           tiles: [...document.querySelectorAll(".bctile")].map((t) => t.querySelectorAll("svg[data-i] .sh").length), share: document.querySelector("#shareText").textContent,
-          best: document.querySelector("#bcBest").textContent, streak: MXS.info().find((x) => x.game.id === "bigcountry").cur }), BC);
+          best: document.querySelector("#bcBest").textContent, streak: MXS.info().find((x) => x.game.id === "bigger").cur }), BC);
         check(end.done && end.score === "9" && JSON.stringify(end.save) === JSON.stringify({ results: { 12: { score: 9, picks: plan } }, game: null }), `bigcountry ${size}: the day ends at 9/10 and saves exactly as before`, JSON.stringify([end.score, end.save]));
         check(end.tiles.length === 10 && end.tiles.every((n) => n === 2), `bigcountry ${size}: the end card strip shows all ten pairs`, JSON.stringify(end.tiles));
         const lines = end.share.split("\n");
@@ -628,7 +628,7 @@ async function page(b, url, opts = {}) {
         const live = JSON.parse(fs.readFileSync(path.join(__dirname, `fixtures/bigcountry-save-from-v${v}.json`), "utf8"));
         const { ctx, p } = await page(b, U + "bigger-country.html#day-12", { storage: live, clock: new Date("2026-11-25T12:00:00"), wait: 900 });
         const s = await p.evaluate(() => ({ round: document.querySelector("#bcRound").textContent, dots: [...document.querySelectorAll("#dots li.done")].length, picks: __big.S().picks.join(""),
-          run: document.querySelector("#bcRun b").textContent, ok: [0, 1, 2, 3].map((i) => { const x = __big.S().pairs[i]; return (x[0].pop >= x[1].pop ? 0 : 1) === __big.S().picks[i]; }), info: MXS.info().find((x) => x.game.id === "bigcountry") }));
+          run: document.querySelector("#bcRun b").textContent, ok: [0, 1, 2, 3].map((i) => { const x = __big.S().pairs[i]; return (x[0].pop >= x[1].pop ? 0 : 1) === __big.S().picks[i]; }), info: MXS.info().find((x) => x.game.id === "bigger") }));
         let run = 0; s.ok.forEach((o) => { run = o ? run + 1 : 0; });
         check(s.round === "Round 5 of 10" && s.dots === 4 && s.picks === "0110" && s.run === String(run), `${v}.0 bigcountry save: today's round resumes at pair 5 with its run`, JSON.stringify(s));
         check(s.info.cur === 2 && s.info.played === 2, `${v}.0 bigcountry save: streak kept (2)`, JSON.stringify([s.info.cur, s.info.played]));
