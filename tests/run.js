@@ -478,7 +478,7 @@ async function page(b, url, opts = {}) {
 
     // 12. Quick mode for the mystery city: no tiles, a clue per missed pin, five pins, scored by the pin that finds it
     {
-      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" }, clock: new Date("2026-11-25T12:00:00") }); // on No. 12's own day, so it counts for the streak
       await p.waitForFunction(() => window.__WORLD);
       check(await p.isVisible("#mxMode"), "quick mode: the mode choice shows before the first move");
       await p.click('#mxMode [data-m="quick"]');
@@ -747,6 +747,15 @@ async function page(b, url, opts = {}) {
         check(!bad.length, "bigger: Nos. 14 to 44 deal only checked cities, never two within 10%", bad.slice(0, 5).join(" "));
         await p.goto(U + "bigger.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
         check((await p.evaluate(() => __big.S().pairs[9].map((c) => c.name + " " + c.pop).join(" | "))) === "Kathmandu 1442271 | Tegucigalpa 850848", "bigger: No. 12 stays as played (Kathmandu v Tegucigalpa)");
+        // from No. 17: one source (UN WUP 2025, urban areas), only the cities it lists, two surprising ones held back
+        await p.goto(U + "bigger.html?d=17#day-17", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
+        const un = await p.evaluate(() => MxCity.pool.map((c) => [c.name, c.country, c.pop, c.note || ""]));
+        const ub = (n) => un.find((x) => x[0] === n);
+        check(un.length === 313 && ub("Tokyo")[2] === 33412512 && ub("Jakarta")[2] === 41913860 && !ub("Luxor") && !ub("Nay Pyi Taw") && !ub("Giza") && !ub("Foshan") && un.every((x) => x[3] === "urban area population, UN WUP 2025"),
+          "bigger: from No. 17, the 313 UN WUP 2025 cities, each labelled", JSON.stringify([un.length, ub("Tokyo"), ub("Luxor")]));
+        await p.goto(U + "city.html?d=17#day-17", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__lf);
+        const mc = await p.evaluate(() => [__lf.P.city, __lf.P.pop, __lf.P.clues.people, (__lf.P.facts || []).join(" / ")]);
+        check(mc[0] === "Bangkok" && mc[1] === 18180280 && /^10 million\+ · /.test(mc[2]) && /About 18,180,280 people live in its urban area \(UN WUP 2025\)/.test(mc[3]), "mystery city: from No. 17 its population clue is the UN figure", JSON.stringify(mc));
         check(!p.errs.length, "bigger data: no errors", p.errs.join("; "));
         await ctx.close();
         // the reveal and the list give the year; the list marks your pick
