@@ -50,7 +50,8 @@
   function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   var sched = [null], last = {}, NR = 17;
   // From No. 16 (scorecard 3): later in the week the cities come from less-known tiers (1 best known, 5 least known),
-  // round by round. Monday to Wednesday keep one tier a round.
+  // round by round. Monday to Wednesday keep one tier a round. Some tiers now come up twice a day, so a place rests 70
+  // days (it was nearly its whole pool's length, which two draws a day would exhaust).
   var HARD_FROM = 16, TIERS = [[2, 3, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 3, 3, 4, 5], [2, 3, 4, 4, 5], [3, 4, 4, 5, 5]];
   function daily(n) {
     while (sched.length <= n) {
@@ -77,7 +78,7 @@
         for (var pass = 0; pass < 2 && chosen < 0; pass++)
           for (var j = 0; j < L; j++) {
             var p = P[pool[(k + j) % L]];
-            if (last[p.i] !== undefined && d - last[p.i] <= (d >= NR ? Math.max(GAP, L - 8) : GAP)) continue; // from No. 17 a place rests until nearly the whole of its pool has had a turn
+            if (last[p.i] !== undefined && d - last[p.i] <= (d >= HARD_FROM ? GAP + 10 : d >= NR ? Math.max(GAP, L - 8) : GAP)) continue; // from No. 17 a place rests until nearly the whole of its pool has had a turn
             if (pass === 0 && (used[p.country] || p.country === m[1] || p.name === m[0])) continue;
             chosen = p.i; break;
           }
@@ -448,7 +449,7 @@
   if (S.results[N]) showDone(); else showAsk();
 
   if (LOCAL) window.__dr = {
-    N: N, P: P, POOLS: POOLS, daily: daily, km: km, points: points, total: total, band: band, fact: fact, shareText: shareText, stats: stats,
+    N: N, P: P, POOLS: POOLS, TIERS: TIERS, HARD_FROM: HARD_FROM, daily: daily, km: km, points: points, total: total, band: band, fact: fact, shareText: shareText, stats: stats,
     S: function () { return { n: N, mode: mode, places: places.map(function (p) { return p.name + "|" + p.country; }), guesses: guesses.slice(), save: load() }; },
     tapAt: function (lat, lon) { place(toXY(lat, lon)); }, lock: lock, next: next, startPractice: startPractice
   };
