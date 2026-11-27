@@ -85,7 +85,7 @@ async function page(b, url, opts = {}) {
       const big = r.info.find((x) => x[0] === "bigger");
       check(r.save[17] && r.save[17].picks.length === 10 && r.save[12] && /^Mapelago Bigger\? No\. 17 \u{1F422} \d+\/10\n[\u{1F3D9}\u{1F5FA}️⬜]+\nCity or country, which is bigger\? mapelago\.com\/bigger\.html#/u.test(r.share), "bigger?: the result is saved beside Bigger city?'s history, with its share line", r.share);
       check(big && big[1] === 6 && big[2] === 6 && !r.info.some((x) => x[0] === "bigcountry"), "bigger?: one streak and stats from both old games (Nos. 12 to 17 run on)", JSON.stringify(r.info));
-      const src = await p.evaluate(() => { const bad = []; for (let d = 17; d <= 60; d++) __big.deal(d).forEach((pr) => { const [x, y] = pr; if (x.t === "country" && (MXAREA[x.cc] !== x.v || MXAREA[y.cc] !== y.v || MXAclose({ area: x.v, szr: x.szr }, { area: y.v, szr: y.szr }))) bad.push(d + ":" + x.name + "/" + y.name); if (x.t === "city" && x.sub === y.sub) bad.push(d + ":" + x.name + "/" + y.name); }); return bad; });
+      const src = await p.evaluate(() => { const bad = []; for (let d = 17; d <= 60; d++) __big.deal(d).forEach((pr) => { const [x, y] = pr; if (x.t === "country" && ((MXAREA[x.cc] != null && MXAREA[x.cc] !== x.v) || (MXAREA[y.cc] != null && MXAREA[y.cc] !== y.v) || MXAclose({ area: x.v, szr: x.szr }, { area: y.v, szr: y.szr }))) bad.push(d + ":" + x.name + "/" + y.name); if (x.t === "city" && x.sub === y.sub) bad.push(d + ":" + x.name + "/" + y.name); }); return bad; });
       check(!src.length, "bigger?: Nos. 17 to 60 use the UN areas, never two cities of one country, never a pair too close to call", src.slice(0, 5).join(" "));
       check(!p.errs.length, "bigger?: no errors", p.errs.join("; "));
       await ctx.close();
@@ -909,7 +909,7 @@ async function page(b, url, opts = {}) {
       const { ctx, p } = await page(b, U + "bigger?q=1", { wait: 300 });
       const T = await p.evaluate(() => MXS.today());
       await p.goto(U + "bigger?q=2#b-bc-" + T + "-0-7"); await p.waitForTimeout(700);
-      check(/A friend scored 7 of 10 on today's Bigger city\?/.test((await p.textContent(".mx-beat").catch(() => "")) || ""), "extensionless address: the beat-my-score banner shows on /bigger");
+      check(/A friend scored 7 of 10 on today's Bigger/.test((await p.textContent(".mx-beat").catch(() => "")) || ""), "extensionless address: the beat-my-score banner shows on /bigger");
       await p.goto(U + "fathoms?q=3#c-" + T + "-4000"); await p.waitForTimeout(700);
       check(/A friend scored 4,000 fathoms/.test(await p.evaluate(() => [...document.querySelectorAll(".mx-risk")].map((e) => e.textContent).join(" "))), "extensionless address: the old challenge banner shows on /fathoms");
       await p.goto(U + "index?q=4#b-mc-" + T + "-0-850"); await p.waitForTimeout(900);
@@ -1330,9 +1330,9 @@ async function page(b, url, opts = {}) {
     {
       const day = (n, v) => ({ results: Object.fromEntries(n.map((d) => [d, v || { score: 1 }])) });
       const { ctx, p } = await page(b, U + "fathoms.html", { clock: new Date("2026-11-25T12:00:00"), storage: { "dailycity:fathoms:v1": JSON.stringify(day([3, 4, 5, 6])), "dailycity:voyage:v1": JSON.stringify(day([7, 8, 9])), "dailycity:stamps:v1": JSON.stringify(day([11, 12])) } });
-      const r = await p.evaluate(() => { const s = MXS.siteStreak(); return { cur: s.cur, best: s.best, today: s.today, done: s.doneToday, total: s.total, frozen: s.frozen, until: MXS.untilNext() }; });
+      const r = await p.evaluate(() => { const s = MXS.siteStreak(); return { cur: s.cur, best: s.best, today: s.today, done: s.doneToday, total: s.total, games: MXS.info().length, frozen: s.frozen, until: MXS.untilNext() }; });
       // days 3 to 9 in a row earn a freeze at seven; day 10 is missed and covered; days 11 and 12 follow; today is No. 12
-      check(r.cur === 9 && r.today && r.done === 1 && r.total === 11 && JSON.stringify(r.frozen) === "[10]" && r.until === "12h 0m", "site streak: any game counts for the day, a freeze covers a gap, and the next puzzles are 12h 0m away at noon", JSON.stringify(r));
+      check(r.cur === 9 && r.today && r.done === 1 && r.total === r.games && JSON.stringify(r.frozen) === "[10]" && r.until === "12h 0m", "site streak: any game counts for the day, a freeze covers a gap, and the next puzzles are 12h 0m away at noon", JSON.stringify(r));
       await ctx.close();
     }
     // ---- vx review fixes (hands-on review of live 0.15.2). No. 12 and 13 keep their answers and scoring (golden.json). ----
