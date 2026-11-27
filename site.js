@@ -95,8 +95,10 @@
 
   // ---------- 3. streaks across all the games (5.1, 5.2, 5.3, 5.4) ----------
   var GAMES = [
-    { id: "city", name: "Mystery city", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
-    { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "The same, with a country to find." },
+    // Mystery: one game with a City and a Country mode. Each mode keeps its own daily puzzle and save; the Country mode's
+    // days count toward Mystery's one streak and stats.
+    { id: "city", name: "Mystery", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city, or switch to today's country." },
+    { id: "country", parent: "city", name: "Mystery (Country)", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "Mystery's Country mode: the same, with a country to find." },
     // Bigger? (from No. 17) is Bigger city? and Bigger country? as one game: it saves where Bigger city? did, and Bigger
     // country?'s days count toward its streak and stats. The old pages still play Nos. 1 to 16.
     { id: "bigger", name: "Bigger?", key: "dailycity:bigger:v1", url: "bigger.html", pages: ["bigger-city.html"], icon: "\u{1F465}", about: "Ten pairs, cities and countries in turn: tap the bigger one." },
@@ -263,6 +265,7 @@
 
   // Addresses come with or without ".html" (mapelago.com/bigger and the previews' /bigger work too), and the home
   // page as "/", "/index" or "/index.html". Pages inside a folder (/games/, /about/) are not games.
+  function topId(g) { return g && (g.parent || g.id); } // a mode of another game (Mystery's Country) counts as that game
   function pageKey(p) { p = String(p || "").replace(/^\.?\//, "").replace(/\.html$/, ""); return p === "index" ? "" : p; } // the home page ("" or index) is the hub, not a game
   function here() {
     var parts = location.pathname.split("/"), f = parts.pop();
@@ -273,7 +276,7 @@
   // 5.2 a note on every game page when another game's streak is waiting for today
   function riskNote(app) {
     var me = here();
-    var risk = info().filter(function (s) { return s.cur >= 3 && !s.doneToday && (!me || s.game.id !== me.id); });
+    var risk = info().filter(function (s) { return s.cur >= 3 && !s.doneToday && (!me || s.game.id !== topId(me)); });
     if (!risk.length) return;
     var el = document.createElement("p");
     el.className = "mx-risk"; el.setAttribute("role", "status");
@@ -578,10 +581,10 @@
     var me = here(), all = info();
     var sec = document.createElement("section");
     sec.className = "mx-today"; sec.setAttribute("aria-labelledby", "mxTodayH");
-    var next = nextUp(all, me), meLeft = me && all.some(function (s) { return s.game.id === me.id && !s.doneToday; });
+    var next = nextUp(all, me), meLeft = me && all.some(function (s) { return s.game.id === topId(me) && !s.doneToday; });
     var homeCopy = me && me.id === "city" && window.MXCOPY && MXCOPY.home;
     sec.innerHTML = (homeCopy ? '<h2 id="mxTodayH">' + esc(homeCopy.headline) + '</h2><p class="mx-next">' + esc(homeCopy.line) + "</p>" : '<h2 id="mxTodayH">Today\'s games</h2>') + '<ul class="mx-cards">' + all.map(function (s) {
-      var g = s.game, isMe = me && g.id === me.id;
+      var g = s.game, isMe = me && g.id === topId(me);
       var st = s.doneToday ? "\u2713 Done today" : isMe ? "You're here" : s.cur >= 2 ? s.cur + "-day streak: play today" : "Play";
       return '<li class="mx-card' + (s.doneToday ? " done" : "") + (isMe ? " here" : "") + '"><a href="' + g.url + '"' + (isMe ? ' aria-current="page"' : "") + '><span class="ic" aria-hidden="true">' + g.icon + "</span><b>" + esc(g.name) + '</b><span class="ab">' + esc((window.MXCOPY && MXCOPY.cards && MXCOPY.cards[g.id]) || g.about) + '</span><span class="st">' + st + "</span></a></li>";
     }).join("") + "</ul>" + (next ? '<p class="mx-next">Next up: <a href="' + next.game.url + '">' + esc(next.game.name) + "</a></p>" : '<p class="mx-next">' + (meLeft ? "This is the last game left today." : "Every game done today. See you tomorrow.") + '</p>');
@@ -650,7 +653,7 @@
   // ---------- Ballast: end ----------
 
   // The first game not yet played today, in menu order, leaving out the one you're on.
-  function nextUp(all, me) { return (all || info()).filter(function (s) { return !s.doneToday && (!me || s.game.id !== me.id); })[0]; }
+  function nextUp(all, me) { return (all || info()).filter(function (s) { return !s.doneToday && (!me || s.game.id !== topId(me)); })[0]; }
   // Every result's "play next" button goes to the first unplayed game (or to All games once everything is done).
   function nextButtons() {
     var me = here(); if (!me) return;

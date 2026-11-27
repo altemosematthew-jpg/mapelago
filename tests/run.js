@@ -97,6 +97,21 @@ async function page(b, url, opts = {}) {
       await red.ctx.close();
     }
 
+    // 1e. Mystery: one game with a City and a Country switch, one streak that keeps both histories
+    {
+      const old = { "dailycity:v2": JSON.stringify({ results: { 12: { won: true, score: 700 } }, games: {} }), "dailycity:country:v1": JSON.stringify({ results: { 13: { won: true, score: 600 }, 14: { won: true, score: 650 } }, games: {} }) };
+      for (const f of ["city.html", "country.html"]) {
+        const { ctx, p } = await page(b, U + f, { storage: old, clock: new Date("2026-11-27T12:00:00"), wait: 900 });
+        const m = await p.evaluate(() => ({ word: document.querySelector("#brandName").textContent.trim(), tabs: [...document.querySelectorAll(".mx-find a")].map((a) => a.textContent.replace(/[^A-Za-z]/g, "") + ">" + a.getAttribute("href") + (a.getAttribute("aria-current") ? "*" : "")).join(" "),
+          info: MXS.info().map((s) => [s.game.id, s.game.name, s.cur, s.played]), today: [...document.querySelectorAll(".mx-today a b, .mx-today b")].map((x) => x.textContent).filter((t) => /Mystery/.test(t)) }));
+        const my = m.info.find((x) => x[0] === "city");
+        check(m.word === "Mystery" && m.tabs === (f === "city.html" ? "City>city.html* Country>country.html" : "City>city.html Country>country.html*"), `mystery: ${f} is Mystery with a City / Country switch`, JSON.stringify(m));
+        check(my && my[1] === "Mystery" && my[2] === 3 && my[3] === 3 && !m.info.some((x) => x[0] === "country"), `mystery: ${f} shows one streak and stats from both modes (Nos. 12 to 14)`, JSON.stringify(m.info));
+        check(!p.errs.length, `mystery: ${f} no errors`, p.errs.join("; "));
+        await ctx.close();
+      }
+    }
+
     // 2. the daily schedule never changes by accident
     const now = {};
     const ctx = await b.newContext(PHONE); const p = await ctx.newPage();
@@ -221,7 +236,7 @@ async function page(b, url, opts = {}) {
         const live = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/country-save-from-v0.14.json"), "utf8"));
         const { ctx, p } = await page(b, U + "country.html#day-14", { storage: live, clock: new Date("2026-11-27T12:00:00"), wait: 1200 });
         await p.waitForFunction(() => window.__WORLD);
-        const s = await read(p), info = await p.evaluate(() => MXS.info().find((x) => x.game.id === "country"));
+        const s = await read(p), info = await p.evaluate(() => MXS.info().find((x) => x.game.id === "city"));
         check(s.S.r === 1 && s.S.moveCost === 8 && s.S.swipes === 7 && s.pts === "794" && s.S.pins.length === 1 && s.S.clues === s.clues, "0.14.0 country save: the No. 14 round in progress keeps the old rules (7 moves, 1 miss, 794 points)", JSON.stringify([s.S.r, s.S.moveCost, s.S.swipes, s.pts, s.clues]));
         check(info.cur === 2 && info.played === 2, "0.14.0 country save: streak kept (2)", JSON.stringify([info.cur, info.played]));
         await p.evaluate(() => (location.hash = "#day-12")); await p.waitForTimeout(1200);

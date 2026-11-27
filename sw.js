@@ -2,14 +2,14 @@
 // Everything else (map data, fonts, icons) is answered from the saved copy at once and refreshed behind the scenes.
 // On install every game is saved, so every game works offline after the first visit to any of them.
 // Release checklist: change this version here AND in every ?v= in the pages (tests/run.js checks they match).
-const C = "mapelago-0.15.61";
+const C = "mapelago-0.15.62";
 const PRE = [
   "./", "city.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html",
-  "dead-reckoning.html", "dead-reckoning.js?v=0.15.61",
-  "daily.html", "daily.js?v=0.15.61", "daily-data.js?v=0.15.61", "bigger-city.html", "bigger.js?v=0.15.61", "bigger-data.js?v=0.15.61", "un-cities.js?v=0.15.61",
-  "ballast.html", "ballast.js?v=0.15.61", "ballast-data.js?v=0.15.61", "vendor/matter.min.js?v=0.15.61", "vendor/decomp.min.js?v=0.15.61",
-  "offline.html", "analytics.js?v=0.15.61", "copy.js?v=0.15.61", "history.js?v=0.15.61", "history-data.js?v=0.15.61", "site.js?v=0.15.61", "extras.js?v=0.15.61", "shapes.js?v=0.15.61", "world.js?v=0.15.61", "world-lite.js?v=0.15.61", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
-  "ink.css?v=0.15.61", "ink/frame.svg", "ink/frame-ink.svg", "ink/blots.svg", "ink/hatch.svg", "ink/paper.jpg", "ink/art/city.svg", "ink/art/country.svg", "ink/art/bigger.svg", "ink/art/bigcountry.svg", "ink/art/voyage.svg", "ink/art/fathoms.svg", "ink/art/stamps.svg", "ink/art/crossings.svg", "ink/art/reckoning.svg", "ink/art/ballast.svg", "ink/art/history.svg", "ink/art/daily.svg", "ink/art/home.svg",
+  "dead-reckoning.html", "dead-reckoning.js?v=0.15.62",
+  "daily.html", "daily.js?v=0.15.62", "daily-data.js?v=0.15.62", "bigger-city.html", "bigger.js?v=0.15.62", "bigger-data.js?v=0.15.62", "un-cities.js?v=0.15.62",
+  "ballast.html", "ballast.js?v=0.15.62", "ballast-data.js?v=0.15.62", "vendor/matter.min.js?v=0.15.62", "vendor/decomp.min.js?v=0.15.62",
+  "offline.html", "analytics.js?v=0.15.62", "copy.js?v=0.15.62", "history.js?v=0.15.62", "history-data.js?v=0.15.62", "site.js?v=0.15.62", "extras.js?v=0.15.62", "shapes.js?v=0.15.62", "world.js?v=0.15.62", "world-lite.js?v=0.15.62", "site.css", "favicon.svg", "icon-180.png", "manifest.webmanifest",
+  "ink.css?v=0.15.62", "ink/frame.svg", "ink/frame-ink.svg", "ink/blots.svg", "ink/hatch.svg", "ink/paper.jpg", "ink/art/city.svg", "ink/art/country.svg", "ink/art/bigger.svg", "ink/art/bigcountry.svg", "ink/art/voyage.svg", "ink/art/fathoms.svg", "ink/art/stamps.svg", "ink/art/crossings.svg", "ink/art/reckoning.svg", "ink/art/ballast.svg", "ink/art/history.svg", "ink/art/daily.svg", "ink/art/home.svg",
   "fonts/anton-latin-400-normal.woff2", "fonts/patrick-hand-sc-latin-400-normal.woff2", "fonts/patrick-hand-latin-400-normal.woff2",
   "fonts/overpass-latin-400-normal.woff2", "fonts/overpass-latin-600-normal.woff2",
   "fonts/overpass-latin-800-normal.woff2", "fonts/overpass-latin-800-italic.woff2"
