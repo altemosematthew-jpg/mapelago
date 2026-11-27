@@ -68,7 +68,7 @@ async function page(b, url, opts = {}) {
       check(k.css && k.bg === "rgb(16, 19, 22)" && k.letters >= 9 && /^Episode \d+/.test(k.num) && k.frames >= 2 && k.rim > 50, "ink: the standard look is Ink & Lantern (dark page, hand-set title, Episode N, inked panels, shaded and hatched land)", JSON.stringify(k));
       check(!p.errs.length, "ink: no errors", p.errs.join("; "));
       await ctx.close();
-      const o = await page(b, U + "crossings.html", { storage: { "dailycity:look": "night" }, wait: 1200 });
+      const o = await page(b, U + "bigger.html", { storage: { "dailycity:look": "night" }, wait: 1200 });
       const n = await o.p.evaluate(() => ({ letters: document.querySelectorAll(".top .word .ink-l").length, frames: document.querySelectorAll(".ink-frame").length, num: document.querySelector("#num").textContent }));
       check(!n.letters && !n.frames && /^No\. \d+/.test(n.num), "ink: another look (Night watch) is left exactly as it was", JSON.stringify(n));
       await o.ctx.close();
@@ -1259,7 +1259,7 @@ async function page(b, url, opts = {}) {
       const t = await page(b, U + "fathoms.html#day-20", { wait: 700 });
       const before = await t.p.evaluate(() => !!document.querySelector("canvas.mx-mini:not([hidden])"));
       await t.p.click("#fpass"); await t.p.waitForTimeout(1200);
-      const after = await t.p.evaluate(() => { const c = document.querySelector("canvas.mx-mini:not([hidden])"); if (!c) return null; const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let acc = 0; for (let i = 0; i < d.length; i += 4) if (d[i] > 150 && d[i + 1] < 80 && d[i + 2] > 90) acc++; return [c.getAttribute("aria-label"), acc > 20]; });
+      const after = await t.p.evaluate(() => { const c = document.querySelector("canvas.mx-mini:not([hidden])"); if (!c) return null; const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let acc = 0; for (let i = 0; i < d.length; i += 4) if ((d[i] > 150 && d[i + 1] < 80 && d[i + 2] > 90) || (d[i] > 140 && d[i + 1] < 90 && d[i + 2] < 70)) acc++; // magenta, or rust in Ink & Lantern return [c.getAttribute("aria-label"), acc > 20]; });
       check(!before && after && /^Map: .+/.test(after[0]) && after[1], "answer map: none before the answer; after it, the answer country is drawn highlighted", JSON.stringify([before, after]));
       await t.ctx.close();
     }

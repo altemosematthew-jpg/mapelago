@@ -33,44 +33,47 @@ html[data-look="chart"] body::before,html:not([data-look]) body::before{content:
     url(ink/blots.svg) center top/1200px auto no-repeat,#101316}
 
 /* 3. titles: Anton, each letter set by hand (site.js tilts them a degree or two) */
-html[data-look="chart"] .top .word,html[data-look="chart"] .about-h,html[data-look="chart"] #done h2,html[data-look="chart"] .panel h2,html[data-look="chart"] h1,
+:is(html[data-look="chart"],html:not([data-look])) .top .word,:is(html[data-look="chart"],html:not([data-look])) .about-h,:is(html[data-look="chart"],html:not([data-look])) #done h2,:is(html[data-look="chart"],html:not([data-look])) .panel h2,:is(html[data-look="chart"],html:not([data-look])) h1,
 html:not([data-look]) h1,html:not([data-look]) h2{font-family:var(--title);font-weight:400;font-style:normal;letter-spacing:.03em;text-transform:none}
-html[data-look="chart"] .top .word{font-size:1.55em;line-height:1.05;color:#F3EAD3;text-shadow:2px 2px 0 #000}
+:is(html[data-look="chart"],html:not([data-look])) .top .word{font-size:1.55em;line-height:1.05;color:#F3EAD3;text-shadow:2px 2px 0 #000}
 .ink-l{display:inline-block;transform:rotate(var(--t,0deg)) translateY(var(--y,0px))}
-html[data-look="chart"] .top .no{font-family:var(--hand);letter-spacing:.04em;color:#F0B070}
+:is(html[data-look="chart"],html:not([data-look])) .top .no{font-family:var(--hand);letter-spacing:.04em;color:#F0B070}
 
 /* 4. panels: hand-drawn cream borders (site.js marks them), slightly crooked, the strokes run past the corners */
-html[data-look="chart"] .ink-frame,html:not([data-look]) .ink-frame{border-color:transparent!important;border-image:url(ink/frame.svg) 12 stretch;border-image-outset:5px;border-radius:2px}
+:is(html[data-look="chart"],html:not([data-look])) .ink-frame,html:not([data-look]) .ink-frame{border-color:transparent!important;border-image:url(ink/frame.svg) 12 stretch;border-image-outset:5px;border-radius:2px}
 
 /* 5. captions: instructions and feedback in cream comic caption boxes */
-html[data-look="chart"] .lede,html[data-look="chart"] .ink-cap,html[data-look="chart"] #say:not(:empty),html[data-look="chart"] .toast,html[data-look="chart"] #toast{
-  background:#EFE6CF;color:#14110d;font-family:var(--hand);font-size:1.02em;letter-spacing:.02em;line-height:1.3;
-  border:2px solid transparent;border-image:url(ink/frame-ink.svg) 12 stretch;border-image-outset:4px;border-radius:0;box-shadow:3px 3px 0 #000;padding:5px 10px}
-html[data-look="chart"] .lede a,html[data-look="chart"] .ink-cap a{color:#7a2d1c}
+:is(html[data-look="chart"],html:not([data-look])) .lede,:is(html[data-look="chart"],html:not([data-look])) .ink-cap,:is(html[data-look="chart"],html:not([data-look])) #say:not(:empty),:is(html[data-look="chart"],html:not([data-look])) .toast,:is(html[data-look="chart"],html:not([data-look])) #toast{
+  background:#EFE6CF;color:#14110d;font-family:var(--hand);font-size:.98em;letter-spacing:.01em;line-height:1.18;
+  border:2px solid transparent;border-image:url(ink/frame-ink.svg) 12 stretch;border-image-outset:4px;border-radius:0;box-shadow:3px 3px 0 #000;padding:4px 9px}
+:is(html[data-look="chart"],html:not([data-look])) .lede a,:is(html[data-look="chart"],html:not([data-look])) .ink-cap a{color:#7a2d1c}
 
 /* 6. buttons: rust for the main action, a hard black offset shadow; the rest cream-lined */
-html[data-look="chart"] .act,html[data-look="chart"] button.go,html[data-look="chart"] .go,html[data-look="chart"] #dvGo{font-family:var(--title);font-weight:400;letter-spacing:.05em;text-transform:none;font-style:normal}
-html[data-look="chart"] .act:not(.plain):not(:disabled),html[data-look="chart"] #dvGo{background:#A8442E!important;color:#F6EEDC!important;border:2px solid #000!important;box-shadow:4px 4px 0 #000!important;border-radius:3px!important}
-html[data-look="chart"] .act:not(.plain):not(:disabled):active,html[data-look="chart"] #dvGo:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #000!important}
-html[data-look="chart"] .act:disabled{background:#3a3530!important;color:#b9ae94!important;border:2px dashed #6b6252!important;box-shadow:none!important}
-html[data-look="chart"] .act.plain{background:transparent!important;color:#EFE6CF!important;border:2px solid #EFE6CF!important;box-shadow:3px 3px 0 #000!important}
+:is(html[data-look="chart"],html:not([data-look])) .act,:is(html[data-look="chart"],html:not([data-look])) button.go,:is(html[data-look="chart"],html:not([data-look])) .go,:is(html[data-look="chart"],html:not([data-look])) #dvGo{font-family:var(--title);font-weight:400;letter-spacing:.05em;text-transform:none;font-style:normal}
+:is(html[data-look="chart"],html:not([data-look])) .act:not(.plain):not(:disabled),:is(html[data-look="chart"],html:not([data-look])) #dvGo{background:#A8442E!important;color:#F6EEDC!important;border:2px solid #000!important;box-shadow:4px 4px 0 #000!important;border-radius:3px!important}
+:is(html[data-look="chart"],html:not([data-look])) .act:not(.plain):not(:disabled):active,:is(html[data-look="chart"],html:not([data-look])) #dvGo:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #000!important}
+:is(html[data-look="chart"],html:not([data-look])) .act:disabled{background:#3a3530!important;color:#b9ae94!important;border:2px dashed #6b6252!important;box-shadow:none!important}
+:is(html[data-look="chart"],html:not([data-look])) .act.plain{background:transparent!important;color:#EFE6CF!important;border:2px solid #EFE6CF!important;box-shadow:3px 3px 0 #000!important}
 
 /* 7. play surfaces stay light: boards and map frames sit on aged chart paper */
-html[data-look="chart"] .board,html[data-look="chart"] #board{background:#CDB98E var(--paper-tex)}
-html[data-look="chart"] :focus-visible{outline:3px solid #F0B070;outline-offset:2px}
+:is(html[data-look="chart"],html:not([data-look])) .board,:is(html[data-look="chart"],html:not([data-look])) #board{background:#CDB98E var(--paper-tex)}
+:is(html[data-look="chart"],html:not([data-look])) :focus-visible{outline:3px solid #F0B070;outline-offset:2px}
 
 /* the About page and other plain pages */
 html:not([data-look]) a{color:#F0B070}
 html:not([data-look]) main,html:not([data-look]) .page{color:var(--ink)}
 
-html[data-look="chart"] .board .chart .shoal{fill:#7E9C93;opacity:.6}
-html[data-look="chart"] .board .chart .depth{stroke:#4f6a62}
-html[data-look="chart"] [data-ink-copy]{pointer-events:none}
+:is(html[data-look="chart"],html:not([data-look])) .board .chart .shoal{fill:#7E9C93;opacity:.6}
+:is(html[data-look="chart"],html:not([data-look])) .board .chart .depth{stroke:#4f6a62}
+:is(html[data-look="chart"],html:not([data-look])) [data-ink-copy]{pointer-events:none}
 
 /* the game's comic panel in its header and on its home card */
-html[data-look="chart"] .top .mark .ink-art{width:51px;height:36px;flex:none;margin-left:8px;transform:rotate(-1.5deg);box-shadow:3px 3px 0 #000;align-self:center}
-html[data-look="chart"] svg.mx-emb{display:none}
-html[data-look="chart"] .ic.ink-ic{width:60px;height:42px;flex:none;font-size:0;line-height:0}
-html[data-look="chart"] .ic.ink-ic img{width:60px;height:42px;display:block;transform:rotate(-1deg);box-shadow:2px 2px 0 #000}
-html[data-look="chart"] .ink-tbc{font-family:var(--title);font-size:1.5em;letter-spacing:.04em;color:#F0B070;text-align:right;margin:22px 4px 8px;transform:rotate(-1deg);text-shadow:2px 2px 0 #000}
-@media (max-width:359px){html[data-look="chart"] .top .mark .ink-art{display:none}}
+:is(html[data-look="chart"],html:not([data-look])) .top .mark .ink-art{width:51px;height:36px;flex:none;margin-left:8px;transform:rotate(-1.5deg);box-shadow:3px 3px 0 #000;align-self:center}
+:is(html[data-look="chart"],html:not([data-look])) svg.mx-emb{display:none}
+:is(html[data-look="chart"],html:not([data-look])) .ic.ink-ic{width:60px;height:42px;flex:none;font-size:0;line-height:0}
+:is(html[data-look="chart"],html:not([data-look])) .ic.ink-ic img{width:60px;height:42px;display:block;transform:rotate(-1deg);box-shadow:2px 2px 0 #000}
+:is(html[data-look="chart"],html:not([data-look])) .ink-tbc{font-family:var(--title);font-size:1.5em;letter-spacing:.04em;color:#F0B070;text-align:right;margin:22px 4px 8px;transform:rotate(-1deg);text-shadow:2px 2px 0 #000}
+@media (max-width:359px){:is(html[data-look="chart"],html:not([data-look])) .top .mark .ink-art{display:none}}
+
+/* map labels keep the compact face their placement was measured with, so neighbours' names keep clear */
+:is(html[data-look="chart"],html:not([data-look])) #map text,:is(html[data-look="chart"],html:not([data-look])) .map text{font-family:"Overpass","Helvetica Neue",Arial,sans-serif!important}
