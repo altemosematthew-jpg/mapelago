@@ -167,6 +167,34 @@ async function page(b, url, opts = {}) {
       check(/class="act plain" id="hintBtn"/.test(fs.readFileSync(path.join(__dirname, "../crossings.html"), "utf8")), "crossings: the hint is a secondary button, not the main action");
     }
 
+    // 1h. scorecard 3 fixes
+    {
+      const pages = ["fathoms.html", "stamps.html", "ballast.html", "crossings.html", "daily.html", "bigger.html", "history.html", "dead-reckoning.html", "index.html"];
+      check(pages.every((f) => !/the mystery city game"/.test(fs.readFileSync(path.join(__dirname, "..", f), "utf8"))), "logo: it says Mapelago home everywhere, not 'the mystery city game'");
+      const hd = fs.readFileSync(path.join(__dirname, "../history-data.js"), "utf8");
+      check(/Türkiye/.test(hd) && /Curaçao/.test(hd) && /Brașov/.test(hd) && !/Turkiye|Curacao|Brasov/.test(hd) && /called until 1960, when its old name came back/.test(hd), "logbook: accents kept (Türkiye, Curaçao, Brașov) and the Brașov question has one answer");
+      check(/"Logbook streak: "/.test(fs.readFileSync(path.join(__dirname, "../history.js"), "utf8")) && /"Crossings streak: "/.test(fs.readFileSync(path.join(__dirname, "../crossings.html"), "utf8")), "streaks: a game's own streak is named, so it isn't mistaken for the site streak");
+      // Stamps: a right answer is green, not the red of a miss
+      { const { ctx, p } = await page(b, U + "stamps.html", { wait: 600 });
+        const bg = await p.evaluate(() => { const o = document.createElement("button"); o.className = "opt right"; document.body.appendChild(o); return getComputedStyle(o).backgroundColor; });
+        check(bg === "rgb(125, 154, 90)", "stamps: a right answer shows in green", bg); await ctx.close(); }
+      // Mystery country: Quick mode has no board, so no board tip; the home page marks each mode
+      { const { ctx, p } = await page(b, U + "country.html", { storage: { "dailycity:country:v1": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" }, wait: 900 });
+        await p.click('#mxMode [data-m="quick"]').catch(() => {}); await p.waitForTimeout(300);
+        check(!(await p.isVisible("#mxTip")), "mystery country: Quick mode doesn't tell you to swipe the board"); await ctx.close(); }
+      { const T0 = 14, st = { "dailycity:v2": JSON.stringify({ results: { [T0]: { won: true, score: 700 } }, games: {} }) };
+        const { ctx, p } = await page(b, U, { storage: st, clock: new Date("2026-11-27T12:00:00"), wait: 900 });
+        const ml = await p.evaluate(() => (document.querySelector('a[data-game="city.html"] .mx-modes') || {}).textContent);
+        check(ml === "City ✓ · Country ○", "home: Mystery's card marks City and Country separately", ml); await ctx.close(); }
+      // Daily Voyage: the pin map zooms, and a miss says which way and where
+      { const { ctx, p } = await page(b, U + "daily.html#day-20", { storage: { "dailycity:dailyvoyage:v1": "{}" }, wait: 900 });
+        await p.click("#zin"); const z = await p.evaluate(() => document.querySelector("#pinmap").mxV.lon1 - document.querySelector("#pinmap").mxV.lon0);
+        await p.click("#zout"); const bx = await p.locator("#pinmap").boundingBox(); await p.mouse.click(bx.x + 10, bx.y + bx.height - 10); await p.click("#lock"); await p.waitForTimeout(300);
+        const say = await p.evaluate(() => ({ t: document.querySelector("#say").textContent, a: !!document.querySelector('#say a[href*="wikipedia.org"]') }));
+        check(z === 180 && /is to the (north|south|east|west|northeast|northwest|southeast|southwest) of your pin\. It's in /.test(say.t) && say.a, "daily voyage: the pin map zooms; a miss gives the direction, where it is and a link to read about it", JSON.stringify([z, say]));
+        await ctx.close(); }
+    }
+
     // 2. the daily schedule never changes by accident
     const now = {};
     const ctx = await b.newContext(PHONE); const p = await ctx.newPage();

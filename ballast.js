@@ -120,6 +120,7 @@
     R("t5", "Tutorial", "5 of 5: Swell", ["CO", "PE", "BO", "VE"], { tip: "The swell rocks the deck, so keep the stack low and in the middle.", name: "pick", swell: 3, lineKm: 1100, endAtLine: true, tut: 5 })
   ];
   var RUN = null; // { mode: "daily" | "practice" | "tut", seed, lvl, lives, cleared, named, lost, marks: [], attempt }
+  var pendT = 0; // the next level of a run, waiting to start
   function newRun(mode, seed) { return { mode: mode, seed: seed, lvl: 1, lives: 3, cleared: 0, named: 0, lost: 0, marks: [], attempt: 0 }; }
   function runPoints(r) { return r.cleared * 100 + r.named * 10; }
   function cargoPreview(seed) { var l = dailyLevel(seed, 1); return "Today's cargo starts in " + (l.region === "World" ? "every corner of the world" : l.region === "Americas" ? "the Americas" : l.region) + "."; }
@@ -714,12 +715,12 @@
         var nl = $("#nextLvl"); nl.hidden = false; nl.textContent = "Play today's Daily Ballast"; nl.onclick = function () { nl.onclick = nextVoyage; startDaily(); };
         showDone(); return;
       }
-      setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
+      pendT = setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
     }
     if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
     else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast((S.cause === "overboard" ? "Too many overboard. " : "Below the line. ") + r.lives + (r.lives === 1 ? " life" : " lives") + " left: the same cargo again for level " + r.lvl + "."); }
     if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt, pic: r.pic }; store(); }
-    if (r.lives > 0) { setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
+    if (r.lives > 0) { pendT = setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
     endRun();
   }
   function endRun() {
@@ -803,7 +804,7 @@
   function startPractice() { RUN = newRun("practice", Math.floor(Math.random() * 1e9)); start(genLevel(RUN.seed, 1, 0)); }
   function startTutorial() { RUN = newRun("tut", 0); start(TUTORIAL[0]); }
   function home() {
-    stop(); RUN = null; clearToast(); $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
+    stop(); clearTimeout(pendT); RUN = null; clearToast(); $("#lvlTitle").textContent = ""; $("#play").hidden = true; $("#done").hidden = true; $("#chart").hidden = false; renderChart();
     var r = save.results[dayNo], d = $("#dailyBtn");
     d.disabled = !!r; d.textContent = r ? "Daily Ballast done: " + r.lvl + (r.lvl === 1 ? " level" : " levels") + " cleared" : save.run && save.run.day === dayNo ? "Carry on today's Daily Ballast (level " + save.run.lvl + ")" : "Play today's Daily Ballast";
     $("#dailyNote").hidden = false;
@@ -910,7 +911,7 @@
     if ($("#flagBtn")) { lookBtns(); $("#flagBtn").onclick = function () { save.look.flags = !save.look.flags; store(); lookBtns(); }; $("#stowBtn").onclick = function () { save.look.stow = !save.look.stow; store(); lookBtns(); }; }
     $("#practiceBtn").onclick = startPractice; if ($("#captainBtn")) $("#captainBtn").onclick = startCaptain;
     $("#tutBtn").onclick = startTutorial;
-    $("#skipTut").onclick = function () { save.tut = 1; store(); RUN = null; startDaily(); };
+    $("#skipTut").onclick = function () { clearTimeout(pendT); save.tut = 1; store(); RUN = null; $("#lvlTitle").textContent = ""; startDaily(); }; // nothing of the tutorial is left waiting
     $("#homeShareBtn").onclick = async function () { var t = $("#homeShareText").textContent, b = this; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy result"; }, 1600); } catch (e) { window.prompt("Copy your result:", t); } };
     // a new day while the page is open: offer it, never interrupt a run
     setInterval(function () { if (today() !== dayNo && !dm) { $("#fresh").hidden = false; } else if (!$("#chart").hidden && save.results[dayNo]) $("#dailyNote").textContent = "Next climb in " + untilMidnight() + ". " + statsLine(); }, 30000);
