@@ -1101,7 +1101,7 @@ async function page(b, url, opts = {}) {
       check(/^Mapelago release \d+\.\d+\.\d+$/.test(await p.textContent(".mx-ver")), "the footer names the release");
       await ctx.close();
       // with every other game done and this one not, it doesn't say everything is done
-      const all = {}; for (const k of ["dailycity:v2", "dailycity:country:v1", "dailycity:bigger:v1", "dailycity:bigcountry:v1", "dailycity:voyage:v1", "dailycity:fathoms:v1", "dailycity:stamps:v1", "dailycity:history:v1", "dailycity:reckoning:v1", "dailycity:ballast:v1"]) all[k] = done();
+      const all = {}; for (const k of ["dailycity:v2", "dailycity:country:v1", "dailycity:bigger:v1", "dailycity:bigcountry:v1", "dailycity:voyage:v1", "dailycity:fathoms:v1", "dailycity:stamps:v1", "dailycity:history:v1", "dailycity:reckoning:v1", "dailycity:ballast:v1"]) all[k] = done(); all["dailycity:bigger:v1"] = JSON.stringify({ results: { [T]: { score: 5, bq: 1 } }, games: {} }); // played on Bigger? itself
       const q = await page(b, U + "crossings.html", { storage: all, wait: 600 });
       const line = await q.p.evaluate(() => [...document.querySelectorAll(".mx-next")].map((e) => e.textContent).join(" "));
       check(!/Every game done/.test(line) && /last game left/.test(line), "today's games: not 'every game done' while this one is unplayed", line);
