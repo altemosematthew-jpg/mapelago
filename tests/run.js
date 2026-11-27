@@ -248,9 +248,9 @@ async function page(b, url, opts = {}) {
       for (const [f, key, cur] of [["", "dailycity:v2", "Mystery city"], ["country.html", "dailycity:country:v1", "Mystery country"]]) {
         const { ctx, p } = await page(b, U + f + "#day-12", { storage: { [key]: '{"games":{},"results":{},"seenHelp":true}' }, ctx: { viewport: { width: 375, height: 667 } } });
         const r = await p.evaluate(() => { const n = document.querySelector(".mx-find"); return { links: [...n.querySelectorAll("a")].map((a) => [a.getAttribute("href"), a.lastChild.textContent, a.getAttribute("aria-current")]), first: document.querySelector("header.top").nextElementSibling === n, bottom: n.getBoundingClientRect().bottom, cards: [...document.querySelectorAll(".mx-cards li b")].slice(0, 2).map((x) => x.textContent) }; });
-        check(JSON.stringify(r.links.map((l) => [l[0], l[1]])) === JSON.stringify([["./", "Mystery city"], ["country.html", "Mystery country"]]) && r.links.filter((l) => l[2] === "page").map((l) => l[1]).join() === cur && r.first && r.bottom < 160,
-          `find it: Mystery city and Mystery country at the top of /${f}`, JSON.stringify(r));
-        check(r.cards.join() === "Mystery city,Mystery country", `find it: the two mystery games lead the game list on /${f}`, r.cards.join());
+        check(JSON.stringify(r.links.map((l) => [l[0], l[1]])) === JSON.stringify([["city.html", "City"], ["country.html", "Country"]]) && r.links.filter((l) => l[2] === "page").map((l) => l[1]).join() === cur && r.first && r.bottom < 160,
+          `find it: Mystery's City / Country switch at the top of /${f}`, JSON.stringify(r));
+        check(r.cards[0] === "Mystery", `find it: Mystery leads the game list on /${f}`, r.cards.join());
         if (!f) {
           await p.focus(".mx-find a[href='country.html']"); await p.keyboard.press("Enter"); await p.waitForURL(/country\.html/);
           check(true, "find it: the country tab works by keyboard");
@@ -262,7 +262,7 @@ async function page(b, url, opts = {}) {
         await p.waitForFunction(() => window.__WORLD);
         await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
         const a = await p.evaluate(() => { const x = document.querySelector("#endBody .also"); return x && [x.getAttribute("href"), x.textContent]; });
-        check(a && a[0] === "country.html" && /mystery country/i.test(a[1]), "find it: Mystery city's end card offers Mystery country next", JSON.stringify(a));
+        check(a && !/^(city|country)\.html$/.test(a[0]) && /^Play .+ next$/.test(a[1]), "find it: Mystery's end card offers the next game", JSON.stringify(a));
         await ctx.close();
       }
     }
@@ -840,7 +840,7 @@ async function page(b, url, opts = {}) {
       await ctx.close();
       const c = await page(b, U + "?b=1#b-mc-" + T + "-0-640", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
       await c.p.waitForFunction(() => window.__WORLD);
-      check(/A friend scored 640 points on today's Mystery city/.test(await c.p.textContent(".mx-beat")), "beat link: the banner names the score and the game");
+      check(/A friend scored 640 points on today's Mystery/.test(await c.p.textContent(".mx-beat")), "beat link: the banner names the score and the game");
       const city = await c.p.evaluate(() => __lf.P.city);
       check(!(await c.p.textContent(".mx-beat")).includes(city), "beat link: the banner never gives the answer");
       await c.p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await c.p.waitForTimeout(3000);
@@ -928,7 +928,7 @@ async function page(b, url, opts = {}) {
       await p.goto(U + "fathoms?q=3#c-" + T + "-4000"); await p.waitForTimeout(700);
       check(/A friend scored 4,000 fathoms/.test(await p.evaluate(() => [...document.querySelectorAll(".mx-risk")].map((e) => e.textContent).join(" "))), "extensionless address: the old challenge banner shows on /fathoms");
       await p.goto(U + "index?q=4#b-mc-" + T + "-0-850"); await p.waitForTimeout(900);
-      check(/A friend scored 850 points on today's Mystery city/.test((await p.textContent(".mx-beat").catch(() => "")) || ""), "extensionless address: /index counts as the mystery city");
+      check(/A friend scored 850 points on today's Mystery/.test((await p.textContent(".mx-beat").catch(() => "")) || ""), "extensionless address: /index counts as the mystery city");
       await p.goto(U + "games/"); await p.waitForTimeout(500);
       check(!(await p.evaluate(() => !!document.querySelector(".mx-card.here"))), "a folder page such as /games/ is not mistaken for a game");
       await ctx.close();
