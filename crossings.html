@@ -441,7 +441,7 @@ a.act{text-decoration:none}
 
 /* scorecard 4: on a phone the box gets its own line and Hint sits beside Cross, clear of the corner; on a desktop the
    map key is readable */
-@media (max-width:600px){#play{display:block!important}#play #cin{display:block;width:100%;margin:0 0 8px}#play .cbar{display:flex;gap:10px;align-items:stretch}#play .cbar #cgo{flex:1}#play .cbar #hintBtn{flex:none;padding:0 16px}}
+@media (max-width:600px){#play:not([hidden]){display:block!important}#play #cin{display:block;width:100%;margin:0 0 8px}#play .cbar{display:flex;gap:10px;align-items:stretch}#play .cbar #cgo{flex:1}#play .cbar #hintBtn{flex:none;padding:0 16px}}
 @media (min-width:900px){.keyline{font-size:14.5px;gap:6px 16px}.keyline i{width:15px;height:15px}}
 </style>
 <link rel="stylesheet" href="ink.css?v=0.15.68">

@@ -1227,7 +1227,7 @@
     var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
     setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
     // desktop (scorecard 4): the one-column games (a 440 px column) use the screen; ink.css widens them from 900 px
-    (function () { var a = document.querySelector(".app"); if (a && getComputedStyle(a).maxWidth === "440px") { a.classList.add("mx-desk"); window.dispatchEvent(new Event("resize")); } })();
+    (function () { var a = document.querySelector(".app"); if (a && innerWidth >= 900 && getComputedStyle(a).maxWidth === "440px") { a.classList.add("mx-desk"); window.dispatchEvent(new Event("resize")); } /* phones: nothing to do, no redraw */ })();
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');
