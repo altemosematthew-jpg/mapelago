@@ -85,6 +85,8 @@ async function page(b, url, opts = {}) {
       const big = r.info.find((x) => x[0] === "bigger");
       check(r.save[17] && r.save[17].picks.length === 10 && r.save[12] && /^Mapelago Bigger\? No\. 17 \u{1F422} \d+\/10\n[\u{1F3D9}\u{1F5FA}️⬜]+\nCity or country, which is bigger\? mapelago\.com\/bigger\.html#/u.test(r.share), "bigger?: the result is saved beside Bigger city?'s history, with its share line", r.share);
       check(big && big[1] === 6 && big[2] === 6 && !r.info.some((x) => x[0] === "bigcountry"), "bigger?: one streak and stats from both old games (Nos. 12 to 17 run on)", JSON.stringify(r.info));
+      const src = await p.evaluate(() => { const bad = []; for (let d = 17; d <= 60; d++) __big.deal(d).forEach((pr) => { const [x, y] = pr; if (x.t === "country" && (MXAREA[x.cc] !== x.v || MXAREA[y.cc] !== y.v || MXAclose({ area: x.v, szr: x.szr }, { area: y.v, szr: y.szr }))) bad.push(d + ":" + x.name + "/" + y.name); if (x.t === "city" && x.sub === y.sub) bad.push(d + ":" + x.name + "/" + y.name); }); return bad; });
+      check(!src.length, "bigger?: Nos. 17 to 60 use the UN areas, never two cities of one country, never a pair too close to call", src.slice(0, 5).join(" "));
       check(!p.errs.length, "bigger?: no errors", p.errs.join("; "));
       await ctx.close();
       const pre = await page(b, U + "bigger.html", { clock: new Date("2026-11-28T12:00:00") });
@@ -721,13 +723,13 @@ async function page(b, url, opts = {}) {
         // Bigger country?: from No. 14 every area is the Factbook's total area, Morocco is out, the last two pairs are within 20%
         const seen = { wrong: [], wide: [], morocco: 0, n: 0 };
         const q = await page(b, U + "bigger-country.html#day-14", { storage: fresh });
-        for (let d = 14; d <= 44; d++) {
+        for (let d = 14; d <= 16; d++) { // from No. 17 the pairs are Bigger?'s (tested with it)
           await q.p.goto(U + "bigger-country.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
           const x = await q.p.evaluate((d) => { const P = __big.S().pairs, A = MxBC.areas; return { bad: P.flat().filter((c) => (d >= 17 ? MXA.byCid[c.cid].area : A[c.cid]) !== c.pop).map((c) => c.name).concat(d >= 17 && P.some((t) => MXAclose(t[0], t[1])) ? ["a pair too close to call"] : []), morocco: P.flat().some((c) => c.name === "Morocco"), last: P.slice(8).map((t) => Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)) }; }, d);
           seen.wrong.push(...x.bad); if (x.morocco) seen.morocco++; if (d < 17 ? x.last.some((v) => v > 1.2 || v < 1.04) : (x.last[1] > 1.27 || x.last[1] < 1.1 || x.last[0] > 1.37 || x.last[0] < 1.1)) seen.wide.push(d + ":" + x.last.map((v) => v.toFixed(2))); seen.n++;
         }
         check(!seen.wrong.length && !seen.morocco, "bigcountry: every area is sourced (CIA World Factbook for Nos. 14-16, the UN Demographic Yearbook from No. 17), Morocco left out, no pair too close to call", JSON.stringify(seen.wrong.slice(0, 5)));
-        check(!seen.wide.length && seen.n === 31, "bigcountry: the last two pairs are close (within 20% to No. 16; from No. 17 the ninth within 37% and the last within 10-27%, by weekday)", seen.wide.join(" "));
+        check(!seen.wide.length && seen.n === 3, "bigcountry: the last two pairs are close (within 20%, Nos. 14 to 16)", seen.wide.join(" "));
         await q.p.goto(U + "bigger-country.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await q.p.waitForFunction(() => window.__big);
         check((await q.p.evaluate(() => __big.S().pairs[0][0].pop)) === 2322794, "bigcountry: No. 12 keeps the figures it was played with");
         check(!q.p.errs.length, "bigcountry official areas: no errors", q.p.errs.join("; "));
@@ -775,12 +777,12 @@ async function page(b, url, opts = {}) {
         check(by("Kathmandu")[2] === 845767 && by("Tegucigalpa")[2] === 1199136 && by("Beijing")[3] === "2020" && by("Buenos Aires")[3] === "city proper, 2022" && by("Tokyo")[3] === "23 wards, 2025",
           "bigger: checked figures with their year, and the unit where it matters", JSON.stringify([by("Kathmandu"), by("Buenos Aires"), by("Tokyo")]));
         const bad = [];
-        for (let d = 14; d <= 44; d++) {
+        for (let d = 14; d <= 16; d++) {
           await p.goto(U + "bigger-city.html?d=" + d + "#day-" + d, { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
           const x = await p.evaluate(() => __big.S().pairs.map((t) => [t[0].name, t[1].name, Math.max(t[0].pop, t[1].pop) / Math.min(t[0].pop, t[1].pop)]));
           x.forEach((t) => { if (t[2] < 1.1 || !by(t[0]) || !by(t[1])) bad.push(d + ":" + t.join("/")); });
         }
-        check(!bad.length, "bigger: Nos. 14 to 44 deal only checked cities, never two within 10%", bad.slice(0, 5).join(" "));
+        check(!bad.length, "bigger: Nos. 14 to 16 deal only checked cities, never two within 10%", bad.slice(0, 5).join(" "));
         await p.goto(U + "bigger-city.html?d=12#day-12", { waitUntil: "domcontentloaded" }); await p.waitForFunction(() => window.__big);
         check((await p.evaluate(() => __big.S().pairs[9].map((c) => c.name + " " + c.pop).join(" | "))) === "Kathmandu 1442271 | Tegucigalpa 850848", "bigger: No. 12 stays as played (Kathmandu v Tegucigalpa)");
         // from No. 17: one source (UN WUP 2025, urban areas), only the cities it lists, two surprising ones held back
@@ -1024,7 +1026,7 @@ async function page(b, url, opts = {}) {
       await p.evaluate(() => { const X = __cross, P = X.P(); let x = P.from; while (X.dist[x][P.to] > 1) { x = X.C.map((_, i) => i).find((n) => X.dist[x][n] === 1 && X.dist[n][P.to] === X.dist[x][P.to] - 1); X.guess(x); } });
       await p.waitForTimeout(400);
       const btn = await p.evaluate(() => { const a = document.querySelector("#done .row2 a.act.plain"); return [a.getAttribute("href"), a.textContent]; });
-      check(btn[0] === "bigger-country.html" && btn[1] === "Play Bigger country? next", "next game: skips the games already played today", JSON.stringify(btn));
+      check(btn[0] === "voyage.html" && btn[1] === "Play Voyage next", "next game: skips the games already played today", JSON.stringify(btn));
       check(/^Mapelago release \d+\.\d+\.\d+$/.test(await p.textContent(".mx-ver")), "the footer names the release");
       await ctx.close();
       // with every other game done and this one not, it doesn't say everything is done
