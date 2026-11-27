@@ -801,6 +801,9 @@ window.VXPACK={"Afghanistan":{"c":"+93","w":".af","p":"Noshak","h":7492,"r":1},"
       items.forEach(function (x) { if (x.kind === "size") x.city = sizable[yn(sizable.length, 1931, t - MXUN.from, 1)[0]]; });
     }
     items.sort(function (x, y) { return x.ease - y.ease; });
+    // from No. 16 the first island never needs the world map (a city at the mark, an outline), so a slow phone can
+    // answer at once while the map loads; the same questions, the first map question simply moves to island 2
+    if (t >= 16 && (items[0].kind === "mark" || items[0].kind === "shape")) { var fi = items.findIndex(function (x) { return x.kind !== "mark" && x.kind !== "shape"; }); if (fi > 0) items.unshift(items.splice(fi, 1)[0]); }
     return items.map(function (x, S) {
       var q = make(x.kind, S, x.c, x.city, ctx);
       if (!q && x.c) COUNTRY.forEach(function (k) { if (!q && k !== x.kind && ok(k, x.c)) q = make(k, S, x.c, null, ctx); });
