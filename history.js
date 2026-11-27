@@ -289,6 +289,8 @@
     } else if (q.k === "t" || q.k === "g") {
       var sl = $("#slider"); if (sl) { sl.disabled = true; sl.value = a.g[a.g.length - 1]; $("#yr").textContent = sl.value; }
       body.querySelectorAll(".nudge button").forEach(function (b) { b.disabled = true; });
+      // answered: the nudges and the rule have done their job, so Next stays on a phone's screen
+      body.querySelectorAll(".nudge, .hint").forEach(function (e) { e.style.display = "none"; });
       pins(i);
       var truth = q.k === "g" ? "They were " + yrs(q.ans) + " apart (" + yearOf(q.f[0]) + " and " + yearOf(q.f[1]) + ")." : "It was " + q.ans + ".";
       s.className = "qsay heat";

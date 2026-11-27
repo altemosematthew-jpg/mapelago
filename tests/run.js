@@ -478,7 +478,7 @@ async function page(b, url, opts = {}) {
 
     // 12. Quick mode for the mystery city: no tiles, a clue per missed pin, five pins, scored by the pin that finds it
     {
-      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" }, clock: new Date("2026-11-25T12:00:00") }); // on No. 12's own day, so it counts for the streak
       await p.waitForFunction(() => window.__WORLD);
       check(await p.isVisible("#mxMode"), "quick mode: the mode choice shows before the first move");
       await p.click('#mxMode [data-m="quick"]');
