@@ -581,7 +581,7 @@ a.act{text-decoration:none}
   var NEW = 16;
   function obscurity(a, b) { var cur = a, s = 0, k = 0; while (dist[cur][b] > 1) { var best = -1; for (var i = 0; i < N; i++) if (dist[cur][i] === 1 && dist[i][b] === dist[cur][b] - 1 && (best < 0 || rank[i] < rank[best])) best = i; s += rank[best]; k++; cur = best; } return k ? s / k : 0; }
   var CLASSES2 = ["Sunday's long road", "Monday's short hop", "Tuesday's middle distance", "Wednesday's hard middle", "Thursday's long road", "Friday's far road", "Saturday's long haul"];
-  function weekday2(L, o) { return L === 3 ? 1 : L === 4 ? (o < 25 ? -1 : o < 50 ? 2 : 3) : L === 5 ? (o < 40 ? -1 : o < 80 ? 4 : 5) : L >= 6 && L <= 8 ? (o < 40 ? -1 : o < 80 ? 0 : 6) : -1; }
+  function weekday2(L, o) { return L === 3 ? 1 : L === 4 ? (o < 25 ? -1 : o < 50 ? 2 : 3) : L === 5 ? (o < 40 ? -1 : o < 70 ? 4 : 5) : L >= 6 && L <= 8 ? (o < 40 ? -1 : o < 70 ? 0 : 6) : -1; }
   var lists2 = null;
   function makeLists2() {
     lists2 = [[], [], [], [], [], [], []];
