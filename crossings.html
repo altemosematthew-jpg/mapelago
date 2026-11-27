@@ -444,6 +444,7 @@ a.act{text-decoration:none}
 @media (max-width:600px){#play:not([hidden]){display:block!important}#play #cin{display:block;width:100%;margin:0 0 8px}#play .cbar{display:flex;gap:10px;align-items:stretch}#play .cbar #cgo{flex:1}#play .cbar #hintBtn{flex:none;padding:0 16px}}
 @media (min-width:900px){.keyline{font-size:14.5px;gap:6px 16px}.keyline i{width:15px;height:15px}}
 </style>
+<link rel="preload" href="world-lite.js?v=0.15.68" as="script"><!-- the map is the first thing drawn: start it early -->
 <link rel="stylesheet" href="ink.css?v=0.15.68">
 </head>
 <body>
@@ -552,7 +553,8 @@ a.act{text-decoration:none}
     });
     return { adj: a, dist: d };
   }
-  var DAILY = graph(D.e), FULL_G = graph(D.e.concat(D.x || []));
+  var DAILY = graph(D.e), FULL = null; // the practice graph is built when practice starts (a faster first load)
+  function fullGraph() { return FULL || (FULL = graph(D.e.concat(D.x || []))); }
   var adj = DAILY.adj, dist = DAILY.dist;
   function useGraph(g) { adj = g.adj; dist = g.dist; }
   function extraNote(a, b) { var hit = (D.x || []).filter(function (e) { return (at[e[0]] === a && at[e[1]] === b) || (at[e[0]] === b && at[e[1]] === a); })[0]; return hit ? hit[2] : null; }
@@ -571,13 +573,15 @@ a.act{text-decoration:none}
     { name: "Saturday's long road", ok: function (L) { return L === 6; } }
   ];
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  var lists = CLASSES.map(function (k, w) {
+  // the lists before No. 16 are built only when one of those days is asked for
+  var listsMemo = null;
+  function getLists() { return listsMemo || (listsMemo = CLASSES.map(function (k, w) {
     var out = [];
     for (var a = 0; a < N; a++) for (var b = a + 1; b < N; b++) { var L = dist[a][b]; if (L > 0 && k.ok(L, a, b)) out.push([a, b]); }
     var r = rng(9001 + w * 7919);
     for (var i = out.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = out[i]; out[i] = out[j]; out[j] = t; }
     return out;
-  });
+  })); }
   function weekday(n) { return (6 + n - 1) % 7; } // No. 1 was Saturday 14 November 2026
   // From No. 16 (scorecard 3: the hard days were too easy) the week follows the site's arc, Monday gentlest and Saturday
   // hardest, and each weekday takes routes by length and by how little-known their countries are: the mean fame rank of the
@@ -599,12 +603,12 @@ a.act{text-decoration:none}
   function daily(n) {
     if (n >= NEW) { if (!lists2) makeLists2(); var w2 = weekday(n), l2 = lists2[w2], p2 = l2[Math.floor((n - NEW) / 7) % l2.length], f2 = rng(n * 31 + 7)() < 0.5;
       return { from: f2 ? p2[1] : p2[0], to: f2 ? p2[0] : p2[1], kind: CLASSES2[w2], hard: 1 }; }
-    var w = weekday(n), list = lists[w], k = Math.floor((n - 1) / 7), p = list[k % list.length];
+    var w = weekday(n), list = getLists()[w], k = Math.floor((n - 1) / 7), p = list[k % list.length];
     var flip = rng(n * 31 + 7)() < 0.5;
     return { from: flip ? p[1] : p[0], to: flip ? p[0] : p[1], kind: CLASSES[w].name };
   }
   function practicePair() {
-    var w = 1 + Math.floor(Math.random() * 5), list = lists[w], p = list[Math.floor(Math.random() * list.length)];
+    var w = 1 + Math.floor(Math.random() * 5), list = getLists()[w], p = list[Math.floor(Math.random() * list.length)];
     return Math.random() < 0.5 ? { from: p[0], to: p[1], kind: "Practice" } : { from: p[1], to: p[0], kind: "Practice" };
   }
 
@@ -983,7 +987,7 @@ a.act{text-decoration:none}
     };
     Array.prototype.forEach.call(document.querySelectorAll(".practiceBtn"), function (btn) {
       btn.onclick = function () {
-        practice = true; drawn = false; useGraph(FULL_G); $("#done").hidden = true; say("");
+        practice = true; drawn = false; useGraph(fullGraph()); $("#done").hidden = true; say("");
         start(practicePair(), null);
         $("#cin").focus(); window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
       };
@@ -997,7 +1001,7 @@ a.act{text-decoration:none}
     countdown(); setInterval(countdown, 1000);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (drawn) drawMap(); });
     if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
-      window.__cross = { P: function () { return P; }, G: function () { return G; }, daily: daily, name: nameOf, at: at, dist: dist, lists: lists, guess: guess, hint: hint, heat: heat, C: C };
+      window.__cross = { P: function () { return P; }, G: function () { return G; }, daily: daily, name: nameOf, at: at, dist: dist, lists: getLists(), guess: guess, hint: hint, heat: heat, C: C };
     }
   }
   init();
