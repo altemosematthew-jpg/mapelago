@@ -94,7 +94,7 @@ async function page(b, url, opts = {}) {
       await pre.ctx.close();
       const oldDay = await page(b, U + "bigger.html", { storage: { "dailycity:bigger:v1": JSON.stringify({ results: { 14: { score: 7, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } } }) }, clock: new Date("2026-11-27T12:00:00"), wait: 800 });
       const od = await oldDay.p.evaluate(() => ({ play: !document.querySelector("#play").hidden, done: !document.querySelector("#done").hidden, listed: MXS.info().find((x) => x[0] === "bigger" || x.game.id === "bigger").doneToday, streak: MXS.info().find((x) => x.game.id === "bigger").cur }));
-      check(od.play && !od.done && !od.listed && od.streak === 1, "bigger?: No. 14 is Bigger?; a round played on the old page today still counts for the streak but doesn't mark Bigger? done", JSON.stringify(od));
+      check(od.play && !od.done && od.listed && od.streak === 1, "bigger?: No. 14 is Bigger?; a round finished on the old page today counts for the streak and marks Bigger? done", JSON.stringify(od));
       await oldDay.ctx.close();
       const red = await page(b, U + "bigger-country.html", { clock: new Date("2026-11-30T12:00:00"), wait: 900 });
       check(/\/bigger\.html$/.test(red.p.url()) && (await red.p.isVisible("#pick0")), "bigger?: the old pages send you to Bigger?", red.p.url());
@@ -148,7 +148,7 @@ async function page(b, url, opts = {}) {
         check(!r.dialogs && r.top < 667 && r.words <= 20 && ms < 10000, `first visit: ${f} opens straight onto the game (no dialog, the first control on the first screen, a short instruction)`, JSON.stringify([r, ms]));
         await ctx.close();
       }
-      const T = { daily: "Mapelago Daily Voyage No. 20 \u{1F422} 78 of 100\n⚓\u{1F9ED}⚓\u{1F30A}\nPin · Bigger · Crossing · Voyage\nFour stops, one voyage. mapelago.com/daily.html",
+      const T = { daily: "Mapelago Daily Voyage No. 20 \u{1F422} 78 of 100\n⚓\u{1F9ED}⚓\u{1F30A}\nPin ⚓ · Bigger \u{1F9ED} · Crossing ⚓ · Voyage \u{1F30A}\nFour stops, one voyage. mapelago.com/daily.html",
         crossings: "Mapelago Crossings No. 20 \u{1F422} 850 points\n\u{1F9ED}\u{1F97E}\u{1F9ED}\nLatvia to Saudi Arabia · par 4 countries · 3 guesses\nCan you cross it? mapelago.com/crossings.html",
         reckoning: "Mapelago Dead Reckoning No. 20 \u{1F422} 742 of 1,000\n\u{1F3AF}\u{1F4CD}\u{1F9ED}⛵\u{1F3AF}\nFive pins on a blank map. How close can you get? mapelago.com/dead-reckoning.html",
         fathoms: "Mapelago Fathoms No. 20 \u{1F422} 5,420 fathoms\n\u{1F7E9}\u{1F7E8}\u{1F41F}\u{1F7E5}\u{1F419}\u{1F7E7}\u{1F7E8}\nHow deep can you go? mapelago.com/fathoms.html",
@@ -1422,7 +1422,7 @@ async function page(b, url, opts = {}) {
         await t.ctx.close(); return [legs, r, t.p.errs]; };
       const a = await play(), c = await play();
       check(a[0] === c[0] && JSON.parse(a[0]).length === 4, "daily voyage: the same four legs on every load", a[0].slice(0, 200));
-      check(a[1].done && a[1].saved && a[1].saved.score === a[1].total && a[1].total >= 0 && a[1].total <= 100 && /^Mapelago Daily Voyage No\. 23 \u{1F422} \d+ of 100\n[\u2693\u{1F9ED}\u{1F30A}]{4}\nPin · Bigger · Crossing · (Fathoms|Logbook|Voyage)\nFour stops, one voyage\. mapelago\.com\/daily\.html$/u.test(a[1].share) && !a[2].length, "daily voyage: four legs to one score out of 100, saved, and a spoiler-free share", JSON.stringify(a[1]) + a[2].join(";"));
+      check(a[1].done && a[1].saved && a[1].saved.score === a[1].total && a[1].total >= 0 && a[1].total <= 100 && /^Mapelago Daily Voyage No\. 23 \u{1F422} \d+ of 100\n[\u2693\u{1F9ED}\u{1F30A}]{4}\nPin [\u2693\u{1F9ED}\u{1F30A}] · Bigger [\u2693\u{1F9ED}\u{1F30A}] · Crossing [\u2693\u{1F9ED}\u{1F30A}] · (Fathoms|Logbook|Voyage) [\u2693\u{1F9ED}\u{1F30A}]\nFour stops, one voyage\. mapelago\.com\/daily\.html$/u.test(a[1].share) && !a[2].length, "daily voyage: four legs to one score out of 100, saved, and a spoiler-free share", JSON.stringify(a[1]) + a[2].join(";"));
     }
     // ---- R: the home page: Daily Voyage is the one big button; three featured games, then the other eight; old city links still work
     {

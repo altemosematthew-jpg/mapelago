@@ -490,7 +490,7 @@ a.act{text-decoration:none}
 #done .panel{display:flex;flex-direction:column}#done .panel>*{order:5}#done #doneTitle,#done .score{order:1}#done .row2{order:3}#done .next{order:4}
 }
 </style>
-<link rel="stylesheet" href="ink.css?v=0.15.67">
+<link rel="stylesheet" href="ink.css?v=0.15.68">
 </head>
 <body>
 <div class="app">
@@ -547,9 +547,9 @@ a.act{text-decoration:none}
   <footer class="about">
     <!-- copy:start -->
     <h1 class="about-h">How has the world map changed since 1800?</h1>
-    <p>Logbook is Mapelago&#x27;s daily history game. Each day brings eight questions about how the map has changed since 1800: which of two events came first, when something happened, what a country used to be called, who it became independent from, and where its capital moved. Some questions put a year on a timeline: slide to your guess and the game tells you how hot or cold you are, from a bullseye to freezing. Land within 5 years and it counts. The questions get harder through the round, and through the week, from easy on Monday to hardest on Sunday. Every fact comes from a source-checked list of independence dates, former names, capital moves and 303 dated changes to the map. Everyone gets the same eight questions, and a new logbook arrives at midnight, your time.</p>
+    <p>Logbook is Mapelago&#x27;s daily history game. Each day brings eight questions about how the map has changed since 1800, of eight kinds: which of two events came first (or later), putting events in order, when something happened, how many years apart two events were, what a country used to be called, what a city used to be called, who a country became independent from, and where a capital moved. The year questions use a timeline: slide to your guess and the game tells you how hot or cold you are, from a bullseye to freezing. Landing close enough counts: within 5 years on Monday, 4 on Tuesday and Wednesday, 3 on Thursday, Friday and Sunday, and 2 on Saturday (from No. 16; 5 years every day before that). The questions get harder through the round, and through the week, from easiest on Monday to hardest on Saturday. Every fact comes from a source-checked list of independence dates, former names, capital moves and 303 dated changes to the map. Everyone gets the same eight questions, and a new logbook arrives at midnight, your time.</p>
     <h2>How to play</h2>
-    <ol class="howto"><li>Answer eight questions. They get harder as you go.</li><li>For &quot;Which came first?&quot;, tap the event that happened first.</li><li>For &quot;When was it?&quot;, slide to the year and lock it in. You get two tries, with a hot or cold clue after the first. Within 5 years counts.</li><li>Each question is worth up to 100 points, 800 a day. The exact year scores most.</li><li>Share your row of results. It never gives the answers away.</li></ol>
+    <ol class="howto"><li>Answer eight questions. They get harder as you go.</li><li>&quot;Which came first?&quot; (or later): tap the event that happened first. &quot;Put in order&quot;: tap the events from earliest to latest.</li><li>&quot;When was it?&quot; and &quot;How many years apart?&quot;: slide to the year (or the number of years) and lock it in. You get two tries, with a hot or cold clue after the first. Close enough counts: 5 years on Monday down to 2 on Saturday.</li><li>&quot;What was it called?&quot;, &quot;What was this city called?&quot;, &quot;Independent from whom?&quot; and &quot;Capital on the move&quot;: pick one of the answers.</li><li>Each question is worth up to 100 points, 800 a day. The exact year scores most.</li><li>Share your row of results. It never gives the answers away.</li></ol>
     <!-- copy:end -->
     <nav aria-label="Daily games"><a href="daily.html">Daily Voyage</a> <a href="city.html">Mystery</a>
       <a href="bigger.html">Bigger?</a>
@@ -571,10 +571,11 @@ a.act{text-decoration:none}
 <div class="modal" id="statsSheet" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="statsT"><button class="tool x" id="closeStats" type="button" aria-label="Close">×</button><h2 id="statsT">Your Logbook stats</h2><div id="statsBody"></div></div></div>
 <div class="modal" id="pastSheet" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pastT"><button class="tool x" id="closePast" type="button" aria-label="Close">×</button><h2 id="pastT">Past logbooks</h2><p class="note">Play any earlier day. These rounds are saved on their own and don't count toward your streak or stats.</p><ol class="pastlist" id="pastList"></ol></div></div>
 <div id="toast" role="status"></div>
-<script src="copy.js?v=0.15.67"></script>
-<script src="site.js?v=0.15.67"></script>
-<script src="history-data.js?v=0.15.67"></script>
-<script src="history.js?v=0.15.67"></script>
-<script src="analytics.js?v=0.15.67" defer></script>
+<script src="copy.js?v=0.15.68"></script>
+<script src="site.js?v=0.15.68"></script>
+<script src="history-data.js?v=0.15.68"></script>
+<script src="history-places.js?v=0.15.68"></script>
+<script src="history.js?v=0.15.68"></script>
+<script src="analytics.js?v=0.15.68" defer></script>
 </body>
 </html>

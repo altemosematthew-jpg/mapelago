@@ -18,6 +18,7 @@
   var close = function (a, b) { return a.t === "country" && window.MXAclose ? MXAclose({ area: a.v, szr: a.szr }, { area: b.v, szr: b.szr }) : false; };
 
   // the day's pairs, dealt in order from No. 14 so that no pair ever returns
+  var WITHDRAWN = { "Macau|Macao": 1 }; // see unit() below
   var used = { city: {}, country: {} }, dealt = {}, last = START - 1, HARDER = 16;
   function sorted(list) { return list.map(function (_, i) { return i; }).sort(function (a, b) { return list[a].v - list[b].v; }); }
   var BY = { city: sorted(CITY), country: sorted(LAND) }, POOL = { city: CITY, country: LAND };
@@ -38,6 +39,7 @@
             var b = by[j]; if (b === a || today[k][b]) continue;
             var q = Math.max(P[a].v, P[b].v) / Math.min(P[a].v, P[b].v), pk = Math.min(a, b) + "-" + Math.max(a, b);
             if (q < lo || q > hi || used[k][pk] || close(P[a], P[b])) continue;
+            if (n >= 16 && (WITHDRAWN[P[a].key] || WITHDRAWN[P[b].key])) continue;
             if (k === "city" && P[a].sub === P[b].sub) continue; // two cities of one country tell you nothing about the world
             got = rnd() < 0.5 ? [a, b] : [b, a];
           }
@@ -72,7 +74,11 @@
 
   function the(x) { return /^(United|Czech|Dominican|Central African|Philippines|Netherlands|Gambia|Bahamas|Maldives|Comoros|Marshall|Solomon)/.test(x) ? "the " + x : x; }
   function times(a, b) { var q = Math.max(a, b) / Math.min(a, b); return q >= 1.995 ? q.toFixed(1).replace(/\.0$/, "") + " times" : Math.round((q - 1) * 100) + "%"; }
-  function unit(x) { return x.t === "city" ? fmt(x.v) + " people" : fmt(x.v) + " km²"; }
+  // Macau (scorecard 4): the UN urban centre matched to it is the wrong one, so its figure is withdrawn. It was dealt only
+  // on No. 14, whose answer stands; from No. 16 it is never dealt.
+  function unit(x) { return WITHDRAWN[x.key] ? "figure withdrawn" : x.t === "city" ? fmt(x.v) + " people" : fmt(x.v) + " km²"; }
+  // a city whose name already says its country (Singapore, Djibouti, Mexico City) is shown without the country again
+  function subOf(x) { return x.t === "city" && (x.name.indexOf(x.sub) === 0 || WITHDRAWN[x.key]) ? "" : x.sub; }
 
   function dots() {
     $("#dots").innerHTML = pairs.map(function (p, i) {
@@ -93,8 +99,8 @@
     [0, 1].forEach(function (j) {
       var b = $("#pick" + j), x = p[j];
       b.className = "pick k-" + k; b.disabled = false;
-      b.innerHTML = '<span class="nm">' + x.name + '</span><span class="sb">' + x.sub + '</span><span class="fig" aria-hidden="true"></span>' + (k === "country" ? '<canvas class="bq-shape" aria-hidden="true"></canvas>' : '<span class="bq-pin" aria-hidden="true"></span>');
-      b.setAttribute("aria-label", x.name + ", " + x.sub);
+      b.innerHTML = '<span class="nm">' + x.name + '</span><span class="sb">' + subOf(x) + '</span><span class="fig" aria-hidden="true"></span>' + (k === "country" ? '<canvas class="bq-shape" aria-hidden="true"></canvas>' : '<span class="bq-pin" aria-hidden="true"></span>');
+      b.setAttribute("aria-label", x.name + (subOf(x) ? ", " + subOf(x) : ""));
     });
     if (k === "country" && window.MXMAP && MXMAP.outline) [0, 1].forEach(function (j) { MXMAP.outline($("#pick" + j + " canvas"), p[j].cid); });
     $("#say").textContent = ""; $("#next").hidden = true; var mm = $("#play canvas.mx-mini"); if (mm) mm.hidden = true; phase = "choose"; shownAt = Date.now();

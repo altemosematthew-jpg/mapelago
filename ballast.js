@@ -271,7 +271,8 @@
     $("#lvlMeta").setAttribute("aria-label", (RUN && RUN.mode !== "tut" ? RUN.lives + " of 3 lives. " : "") + L.region + ", " + L.list.length + " countries, load line " + L.lineKm + " kilometres");
     $("#tip").hidden = !L.tip; $("#tip").textContent = L.tip || ""; $("#skipTut").hidden = !(RUN && RUN.mode === "tut");
     $("#nameBox").hidden = L.name === "none"; $("#nameBox").dataset.mode = L.name === "type" ? "type" : "pick";
-    asked = null; dropping = null; $("#dropBtn").hidden = false; $("#dropBtn").disabled = false; $("#contBtn").hidden = true;
+    // an unanswered naming question survives a restart of the same level (scorecard 4): it stays open until it is answered
+    if (!(asked && asked.answer === null && asked.lv === L.id && L.name !== "none" && L.name !== "earn")) asked = null; queued = null; dropping = null; $("#dropBtn").hidden = false; $("#dropBtn").disabled = false; $("#contBtn").hidden = true;
     $("#play").hidden = false; $("#done").hidden = true; $("#chart").hidden = true;
     resize();
     next();
@@ -289,7 +290,7 @@
   // ---------- one piece at a time ----------
   // In the Daily and practice the name question is about the country just placed, and never holds up the next piece.
   // On a voyage each piece is earned first (see renderEarn).
-  var asked = null; // { s, answer: null | true | false, body }
+  var asked = null, queued = null; // { s, answer: null | true | false, body, lv }; queued: the newest landing, asked once the open question is done
   function lastCall() { // the load is over: one last chance to name the final country, then Continue
     hover = null;
     if (asked && asked.answer === null && L.name !== "none" && L.name !== "earn") { // the question stays open: answer it or skip it, then on
@@ -348,6 +349,9 @@
   function overboard(b) { return b.position.y > DECK_Y + WATER + 16 || Math.abs(b.position.x) > VW; } // lost only when it's in the water
   function settled() { return pieces.every(function (b) { return b.mxGone || b.isSleeping || (b.speed < 0.1 && b.angularSpeed < 0.008); }); }
   function heightKm() { return Math.max(0, Math.round((DECK_Y - stackTop(true)) / S.k)); }
+  // what the readout shows: the stack as drawn, every piece aboard except one still falling (scorecard 4: the readout
+  // used only resting pieces, so it jumped by hundreds of km whenever the top piece wobbled). Clearing still uses heightKm.
+  function shownKm() { var top = DECK_Y; pieces.forEach(function (b) { if (b.mxGone || (b === lastBody && state === "fall") || b.position.y > DECK_Y + 20) return; top = Math.min(top, b.bounds.min.y); }); return Math.max(0, Math.round((DECK_Y - top) / S.k)); }
   function need() { var n = L.list.length; return Math.min(n, Math.max(3, Math.ceil(n * (L.climb || L.tut ? 0.5 : 0.6)))); } // the line only counts once at least three pieces (half the cargo; most of it on a voyage) are aboard
   function endLevel(ok) {
     if (S.judged) return;
@@ -381,7 +385,7 @@
       if (fallT > 250 && (!lastBody || lastBody.mxGone || lastBody.speed < 0.9 || fallT > 1600)) {
         if (lastBody && !lastBody.mxGone) { SFX.land(); lastBody.mxLand = time; if (lastBody.position.x > deckW() / 5) crewDo("duck"); }
         S.i++;
-        if (L.name !== "none" && L.name !== "earn" && lastBody && !lastBody.mxGone) { asked = { s: dropping, answer: null, body: lastBody }; renderName(); }
+        if (L.name !== "none" && L.name !== "earn" && lastBody && !lastBody.mxGone) { var q = { s: dropping, answer: null, body: lastBody, lv: L.id }; if (asked && asked.answer === null) queued = q; else { asked = q; renderName(); } }
         $("#dropBtn").disabled = S.i >= L.list.length; // nothing left to load: Drop is off
         next();
       }
@@ -598,15 +602,16 @@
         cx.font = "800 " + 13 * k + "px " + font; cx.textAlign = "center"; cx.fillStyle = ink; cx.fillText("Drag me, then let go", X(at.x), Y(at.y) - rad - 6 * k); cx.textAlign = "left";
       }
       shape(o, at.x, at.y, hover.ang, state === "earn" ? css("--muted", "#6b777e") : hover.crate ? "#d9c7a3" : accent, state === "earn" ? 0.55 : 0.9);
+      if (state === "aim" && !(L.tut === 1 && S.i === 0 && !touched)) { cx.font = "800 " + 11 * k + "px " + font; cx.textAlign = "center"; cx.lineWidth = 3 * k; cx.strokeStyle = css("--paper", "#fff"); var ny = Y(at.y - halfHeight(hover)) - 12 * k; cx.strokeText("Now", X(at.x), ny); cx.fillStyle = ink; cx.fillText("Now", X(at.x), ny); cx.textAlign = "left"; } // the piece in hand (the box shows the one after)
       if (save.look.stow && state === "aim") drawStow(cx, stowFor(S.i), X(at.x), Y(at.y - halfHeight(hover)) + 1, kz * 0.9, "hold", time);
     }
     // read-outs: the stack against the line, the hold countdown, the finish
-    var gx0 = W - 14 * k, gh = Y(DECK_Y) - Y(lineY), frac = Math.max(0, Math.min(1, S.height / L.lineKm));
+    var hk = S.judged || !engine ? S.height : shownKm(), gx0 = W - 14 * k, gh = Y(DECK_Y) - Y(lineY), frac = Math.max(0, Math.min(1, hk / L.lineKm));
     cx.fillStyle = css("--paper", "#fff"); cx.strokeStyle = ink; cx.lineWidth = 1.5 * k / 1.2;
     cx.fillRect(gx0, Y(lineY), 8 * k, gh); cx.strokeRect(gx0, Y(lineY), 8 * k, gh);
     cx.fillStyle = accent; cx.fillRect(gx0, Y(DECK_Y) - gh * frac, 8 * k, gh * frac);
     // a tick and the figure at the stack's highest point, so the reading and the drawing can be compared at a glance
-    if (S.height > 0 && !cleared) { var ty = Y(DECK_Y - S.height * S.k); cx.strokeStyle = ink; cx.lineWidth = 1.5 * k / 1.2; cx.beginPath(); cx.moveTo(gx0 - 26 * k, ty); cx.lineTo(gx0 + 8 * k, ty); cx.stroke(); cx.fillStyle = ink; cx.font = "700 " + 10 * k + "px " + font; cx.textAlign = "right"; cx.fillText(fmt(S.height) + " km", gx0 - 2 * k, ty - 3 * k); }
+    if (hk > 0 && !cleared) { var ty = Y(DECK_Y - hk * S.k); cx.strokeStyle = ink; cx.lineWidth = 1.5 * k / 1.2; cx.beginPath(); cx.moveTo(gx0 - 26 * k, ty); cx.lineTo(gx0 + 8 * k, ty); cx.stroke(); cx.fillStyle = ink; cx.font = "700 " + 10 * k + "px " + font; cx.textAlign = "right"; cx.fillText(fmt(hk) + " km", gx0 - 2 * k, ty - 3 * k); }
     seaFrame();
     cx.textAlign = "center"; cx.fillStyle = ink;
     if (cleared) { var pulse = reduce ? 1 : 1 + 0.12 * Math.sin(cheerT / 90); cx.font = "800 " + 30 * k * pulse + "px " + font; cx.fillStyle = accent; cx.fillText("Loaded!", W / 2, Y(lineY) - 22 * k); }
@@ -660,6 +665,7 @@
     if (!skipped) (ok ? SFX.right : SFX.wrong)();
     renderHud();
     if (state === "last") setTimeout(function () { if (state === "last") cont(); }, 900); // answered after the load: on to the next level
+    else if (queued) setTimeout(function () { if (queued && (!asked || asked.answer !== null) && queued.body && !queued.body.mxGone && state !== "last") { asked = queued; queued = null; renderName(); } }, 900);
   }
   // ---------- voyages: each piece is earned with a question about that country ----------
   // Four choices. A right answer gives you the country; a wrong one costs nothing but gives a plain crate, about a third
@@ -704,10 +710,10 @@
   function points() { return heightKm() + 100 * named(); }
   function renderHud() {
     $("#hPieces").textContent = Math.max(0, L.list.length - S.i - (state === "fall" ? 1 : 0));
-    $("#hHeight").textContent = fmt(S.height) + " of " + fmt(L.lineKm);
+    $("#hHeight").textContent = fmt(S.judged || !engine ? S.height : shownKm()) + " of " + fmt(L.lineKm);
     $("#hNamed").textContent = named();
     $("#hLost").textContent = L.tut ? S.lost.length : S.lost.length > L.spare ? S.lost.length + ": one too many" : S.lost.length + " of " + L.spare;
-    var more = need() - aboard(); $("#hNeed").textContent = S.judged ? "" : more > 0 ? "load " + more + " more" : S.height >= L.lineKm ? "hold above the line" : "build up to the line";
+    var more = need() - aboard(); $("#hNeed").textContent = S.judged ? "" : more > 0 ? more + " more aboard before the line counts" : S.height >= L.lineKm ? "hold above the line" : "build up to the line";
   }
   function stars() {
     if (!S.cleared) return 0;
@@ -759,7 +765,7 @@
       }
       pendT = setTimeout(function () { if (RUN === r) start(TUTORIAL[r.lvl - 1]); }, ok ? 700 : 1100); return;
     }
-    if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); toast("Level " + (r.lvl - 1) + " loaded. On to level " + r.lvl + "."); }
+    if (ok) { r.cleared++; r.marks.push(S.lost.length ? "\u{1F7E8}" : "\u{1F7E9}"); r.lvl++; r.attempt = 0; SFX.line(); turtle("swim"); var spare = L.list.length - S.i; toast("Level " + (r.lvl - 1) + " loaded" + (spare > 0 ? ", " + spare + " left unneeded" : "") + ". Next: level " + r.lvl + "."); }
     else { r.lives--; r.marks.push("\u{1F7E5}"); r.attempt++; SFX.fail(); turtle("peek"); if (r.lives > 0) toast((S.cause === "overboard" ? "Too many overboard. " : "Below the line. ") + r.lives + (r.lives === 1 ? " life" : " lives") + " left: the same cargo again for level " + r.lvl + "."); }
     if (r.mode === "daily") { save.run = { day: dayNo, lvl: r.lvl, lives: r.lives, cleared: r.cleared, named: r.named, lost: r.lost, marks: r.marks, attempt: r.attempt, pic: r.pic }; store(); }
     if (r.lives > 0) { pendT = setTimeout(function () { if (RUN === r) start(runLevel(r)); }, 900); return; }
@@ -784,7 +790,7 @@
     $("#doneStars").hidden = true;
     $("#bigScore").textContent = res.lvl; $("#bigUnit").textContent = res.lvl === 1 ? "level cleared" : "levels cleared";
     $("#doneLine").textContent = fmt(res.score) + " points: " + res.lvl + " × 100 for the levels + " + res.named + " × 10 for the names.";
-    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " Next climb in " + untilMidnight() + ". Endless practice and the voyages are open any time." : r.mode === "captain" ? "The Captain's run is a Sunday extra on a harder sea: it never changes your Daily Ballast or your streak. Your best: " + (st.bestCaptain || 0) + " levels. Back next Sunday." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
+    $("#doneWhy").textContent = r.mode === "daily" ? statsLine() + " Endless practice and the voyages are open any time." : r.mode === "captain" ? "The Captain's run is a Sunday extra on a harder sea: it never changes your Daily Ballast or your streak. Your best: " + (st.bestCaptain || 0) + " levels. Back next Sunday." : "Practice doesn't count for your streak. Best practice run: " + (st.bestPractice || 0) + " levels.";
     var share = $("#shareText"), sb = $("#shareBtn");
     share.hidden = sb.hidden = r.mode !== "daily";
     if (r.mode === "daily") share.textContent = shareText(dayNo, res);

@@ -84,6 +84,25 @@ html:not([data-look]) main,html:not([data-look]) .page{color:var(--ink)}
 :is(html[data-look="chart"],html:not([data-look])) .mx-card .ic.ink-ic{width:48px;height:34px;flex:none;font-size:0;line-height:0}
 :is(html[data-look="chart"],html:not([data-look])) .mx-card .ic.ink-ic img{width:48px;height:34px;display:block;box-shadow:2px 2px 0 #000}
 
+/* a right answer's verdict bar (Stamps) is green too */
+:is(html[data-look="chart"],html:not([data-look])) .qsay.ok{background:#7d9a5a!important;color:#14110d!important}
 /* a right answer is sage green, never the rust of the main button (which read as a miss) */
 :is(html[data-look="chart"],html:not([data-look])) .opt.right,:is(html[data-look="chart"],html:not([data-look])) button.right{background:#7d9a5a!important;color:#14110d!important;border-color:#14110d!important}
 :is(html[data-look="chart"],html:not([data-look])) .pick.right{outline-color:#7d9a5a!important}
+
+/* share pop-ups: "press and hold" only on touch screens; a mouse gets the download wording */
+@media (hover: hover) and (pointer: fine) { .mx-touch { display: none; } }
+@media (hover: none), (pointer: coarse) { .mx-mouse { display: none; } }
+
+/* desktop (scorecard 4): the one-column games stop sitting in a 440 px strip; maps and boards grow with them */
+@media (min-width: 900px) {
+  .app.mx-desk { max-width: 780px; }
+  .app.mx-desk h1, .app.mx-desk #ask, .app.mx-desk #qask { font-size: 1.15em; }
+}
+
+/* the toast (scorecard 4: clipped at 375 px): centred across the whole screen, not from its middle, so it no longer
+   wraps at half the width and covers the title */
+#toast { left: 0 !important; right: 0 !important; margin: 0 auto; width: max-content; max-width: min(92vw, 520px); text-align: center; transform: translate(0, -220%) !important; }
+#toast.show { transform: translate(0, 0) !important; }
+/* long country names wrap inside answer buttons instead of being cut off */
+#nameOpts .opt, #qopts .opt, #opts .opt { white-space: normal; overflow-wrap: break-word; line-height: 1.15; }
