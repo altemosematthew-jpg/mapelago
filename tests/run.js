@@ -1363,7 +1363,7 @@ async function page(b, url, opts = {}) {
           if (k === "pin") { const bx = await t.p.locator("#pinmap").boundingBox(); await t.p.mouse.click(bx.x + bx.width / 2, bx.y + bx.height / 2); await t.p.click("#lock"); }
           else if (k === "deep") { await t.p.fill("#din", await t.p.evaluate(() => { const L = __dv.LEGS[3]; return document.querySelector('#dlist option[value]') && [...document.querySelectorAll("#dlist option")].map((o) => o.value).find((v) => true) ; })); await t.p.click("#dgo"); }
           else await t.p.click("#leg .opt");
-          if (k === "cross" && !(await t.p.isVisible("#next"))) await t.p.click("#leg .opt:not([disabled])");
+          if ((k === "cross" || k === "mark") && !(await t.p.isVisible("#next"))) await t.p.click("#leg .opt:not([disabled])"); // a second try
           await t.p.waitForTimeout(150); await t.p.click("#next");
         }
         await t.p.waitForTimeout(300);
