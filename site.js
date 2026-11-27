@@ -95,7 +95,7 @@
 
   // ---------- 3. streaks across all the games (5.1, 5.2, 5.3, 5.4) ----------
   var GAMES = [
-    { id: "city", name: "Mystery city", key: "dailycity:v2", url: "./", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
+    { id: "city", name: "Mystery city", key: "dailycity:v2", url: "city.html", icon: "\u{1F3D9}\uFE0F", about: "Slide tiles for clues, then pin today's city." },
     { id: "country", name: "Mystery country", key: "dailycity:country:v1", url: "country.html", icon: "\u{1F30D}", about: "The same, with a country to find." },
     { id: "bigger", name: "Bigger city?", key: "dailycity:bigger:v1", url: "bigger.html", icon: "\u{1F465}", about: "Ten pairs: tap the city where more people live." },
     { id: "bigcountry", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
@@ -227,7 +227,7 @@
     if (!p) { p = document.createElement("p"); p.className = "mx-daily"; if (after && after.parentNode === box) box.insertBefore(p, after.nextSibling); else box.appendChild(p); }
     if (p.textContent !== t) p.textContent = t;
   }
-  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay };
+  window.MXS = { streak: streak, info: info, today: today, games: GAMES, siteStreak: siteStreak, untilNext: untilNext, weekLevel: weekLevel, puzzleDay: puzzleDay, shareCard: function () { return shareImageClick({ id: "daily" }); } };
 
   var CSS = '.mx-risk{display:block;margin:0 0 10px;line-height:1.45;padding:8px 12px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--tint,#dcedf5);color:var(--ink,#000);font-size:14px;font-weight:600}'
     + '.mx-risk a{color:inherit;font-weight:800}'
@@ -243,7 +243,7 @@
     + '.mxs textarea{width:100%;min-height:76px;box-sizing:border-box;font:12px ui-monospace,monospace;border:1.5px solid var(--line,#000);border-radius:8px;padding:6px}'
     + '.mxs .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.mxs .btns button{min-height:44px;padding:0 14px;border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r-btn,12px);background:var(--paper,#fff);color:inherit;font:inherit;font-weight:800;cursor:pointer}'
     + '.mxs .btns .go{background:var(--accent,#b4237d);color:var(--on-accent,#fff)}'
-    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}@keyframes mxPop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}@keyframes mxShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}.mx-pop{animation:mxPop .35s ease-out}.mx-shake{animation:mxShake .4s ease-out}@keyframes mxHand{0%,100%{transform:translate(-50%,6px)}50%{transform:translate(-50%,-4px) scale(.92)}}.mx-hand{position:absolute;z-index:40;font-size:34px;line-height:1;pointer-events:none;transform:translate(-50%,0);animation:mxHand 1.1s ease-in-out infinite}@media (prefers-reduced-motion:reduce){.mx-hand{animation:none}}canvas.mx-mini{display:block;width:100%;height:72px;margin:6px 0;border-radius:10px}canvas.mx-mini[hidden]{display:none}.app:has(canvas.mx-mini:not([hidden])) .wheelbox.asked{display:none}.act[hidden],.linkbtn[hidden],.mx-img[hidden]{display:none!important}.mx-daily{margin:6px 0;font-size:13.5px;font-weight:700;line-height:1.3}#done .panel>.mx-daily,#endBody>.mx-daily{order:4}#done:has(.mx-daily) .panel>.next,#endBody:has(.mx-daily)>.next{display:none}.mx-site{font-weight:700}'
+    + '.mx-help{border:var(--bw,2px) solid var(--line,#000);border-radius:var(--r,12px);background:var(--paper,#fff);color:var(--ink,#000);width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;padding:16px;overflow:auto}.mx-help::backdrop{background:rgba(0,0,0,.45)}.mx-help h2{margin:0 0 8px;font-size:21px}.mx-help p,.mx-help li{margin:0 0 8px;font-size:15px;line-height:1.4}.mx-help ul,.mx-help ol{margin:0 0 10px;padding-left:20px}.mx-help .act{width:100%;margin-top:4px}#mxHelpBtn{font-weight:800;font-size:20px}#done .row2>:nth-child(3):last-child{grid-column:1/-1}#doneTitle:focus{outline:none}@keyframes mxPop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}@keyframes mxShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}.mx-pop{animation:mxPop .35s ease-out}.mx-shake{animation:mxShake .4s ease-out}@keyframes mxHand{0%,100%{transform:translate(-50%,6px)}50%{transform:translate(-50%,-4px) scale(.92)}}.mx-hand{position:absolute;z-index:40;font-size:34px;line-height:1;pointer-events:none;transform:translate(-50%,0);animation:mxHand 1.1s ease-in-out infinite}@media (prefers-reduced-motion:reduce){.mx-hand{animation:none}}svg.mx-emb{display:inline-block;width:.8em;height:.8em;vertical-align:-.05em;margin-left:.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}@keyframes mxIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}#done:not([hidden]),#shown:not([hidden]),#choice:not([hidden]),#quiz:not([hidden]),.mx-help[open]{animation:mxIn .25s ease-out}@media (prefers-reduced-motion:reduce){#done,#shown,#choice,#quiz,.mx-help{animation:none!important}}canvas.mx-mini{display:block;width:100%;height:72px;margin:6px 0;border-radius:10px}canvas.mx-mini[hidden]{display:none}.app:has(canvas.mx-mini:not([hidden])) .wheelbox.asked{display:none}.act[hidden],.linkbtn[hidden],.mx-img[hidden]{display:none!important}.mx-daily{margin:6px 0;font-size:13.5px;font-weight:700;line-height:1.3}#done .panel>.mx-daily,#endBody>.mx-daily{order:4}#done:has(.mx-daily) .panel>.next,#endBody:has(.mx-daily)>.next{display:none}.mx-site{font-weight:700}'
     + '@keyframes mxFirst{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 5px var(--accent,#b4237d)}}.mx-fresh [data-first]{animation:mxFirst 1.6s ease-in-out infinite;border-radius:var(--r-btn,12px)}@media (prefers-reduced-motion:reduce){.mx-fresh [data-first]{animation:none;box-shadow:0 0 0 4px var(--accent,#b4237d)}}'
     + '.mx-today{grid-column:1/-1;margin:36px 0 0}.mx-today h2{margin:0 0 10px;font-size:20px}'
     + '.mx-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}'
@@ -258,7 +258,7 @@
 
   // Addresses come with or without ".html" (mapelago.com/bigger and the previews' /bigger work too), and the home
   // page as "/", "/index" or "/index.html". Pages inside a folder (/games/, /about/) are not games.
-  function pageKey(p) { p = String(p || "").replace(/^\.?\//, "").replace(/\.html$/, ""); return p === "index" ? "" : p; }
+  function pageKey(p) { p = String(p || "").replace(/^\.?\//, "").replace(/\.html$/, ""); return p === "index" ? "" : p; } // the home page ("" or index) is the hub, not a game
   function here() {
     var parts = location.pathname.split("/"), f = parts.pop();
     if (parts.filter(Boolean).length) return undefined;
@@ -628,7 +628,7 @@
     ballast: { code: "bl", max: 60000, modes: 1 }
   };
   function gameByCode(c) { var id = Object.keys(BEAT).filter(function (k) { return BEAT[k].code === c; })[0]; return id ? GAMES.filter(function (g) { return g.id === id; })[0] : null; }
-  function gameByPage(page) { return GAMES.filter(function (g) { return pageKey(g.url) === pageKey(page); })[0]; }
+  function gameByPage(page) { var k = pageKey(page) || "city"; /* a link to the home page with a result on it is Mystery city's (it lived there) */ return GAMES.filter(function (g) { return pageKey(g.url) === k; })[0]; }
   function said(id, mode, n) {
     if (mode === 1) return n >= 200 && n % 200 === 0 ? "found it on pin " + ((1000 - n) / 200 + 1) + " of 5 in Quick mode" : "didn't find it in 5 pins in Quick mode";
     if (id === "city" || id === "country" || id === "crossings") return Number(n).toLocaleString("en-US") + " points";
@@ -886,6 +886,25 @@
     }); }).observe(app, { subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true });
   }
 
+  // One visual system: each game's header carries a small line drawing in the Chart room style, and screens slide in.
+  var EMBLEM = {
+    city: '<path d="M3 21V9l5-3v15M8 21V4h6v17M14 21v-9h6v9M2 21h20M10 7h2M10 10h2M10 13h2M16 15h2"/>',
+    country: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+    bigger: '<path d="M4 20V11h5v9M11 20V4h6v16M2 20h20"/>',
+    bigcountry: '<path d="M3 8l6-3 6 3 6-3v11l-6 3-6-3-6 3z"/><path d="M9 5v11M15 8v11"/>',
+    voyage: '<circle cx="12" cy="5" r="2"/><path d="M12 7v13M7 11h10M5 15c1 4 4 5 7 5s6-1 7-5"/>',
+    fathoms: '<path d="M2 6c3-2 5 2 8 0s5 2 8 0M2 11c3-2 5 2 8 0s5 2 8 0M12 13v8M9 18l3 3 3-3"/>',
+    stamps: '<path d="M5 3h14v18H5z" stroke-dasharray="2 2"/><path d="M8 7h8v7H8zM8 17h8"/>',
+    crossings: '<circle cx="12" cy="12" r="9"/><path d="M12 5l2 7-2 7-2-7z"/>',
+    history: '<path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6zM6 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2M9 8h7M9 12h7M9 16h4"/>',
+    reckoning: '<path d="M12 22s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12z"/><circle cx="12" cy="10" r="2.5"/>',
+    ballast: '<path d="M2 14h20l-3 6H5zM12 14V3M12 3l7 9h-7"/>'
+  };
+  function emblem() {
+    var me = here(), w = document.querySelector("header.top .word"); if (!me || !w || !EMBLEM[me.id] || w.querySelector(".mx-emb")) return;
+    w.insertAdjacentHTML("beforeend", ' <svg class="mx-emb" viewBox="0 0 24 24" aria-hidden="true">' + EMBLEM[me.id] + "</svg>");
+  }
+
   function mount() {
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var app = document.querySelector(".app");
@@ -896,7 +915,7 @@
       Array.prototype.forEach.call(app.children, function (el) { if (/^(HEADER|FOOTER)$/.test(el.tagName)) el.setAttribute("role", "none"); });
     }
     if (app) { riskNote(app); challenge(app); beat(app); today_games(app); }
-    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps(); answerMotion();
+    watchEnd(); upgradeShown(); nextButtons(); versionLine(); helpButton(); firstMove(); answerMaps(); answerMotion(); emblem();
     // the day's level in words on the games whose own dial is not set yet (from No. 19)
     var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
     setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own

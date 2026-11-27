@@ -7,7 +7,7 @@ const { chromium } = require("playwright"); const start = require("./server.js")
 const FIRST = +process.argv[2] || 20, DAYS = +process.argv[3] || 365;
 // how each game's content for one day is read: an array of keys (one per question, pair, place, route or piece set)
 const GAMES = [
-  { id: "city", name: "Mystery city", page: "index.html", unit: "city", hook: "__lf", key: () => [__lf.P.city + ", " + __lf.P.country] },
+  { id: "city", name: "Mystery city", page: "city.html", unit: "city", hook: "__lf", key: () => [__lf.P.city + ", " + __lf.P.country] },
   { id: "country", name: "Mystery country", page: "country.html", unit: "country", gap: 45, why: "about 195 countries: one full cycle, then a reshuffle", hook: "__lf", key: () => [__lf.P.city] },
   { id: "bigger", name: "Bigger city?", page: "bigger.html", unit: "pair", hook: "__big", key: () => __big.S().pairs.map((p) => p.map((c) => c.name + "," + (c.country || "")).sort().join(" | ")) },
   { id: "bigcountry", name: "Bigger country?", page: "bigger-country.html", unit: "pair", hook: "__big", key: () => __big.S().pairs.map((p) => p.map((c) => c.name).sort().join(" | ")) },

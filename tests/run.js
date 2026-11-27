@@ -5,7 +5,7 @@ const fs = require("fs"), path = require("path");
 const start = require("./server.js");
 const UPDATE = process.argv.includes("--update-golden");
 const GOLDEN = path.join(__dirname, "golden.json");
-const GAMES = { city: "", country: "country.html", bigger: "bigger.html", biggercountry: "bigger-country.html", voyage: "voyage.html", fathoms: "fathoms.html", stamps: "stamps.html", crossings: "crossings.html" };
+const GAMES = { city: "city.html", country: "country.html", bigger: "bigger.html", biggercountry: "bigger-country.html", voyage: "voyage.html", fathoms: "fathoms.html", stamps: "stamps.html", crossings: "crossings.html" };
 const DAYS = [...Array(30).keys()].map((i) => i + 1).concat([60, 100, 200, 365]);
 const PHONE = { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true };
 const DESKTOP = { viewport: { width: 1280, height: 800 } };
@@ -41,7 +41,7 @@ async function page(b, url, opts = {}) {
   const b = await chromium.launch();
   try {
     // 1. every page loads cleanly at phone and desktop size
-    for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "ballast.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
+    for (const f of ["city.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "history.html", "dead-reckoning.html", "ballast.html", "hints.html", "about/", "how-to-play/", "privacy/", "games/", "offline.html", "404.html"])
       for (const desktop of [false, true]) {
         const { ctx, p } = await page(b, U + f, { desktop, wait: 800 });
         check(!p.errs.length, `loads cleanly: /${f} ${desktop ? "desktop" : "phone"}`, p.errs.join("; "));
@@ -84,7 +84,7 @@ async function page(b, url, opts = {}) {
     // 3. a save made by the live version (0.11) replays exactly
     const old = fs.readFileSync(path.join(__dirname, "fixtures/save-from-v0.11.json"), "utf8");
     for (const desktop of [false, true]) {
-      let { ctx, p } = await page(b, U + "#day-12", { desktop, storage: { "dailycity:v2": old } });
+      let { ctx, p } = await page(b, U + "city.html#day-12", { desktop, storage: { "dailycity:v2": old } });
       const s = await p.evaluate(() => ({ S: __lf.S(), pts: document.querySelector("#score").textContent, clues: document.querySelectorAll("#clues li").length }));
       check(s.S.swipes === 25 && s.pts === "650" && s.clues === 5 && s.S.pins.length === 1, "old save: day 12 in progress replays (25 moves, 650 points, 5 clues)", JSON.stringify([s.S.swipes, s.pts, s.clues]));
       await p.evaluate(() => (location.hash = "#day-11")); await p.waitForTimeout(1200);
@@ -94,7 +94,7 @@ async function page(b, url, opts = {}) {
 
     // 4. streaks and freezes
     {
-      const { ctx, p } = await page(b, U);
+      const { ctx, p } = await page(b, U + "city.html");
       const r = await p.evaluate(() => {
         const R = (ds) => Object.fromEntries(ds.map((d) => [d, { score: 1 }]));
         const S = (ds, t) => { const s = MX.streak(R(ds), t); return [s.cur, s.best, s.freezes]; };
@@ -106,7 +106,7 @@ async function page(b, url, opts = {}) {
 
     // 5. new games: one clue to start, scoring
     {
-      const { ctx, p } = await page(b, U + "#day-12");
+      const { ctx, p } = await page(b, U + "city.html#day-12");
       check((await p.evaluate(() => document.querySelectorAll("#clues li").length)) === 1, "new game starts with exactly one clue");
       await p.waitForFunction(() => window.__WORLD);
       await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(1500);
@@ -122,8 +122,8 @@ async function page(b, url, opts = {}) {
     }
 
     // 7. keyboard-only pin
-    for (const f of ["", "country.html"]) {
-      const { ctx, p } = await page(b, U + f + "#day-7", { desktop: true, storage: { [f ? "dailycity:country:v1" : "dailycity:v2"]: '{"games":{},"results":{},"seenHelp":true}' } });
+    for (const f of ["city.html", "country.html"]) {
+      const { ctx, p } = await page(b, U + f + "#day-7", { desktop: true, storage: { [f === "country.html" ? "dailycity:country:v1" : "dailycity:v2"]: '{"games":{},"results":{},"seenHelp":true}' } });
       await p.waitForFunction(() => window.__WORLD);
       await p.focus("#pinBtn"); await p.keyboard.press("Enter"); await p.waitForTimeout(500);
       await p.keyboard.press("ArrowRight"); await p.keyboard.press("Enter"); await p.waitForTimeout(1300);
@@ -205,7 +205,7 @@ async function page(b, url, opts = {}) {
         await ctx.close();
       }
       {
-        const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}' } });
+        const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}' } });
         await p.waitForFunction(() => window.__WORLD);
         await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3500);
         const a = await p.evaluate(() => { const x = document.querySelector("#endBody .also"); return x && [x.getAttribute("href"), x.textContent]; });
@@ -298,7 +298,7 @@ async function page(b, url, opts = {}) {
       }
       // Quick mode keeps its own scoring, with stars and a sum
       {
-        const { ctx, p } = await page(b, U + "#day-14", { storage: fresh("dailycity:v2", { "dailycity:mode": "quick" }) });
+        const { ctx, p } = await page(b, U + "city.html#day-14", { storage: fresh("dailycity:v2", { "dailycity:mode": "quick" }) });
         await p.waitForFunction(() => window.__WORLD);
         await p.evaluate(() => __lf.confirmAt([((__lf.P.lon + 180) % 360) - 180, -__lf.P.lat])); await p.waitForTimeout(1500);
         const live = await p.textContent("#live");
@@ -439,7 +439,7 @@ async function page(b, url, opts = {}) {
 
     // 8. a game in progress survives midnight
     {
-      const { ctx, p } = await page(b, U, { clock: new Date("2026-11-25T23:59:30"), ctx: { timezoneId: "Europe/London" } });
+      const { ctx, p } = await page(b, U + "city.html", { clock: new Date("2026-11-25T23:59:30"), ctx: { timezoneId: "Europe/London" } });
       for (const k of ["ArrowUp", "ArrowRight", "ArrowUp"]) await p.keyboard.press(k);
       const before = await p.textContent("#num");
       await p.clock.runFor(60000); await p.waitForTimeout(300);
@@ -448,7 +448,7 @@ async function page(b, url, opts = {}) {
     }
     // 10. after a missed pin opens a clue early, "Next clue: make a N" matches the highlighted locked slot
     {
-      const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}' } });
+      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}' } });
       await p.waitForFunction(() => window.__WORLD);
       const read = () => p.evaluate(() => ({ label: (document.querySelector("#nextClue").textContent.match(/\d+/) || [""])[0], slot: (document.querySelector("#track .upnext") || {}).textContent, open: document.querySelectorAll("#clues li").length }));
       const before = await read();
@@ -465,7 +465,7 @@ async function page(b, url, opts = {}) {
     // 11. a save from the live release (0.14.0, recorded on that version) loads with its results, streaks and round in progress
     {
       const live = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/save-from-v0.14.json"), "utf8"));
-      const { ctx, p } = await page(b, U + "#day-12", { storage: live, clock: new Date("2026-11-25T12:00:00"), wait: 1200 });
+      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: live, clock: new Date("2026-11-25T12:00:00"), wait: 1200 });
       const r = await p.evaluate(() => ({ moves: document.querySelector("#swipes").textContent, info: MXS.info().map((s) => [s.game.id, s.cur, s.played]) }));
       check(r.moves === "3", "0.14.0 save: today's mystery city round in progress replays (3 moves)", r.moves);
       const city = r.info.find((x) => x[0] === "city"), country = r.info.find((x) => x[0] === "country");
@@ -478,7 +478,7 @@ async function page(b, url, opts = {}) {
 
     // 12. Quick mode for the mystery city: no tiles, a clue per missed pin, five pins, scored by the pin that finds it
     {
-      const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
       await p.waitForFunction(() => window.__WORLD);
       check(await p.isVisible("#mxMode"), "quick mode: the mode choice shows before the first move");
       await p.click('#mxMode [data-m="quick"]');
@@ -493,7 +493,7 @@ async function page(b, url, opts = {}) {
       check(/quick mode/.test(r.share) && /Found in 3\/5 pins/.test(r.share), "quick mode: the share says the mode and 3/5", r.share);
       await ctx.close();
       // a tile round already started stays a tile round, even if the player last chose quick
-      const t = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{"12":{"moves":"U","pins":[],"done":false,"won":false,"score":0,"r":3}},"results":{},"seenHelp":true}', "dailycity:mode": "quick", "dailycity:coach": "1" } });
+      const t = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{"12":{"moves":"U","pins":[],"done":false,"won":false,"score":0,"r":3}},"results":{},"seenHelp":true}', "dailycity:mode": "quick", "dailycity:coach": "1" } });
       check(!(await t.p.evaluate(() => document.documentElement.classList.contains("mx-quick"))) && !(await t.p.isVisible("#mxMode")), "quick mode: never switches a round already started");
       await t.ctx.close();
     }
@@ -616,7 +616,7 @@ async function page(b, url, opts = {}) {
       }
       // the city page keeps its Past cities button now that extras.js is shared
       {
-        const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+        const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
         check(!!(await p.$("#pastCities")) && !!(await p.$("#soundBtn")), "city: Past cities and the sound button are still there");
         await ctx.close();
       }
@@ -767,7 +767,7 @@ async function page(b, url, opts = {}) {
 
     // 13. beat-my-score links: checked strictly, never the answer, side by side at the end
     {
-      const { ctx, p } = await page(b, U, { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+      const { ctx, p } = await page(b, U + "city.html", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
       const T = await p.evaluate(() => MXS.today());
       const bad = await p.evaluate((T) => ["#b-zz-1-0-5", `#b-mc-${T}-0-1001`, `#b-mc-${T}-2-600`, `#b-bc-${T}-0-11`, `#b-mc-${T}-0-<b>1</b>`, `#b-mc-${T + 2}-0-600`, "#b-mc-0-0-5"].map((h) => MXS.beat.parse(h)), T);
       check(bad.every((x) => x === null), "beat link: unknown games, out-of-range numbers and markup are refused", JSON.stringify(bad));
@@ -794,7 +794,7 @@ async function page(b, url, opts = {}) {
     // 14. visitor counting (Cloudflare Web Analytics, switched on 25 Nov 2026): the beacon loads on mapelago.com only,
     //     never for Global Privacy Control or Do Not Track, and the privacy page always matches the switch
     {
-      const PAGES = ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/", "about/", "games/"];
+      const PAGES = ["city.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "privacy/", "about/", "games/"];
       const words = (q) => q.evaluate(() => [MXANALYTICS.on, [...document.querySelectorAll('[data-analytics="on"]')].every((e) => !e.hidden), [...document.querySelectorAll('[data-analytics="off"]')].every((e) => e.hidden), /Cloudflare Web Analytics/.test(document.querySelector("main").innerText), /no tracking scripts/.test(document.querySelector("main").innerText), (document.querySelector("#analyticsSince") || {}).textContent]);
       // switched on, on this machine: nothing is loaded, the wording is the counting wording
       {
@@ -875,7 +875,7 @@ async function page(b, url, opts = {}) {
     // 18. a save from release 0.15.0 (recorded on that version): quick-mode result, crossings in progress, remembered mode
     {
       const v15 = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/save-from-v0.15.json"), "utf8"));
-      const { ctx, p } = await page(b, U + "#day-12", { storage: v15, clock: new Date("2026-11-25T12:00:00"), wait: 1500 });
+      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: v15, clock: new Date("2026-11-25T12:00:00"), wait: 1500 });
       const r = await p.evaluate(() => ({ res: JSON.parse(localStorage.getItem("dailycity:v2")).results[12], city: MXS.info().find((s) => s.game.id === "city"), quick: document.documentElement.classList.contains("mx-quick") }));
       check(r.res.q === 1 && r.res.score === 800 && r.city.cur === 3 && r.quick, "0.15.0 save: the quick-mode day and the 3-day streak are kept", JSON.stringify([r.res, r.city.cur, r.quick]));
       await p.goto(U + "?n=13#day-13"); await p.waitForTimeout(1200);
@@ -924,7 +924,7 @@ async function page(b, url, opts = {}) {
     {
       const ends = {};
       for (const d of [12, 13, 46]) {
-        const { ctx, p } = await page(b, U + "#day-" + d, { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+        const { ctx, p } = await page(b, U + "city.html#day-" + d, { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
         await p.waitForFunction(() => window.__WORLD);
         await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(2600);
         ends[d] = await p.evaluate(() => ({ facts: [...document.querySelectorAll("#endBody .facts li")].map((l) => l.textContent), country: document.querySelector("#endBody .country").textContent }));
@@ -933,14 +933,14 @@ async function page(b, url, opts = {}) {
       check(ends[13].facts.length === 3 && /bandeng presto/.test(ends[13].facts.join(" ")), "city facts: No. 13 shows its three checked facts", JSON.stringify(ends[13]));
       check(ends[12].facts.length >= 1 && !/bandeng/.test(ends[12].facts.join(" ")), "city facts: a city without checked facts keeps the standard ones");
       check(ends[46].country === "China (Macao SAR)" && /1557/.test(ends[46].facts.join(" ")), "city facts: Macau reads China (Macao SAR)", JSON.stringify(ends[46]));
-      const src = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+      const src = fs.readFileSync(path.join(__dirname, "../city.html"), "utf8");
       check(!/"13":\[|No\. 13/.test(src.slice(src.indexOf("var MxCF="), src.indexOf("var MxCF=") + 300)), "city facts: the page keys them by city, not by puzzle number");
     }
 
     // 21. landmarks for screen readers: exactly one main region on every page (checked with axe-core: no landmark issues left)
     {
       const ctx = await b.newContext(PHONE), p = await ctx.newPage(), bad = [];
-      for (const f of ["", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "dead-reckoning.html", "games/", "privacy/", "about/", "how-to-play/"]) {
+      for (const f of ["city.html", "country.html", "bigger.html", "bigger-country.html", "voyage.html", "fathoms.html", "stamps.html", "crossings.html", "dead-reckoning.html", "games/", "privacy/", "about/", "how-to-play/"]) {
         await p.goto(U + f, { waitUntil: "load" }); await p.waitForTimeout(250);
         const r = await p.evaluate(() => [document.querySelectorAll("main,[role=main]").length, document.querySelectorAll("main header,[role=main] > header:not([role=none])").length]);
         if (r[0] !== 1 || r[1]) bad.push(f + " " + JSON.stringify(r));
@@ -993,7 +993,7 @@ async function page(b, url, opts = {}) {
     // 25. Mystery city review items: ranks explained, play again in the other mode, zoom keeps the pin, mode choice hides on a move
     {
       const fresh = { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" };
-      const { ctx, p } = await page(b, U + "#day-12", { storage: fresh });
+      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: fresh });
       await p.waitForFunction(() => window.__WORLD);
       await p.keyboard.press("ArrowUp"); await p.waitForTimeout(250);
       check(!(await p.isVisible("#mxMode")), "city: the Tiles/Quick choice goes away on the first move");
@@ -1009,8 +1009,8 @@ async function page(b, url, opts = {}) {
       const after = await p.evaluate(() => ({ today: JSON.parse(localStorage.getItem("dailycity:v2")).results[12], n: Object.keys(JSON.parse(localStorage.getItem("dailycity:v2")).results).length, back: (document.querySelector("#mxAgain") || {}).textContent }));
       check(after.today.score === end.score && !after.today.q && after.n === 1 && /again in Tiles/.test(after.back || ""), "city: the replay never changes the day's result or streak", JSON.stringify(after));
       await ctx.close();
-      for (const f of ["", "country.html"]) {
-        const z = await page(b, U + f + "#day-7", { desktop: true, storage: { [f ? "dailycity:country:v1" : "dailycity:v2"]: '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+      for (const f of ["city.html", "country.html"]) {
+        const z = await page(b, U + f + "#day-7", { desktop: true, storage: { [f === "country.html" ? "dailycity:country:v1" : "dailycity:v2"]: '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
         await z.p.waitForFunction(() => window.__WORLD);
         await z.p.focus("#pinBtn"); await z.p.keyboard.press("Enter"); await z.p.waitForTimeout(500);
         for (let i = 0; i < 9; i++) await z.p.keyboard.press(i % 2 ? "ArrowUp" : "ArrowRight", { delay: 5 });
@@ -1028,14 +1028,14 @@ async function page(b, url, opts = {}) {
       const bad = ["voyage", "fathoms", "history", "stamps", "crossings", "ballast", "bigger", "bigcountry"].filter((id) => { const m = new RegExp("<!-- rules:" + id + " -->([\\s\\S]*?)<!-- /rules:" + id + " -->").exec(how); return !m || strip(m[1]) !== C[id].explainer; });
       check(!bad.length, "how to play: each game's rules are the same text as its footer and All games (copy.json)", bad.join(" "));
       check(/<h2 id="crossings">/.test(how) && /rules of all eleven daily games/.test(how) && how.indexOf("From No. 14, on 27 November 2026") < how.indexOf("plays by the same rules as Mystery city"), "how to play: Crossings has its own heading; the title covers every game; Mystery country's date comes first");
-      const { ctx, p } = await page(b, U + "#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
+      const { ctx, p } = await page(b, U + "city.html#day-12", { storage: { "dailycity:v2": '{"games":{},"results":{},"seenHelp":true}', "dailycity:coach": "1" } });
       await p.waitForFunction(() => window.__WORLD);
       const s0 = await p.textContent("#score");
       await p.evaluate(() => __lf.confirmAt([__lf.P.lon, __lf.P.lat])); await p.waitForTimeout(3200);
       const end = await p.evaluate(() => [document.querySelector("#endBody .score b").textContent, document.querySelector("#endBody .share").textContent]);
       check(s0 === "1,000" && end[0] === "1,000" && /1,000 points/.test(end[1]) && /#b-mc-12-0-1000$/.test(end[1].trim()), "mystery city: 1,000 has its comma on the score, the result and the share (the link keeps plain digits)", JSON.stringify([s0, end]));
       await ctx.close();
-      const src = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+      const src = fs.readFileSync(path.join(__dirname, "../city.html"), "utf8");
       check(/"Nizhniy Novgorod":"Nizhny Novgorod"/.test(src) && /"Ludhi\\u0101na":"Ludhiana"/.test(src) && /"G\\xF6teborg":"Gothenburg"/.test(src), "mystery city: Nizhny Novgorod, Ludhiana and Gothenburg use their common English names");
     }
 
@@ -1268,6 +1268,16 @@ async function page(b, url, opts = {}) {
       const a = await play(), c = await play();
       check(a[0] === c[0] && JSON.parse(a[0]).length === 4, "daily voyage: the same four legs on every load", a[0].slice(0, 200));
       check(a[1].done && a[1].saved && a[1].saved.score === a[1].total && a[1].total >= 0 && a[1].total <= 100 && /^Mapelago Daily Voyage No\. 23 \u{1F422} \d+ of 100\n[\u2693\u{1F9ED}\u{1F30A}]{4}\nFour stops, one voyage\. mapelago\.com\/daily\.html$/u.test(a[1].share) && !a[2].length, "daily voyage: four legs to one score out of 100, saved, and a spoiler-free share", JSON.stringify(a[1]) + a[2].join(";"));
+    }
+    // ---- R: the home page: Daily Voyage is the one big button; three featured games, then the other eight; old city links still work
+    {
+      const t = await page(b, U, { wait: 600 });
+      const r = await t.p.evaluate(() => ({ go: document.querySelector("#dvGo").getAttribute("href"), feat: [...document.querySelectorAll(".feat a")].map((a) => a.getAttribute("href")), more: document.querySelectorAll(".more a").length, top: document.querySelector("#dvGo").getBoundingClientRect().bottom }));
+      check(r.go === "daily.html" && r.top <= 667 && r.feat.join() === "crossings.html,dead-reckoning.html,city.html" && r.more === 8 && !t.p.errs.length, "home: Daily Voyage above the fold, three featured games and eight more", JSON.stringify(r));
+      await t.ctx.close();
+      const o = await page(b, U + "#b-mc-20-0-700", { wait: 900 });
+      check(/city\.html$/.test(new URL(o.p.url()).pathname) && (await o.p.evaluate(() => !!window.__lf)), "home: an old Mystery city link (mapelago.com/#...) opens the game", o.p.url());
+      await o.ctx.close();
     }
     // ---- one streak for the whole site: a day counts when any game was finished; a freeze covers a missed day
     {

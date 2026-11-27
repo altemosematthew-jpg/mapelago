@@ -41,8 +41,8 @@ for gid, g in C['games'].items():
 p = os.path.join(ROOT, 'games', 'index.html'); s = open(p, encoding='utf8').read()
 s = re.sub(r'<p class="lede">.*?</p>', f'<p class="lede">{esc(C["allGames"]["intro"])}</p>', s, count=1, flags=re.S)
 for gid, g in C['games'].items():
-    url = '../' if g['file'] == 'index.html' else '../' + g['file']
-    sec_id = 'mystery-city' if g['file'] == 'index.html' else g['file'].replace('.html', '')
+    url = '../' + g['file']
+    sec_id = 'mystery-city' if g['file'] == 'city.html' else g['file'].replace('.html', '')
     steps = ''.join(f'<li>{esc(x)}</li>' for x in g['howto'])
     s = re.sub(r'(<section id="' + re.escape(sec_id) + r'">\n<h2><a href="[^"]*">[^<]*</a></h2>\n).*?(?=<p><a class="play")',
                lambda m: m.group(1) + f'<p>{esc(g["explainer"])}</p>\n<ol class="howto">{steps}</ol>\n', s, count=1, flags=re.S)
@@ -53,7 +53,7 @@ p = os.path.join(ROOT, 'how-to-play', 'index.html'); s = open(p, encoding='utf8'
 for gid, g in C['games'].items():
     tag = f'<!-- rules:{gid} -->'
     if tag not in s: continue
-    url = '../' if g['file'] == 'index.html' else '../' + g['file']
+    url = '../' + g['file']
     name = {'bigger': 'Bigger city?', 'bigcountry': 'Bigger country?'}.get(gid, g['title'].split(':')[0])
     text = esc(g['explainer'])
     linked = text.replace(esc(name), f'<a href="{url}">{esc(name)}</a>', 1) if esc(name) in text else f'<a href="{url}">{esc(name)}</a>: ' + text
