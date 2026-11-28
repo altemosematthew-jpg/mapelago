@@ -100,3 +100,9 @@ Bots: Crossings and Logbook play with fame (the best-known answer first); Stamps
 
 ### One population figure
 Every city population the site shows is the UN WUP 2025 urban-area figure (un-cities.js) or none. Dead Reckoning now uses it (a city without a UN figure gets no number). Fathoms no longer prints a largest-city figure from No. 16; its order still comes from the older largest-city sizes, because the UN table in the repo covers only the 315 cities the games use. Fixing that needs the full WUP 2025 Cities file (population.un.org), which this build machine cannot reach.
+
+## Scorecard 4 changes (0.15.68)
+- Crossings: an extra guess costs 100 again (scorecard 4 asked for 100, matching How to play); four extra guesses are still allowed from No. 16. Test player: median 750, Monday and Tuesday 1,000, Saturday 500 (unchanged, because the player's misses are mostly border-shut rounds).
+- Stamps: from No. 16, on Fridays and Saturdays a stamp takes both of the wedge's questions right, and a miss on either closes it (scorecard 4: six of six in six spins).
+- Mystery city: from No. 22 Saturday's and Sunday's cities swap, so Saturday is the hardest day as everywhere else (No. 16, a Sunday, keeps the hardest city it was dealt).
+- Released on No. 15, so this release's new rules start at No. 17: Tuvalu and Timor-Leste (Asia) join Fathoms, and Macau leaves Bigger? and the Daily Voyage. Crossings' No. 16 keeps the 250 per extra guess it was published with; 100 from No. 17.

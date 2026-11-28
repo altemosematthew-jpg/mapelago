@@ -28,7 +28,7 @@ CSS = r"""
 .pick .fig{display:block;margin-top:4px;font-weight:800;font-size:17px;min-height:1px}
 .pick canvas.bq-shape{position:absolute;right:10px;top:50%;width:76px;height:56px;transform:translateY(-50%)}
 .pick .bq-pin{position:absolute;right:22px;top:50%;width:46px;height:46px;transform:translateY(-50%);background:url(ink/art/bigger.svg) center/cover;border-radius:3px;opacity:.9}
-.pick.right{outline:4px solid var(--accent);outline-offset:-2px}.pick.wrong{opacity:.62}.pick.mine::after{content:"Your pick";position:absolute;right:10px;bottom:6px;font-size:12px;font-weight:800;color:var(--accent-ink)}
+.pick.right{outline:4px solid var(--accent);outline-offset:-2px}.pick.wrong{opacity:.62}.pick.mine::after{content:"Your pick";position:absolute;left:12px;top:-11px;padding:0 7px;font-size:12px;font-weight:800;line-height:20px;background:var(--ink);color:var(--paper);border-radius:3px}
 .or{margin:6px 0;text-align:center;font-weight:800;color:var(--ink-2)}
 #say{min-height:22px;margin:8px 0 4px}#say .src{color:#5a4a30;font-size:13px}
 #next{margin-top:6px;width:100%}#next[hidden]{display:none}

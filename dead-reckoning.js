@@ -99,20 +99,15 @@
   function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
   function fact(p) {
     if (p.lm) return [p.clue, cap(p.kind) + " · " + p.country];
-    var c = (window.DR_COUNTRIES || {})[p.country] || [], kind = c[0], cur = c[1], high = c[2];
     // one population figure across the site (scorecard 3): the UN's 2025 urban-area estimate, or no figure at all
     var un = window.MXUN ? MXUN.pop(p.name, p.country) : null, ppl = un ? " about " + popText(un) + " people live in its urban area" : "";
     var one = p.capital ? "The capital of " + the(p.country) + (ppl ? ";" + ppl : "") + "." : "A city in " + the(p.country) + (ppl ? ";" + ppl : "") + ".";
-    var two = [];
-    if (kind === "island") two.push(the(p.country) + " is an island country");
-    else if (kind === "landlocked") two.push(the(p.country) + " has no coastline");
-    if (high) {
-      var at = high.lastIndexOf(", "), peak = high.slice(0, at), m = Number(high.slice(at + 2));
-      if (peak && isFinite(m)) two.push((two.length ? "its" : owns(p.country)) + " highest point is " + peak + ", " + m.toLocaleString("en-US") + " m");
-    }
-    // one-word currencies are common nouns (the euro, the leone); longer names keep their capitals (the Pakistan rupee)
-    if (cur && two.length < 2) two.push((two.length ? "its" : owns(p.country)) + " currency is the " + (/\s/.test(cur) ? cur : cur.toLowerCase()));
-    return [one, two.length ? cap(two.join("; ")) + "." : ""];
+    // the second line is about the place itself (scorecard 4), worked out from the site's own coordinates: how far and
+    // which way it is from its country's capital, or, for a capital, where it sits on the globe
+    var capP = P.filter(function (q) { return q.capital && !q.lm && q.country === p.country && q.name !== p.name; })[0], two;
+    if (!p.capital && capP) { var d = km(capP, p); two = d < 15 ? "It lies right beside " + capP.name + ", the capital." : "It lies about " + fmtKm(Math.round(d / 10) * 10 || d) + " " + dirName(bearing(capP, p)) + " of " + capP.name + ", the capital."; }
+    else two = "It lies at " + Math.abs(p.lat).toFixed(1) + "\u00b0" + (p.lat >= 0 ? "N" : "S") + ", " + Math.abs(p.lon).toFixed(1) + "\u00b0" + (p.lon >= 0 ? "E" : "W") + ", " + (Math.abs(p.lat) < 23.44 ? "inside the tropics" : Math.abs(p.lat) > 66.56 ? "inside the polar circle" : "outside the tropics") + ".";
+    return [one, two];
   }
 
   // ---------- saves ----------
@@ -137,9 +132,9 @@
   }
   function shareText() {
     var r = S.results[N]; if (!r) return "";
-    // the marks, closest to furthest: bullseye, pin, compass, adrift, lost at sea
-    var marks = String(r.b || "").replace(/\u{1F7E9}/gu, "\u{1F4CD}").replace(/\u{1F7E8}/gu, "\u{1F9ED}").replace(/\u{1F7E7}/gu, "\u26F5").replace(/\u{1F7E5}/gu, "\u{1F30A}");
-    return "Mapelago Dead Reckoning No. " + N + " \u{1F422} " + r.total.toLocaleString("en-US") + " of 1,000\n" + marks + "\nFive pins on a blank map. How close can you get? mapelago.com/dead-reckoning.html#b-dr-" + N + "-0-" + r.total;
+    // one square a place, closest to furthest: bullseye (under 50 km), green (250), yellow (750), orange (2,000), red
+    var marks = String(r.b || "");
+    return "Mapelago Dead Reckoning No. " + N + " \u{1F422} " + r.total.toLocaleString("en-US") + " of 1,000\n" + marks + "\n\u{1F3AF} under 50 km \u00b7 \u{1F7E9} 250 \u00b7 \u{1F7E8} 750 \u00b7 \u{1F7E7} 2,000 \u00b7 \u{1F7E5} further\nFive pins on a blank map. How close can you get? mapelago.com/dead-reckoning.html#b-dr-" + N + "-0-" + r.total;
   }
   function stats() {
     var days = Object.keys(S.results).map(Number).filter(function (n) { return n > 0 && S.results[n] && isFinite(S.results[n].total); });

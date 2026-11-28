@@ -39,7 +39,7 @@
   if (N >= 17 && N % 2 && window.BQ_DATA) {
     // from No. 17 the Bigger stop follows Bigger?: on odd numbers a pair of cities, by the UN's urban-area figures
     var CT = BQ_DATA.city, cp = null;
-    for (t = 0; t < 4000 && !cp; t++) { var ca = pick(CT), cb = pick(CT), cq = Math.max(ca[2], cb[2]) / Math.min(ca[2], cb[2]); if (ca !== cb && ca[1] !== cb[1] && cq >= lo && cq <= hi) cp = [ca, cb]; }
+    for (t = 0; t < 4000 && !cp; t++) { var ca = pick(CT), cb = pick(CT); if (N >= 17 && (ca[0] === "Macau" || cb[0] === "Macau")) continue; var cq = Math.max(ca[2], cb[2]) / Math.min(ca[2], cb[2]); if (ca !== cb && ca[1] !== cb[1] && cq >= lo && cq <= hi) cp = [ca, cb]; }
     LEGS.push({ kind: "pair", name: "Bigger", city: true, pair: cp.map(function (c) { return { name: c[0], cont: c[1], area: c[2] }; }), ask: "Which city has more people?" });
   } else LEGS.push({ kind: "pair", name: "Bigger", pair: pair, ask: "Which covers more land?" });
   // 3. a crossing with one country between: which one links them?
@@ -125,7 +125,7 @@
   function finishLeg(p, why, names) {
     G.pts.push(p); G.tries = 0; busy = true; say(why + " +" + p); keep(); chart();
     if (names && names.length && window.MXMAP) MXMAP.show($("#say"), names.join(" ")); // where the answer is
-    $("#next").hidden = false; $("#next").textContent = G.pts.length < 4 ? "Sail on to stop " + (G.pts.length + 1) : "See the voyage";
+    $("#next").hidden = false; setTimeout(function () { var nb = $("#next"), rc = nb && nb.getBoundingClientRect(); if (rc && rc.bottom > innerHeight && nb.scrollIntoView) nb.scrollIntoView({ block: "nearest" }); }, 60); $("#next").textContent = G.pts.length < 4 ? "Sail on to stop " + (G.pts.length + 1) : "See the voyage";
     $("#next").focus({ preventScroll: true });
   }
   function show() {
@@ -144,7 +144,7 @@
       $("#zin").onclick = function () { zoom(0.5); }; $("#zout").onclick = function () { zoom(2); };
       if (window.__WORLD) go(); else { var sc = document.createElement("script"); sc.src = document.querySelector('script[src*="daily.js"]').src.replace("daily.js", "world-lite.js"); sc.onload = go; document.head.appendChild(sc); go(); }
       cv.onclick = function (e) { if (busy) return; var rc = cv.getBoundingClientRect(); pin = cv.mxP(e.clientX - rc.left, e.clientY - rc.top); drawMap(cv, pin); $("#lock").disabled = false; };
-      $("#lock").onclick = function () { if (busy || !pin) return; var ans = [L.place[2], L.place[3]], d = km(pin, ans), p = Math.round(25 * Math.exp(-d / (TUNE ? 1200 * (1.15 - 0.4 * H) : 1200))); $("#lock").disabled = true; cv.mxAns = ans; cv.mxV = null; drawMap(cv, pin, ans);
+      $("#lock").onclick = function () { if (busy || !pin) return; var ans = [L.place[2], L.place[3]], d = km(pin, ans), p = Math.round(25 * Math.exp(-d / (TUNE ? 1200 * (1.15 - 0.4 * H) : 1200))); $("#lock").disabled = true; $("#lock").hidden = true; /* used: out of the way, so Sail on sits on the first screen */ cv.mxAns = ans; cv.mxV = null; drawMap(cv, pin, ans);
         var dir = ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"][Math.round(bearing(pin, ans) / 45) % 8], co = byName[L.place[1]];
         finishLeg(p, Math.round(d).toLocaleString("en-US") + " km off" + (d > 50 ? ": " + L.place[0] + " is to the " + dir + " of your pin." : ". Spot on.") + " It's in " + the(L.place[1] || L.place[0]) + (co ? ", " + co.cont : "") + ".");
         $("#say").insertAdjacentHTML("beforeend", ' <a href="https://en.wikipedia.org/w/index.php?search=' + encodeURIComponent(L.place[0] + (L.place[1] ? ", " + L.place[1] : "")) + '" target="_blank" rel="noopener">Read about ' + L.place[0] + "</a>"); };
@@ -184,7 +184,7 @@
   $("#next").onclick = function () { G.at = G.pts.length; keep(); show(); };
 
   // ---------- the finish ----------
-  function shareText() { var res = save.results[N]; return "Mapelago Daily Voyage No. " + N + " \u{1F422} " + res.score + " of 100\n" + res.pts.map(mark).join("") + (N >= 16 ? "\n" + LEGS.map(function (l) { return l.name; }).join(" · ") : "") + "\nFour stops, one voyage. mapelago.com/daily.html"; }
+  function shareText() { var res = save.results[N]; return "Mapelago Daily Voyage No. " + N + " \u{1F422} " + res.score + " of 100\n" + res.pts.map(mark).join("") + "\n" + LEGS.map(function (l, i) { return l.name + " " + mark(res.pts[i] || 0); }).join(" · ") + "\nFour stops, one voyage. mapelago.com/daily.html"; }
   function done() {
     if (!save.results[N]) { save.results[N] = { score: total(), pts: G.pts.slice() }; delete save.game; store(); ping("done"); }
     // one streak with the retired Voyage's days in it (site.js counts them for the Daily Voyage)

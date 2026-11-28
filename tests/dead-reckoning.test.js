@@ -64,7 +64,7 @@ module.exports = async function ({ b, U, page, check }) {
     const share = await p.textContent("#shareText");
     const save1 = await p.evaluate(() => localStorage.getItem("dailycity:reckoning:v1"));
     const res = JSON.parse(save1).results[12];
-    check(/^Mapelago Dead Reckoning No\. 12 \u{1F422} [\d,]+ of 1,000\n[\u{1F3AF}\u{1F4CD}\u{1F9ED}\u26F5\u{1F30A}]{5}\nFive pins on a blank map\. How close can you get\? mapelago\.com\/dead-reckoning\.html#b-dr-12-0-\d+$/u.test(share), "dead reckoning: share text format", share);
+    check(/^Mapelago Dead Reckoning No\. 12 \u{1F422} [\d,]+ of 1,000\n[\u{1F3AF}\u{1F7E9}\u{1F7E8}\u{1F7E7}\u{1F7E5}]{5}\n\u{1F3AF} under 50 km · \u{1F7E9} 250 · \u{1F7E8} 750 · \u{1F7E7} 2,000 · \u{1F7E5} further\nFive pins on a blank map\. How close can you get\? mapelago\.com\/dead-reckoning\.html#b-dr-12-0-\d+$/u.test(share), "dead reckoning: share text format (a square a place, with its key)", share);
     const leaks = names.flatMap((n) => n.split("|")).filter((w) => share.toLowerCase().includes(w.toLowerCase()));
     check(!leaks.length, "dead reckoning: no place or country in the share text", leaks.join(", "));
     check(res && res.total > 600 && !(await p.isHidden("#done")), "dead reckoning: a finished day is saved and shown", JSON.stringify(res));

@@ -94,7 +94,7 @@ async function page(b, url, opts = {}) {
       await pre.ctx.close();
       const oldDay = await page(b, U + "bigger.html", { storage: { "dailycity:bigger:v1": JSON.stringify({ results: { 14: { score: 7, picks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } } }) }, clock: new Date("2026-11-27T12:00:00"), wait: 800 });
       const od = await oldDay.p.evaluate(() => ({ play: !document.querySelector("#play").hidden, done: !document.querySelector("#done").hidden, listed: MXS.info().find((x) => x[0] === "bigger" || x.game.id === "bigger").doneToday, streak: MXS.info().find((x) => x.game.id === "bigger").cur }));
-      check(od.play && !od.done && !od.listed && od.streak === 1, "bigger?: No. 14 is Bigger?; a round played on the old page today still counts for the streak but doesn't mark Bigger? done", JSON.stringify(od));
+      check(od.play && !od.done && od.listed && od.streak === 1, "bigger?: No. 14 is Bigger?; a round finished on the old page today counts for the streak and marks Bigger? done", JSON.stringify(od));
       await oldDay.ctx.close();
       const red = await page(b, U + "bigger-country.html", { clock: new Date("2026-11-30T12:00:00"), wait: 900 });
       check(/\/bigger\.html$/.test(red.p.url()) && (await red.p.isVisible("#pick0")), "bigger?: the old pages send you to Bigger?", red.p.url());
@@ -148,7 +148,7 @@ async function page(b, url, opts = {}) {
         check(!r.dialogs && r.top < 667 && r.words <= 20 && ms < 10000, `first visit: ${f} opens straight onto the game (no dialog, the first control on the first screen, a short instruction)`, JSON.stringify([r, ms]));
         await ctx.close();
       }
-      const T = { daily: "Mapelago Daily Voyage No. 20 \u{1F422} 78 of 100\n⚓\u{1F9ED}⚓\u{1F30A}\nPin · Bigger · Crossing · Voyage\nFour stops, one voyage. mapelago.com/daily.html",
+      const T = { daily: "Mapelago Daily Voyage No. 20 \u{1F422} 78 of 100\n⚓\u{1F9ED}⚓\u{1F30A}\nPin ⚓ · Bigger \u{1F9ED} · Crossing ⚓ · Voyage \u{1F30A}\nFour stops, one voyage. mapelago.com/daily.html",
         crossings: "Mapelago Crossings No. 20 \u{1F422} 850 points\n\u{1F9ED}\u{1F97E}\u{1F9ED}\nLatvia to Saudi Arabia · par 4 countries · 3 guesses\nCan you cross it? mapelago.com/crossings.html",
         reckoning: "Mapelago Dead Reckoning No. 20 \u{1F422} 742 of 1,000\n\u{1F3AF}\u{1F4CD}\u{1F9ED}⛵\u{1F3AF}\nFive pins on a blank map. How close can you get? mapelago.com/dead-reckoning.html",
         fathoms: "Mapelago Fathoms No. 20 \u{1F422} 5,420 fathoms\n\u{1F7E9}\u{1F7E8}\u{1F41F}\u{1F7E5}\u{1F419}\u{1F7E7}\u{1F7E8}\nHow deep can you go? mapelago.com/fathoms.html",
@@ -534,7 +534,7 @@ async function page(b, url, opts = {}) {
         check(lang === "Languages: Hebrew and Arabic", "review: the languages clue reads 'Languages: Hebrew and Arabic' once", lang);
         // one name: the share says Mystery country, the header says No. 12, and the link is unchanged
         const sh = await p.evaluate(() => ({ share: document.querySelector("#endBody .share").textContent, num: document.querySelector("#num").textContent }));
-        check(sh.share.startsWith("Mapelago Mystery country No. 12 \u{1F422} ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && sh.num === "Episode 12" && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
+        check(sh.share.startsWith("Mapelago Mystery country No. 12 \u{1F422} ") && /mapelago\.com\/country\.html#(c-12-|b-mn-12-)/.test(sh.share) && /^Episode 12 · [a-z ]+$/.test(sh.num) && !/Countries/.test(sh.share), "review: the share and the header say Mystery country / No. 12", JSON.stringify(sh));
         await ctx.close();
       }
       for (const link of ["#c-12-640-2", "#b-mn-12-0-640"]) {
@@ -565,7 +565,7 @@ async function page(b, url, opts = {}) {
         const p5 = await ctx.newPage(); await p5.goto(U + "country.html#day-5", { waitUntil: "domcontentloaded" }); await p5.waitForFunction(() => window.__lf);
         const g5 = await p5.evaluate(() => __lf.P.city); await p5.close();
         const a = await p.evaluate(() => ({ num: document.querySelector("#num").textContent, ban: !document.querySelector("#arcBan").hidden, name: __lf.P.city }));
-        check(a.num === "Episode 5 · archive" && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
+        check(/^Episode 5 · [a-z ]+ · archive$/.test(a.num) && a.ban && a.name === g5, "review: #past-5 plays No. 5, marked as the archive", JSON.stringify([a, g5]));
         await p.evaluate(() => __lf.confirmAt(__lf.home())); await p.waitForTimeout(3500);
         const s = await p.evaluate(() => ({ main: JSON.parse(localStorage.getItem("dailycity:country:v1")), arc: JSON.parse(localStorage.getItem("dailycity:country:archive:v1")), share: document.querySelector("#endBody .share").textContent }));
         check(!Object.keys(s.main.results).length && !s.main.games[5] && s.arc.results[5] && s.arc.results[5].won && s.share.startsWith("Mapelago Mystery country No. 5 (archive) \u{1F422}"), "review: an archive round saves apart and never touches results or streaks", JSON.stringify([Object.keys(s.main.results), s.arc && s.arc.results, s.share.split("\n")[0]]));
@@ -1080,8 +1080,8 @@ async function page(b, url, opts = {}) {
         check(t[0] === "Name a country that borders the Democratic Republic of the Congo." && / than the United Kingdom\./.test(t[1]) && t[2] === "Name a country that borders Chad." && t[3] === "San Marino", "fathoms: 'borders the Democratic Republic of the Congo'; San Marino's capital is San Marino", JSON.stringify(t));
         await f.ctx.close();
       }
-      const o = await page(b, U + "fathoms.html#day-19", { wait: 600 });
-      check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 20 are dealt exactly as before");
+      const o = await page(b, U + "fathoms.html#day-16", { wait: 600 });
+      check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 17 are dealt exactly as before (Tuvalu joins from No. 17)");
       await o.ctx.close();
     }
 
@@ -1422,7 +1422,7 @@ async function page(b, url, opts = {}) {
         await t.ctx.close(); return [legs, r, t.p.errs]; };
       const a = await play(), c = await play();
       check(a[0] === c[0] && JSON.parse(a[0]).length === 4, "daily voyage: the same four legs on every load", a[0].slice(0, 200));
-      check(a[1].done && a[1].saved && a[1].saved.score === a[1].total && a[1].total >= 0 && a[1].total <= 100 && /^Mapelago Daily Voyage No\. 23 \u{1F422} \d+ of 100\n[\u2693\u{1F9ED}\u{1F30A}]{4}\nPin · Bigger · Crossing · (Fathoms|Logbook|Voyage)\nFour stops, one voyage\. mapelago\.com\/daily\.html$/u.test(a[1].share) && !a[2].length, "daily voyage: four legs to one score out of 100, saved, and a spoiler-free share", JSON.stringify(a[1]) + a[2].join(";"));
+      check(a[1].done && a[1].saved && a[1].saved.score === a[1].total && a[1].total >= 0 && a[1].total <= 100 && /^Mapelago Daily Voyage No\. 23 \u{1F422} \d+ of 100\n[\u2693\u{1F9ED}\u{1F30A}]{4}\nPin [\u2693\u{1F9ED}\u{1F30A}] · Bigger [\u2693\u{1F9ED}\u{1F30A}] · Crossing [\u2693\u{1F9ED}\u{1F30A}] · (Fathoms|Logbook|Voyage) [\u2693\u{1F9ED}\u{1F30A}]\nFour stops, one voyage\. mapelago\.com\/daily\.html$/u.test(a[1].share) && !a[2].length, "daily voyage: four legs to one score out of 100, saved, and a spoiler-free share", JSON.stringify(a[1]) + a[2].join(";"));
     }
     // ---- R: the home page: Daily Voyage is the one big button; three featured games, then the other eight; old city links still work
     {

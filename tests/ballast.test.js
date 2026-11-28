@@ -332,7 +332,7 @@ module.exports = async function ({ b, U, page, check }) {
     check(r.lost[0] === 3 && r.lost[1] && !r.lost[2] && r.lost[3] !== "last" && !/3 of 2/.test(r.lost[4]), "ballast P0: the third country overboard ends the load at once; nothing waits on a name; no '3 of 2'", JSON.stringify(r.lost));
     check(r.retry[0] === r.retry[1] && r.retry[1] === r.retry[2] && r.retry[3] === r.retry[4], "ballast P0: a retry is the same level, the same cargo and the same load line", JSON.stringify(r.retry));
     check(r.need[0].every((n) => n >= 3) && r.need[1].every((x) => x[0] >= Math.min(3, x[1])) && r.need[2].every((x) => x[0] >= 3 && x[0] >= x[1] * 0.6), "ballast P0: every level needs at least three pieces aboard, and a voyage most of its cargo", JSON.stringify(r.need).slice(0, 300));
-    check(!r.early[0] && r.early[1] && /load \d more/.test(r.early[2]) && r.frozen[0] && r.frozen[1], "ballast P0: above the line with too few aboard doesn't clear and says why; a cleared stack stays as it stood", JSON.stringify([r.early, r.frozen]));
+    check(!r.early[0] && r.early[1] && /\d more aboard before the line counts/.test(r.early[2]) && r.frozen[0] && r.frozen[1], "ballast P0: above the line with too few aboard doesn't clear and says why; a cleared stack stays as it stood", JSON.stringify([r.early, r.frozen]));
     check(r.skip[0] && r.skip[1] === "Skip naming" && r.skipped, "ballast P0: the skip is labelled Skip naming and never holds up the load", JSON.stringify([r.skip, r.skipped]));
     check(r.stale[0] === 4 && r.stale[1] === "none" && r.stale[2] === 0 && r.stale[3], "ballast P0: the name choices are gone when the typed field appears", JSON.stringify(r.stale));
     check(!r.named.length, "ballast P0: a voyage question never names the country being earned", r.named.slice(0, 3).join(" | "));
@@ -357,7 +357,7 @@ module.exports = async function ({ b, U, page, check }) {
       return o;
     });
     check(r.falling[0] === "fall" && r.falling[1] === 0, "ballast A: the piece still falling is not counted in the stack height", JSON.stringify(r.falling));
-    check(/build up to the line|load \d more/.test(r.need) && !/hold above/.test(r.need), "ballast A: 'hold above the line' only when the stack is above it", r.need);
+    check(/build up to the line|\d more aboard/.test(r.need) && !/hold above/.test(r.need), "ballast A: 'hold above the line' only when the stack is above it", r.need);
     check(r.asked === 0 && /^Too many overboard\./.test(r.toast), "ballast A: never asked to name a lost piece; three overboard says so", JSON.stringify(r));
     check(r.dropOff, "ballast A: Drop is off when nothing is left to load");
     await ctx.close();

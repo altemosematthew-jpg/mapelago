@@ -102,7 +102,7 @@
     { id: "daily", name: "Daily Voyage", key: "dailycity:dailyvoyage:v1", url: "daily.html", icon: "\u2693", about: "Four stops from the best games, one score out of 100." },
     // Bigger? (from No. 14) is Bigger city? and Bigger country? as one game: it saves where Bigger city? did, and Bigger
     // country?'s days count toward its streak and stats. The old pages still play Nos. 1 to 16.
-    { id: "bigger", name: "Bigger?", key: "dailycity:bigger:v1", url: "bigger.html", pages: ["bigger-city.html"], doneIf: function (r) { return !!(r && r.bq); }, /* done today only when Bigger? itself was played */ icon: "\u{1F465}", about: "Ten pairs, cities and countries in turn: tap the bigger one." },
+    { id: "bigger", name: "Bigger?", key: "dailycity:bigger:v1", url: "bigger.html", pages: ["bigger-city.html"], /* a round finished on the old Bigger city? page counts as Bigger? done (scorecard 4) */ icon: "\u{1F465}", about: "Ten pairs, cities and countries in turn: tap the bigger one." },
     { id: "bigcountry", parent: "bigger", name: "Bigger country?", key: "dailycity:bigcountry:v1", url: "bigger-country.html", icon: "\u{1F5FA}\uFE0F", about: "Ten pairs: tap the country with more land." },
     // Voyage retired on No. 14: its best question is a Daily Voyage stop, and its days count toward the Daily Voyage streak
     { id: "voyage", parent: "daily", name: "Voyage", key: "dailycity:voyage:v1", url: "voyage.html", icon: "\u26F5", about: "Ten islands of trivia. Sail on or drop anchor." },
@@ -420,17 +420,20 @@
         blob(pts[0][0], pts[0][1], 40, "#C9A257"); blob(pts[pts.length - 1][0], pts[pts.length - 1][1], 40, "#C9A257");
         if (ends[1]) label(ends[1], pts[0][0] - 30, pts[0][1] - 60, 34, "left"); if (ends[2]) label(ends[2], pts[pts.length - 1][0] + 30, pts[pts.length - 1][1] - 60, 34, "right");
         var mids = window.MX_SHARE_NAMES || [];
-        marks.forEach(function (m, i) { var p = pts[i + 1]; blob(p[0], p[1], 26, col(m)); if (mids[i]) label(mids[i].length > 14 ? mids[i].slice(0, 13) + "." : mids[i], p[0], p[1] + (i === marks.length - 1 && i ? -40 : 62), 24); });
+        // a guess on a shortest route sits on the path in sand; one off it steps off the path, orange (1 or 2 borders
+        // off) or sea green (3 or more), so the route and the detours read apart at a glance
+        var OFF = { "\u{1F9ED}": "#C9773A", "\u{1F30A}": "#7E9C93", "\u274C": "#3a3530" };
+        marks.forEach(function (m, i) { var p = pts[i + 1]; if (OFF[m]) { p = [p[0], p[1] + 40]; x.setLineDash([6, 6]); x.lineWidth = 3; x.strokeStyle = "#14110d"; x.beginPath(); x.moveTo(pts[i + 1][0], pts[i + 1][1]); x.lineTo(p[0], p[1]); x.stroke(); x.setLineDash([]); } blob(p[0], p[1], 26, OFF[m] || col(m)); if (mids[i]) label(mids[i].length > 14 ? mids[i].slice(0, 13) + "." : mids[i], p[0], p[1] + (i === marks.length - 1 && i ? -40 : 62), 24); });
       } else {
         // each stop: its name (from the share line, from No. 16) and how it went: a tick for full marks, a half for some, a cross for none
-        var named = / \u00b7 /.test(lines[2] || "") ? lines[2].split(" \u00b7 ") : null, names = named || ["PIN", "BIGGER", "CROSSING", "STOP 4"], how = { "\u2693": "\u2713", "\u{1F9ED}": "\u00bd", "\u{1F30A}": "\u2717" };
+        var named = / \u00b7 /.test(lines[2] || "") ? lines[2].split(" \u00b7 ").map(function (w) { return w.replace(/[^A-Za-z ]/g, "").trim(); }) : null, names = named || ["PIN", "BIGGER", "CROSSING", "STOP 4"], how = { "\u2693": "\u2713", "\u{1F9ED}": "\u00bd", "\u{1F30A}": "\u2717" };
         marks.forEach(function (m, i) { var p = pts[i]; blob(p[0], p[1], 44, col(m)); label(how[m] || String(i + 1), p[0], p[1] + 14, 44); label(String(names[i] || "").toUpperCase(), p[0], p[1] + 92, 30); });
       }
       return true;
     }
     if (id === "reckoning") {
       // five pins pushed into the chart, each ringed by how close it landed
-      var spots = [[.16, .35], [.36, .62], [.52, .3], [.7, .58], [.86, .36]], q = { "\u{1F3AF}": 3, "\u{1F4CD}": 2, "\u{1F9ED}": 1 };
+      var spots = [[.16, .35], [.36, .62], [.52, .3], [.7, .58], [.86, .36]], q = { "\u{1F3AF}": 3, "\u{1F4CD}": 2, "\u{1F9ED}": 1, "\u{1F7E9}": 2, "\u{1F7E8}": 1 };
       marks.slice(0, 5).forEach(function (m, i) {
         var cx = spots[i][0] * W, cy = spots[i][1] * H, rings = q[m] || 0;
         for (var r = 3; r >= 1; r--) { x.beginPath(); x.arc(cx, cy, 22 * r, 0, Math.PI * 2); x.strokeStyle = r <= rings ? "#14110d" : "rgba(20,17,13,.25)"; x.lineWidth = r <= rings ? 4 : 2; x.stroke(); }
@@ -442,12 +445,12 @@
       // one line sounded per prompt: the deeper the answer, the longer the line
       var deep = { "\u{1F7E9}": .25, "\u{1F7E8}": .45, "\u{1F7E7}": .6, "\u{1F7E5}": .75, "\u{1F41F}": .85, "\u{1F419}": 1, "\u{1F30A}": .15 };
       x.fillStyle = "rgba(126,156,147,.55)"; x.fillRect(0, H * .18, W, H * .82);
-      marks.forEach(function (m, i) { var cx = 70 + i * ((W - 360) / Math.max(1, marks.length - 1)), d = (deep[m] != null ? deep[m] : .5) * H * .72; // clear of the score stamp
+      marks.forEach(function (m, i) { var cx = 70 + i * ((W - 430) / Math.max(1, marks.length - 1)), d = (deep[m] != null ? deep[m] : .5) * H * .72; // clear of the score stamp
         x.strokeStyle = "#14110d"; x.lineWidth = 4; x.beginPath(); x.moveTo(cx, H * .1); x.lineTo(cx, H * .18 + d); x.stroke(); blob(cx, H * .18 + d + 16, 18, col(m)); });
       return true;
     }
     // Bigger?: ten tiles, cities and countries in turn
-    marks.slice(0, 10).forEach(function (m, i) { var cx = 70 + (i % 5) * ((W - 140) / 4), cy = H * (i < 5 ? .32 : .7); x.save(); x.translate(cx, cy); x.rotate((rnd() - .5) * .12);
+    marks.slice(0, 10).forEach(function (m, i) { var cx = 90 + (i % 4) * 150, cy = H * [.2, .48, .76][Math.floor(i / 4)]; /* rows of 4, 4 and 2, clear of the score seal */ x.save(); x.translate(cx, cy); x.rotate((rnd() - .5) * .12);
       x.fillStyle = "rgba(20,17,13,.55)"; x.fillRect(-56, -48, 120, 104); x.fillStyle = col(m); x.fillRect(-60, -52, 120, 104); x.lineWidth = 5; x.strokeStyle = "#14110d"; x.strokeRect(-60, -52, 120, 104); x.restore(); });
     return true;
   }
@@ -540,6 +543,12 @@
   }
   async function shareImageClick(me) {
     var t = document.getElementById("shareText"); if (!t) return;
+    // the card takes a moment (fonts, maps): the button says so and can't be pressed twice
+    var bt = document.querySelector(".mx-img, #imgBtn"), was = bt && bt.textContent;
+    if (bt) { if (bt.disabled) return; bt.disabled = true; bt.textContent = "Making your card…"; bt.setAttribute("aria-busy", "true"); }
+    try { return await shareImageMake(me, t); } finally { if (bt) { bt.disabled = false; bt.textContent = was; bt.removeAttribute("aria-busy"); } }
+  }
+  async function shareImageMake(me, t) {
     var c = await shareImage(t.textContent, me), blob = await new Promise(function (r) { c.toBlob(r, "image/png"); });
     try {
       var f = new File([blob], "mapelago-" + me.id + ".png", { type: "image/png" });
@@ -548,7 +557,7 @@
     var m = document.getElementById("mxImg");
     if (!m) {
       m = document.createElement("div"); m.className = "modal mxm"; m.id = "mxImg"; m.hidden = true;
-      m.innerHTML = '<div class="mxs" role="dialog" aria-modal="true" aria-labelledby="mxImgT"><button class="x" id="closeMxImg" aria-label="Close">×</button><h2 id="mxImgT">Your result card</h2><p>Press and hold the image to save it, or download it, then post it.</p><img id="mxImgPic" alt="Your result card" style="width:100%;border:2px solid #000;border-radius:8px"><div class="btns"><a class="go" id="mxImgDl" download="mapelago.png" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:2px solid #000;border-radius:12px;text-decoration:none;font-weight:800">Download</a></div></div>';
+      m.innerHTML = '<div class="mxs" role="dialog" aria-modal="true" aria-labelledby="mxImgT"><button class="x" id="closeMxImg" aria-label="Close">×</button><h2 id="mxImgT">Your result card</h2><p><span class="mx-touch">Press and hold the image to save it, or download it, then post it.</span><span class="mx-mouse">Download the image, then post it.</span></p><img id="mxImgPic" alt="Your result card" style="width:100%;border:2px solid #000;border-radius:8px"><div class="btns"><a class="go" id="mxImgDl" download="mapelago.png" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:2px solid #000;border-radius:12px;text-decoration:none;font-weight:800">Download</a></div></div>';
       document.body.appendChild(m);
       m.querySelector("#closeMxImg").onclick = function () { m.hidden = true; };
       m.addEventListener("click", function (e) { if (e.target === m) m.hidden = true; });
@@ -960,11 +969,21 @@
       all.forEach(function (k) { var i = t.indexOf(k); if (i > 0 && !/[a-z]/.test(t[i - 1]) && !/[a-z]/.test(t[i + k.length])) { var f = find(k); if (f && out.indexOf(f) < 0) out.push(f); t = t.split(k).join(" "); } });
       return out;
     }
-    function draw(cv, hi) {
+    // places (not countries) named in the text, from window.MXPLACES when the page has it (Logbook): [name, lat, lon, country]
+    function placesIn(text) {
+      var P = window.MXPLACES; if (!P) return [];
+      var t = " " + String(text || "") + " ", out = [];
+      Object.keys(P).sort(function (a, b) { return b.length - a.length; }).forEach(function (n) { var i = t.indexOf(n); if (i > 0 && !/[A-Za-z\u00C0-\u024F]/.test(t[i - 1]) && !/[A-Za-z\u00C0-\u024F]/.test(t[i + n.length])) { out.push([n].concat(P[n])); t = t.split(n).join(" "); } });
+      return out;
+    }
+    function draw(cv, hi, dots) {
+      dots = dots || [];
       var w = cv.clientWidth || 300, h = cv.clientHeight || 72, dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = w * dpr; cv.height = h * dpr;
       var g = cv.getContext("2d"), cs = getComputedStyle(document.documentElement), col = function (v, d) { return (cs.getPropertyValue(v) || "").trim() || d; };
       var x0 = 180, x1 = -180, y0 = 90, y1 = -90;
       hi.forEach(function (f) { f.polys.forEach(function (p) { p[0].forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }); }); });
+      // with places named, the frame is the places (a big country like Russia would otherwise shrink them to a speck)
+      if (dots.length) { x0 = 180; x1 = -180; y0 = 90; y1 = -90; dots.forEach(function (d) { x0 = Math.min(x0, d[2] - 6); x1 = Math.max(x1, d[2] + 6); y0 = Math.min(y0, d[1] - 4); y1 = Math.max(y1, d[1] + 4); }); }
       if (x1 - x0 > 200) { x0 = -170; x1 = 190; } // across the date line: show the world
       var mx = (x0 + x1) / 2, my = (y0 + y1) / 2, span = Math.max(x1 - x0, (y1 - y0) * 1.6, 14) * 1.8, cos = Math.cos(my * Math.PI / 180), k = w / (span * cos);
       if ((y1 - y0) * 1.8 * k > h) k = h / ((y1 - y0) * 1.8);
@@ -978,15 +997,18 @@
         var bx = [1e9, 1e9, -1e9, -1e9]; f.polys.forEach(function (p) { p[0].forEach(function (q) { var v = P(q); bx[0] = Math.min(bx[0], v[0]); bx[1] = Math.min(bx[1], v[1]); bx[2] = Math.max(bx[2], v[0]); bx[3] = Math.max(bx[3], v[1]); }); });
         if (bx[2] - bx[0] < 8 && bx[3] - bx[1] < 8) { g.beginPath(); g.arc((bx[0] + bx[2]) / 2, (bx[1] + bx[3]) / 2, 6, 0, 6.2832); g.fillStyle = col("--accent", "#b4237d"); g.fill(); g.lineWidth = 1.5; g.stroke(); }
       });
+      // each named place: a ringed dot
+      dots.forEach(function (d) { var s = P([d[2], d[1]]); g.beginPath(); g.arc(s[0], s[1], 4.5, 0, 6.2832); g.fillStyle = col("--paper", "#fff"); g.fill(); g.lineWidth = 2; g.strokeStyle = col("--ink", "#000"); g.stroke(); });
       g.strokeStyle = col("--ink", "#000"); g.lineWidth = 2; g.strokeRect(1, 1, w - 2, h - 2);
     }
     function show(after, text, label) {
       if (!after || !after.parentNode) return;
       load(function () {
-        decode(); var hi = namesIn(text), cv = after.parentNode.querySelector("canvas.mx-mini");
-        if (!hi.length) { if (cv) cv.hidden = true; return; }
+        decode(); var hi = namesIn(text), dots = placesIn(text), cv = after.parentNode.querySelector("canvas.mx-mini");
+        dots.forEach(function (d) { var f = find(String(d[3]).toLowerCase()); if (f && hi.indexOf(f) < 0) hi.push(f); }); // the country each place is in today
+        if (!hi.length && !dots.length) { if (cv) cv.hidden = true; return; }
         if (!cv) { cv = document.createElement("canvas"); cv.className = "mx-mini"; cv.setAttribute("role", "img"); after.parentNode.insertBefore(cv, after.nextSibling); }
-        cv.hidden = false; cv.setAttribute("aria-label", "Map: " + hi.map(function (f) { return f.name; }).join(", ")); requestAnimationFrame(function () { draw(cv, hi); });
+        cv.hidden = false; cv.setAttribute("aria-label", "Map: " + dots.map(function (d) { return d[0] + " (" + d[3] + ")"; }).concat(hi.filter(function (f) { return !dots.some(function (d) { return find(String(d[3]).toLowerCase()) === f; }); }).map(function (f) { return f.name; })).join(", ")); requestAnimationFrame(function () { draw(cv, hi, dots); });
       });
     }
     // one country's outline, fitted to a small canvas (Bigger?'s country cards): land colour, a darker rim on the shadow side
@@ -1204,6 +1226,8 @@
     // the day's level in words on the games whose own dial is not set yet (from No. 19)
     var mine = here(); if (mine && !window.MX_ARC && puzzleDay() >= 19 && /^(country|fathoms|stamps|reckoning)$/.test(mine.id)) window.MX_ARC = weekLevel(puzzleDay());
     setTimeout(arcLabel, 300); setTimeout(arcLabel, 1500); setTimeout(soundButton, 900); // after any game has added its own
+    // desktop (scorecard 4): the one-column games (a 440 px column) use the screen; ink.css widens them from 900 px
+    (function () { var a = document.querySelector(".app"); if (a && innerWidth >= 900 && getComputedStyle(a).maxWidth === "440px") { a.classList.add("mx-desk"); window.dispatchEvent(new Event("resize")); } /* phones: nothing to do, no redraw */ })();
     addImageButton();
     watchDone();
     var nav = document.querySelector('nav[aria-label="Daily games"]');
