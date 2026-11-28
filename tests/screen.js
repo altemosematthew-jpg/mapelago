@@ -49,7 +49,7 @@ const GAMES = [
       for (let i = 0; i < 40; i++) { const st = await p.evaluate(() => { const d = document.querySelector("#done"); if (d && !d.hidden) return "done"; const n = [...document.querySelectorAll("#play button")].find((x) => x.offsetParent && !x.disabled && !/^pick/.test(x.id)); if (n) { n.click(); return "next"; } const b = document.querySelector("#pick0"); if (b && b.offsetParent && !b.disabled) { b.click(); return "pick"; } return "wait"; }); if (st === "done") break; await p.waitForTimeout(450); if (i === 0) await m("after an answer"); }
       await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", ".mx-daily"]);
     } },
-  { id: "bigcountry", name: "Bigger country? (until No. 16)", page: "bigger-country.html#day-14", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async (p, m) => {
+  { id: "bigcountry", name: "Bigger country? (until No. 16)", page: "bigger-country.html#day-14", at: "2026-11-27T12:00:00", first: "#pick0", read: ".lede", ready: "!!window.__big", states: async (p, m) => {
       for (let i = 0; i < 40; i++) { const st = await p.evaluate(() => { const d = document.querySelector("#done"); if (d && !d.hidden) return "done"; const n = [...document.querySelectorAll("#play button")].find((x) => x.offsetParent && !x.disabled && !/^pick/.test(x.id)); if (n) { n.click(); return "next"; } const b = document.querySelector("#pick0"); if (b && b.offsetParent && !b.disabled) { b.click(); return "pick"; } return "wait"; }); if (st === "done") break; await p.waitForTimeout(450); if (i === 0) await m("after an answer"); }
       await p.waitForTimeout(1200); await m("finish", ["#doneTitle", "#done .score", "#shareBtn", ".mx-daily"]);
     } },
