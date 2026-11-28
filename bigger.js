@@ -39,7 +39,7 @@
             var b = by[j]; if (b === a || today[k][b]) continue;
             var q = Math.max(P[a].v, P[b].v) / Math.min(P[a].v, P[b].v), pk = Math.min(a, b) + "-" + Math.max(a, b);
             if (q < lo || q > hi || used[k][pk] || close(P[a], P[b])) continue;
-            if (n >= 16 && (WITHDRAWN[P[a].key] || WITHDRAWN[P[b].key])) continue;
+            if (n >= 17 && (WITHDRAWN[P[a].key] || WITHDRAWN[P[b].key])) continue;
             if (k === "city" && P[a].sub === P[b].sub) continue; // two cities of one country tell you nothing about the world
             got = rnd() < 0.5 ? [a, b] : [b, a];
           }
@@ -75,7 +75,7 @@
   function the(x) { return /^(United|Czech|Dominican|Central African|Philippines|Netherlands|Gambia|Bahamas|Maldives|Comoros|Marshall|Solomon)/.test(x) ? "the " + x : x; }
   function times(a, b) { var q = Math.max(a, b) / Math.min(a, b); return q >= 1.995 ? q.toFixed(1).replace(/\.0$/, "") + " times" : Math.round((q - 1) * 100) + "%"; }
   // Macau (scorecard 4): the UN urban centre matched to it is the wrong one, so its figure is withdrawn. It was dealt only
-  // on No. 14, whose answer stands; from No. 16 it is never dealt.
+  // on No. 14, whose answer stands; from No. 17 it is never dealt.
   function unit(x) { return WITHDRAWN[x.key] ? "figure withdrawn" : x.t === "city" ? fmt(x.v) + " people" : fmt(x.v) + " km²"; }
   // a city whose name already says its country (Singapore, Djibouti, Mexico City) is shown without the country again
   function subOf(x) { return x.t === "city" && (x.name.indexOf(x.sub) === 0 || WITHDRAWN[x.key]) ? "" : x.sub; }

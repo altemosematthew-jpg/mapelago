@@ -1080,8 +1080,8 @@ async function page(b, url, opts = {}) {
         check(t[0] === "Name a country that borders the Democratic Republic of the Congo." && / than the United Kingdom\./.test(t[1]) && t[2] === "Name a country that borders Chad." && t[3] === "San Marino", "fathoms: 'borders the Democratic Republic of the Congo'; San Marino's capital is San Marino", JSON.stringify(t));
         await f.ctx.close();
       }
-      const o = await page(b, U + "fathoms.html#day-15", { wait: 600 });
-      check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 16 are dealt exactly as before (Tuvalu joins from No. 16)");
+      const o = await page(b, U + "fathoms.html#day-16", { wait: 600 });
+      check(!(await o.p.evaluate(() => __fath.S().prompts.some((x) => x.answers.includes("TV")))), "fathoms: days before No. 17 are dealt exactly as before (Tuvalu joins from No. 17)");
       await o.ctx.close();
     }
 

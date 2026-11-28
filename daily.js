@@ -39,7 +39,7 @@
   if (N >= 17 && N % 2 && window.BQ_DATA) {
     // from No. 17 the Bigger stop follows Bigger?: on odd numbers a pair of cities, by the UN's urban-area figures
     var CT = BQ_DATA.city, cp = null;
-    for (t = 0; t < 4000 && !cp; t++) { var ca = pick(CT), cb = pick(CT); if (N >= 16 && (ca[0] === "Macau" || cb[0] === "Macau")) continue; var cq = Math.max(ca[2], cb[2]) / Math.min(ca[2], cb[2]); if (ca !== cb && ca[1] !== cb[1] && cq >= lo && cq <= hi) cp = [ca, cb]; }
+    for (t = 0; t < 4000 && !cp; t++) { var ca = pick(CT), cb = pick(CT); if (N >= 17 && (ca[0] === "Macau" || cb[0] === "Macau")) continue; var cq = Math.max(ca[2], cb[2]) / Math.min(ca[2], cb[2]); if (ca !== cb && ca[1] !== cb[1] && cq >= lo && cq <= hi) cp = [ca, cb]; }
     LEGS.push({ kind: "pair", name: "Bigger", city: true, pair: cp.map(function (c) { return { name: c[0], cont: c[1], area: c[2] }; }), ask: "Which city has more people?" });
   } else LEGS.push({ kind: "pair", name: "Bigger", pair: pair, ask: "Which covers more land?" });
   // 3. a crossing with one country between: which one links them?

@@ -498,7 +498,7 @@ a.act{text-decoration:none}
   <footer class="about">
     <!-- copy:start -->
     <h1 class="about-h">Cross the map, one border at a time.</h1>
-    <p>Crossings is Mapelago&#x27;s daily route game. You get two countries joined by land, such as France and Poland, and you name the countries in between until your chain links them border to border. Par is the shortest route. Each country you name is coloured by how far it is from a shortest route, so the map warms up as you close in. Every guess beyond par costs 100 points, and a hint, which reveals a country on a shortest route, costs 150. Four guesses beyond par and the border stays shut. Monday is a short hop between well-known countries; through the week the routes get longer and pass through less familiar ones, and Saturday is the hardest. Only land borders count, so island countries can&#x27;t be on a route. Borders that exist only through an exclave or overseas territory, such as Kaliningrad or French Guiana, aren&#x27;t used in daily crossings. Monday&#x27;s crossing is short and Sunday&#x27;s is a long haul. Everyone gets the same crossing, and a new one arrives at midnight, your time.</p>
+    <p>Crossings is Mapelago&#x27;s daily route game. You get two countries joined by land, such as France and Poland, and you name the countries in between until your chain links them border to border. Par is the shortest route. Each country you name is coloured by how far it is from a shortest route, so the map warms up as you close in. Every guess beyond par costs 100 points (250 on No. 16 only), and a hint, which reveals a country on a shortest route, costs 150. Four guesses beyond par and the border stays shut. Monday is a short hop between well-known countries; through the week the routes get longer and pass through less familiar ones, and Saturday is the hardest. Only land borders count, so island countries can&#x27;t be on a route. Borders that exist only through an exclave or overseas territory, such as Kaliningrad or French Guiana, aren&#x27;t used in daily crossings. Monday&#x27;s crossing is short and Sunday&#x27;s is a long haul. Everyone gets the same crossing, and a new one arrives at midnight, your time.</p>
     <h2>How to play</h2>
     <ol class="howto"><li>Read today&#x27;s two countries and par, the fewest borders between them.</li><li>Type a country you&#x27;d pass through on the way.</li><li>Its colour shows how far it is from a shortest route. The darkest colour is on one.</li><li>Keep naming countries until your chain joins the two, border to border.</li><li>Score 1,000 at par. Each extra guess costs 100 and each hint 150.</li></ol>
     <!-- copy:end -->
@@ -553,8 +553,8 @@ a.act{text-decoration:none}
     });
     return { adj: a, dist: d };
   }
-  var DAILY = graph(D.e), FULL = null; // the practice graph is built when practice starts (a faster first load)
-  function fullGraph() { return FULL || (FULL = graph(D.e.concat(D.x || []))); }
+  var DAILY = graph(D.e), FULLG = null; // the practice graph is built when practice starts (a faster first load)
+  function fullGraph() { return FULLG || (FULLG = graph(D.e.concat(D.x || []))); }
   var adj = DAILY.adj, dist = DAILY.dist;
   function useGraph(g) { adj = g.adj; dist = g.dist; }
   function extraNote(a, b) { var hit = (D.x || []).filter(function (e) { return (at[e[0]] === a && at[e[1]] === b) || (at[e[0]] === b && at[e[1]] === a); })[0]; return hit ? hit[2] : null; }
@@ -602,7 +602,7 @@ a.act{text-decoration:none}
   }
   function daily(n) {
     if (n >= NEW) { if (!lists2) makeLists2(); var w2 = weekday(n), l2 = lists2[w2], p2 = l2[Math.floor((n - NEW) / 7) % l2.length], f2 = rng(n * 31 + 7)() < 0.5;
-      return { from: f2 ? p2[1] : p2[0], to: f2 ? p2[0] : p2[1], kind: CLASSES2[w2], hard: 1 }; }
+      return { from: f2 ? p2[1] : p2[0], to: f2 ? p2[0] : p2[1], kind: CLASSES2[w2], hard: 1, n: n }; }
     var w = weekday(n), list = getLists()[w], k = Math.floor((n - 1) / 7), p = list[k % list.length];
     var flip = rng(n * 31 + 7)() < 0.5;
     return { from: flip ? p[1] : p[0], to: flip ? p[0] : p[1], kind: CLASSES[w].name };
@@ -639,7 +639,7 @@ a.act{text-decoration:none}
 
   var P, G; // P: puzzle {from,to,kind,par}; G: game {steps:[{i,hint}], over, won}
   function start(pz, saved) {
-    P = pz; P.par = dist[P.from][P.to]; STEP = 100; EXTRA = pz.hard ? 4 : 6;
+    P = pz; P.par = dist[P.from][P.to]; STEP = pz.n === 16 ? 250 : 100; /* No. 16 keeps the 250 it was published with */ EXTRA = pz.hard ? 4 : 6;
     G = { steps: [], over: false, won: false };
     if (saved && Array.isArray(saved.steps)) saved.steps.forEach(function (s) { if (C[at[s.c]]) G.steps.push({ i: at[s.c], hint: !!s.h }); });
     settle(true);
